@@ -8,7 +8,7 @@ export interface User {
     birthdate: string;
     email: string;
     phone: number;
-    guardian?: {
+    guardian?: { 
         guardianFirstName: string,
         guardianLastName: string,
         guardianAddress: string,
