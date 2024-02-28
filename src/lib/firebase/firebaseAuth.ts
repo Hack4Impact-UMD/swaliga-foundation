@@ -7,7 +7,7 @@ import { auth } from "./firebaseConfig";
 
 type userAuthResponse = {
   success: boolean;
-  userId: string;
+  userId: string | null;
 };
 
 export const signUpUser = async (
@@ -25,7 +25,7 @@ export const signUpUser = async (
     return { success: true, userId: user.uid };
   } catch (error) {
     console.log(error);
-    return { success: false, userId: "-1" };
+    return { success: false, userId: null };
   }
 };
 
@@ -44,6 +44,6 @@ export const loginUser = async (
     return { success: true, userId: user.uid };
   } catch (error) {
     console.log(error);
-    return { success: false, userId: "-1" };
+    return { success: false, userId: null };
   }
 };
