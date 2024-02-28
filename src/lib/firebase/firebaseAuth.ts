@@ -5,7 +5,7 @@ import {
 } from "firebase/auth";
 import { auth } from "./firebaseConfig";
 
-type userAuthResponse = {
+type UserAuthResponse = {
   success: boolean;
   userId: string | null;
 };
@@ -13,7 +13,7 @@ type userAuthResponse = {
 export const signUpUser = async (
   email: string,
   password: string
-): Promise<userAuthResponse> => {
+): Promise<UserAuthResponse> => {
   try {
     const userCredential: UserCredential = await createUserWithEmailAndPassword(
       auth,
@@ -32,7 +32,7 @@ export const signUpUser = async (
 export const loginUser = async (
   email: string,
   password: string
-): Promise<userAuthResponse> => {
+): Promise<UserAuthResponse> => {
   try {
     const userCredential: UserCredential = await signInWithEmailAndPassword(
       auth,
