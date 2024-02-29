@@ -1,0 +1,90 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%; /* Adjust based on your layout */
+    max-width: 1250px; /* Adjust based on your layout */
+  }
+  
+  .logo-section {
+    flex-basis: 60%; /* Adjust the size ratio between logo and form */
+    background-color: #295972;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .logo-section #logo {
+    /* Set the width or height depending on which dimension is more important to control. */
+  width: 750px;  /* Or 'height: 150px;' if height needs to be fixed. */
+  height: auto;  /* This maintains the aspect ratio of the image. */
+  
+  /* Optional: Set a maximum size if the image should be responsive but not exceed a certain size. */
+  max-width: 100%;
+  max-height: 100%;
+}
+
+    .logo-section #text {
+    /* Set the width or height depending on which dimension is more important to control. */
+  width: 400px;  /* Or 'height: 150px;' if height needs to be fixed. */
+  height: auto;  /* This maintains the aspect ratio of the image. */
+  
+  /* Optional: Set a maximum size if the image should be responsive but not exceed a certain size. */
+  max-width: 100%;
+  max-height: 100%;
+}
+  .form-container {
+    flex-basis: 50%;
+    background-color: white; /* Lime green background */
+    padding: 2em; /* Padding around the form */
+    width: fit-content; /* Adjust width based on content */
+    margin: auto; /* Center the form container */
+    align-items: center;
+    border-radius: 8px; /* Rounded corners for the container */
+  }
+  .form-section {
+    flex-basis: 75%; /* Adjust the size ratio between logo and form */
+    background: #D0D12A; /* Replace with the actual color */
+    padding: 3em;
+    border-radius: 8px;
+    margin-left: 90px;
+    align-items: center;
+    height: 50vh;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  .form-section h1 {
+    color: #3E728B; /* Replace with the actual color */
+    text-align: center;
+    margin-bottom: 1em;
+  }
+  
+  .input-field {
+    margin-bottom: 1em;
+  }
+  
+  .input-field input {
+    width: 100%;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .submit-button button {
+    width: 100%;
+    padding: 0.5em;
+    border: none;
+    border-radius: 4px;
+    background-color: #444; /* Adjust button color as per your design */
+    color: white;
+    cursor: pointer;
+  }
+  
+  .submit-button button:hover {
+    background-color: #555;
+  }
