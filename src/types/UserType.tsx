@@ -9,11 +9,11 @@ export interface User {
     email: string;
     phone: number;
     guardian?: {
-        guardianFirstName: string,
-        guardianLastName: string,
-        guardianAddress: string,
-        guardianEmail: string,
-        guardianPhone: number,
+        firstName: string,
+        lastName: string,
+        address: string,
+        email: string,
+        phone: number,
     }[];
     password: string; 
     id: string;
