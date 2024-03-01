@@ -5,10 +5,10 @@ export interface User {
     middleName?: string;
     address: string;
     school: string;
-    birthdate: string;
+    birthdate: Date;
     email: string;
     phone: number;
-    guardian?: {
+    guardian?: { 
         firstName: string,
         lastName: string,
         address: string,
@@ -16,5 +16,6 @@ export interface User {
         phone: number,
     }[];
     password: string; 
+    swaligaId: number,
     id: string;
 }
