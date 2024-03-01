@@ -1,10 +1,10 @@
 import { User } from "@/types/UserType";
-import { collection, doc, addDoc, getDoc, updateDoc, deleteDoc, collectionGroup, query, getDocs, Query, orderBy, DocumentData } from "firebase/firestore";
-import { db } from "./firebaseConfig";
+import { collection, doc, addDoc, getDoc, updateDoc, deleteDoc, collectionGroup, getDocs } from "firebase/firestore";
+import { db } from "../firebaseConfig";
 
 export async function getAccountById(id: string): Promise<User> {
   try {
-    const docRef = doc(db, "Users", id);
+    const docRef = doc(db, "users", id);
     const snapshot = await getDoc(docRef);
     if (snapshot.exists()) {
       console.log("Retrieved account successfully");
@@ -19,9 +19,9 @@ export async function getAccountById(id: string): Promise<User> {
   }
 }
 
-async function createAccount(user: User): Promise<void> {
+export async function createAccount(user: User): Promise<void> {
   try {
-    const usersCollectionRef = collection(db, "Users");
+    const usersCollectionRef = collection(db, "users");
     await addDoc(usersCollectionRef, user);
     console.log("Account created successfully");
   } catch (error) {
@@ -30,9 +30,9 @@ async function createAccount(user: User): Promise<void> {
   }
 }
 
-async function deleteUserAccount(id: string): Promise<void> {
+export async function deleteUserAccount(id: string): Promise<void> {
     try {
-      const userRef = doc(db, "Users", id);
+      const userRef = doc(db, "users", id);
       await deleteDoc(userRef);
       console.log("User account deleted successfully");
     } catch (error) {
@@ -41,9 +41,9 @@ async function deleteUserAccount(id: string): Promise<void> {
     }
   }
 
-async function updatePassword(id: string, newPassword: string): Promise<void> {
+export async function updatePassword(id: string, newPassword: string): Promise<void> {
   try {
-    const user = doc(db, "Users", id);
+    const user = doc(db, "users", id);
     await updateDoc(user, { password: newPassword });
     console.log("Password updated successfully");
   } catch (error) {
@@ -52,10 +52,10 @@ async function updatePassword(id: string, newPassword: string): Promise<void> {
   }
 }
 
-async function getUserList(): Promise<User[]> {
+export async function getUserList(): Promise<User[]> {
     try {
         const usersList: User[] = [];
-        const querySnapshot = await getDocs(collectionGroup(db, "Users"));
+        const querySnapshot = await getDocs(collectionGroup(db, "users"));
         
         querySnapshot.forEach((doc) => {
           usersList.push(doc.data() as User);
