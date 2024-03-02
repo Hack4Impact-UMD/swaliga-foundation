@@ -1,1 +1,11 @@
 @import-normalize;
+
+@font-face {
+    font-family: 'Poppins-Medium';
+    src: url('../lib/fonts/Poppins/Poppins-Medium.ttf');
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
