@@ -1,5 +1,11 @@
 import Image from "next/image";
+import Login from './login';
+import styles from './page.module.css'
 
 export default function Home() {
-  return <h1>Hello, Next.js!</h1>
+  return (
+    <div className={styles.container}>
+      <Login/>
+    </div>
+  )
 }

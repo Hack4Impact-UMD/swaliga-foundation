@@ -1,1 +1,7 @@
 @import-normalize;
+
+html, body, #app, #app>div {
+    height: 100%;
+    margin: 0; /* So that the login page takes up the full screen */
+    padding: 0; /* So that the login page takes up the full screen */
+}
