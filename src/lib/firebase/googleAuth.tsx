@@ -1,4 +1,4 @@
-import { auth } from '../../../firebaseConfig';
+import { auth } from './firebaseConfig';
 import { FirebaseError } from 'firebase/app';
 import { signInWithPopup, signOut, GoogleAuthProvider } from 'firebase/auth';
 
@@ -38,15 +38,11 @@ async function signInWithGoogle(): Promise<void> {
     };
 };
 
-function logOut(): void {
+async function logOut(): Promise<void> {
     const user = auth.currentUser;
     if (user) {
-        signOut(auth)
-        .then(() => {
-            console.log("Sign-out successful");
-        }).catch((error) => {
-            console.log(error);
-        });
+        await signOut(auth);
+        console.log("Sign-out successful");
     } else {
         console.log("No user is signed in");
     }
