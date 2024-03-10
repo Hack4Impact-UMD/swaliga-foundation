@@ -151,7 +151,7 @@ export default function LoginPage() {
             alt="swaliga-logo"
           />
         </div>
-      </div>{" "}
+      </div>
     </div>
   );
 }
