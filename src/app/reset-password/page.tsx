@@ -4,17 +4,15 @@ import styles from "./ResetPasswordPage.module.css";
 import CompanyLogo from "@/../public/images/logo.svg";
 import CompanyLogoWords from "@/../public/images/logo2.svg";
 import React, { useState } from "react";
-import { auth } from '../../lib/firebase/firebaseConfig'; // Path to firebaseConfig.ts
+import { auth } from '@/lib/firebase/firebaseConfig'; // Path to firebaseConfig.ts
 import { sendPasswordResetEmail } from 'firebase/auth'
-import Link from "next/link"
-
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const handleReset = async (e) => {
+  const handleReset = async (e: any) => {
     e.preventDefault();
     try {
       await sendPasswordResetEmail(auth, email);
