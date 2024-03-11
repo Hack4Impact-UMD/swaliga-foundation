@@ -1,5 +1,5 @@
 import { User } from "@/types/User";
-import { collection, doc, addDoc, getDoc, updateDoc, deleteDoc, collectionGroup, getDocs } from "firebase/firestore";
+import { collection, doc, addDoc, getDoc, updateDoc, deleteDoc, collectionGroup, getDocs, UpdateData } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
 export async function getAccountById(id: string): Promise<User> {
@@ -26,6 +26,17 @@ export async function createAccount(user: User): Promise<void> {
     console.log("Account created successfully");
   } catch (error) {
     console.error("Error creating account:", error);
+    throw error;
+  }
+}
+
+export async function updateAccount(id: string, updatedUserData: UpdateData<User>): Promise<void> {
+  try {
+    const user = doc(db, "users", id);
+    await updateDoc(user, updatedUserData);
+    console.log("Account updated successfully");
+  } catch (error) {
+    console.error("Error updating account:", error);
     throw error;
   }
 }
