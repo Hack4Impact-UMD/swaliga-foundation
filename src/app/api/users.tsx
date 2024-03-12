@@ -1,8 +1,7 @@
-import { getAccountById, createAccount } from "@/lib/firebase/database/users";
-
+import { getAccountById, createAccount, updateAccount } from "@/lib/firebase/database/users";
 import { NextApiRequest, NextApiResponse } from 'next';
-import {auth, db} from '@/lib/firebase/firebaseConfig';
 import { User } from "@/types/User";
+import { UpdateData } from "firebase/firestore";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
@@ -33,9 +32,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (checkIfValidUser(user)) {
                 try {
                     const result = await createAccount(user);
-                    res.status(200).json({ result });
+                    return res.status(200).json({ result });
                 } catch {
-                    res.status(404).json({ error: 'error with creating the account' });
+                    return res.status(404).json({ error: 'error with creating the account' });
                 }
             } else {
                 return res.status(400).json({ error: 'invalid user data' });
@@ -44,7 +43,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             res.status(500).json({ error: 'failed to load data' });
         }
     } else if (req.method === 'PUT') {
+        try {
+            if (!req.body) {
+                return res.status(400).json({ error: 'missing request body' });
+            }
 
+            const userid = req.query.userid;
+            let info : UpdateData<User> = req.body;
+
+            if (!userid) {
+                return res.status(400).json({ error: 'missing userid' });
+            } else if (!info) {
+                return res.status(400).json({ error: 'invalid user data' });
+            } else {
+                try {
+                    let strUserId = String(userid);
+                    const result = await updateAccount(strUserId, info);
+                    res.status(200).json({ result });
+                } catch {
+                    res.status(404).json({ error: 'error with creating the account' });
+                }
+            }
+        } catch (err) {
+            res.status(500).json({ error: 'failed to load data' });
+        }
     }
 }
 
