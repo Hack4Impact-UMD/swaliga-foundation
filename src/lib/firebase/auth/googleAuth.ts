@@ -1,4 +1,4 @@
-import { auth } from './firebaseConfig';
+import { auth } from '../firebaseConfig';
 import { FirebaseError } from 'firebase/app';
 import { signInWithPopup, signOut, GoogleAuthProvider } from 'firebase/auth';
 
@@ -17,6 +17,7 @@ async function verifyGoogleToken(googleAccessToken: string | undefined): Promise
 
 async function signInWithGoogle(): Promise<void> {
     const provider = new GoogleAuthProvider();
+    provider.addScope('https://www.googleapis.com/auth/drive.file');
     try {
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
