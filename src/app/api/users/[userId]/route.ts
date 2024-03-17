@@ -1,14 +1,13 @@
-import { getAccountById, createAccount, updateAccount } from "@/lib/firebase/database/users";
+import { getAccountById, updateAccount } from "@/lib/firebase/database/users";
 import { NextApiRequest, NextApiResponse } from 'next';
 import { User } from "@/types/User";
 import { UpdateData } from "firebase/firestore";
 
-//TODO: adjust code to use [userId]
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse, { params }: { params: { userId: string } }) {
     if (req.method === 'GET') { // get user by id
         try {
-            const userid = req.query.userid;
+            const userid = params.userId;
+            
             if (!userid) {
                 res.status(400).json({ error: 'missing userid' });
             } else {
@@ -29,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(400).json({ error: 'missing request body' });
             }
 
-            const userid = req.query.userid;
+            const userid = params.userId;
             let info : UpdateData<User> = req.body;
 
             if (!userid) {
