@@ -1,5 +1,5 @@
 import { User } from "@/types/User";
-import { collection, doc, addDoc, getDoc, updateDoc, deleteDoc, collectionGroup, getDocs, UpdateData } from "firebase/firestore";
+import { collection, doc, addDoc, setDoc, getDoc, updateDoc, deleteDoc, collectionGroup, getDocs, UpdateData } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
 export async function getAccountById(id: string): Promise<User> {
@@ -21,8 +21,8 @@ export async function getAccountById(id: string): Promise<User> {
 
 export async function createAccount(user: User): Promise<void> {
   try {
-    const usersCollectionRef = collection(db, "users");
-    await addDoc(usersCollectionRef, user);
+    const usersCollectionRef = doc(db, "users", user.id);
+    await setDoc(usersCollectionRef, user);
     console.log("Account created successfully");
   } catch (error) {
     console.error("Error creating account:", error);
