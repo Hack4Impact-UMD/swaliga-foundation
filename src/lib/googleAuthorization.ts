@@ -1,10 +1,9 @@
 import { google } from "googleapis";
 import { redirect } from "next/navigation";
 
-export function authorizeWithGoogle() {
-  const oauth2Client = new google.auth.OAuth2(
-    process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-    process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
+export const oauth2Client = new google.auth.OAuth2(
+  process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+  process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
     "http://localhost:3000/__/auth/handler"
   );
 
