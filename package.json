@@ -11,7 +11,7 @@
   "dependencies": {
     "-": "^0.0.1",
     "canvas": "^2.11.2",
-    "firebase": "^10.8.0",
+    "firebase": "^10.8.1",
     "konva": "^9.3.3",
     "next": "^14.1.0",
     "react": "^18",
