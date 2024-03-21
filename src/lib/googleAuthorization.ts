@@ -4,10 +4,14 @@ import { redirect } from "next/navigation";
 export const oauth2Client = new google.auth.OAuth2(
   process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
   process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
-    "http://localhost:3000/__/auth/handler"
-  );
+  "http://localhost:3000/api/auth/handler"
+);
 
-  const scopes = ["https://www.googleapis.com/auth/drive.file"];
+export function authorizeWithGoogle() {
+  const scopes = [
+    "https://www.googleapis.com/auth/forms.body",
+    "https://www.googleapis.com/auth/spreadsheets",
+  ];
 
   const authorizationUrl = oauth2Client.generateAuthUrl({
     access_type: "offline",
