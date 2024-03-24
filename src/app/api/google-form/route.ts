@@ -11,7 +11,7 @@ export async function POST(req: Request) {
                 scopes: ['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/forms'],
             });
 
-            // 1-1. authenticate admin google account
+            // 1-1. authenticate admin google account (user account)
             
 
             const forms = google.forms({
