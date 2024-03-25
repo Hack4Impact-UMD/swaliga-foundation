@@ -28,12 +28,15 @@ export default function ForgotPasswordPage() {
             0,
             0,
             0,
-            dims.height / 60,
-            (50 / 85) * dims.width,
+
+            dims.height / 30,
+            (50 / 100) * dims.width,
             dims.height,
+
             dims.width,
             dims.height,
             dims.width,
+            
             0.45 * dims.height,
             dims.height / 60,
             0,
