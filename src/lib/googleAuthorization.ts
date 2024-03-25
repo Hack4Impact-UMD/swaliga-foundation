@@ -7,6 +7,11 @@ const oauth2Client = new google.auth.OAuth2(
   "http://localhost:3000/api/auth/handler"
 );
 
+export const forms = google.forms({
+  version: 'v1',
+  auth: oauth2Client
+})
+
 export function authorizeWithGoogle() {
   const scopes = [
     "https://www.googleapis.com/auth/forms.body",
@@ -24,9 +29,8 @@ export function authorizeWithGoogle() {
 
 export async function setCredentials(authCode: string): Promise<boolean> {
   try {
-    const {tokens} = await oauth2Client.getToken(authCode);
+    const { tokens } = await oauth2Client.getToken(authCode);
     oauth2Client.setCredentials(tokens);
-    console.log(oauth2Client.credentials);
     return true;
   } catch (err) {
     console.error('getting tokens failed');
