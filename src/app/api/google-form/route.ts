@@ -1,18 +1,22 @@
 import { google } from 'googleapis';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/firebase/firebaseConfig';
+import { collection, addDoc } from "firebase/firestore"; 
 
-export async function POST(req: Request) {
+export async function handler(req: NextRequest, res: NextResponse) {
     try {
         if (req.method === 'POST') {
-            // 1. authenticate google service account
-            const auth = new google.auth.GoogleAuth({
-                keyFile: 'src/app/api/google-form/TestServiceAccountKey.json',
-                scopes: ['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/forms'],
-            });
+            // 1-1. get access token from client side
+            const header = req.headers.get("authorization") || '';
+            const accessToken = header.split("Bearer ").at(1);
 
-            // 1-1. authenticate admin google account (user account)
+            if (!accessToken) {
+                return NextResponse.json({ message: "Access token is missing" }, { status: 401 });
+            }
             
+            // 1-2. get user credentials (admin)
+            const auth = new google.auth.OAuth2();
+            auth.setCredentials({ "access_token": accessToken });
 
             const forms = google.forms({
                 version: 'v1',
@@ -25,46 +29,29 @@ export async function POST(req: Request) {
                     info: {
                         title: "Your Form Title",
                         documentTitle: "Your Document Title",
-                    }
+                    },
                 }
             });
 
             console.log("Form Created: ", form.data);
 
             // 3. store the data into firestore
+            try {
+                const formDoc = await addDoc(collection(db, "forms"), {
+                    formId: form.data.formId,
+                    title: form.data.info?.title,
+                    revisionId: form.data.revisionId,
+                    responderUri: form.data.responderUri,
+                });
+                console.log("Form added");
+            } catch (err) {
+                console.log("Error adding document: ", err);
+            }
 
             return NextResponse.json(form.data , { status: 200 });
         }
     } catch (err) {
-        console.log('Error creating form:', err);
-        return NextResponse.json({ message: '405 error' }, { status: 405 });
+        console.log("Error creating form:", err);
+        return NextResponse.json({ message: "Error creating form:" }, { status: 405 });
     }
-    
-    // if (req.method === 'POST') {
-    //     try {
-    //         const auth = new google.auth.GoogleAuth({
-    //             keyFile: '/Users/minji/Desktop/2024 Spring/Hack4Impact/Swaliga/swaliga-foundation/src/lib/firebase/TestServiceAccountKey.json',
-    //             scopes: ['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/forms'],
-    //         });
-            
-    //         const forms = google.forms({version: 'v1', auth: auth});
-            
-    //         const form = await forms.forms.create({
-    //             requestBody: {
-    //                 info: {
-    //                     title: "Your Form Title",
-    //                 }
-    //             }
-    //         });
-            
-    //         console.log("Form Created: ", form.data);
-    //         res.status(200).json(form.data);
-    //     } catch (error) {
-    //         console.error('Error creating form:', error);
-    //         res.status(500).send('Error creating form');
-    //     }
-    // } else {
-    //     res.setHeader('Allow', ['POST']);
-    //     res.status(405).end(`Method ${req.method} Not Allowed`);
-    // }
 }

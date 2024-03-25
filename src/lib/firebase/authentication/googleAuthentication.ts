@@ -1,4 +1,4 @@
-import { auth } from './firebaseConfig';
+import { auth } from '../firebaseConfig';
 import { FirebaseError } from 'firebase/app';
 import { signInWithPopup, signOut, GoogleAuthProvider } from 'firebase/auth';
 
