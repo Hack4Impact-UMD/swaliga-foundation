@@ -15,6 +15,7 @@ export const forms = google.forms({
 export function authorizeWithGoogle() {
   const scopes = [
     "https://www.googleapis.com/auth/forms.body",
+    "https://www.googleapis.com/auth/forms.responses.readonly",
     "https://www.googleapis.com/auth/spreadsheets",
   ];
 
