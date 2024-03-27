@@ -10,7 +10,7 @@ interface Survey {
   assignedUsers: string[];
 }
 
-interface FormResponse {
+interface Response {
   formId: string;
   responseId: string;
   userId: string;
