@@ -1,5 +1,5 @@
 // Basic structures for Forms and Responses
-interface Survey {
+export interface Survey {
   formId: string;
   info: Info;
   settings: FormSettings;
@@ -10,7 +10,7 @@ interface Survey {
   assignedUsers: string[];
 }
 
-interface Response {
+export interface Response {
   formId: string;
   responseId: string;
   userId: string;
