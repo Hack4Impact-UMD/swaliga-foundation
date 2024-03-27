@@ -1,4 +1,5 @@
-// Basic structures for Forms and Responses
+import { Watch } from "./watch-types";
+
 export interface Survey {
   formId: string;
   info: Info;
@@ -8,6 +9,8 @@ export interface Survey {
   responderUri: string;
   linkedSheetId?: string;
   assignedUsers: string[];
+  schemaWatch: Watch;
+  responsesWatch: Watch;
 }
 
 export interface Response {
