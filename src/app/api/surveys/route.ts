@@ -3,55 +3,51 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/firebase/firebaseConfig';
 import { collection, addDoc } from "firebase/firestore"; 
 
-export async function handler(req: NextRequest, res: NextResponse) {
-    try {
-        if (req.method === 'POST') {
-            // 1-1. get access token from client side
-            const header = req.headers.get("authorization") || '';
-            const accessToken = header.split("Bearer ").at(1);
+export async function POST(req: NextRequest, res: NextResponse) {
+  // 1-1. get access token from client side
+  const header = req.headers.get("authorization") || "";
+  const accessToken = header.split("Bearer ").at(1);
 
-            if (!accessToken) {
-                return NextResponse.json({ message: "Access token is missing" }, { status: 401 });
-            }
-            
-            // 1-2. get user credentials (admin)
-            const auth = new google.auth.OAuth2();
-            auth.setCredentials({ "access_token": accessToken });
+  if (!accessToken) {
+    return NextResponse.json(
+      { message: "Access token is missing" },
+      { status: 401 }
+    );
+  }
 
-            const forms = google.forms({
-                version: 'v1',
-                auth: auth
-            });
+  // 1-2. get user credentials (admin)
+  const auth = new google.auth.OAuth2();
+  auth.setCredentials({ access_token: accessToken });
 
-            // 2. create a google form
-            const form = await forms.forms.create({
-                requestBody: {
-                    info: {
-                        title: "Your Form Title",
-                        documentTitle: "Your Document Title",
-                    },
-                }
-            });
+  const forms = google.forms({
+    version: "v1",
+    auth: auth,
+  });
 
-            console.log("Form Created: ", form.data);
+  // 2. create a google form
+  const form = await forms.forms.create({
+    requestBody: {
+      info: {
+        title: "Your Form Title",
+        documentTitle: "Your Document Title",
+      },
+    },
+  });
 
-            // 3. store the data into firestore
-            try {
-                const formDoc = await addDoc(collection(db, "forms"), {
-                    formId: form.data.formId,
-                    title: form.data.info?.title,
-                    revisionId: form.data.revisionId,
-                    responderUri: form.data.responderUri,
-                });
-                console.log("Form added");
-            } catch (err) {
-                console.log("Error adding document: ", err);
-            }
+  console.log("Form Created: ", form.data);
 
-            return NextResponse.json(form.data , { status: 200 });
-        }
-    } catch (err) {
-        console.log("Error creating form:", err);
-        return NextResponse.json({ message: "Error creating form:" }, { status: 405 });
-    }
+  // 3. store the data into firestore
+  try {
+    const formDoc = await addDoc(collection(db, "forms"), {
+      formId: form.data.formId,
+      title: form.data.info?.title,
+      revisionId: form.data.revisionId,
+      responderUri: form.data.responderUri,
+    });
+    console.log("Form added");
+  } catch (err) {
+    console.log("Error adding document: ", err);
+  }
+
+  return NextResponse.json(form.data, { status: 200 });
 }
