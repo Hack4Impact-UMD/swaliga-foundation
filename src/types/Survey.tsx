@@ -1,5 +1,5 @@
 // Basic structures for Forms and Responses
-interface Form {
+interface Survey {
   formId: string;
   info: Info;
   settings: FormSettings;
@@ -7,11 +7,13 @@ interface Form {
   revisionId: string;
   responderUri: string;
   linkedSheetId?: string;
+  assignedUsers: string[];
 }
 
 interface FormResponse {
   formId: string;
   responseId: string;
+  userId: string;
   createTime: string;
   lastSubmittedTime: string;
   respondentEmail: string;
