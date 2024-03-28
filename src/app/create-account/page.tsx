@@ -69,7 +69,6 @@ export default function CreateAccountPage() {
       ];
       setPolygons(coords);
     }, []);
-
     const generatePolygonOverlay = useCallback((dims: Dims) => {
       const coords: Polygon[] = [
         {
@@ -99,7 +98,44 @@ export default function CreateAccountPage() {
           fill: "#295972",
         },
       ];
-      setPolygonOverlay(coords);
+      const borderPolygon1 = {
+        points: [
+          dims.width / 2 + 670, 0.15 * dims.height - 55, // top-left corner
+          dims.width / 2 + 678, 0.15 * dims.height - 54, // top-right corner
+          dims.width / 2 + 678, 0.15 * dims.height + 557, // bottom-right corner
+          dims.width / 2 + 670, 0.15 * dims.height + 556, // bottom-left corner
+        ],
+        fill: 'white',
+      };
+      const borderPolygon2 = {
+        points: [
+          dims.width / 2 - 591, 0.15 * dims.height - 55, // top-left corner
+          dims.width / 2 - 583, 0.15 * dims.height - 54, // top-right corner
+          dims.width / 2 - 583, 0.15 * dims.height + 557, // bottom-right corner
+          dims.width / 2 - 591, 0.15 * dims.height + 556, // bottom-left corner
+        ],
+        fill: 'white',
+      };
+      const borderPolygon3 = {
+        points: [
+          dims.width / 2 - 583, 0.15 * dims.height + 549, // bottom-right corner
+          dims.width / 2 - 591, 0.15 * dims.height + 557, // bottom-left corner
+          dims.width / 2 + 678, 0.15 * dims.height + 557, // bottom-right corner
+          dims.width / 2 + 670, 0.15 * dims.height + 549, // bottom-left corner
+        ],
+        fill: 'white',
+      };
+      const borderPolygon4 = {
+        points: [
+          dims.width / 2 - 591, 0.15 * dims.height - 57, // bottom-right corner
+          dims.width / 2 - 591, 0.15 * dims.height - 49, // bottom-left corner
+          dims.width / 2 + 678, 0.15 * dims.height - 49, // bottom-right corner
+          dims.width / 2 + 678, 0.15 * dims.height - 57, // bottom-left corner
+        ],
+        fill: 'white',
+      };
+        const updatedCoords = [...coords, borderPolygon1, borderPolygon2, borderPolygon3, borderPolygon4];
+      setPolygonOverlay(updatedCoords);
     }, []);
 
     useEffect(() => {

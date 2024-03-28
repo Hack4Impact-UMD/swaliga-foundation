@@ -44,7 +44,7 @@
 
 .accountForm {
     position: absolute;
-    border: 8px solid white;
+    /*border: 8px solid white;*/
     top: 50%;
     left: 53%;
     transform: translate(-50%, -50%);

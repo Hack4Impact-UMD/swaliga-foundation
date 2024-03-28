@@ -98,7 +98,44 @@ export default function ForgotPasswordPage() {
           fill: "#295972",
         },
       ];
-      setPolygonOverlay(coords);
+      const borderPolygon1 = {
+        points: [
+          dims.width / 2 + 470, 0.15 * dims.height - 19, // top-left corner
+          dims.width / 2 + 475, 0.15 * dims.height - 19, // top-right corner
+          dims.width / 2 + 475, 0.15 * dims.height + 518, // bottom-right corner
+          dims.width / 2 + 470, 0.15 * dims.height + 514, // bottom-left corner
+        ],
+        fill: 'white',
+      };
+      const borderPolygon2 = {
+        points: [
+          dims.width / 2 - 390, 0.15 * dims.height - 19, // top-left corner
+          dims.width / 2 - 385, 0.15 * dims.height - 19, // top-right corner
+          dims.width / 2 - 385, 0.15 * dims.height + 518, // bottom-right corner
+          dims.width / 2 - 390, 0.15 * dims.height + 514, // bottom-left corner
+        ],
+        fill: 'white',
+      };
+      const borderPolygon3 = {
+        points: [
+          dims.width / 2 - 385, 0.15 * dims.height + 513, // bottom-right corner
+          dims.width / 2 - 390, 0.15 * dims.height + 517, // bottom-left corner
+          dims.width / 2 + 475, 0.15 * dims.height + 517, // bottom-right corner
+          dims.width / 2 + 470, 0.15 * dims.height + 513, // bottom-left corner
+        ],
+        fill: 'white',
+      };
+      const borderPolygon4 = {
+        points: [
+          dims.width / 2 - 385, 0.15 * dims.height - 19, // bottom-right corner
+          dims.width / 2 - 390, 0.15 * dims.height - 15, // bottom-left corner
+          dims.width / 2 + 475, 0.15 * dims.height - 15, // bottom-right corner
+          dims.width / 2 + 470, 0.15 * dims.height - 19, // bottom-left corner
+        ],
+        fill: 'white',
+      };
+        const updatedCoords = [...coords, borderPolygon1, borderPolygon2, borderPolygon3, borderPolygon4];
+  setPolygonOverlay(updatedCoords);
     }, []);
 
     useEffect(() => {
