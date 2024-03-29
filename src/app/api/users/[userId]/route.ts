@@ -1,5 +1,5 @@
 import { getAccountById, updateAccount } from "@/lib/firebase/database/users";
-import { User } from "@/types/User";
+import { User } from "@/types/user-types";
 import { NextRequest, NextResponse } from 'next/server';
 import { UpdateData } from "firebase/firestore";
 
