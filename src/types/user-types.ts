@@ -16,6 +16,7 @@ export interface User {
         phone: number,
     }[];
     password: string; 
-    swaligaId: number,
     id: string;
+    assignedSurveys: string[];
+    completedResponses: string[];
 }
