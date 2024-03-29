@@ -1,4 +1,4 @@
-import { User } from "@/types/User";
+import { User } from "@/types/user-types";
 import { collection, doc, addDoc, setDoc, getDoc, updateDoc, deleteDoc, collectionGroup, getDocs, UpdateData } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
