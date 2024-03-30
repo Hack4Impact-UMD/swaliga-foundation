@@ -162,6 +162,7 @@ export default function CreateAccountPage() {
           lastName: '',
           name: '',
           email: '',
+          bday: '',
           phoneNumber: '',
           emergencyEmail: '',
           emergencyPhone: '',
@@ -171,11 +172,16 @@ export default function CreateAccountPage() {
           city: '',
           state: '',
           zipCode: '',
+          grad: '',
+          yearsInSwaliga: '',
         });
       
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [passwordError, setPasswordError] = useState("");
+    const [bdayError, setBdayError] = useState("");
+    const [gradError, setGradError] = useState("");
+    const [yearsInSwaligaError, setYearsInSwaligaError] = useState("");
     const [emergencyContacts, setEmergencyContacts] = useState([
         { name: '', email: '', phone: '' } // Start with one empty contact
     ]);
@@ -222,11 +228,6 @@ export default function CreateAccountPage() {
             return;
         }
 
-        setAccountInfo(prevState => ({
-        ...prevState,
-        [name]: value,
-        }));
-
         if (name === 'password' || name === 'confirmPassword') {
             if (name === 'password' && accountInfo.confirmPassword && value !== accountInfo.confirmPassword) {
                 setPasswordError("Passwords do not match");
@@ -236,6 +237,38 @@ export default function CreateAccountPage() {
                 setPasswordError(""); // Clear error if passwords match
             }
         }
+
+        if (name === 'bday') {
+            const regex = /^\d{4}\/\d{2}\/\d{2}$/; // Matches YYYY/MM/DD format
+            if (!regex.test(value)) {
+                setBdayError("Birthday must be in YYYY/MM/DD format");
+            } else {
+                setBdayError(""); // Clear error if format is correct
+            }
+        }
+
+        if (name === 'grad') {
+            const regex = /^\d{4}$/; // Matches YYYY format
+            if (!regex.test(value)) {
+                setGradError("Graduation year must be in YYYY format");
+            } else {
+                setGradError(""); // Clear error if format is correct
+            }
+        }
+
+        if (name === 'yearsInSwaliga') {
+            const regex = /^\d{4}$/; // Matches YYYY format
+            if (!regex.test(value)) {
+                setYearsInSwaligaError("Year must be in YYYY format");
+            } else {
+                setYearsInSwaligaError(""); // Clear error if format is correct
+            }
+        }
+
+        setAccountInfo(prevState => ({
+            ...prevState,
+            [name]: value,
+        }));
     };
       
     const toggleConfirmPasswordVisibility = () => {
@@ -294,6 +327,25 @@ export default function CreateAccountPage() {
                                     <input type="tel" name="phoneNumber" placeholder="Enter phone number" value={accountInfo.phoneNumber} onChange={handleChange} />
                                 </div>   
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Birthdate */}
+                    <div className={styles.formGroupRow}>
+                        <div className={styles.formGroup}>
+                        <label style={{ color: bdayError ? 'red' : 'inherit' }}>Birthdate <span className={styles.requiredAsterisk}>*</span></label>
+                            <div className={`${styles.inputIconGroup} ${bdayError ? styles.inputError : ''}`}>
+                                <i className={`${styles.inputIconGroup} ${bdayError ? styles.inputError : ''}`}></i>
+                                <input 
+                                    type="text" 
+                                    name="bday" 
+                                    placeholder="YYYY/MM/DD" 
+                                    value={accountInfo.bday} 
+                                    onChange={handleChange} 
+                                />
+                                <i className="fas fa-birthday-cake"></i>
+                            </div>
+                            {bdayError && <div className={styles.passwordError}>{bdayError}</div>}
                         </div>
                     </div>
 
@@ -405,6 +457,44 @@ export default function CreateAccountPage() {
                                     <input type="text" name="zipCode" placeholder="Zip Code" value={accountInfo.zipCode} onChange={handleChange} />
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Year you graduate field */}
+                    <div className={styles.formGroupRow}>
+                        <div className={styles.formGroup}>
+                        <label style={{ color: gradError ? 'red' : 'inherit' }}>What year do you plan to graduate? <span className={styles.requiredAsterisk}>*</span></label>
+                            <div className={`${styles.inputIconGroup} ${gradError ? styles.inputError : ''}`}>
+                                <i className={`${styles.inputIconGroup} ${gradError ? styles.inputError : ''}`}></i>
+                                <input 
+                                    type="text" 
+                                    name="grad" 
+                                    placeholder="YYYY" 
+                                    value={accountInfo.grad} 
+                                    onChange={handleChange} 
+                                />
+                                <i className="fas fa-graduation-cap"></i>
+                            </div>
+                            {gradError && <div className={styles.passwordError}>{gradError}</div>}
+                        </div>
+                    </div>
+                    
+                    {/* Year you graduate field */}
+                    <div className={styles.formGroupRow}>
+                        <div className={styles.formGroup}>
+                        <label style={{ color: yearsInSwaligaError ? 'red' : 'inherit' }}>How many years have you been in the Swaliga STEM club at HSRA <span className={styles.requiredAsterisk}>*</span></label>
+                            <div className={`${styles.inputIconGroup} ${yearsInSwaligaError ? styles.inputError : ''}`}>
+                                <i className={`${styles.inputIconGroup} ${yearsInSwaligaError ? styles.inputError : ''}`}></i>
+                                <input 
+                                    type="text" 
+                                    name="yearsInSwaliga" 
+                                    placeholder="YYYY" 
+                                    value={accountInfo.yearsInSwaliga} 
+                                    onChange={handleChange} 
+                                />
+                                <i className="fas fa-flask"></i>
+                            </div>
+                            {yearsInSwaligaError && <div className={styles.passwordError}>{yearsInSwaligaError}</div>}
                         </div>
                     </div>
 
