@@ -1,4 +1,3 @@
-import { Watch } from "@/types/watch-types";
 import { forms } from "@/lib/googleAuthorization";
 
 export async function createWatch(formId: string, eventType: string) {
@@ -18,8 +17,8 @@ export async function createWatch(formId: string, eventType: string) {
                 }
             }
         );
-        
-        console.log("Response", response);
+
+        console.log("Response", response.data);
     } catch (error) {
         console.log("Error with creating watch using given information", error);
         throw error;
@@ -28,8 +27,13 @@ export async function createWatch(formId: string, eventType: string) {
 
 export async function renewWatch(formId : string, watchId : string) {
     try {
-        const response = await forms.forms.watches.renew({"formId": formId, "watchId": watchId});
-        console.log("Response", response);
+        const response = await forms.forms.watches.renew(
+            {
+                "formId": formId, 
+                "watchId": watchId
+            }
+        );
+        console.log("Response", response.data);
     } catch (error) {
         console.log("Error with renewing watch using given formId and watchId", error);
         throw error;
