@@ -5,6 +5,16 @@ import { forms_v1, google } from "googleapis";
 
 async function createFormWatch(formId: string, topicName: string) {
   try {
+
+    // // TODO: Remove - Deletes the old watch
+    // const delete_response = await forms.forms.watches.delete({
+    //   formId: formId,
+    //   watchId: 'some-watch'
+    // });
+
+    // // See if there is any output from attempting to delete an old watch
+    // console.log("Delete response: ", delete_response);
+
     const response = await forms.forms.watches.create({
         formId: formId,
         requestBody: {
