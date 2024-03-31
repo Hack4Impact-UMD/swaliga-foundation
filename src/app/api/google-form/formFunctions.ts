@@ -2,7 +2,7 @@ import {forms } from '../../../lib/googleAuthorization';
 import { db } from "../../../lib/firebase/firebaseConfig";
 import { doc, setDoc } from 'firebase/firestore';
 
-/* Retrieve form data given form id and update it to firebase. Returns the form data. 
+/* Retrieve form data given form id and update it to firebase.
 * @params id - id of form 
 */
 export async function updateForm(id: string) {
