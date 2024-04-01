@@ -24,6 +24,8 @@ export function listenForMessages() {
         `${message.attributes.watchId} triggered on form response submission.`
       );
 
+      // TODO: Implement logic for the collection name to update, right now it's just
+      // the one I used for testing
       updateOnResponse('gavin-form-testing', message.attributes.formId);
     } else {
       // Not much to do here...
