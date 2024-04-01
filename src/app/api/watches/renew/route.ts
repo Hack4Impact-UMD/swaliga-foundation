@@ -1,6 +1,5 @@
 import { renewWatch } from "@/lib/firebase/database/watches";
 import { NextRequest, NextResponse } from 'next/server';
-import { Watch } from "@/types/watch-types";
 
 export async function POST(req: NextRequest) {
     try {
