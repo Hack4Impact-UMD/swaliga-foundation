@@ -2,16 +2,16 @@
 
 import styles from "./StudentDashboard.module.css";
 import CompanyLogo from "@/../public/images/logo.svg";
-import Image from 'next/image'
-import Link from 'next/link'
+import Vector from "@/app/student-dashboard/Vector.png"
+import Image from "next/image"
+import Link from "next/link"
 import React, { useState, useEffect } from "react";
-import { Disclosure } from '@headlessui/react'
-import { User } from '@/types/user-types';
+import { Disclosure } from "@headlessui/react"
+import { User } from "@/types/user-types";
 import { Survey } from '@/types/survey-types';
 import { db, auth } from '@/lib/firebase/firebaseConfig';
 import { getAuth } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-
 
 
 export default function StudentDashboard() {
@@ -35,8 +35,8 @@ export default function StudentDashboard() {
         }],
         password: 'test1234', 
         id: '000-001-111',
-        assignedSurveys: ['survey1', 'survey2', 'survey3'],
-        completedResponses: ['completed1', 'completed2'],
+        assignedSurveys: ['survey1', 'survey2', 'survey3'], // form survey 'url' saved? or form id?
+        completedResponses: ['completed1', 'completed2'], // form response (submitted form?) url saved?
     };
 
     const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -105,6 +105,11 @@ export default function StudentDashboard() {
                     <Disclosure key={survey} as="div">
                         <Disclosure.Button className={styles.assignedSurveyButton}>
                             <span>{survey}</span>
+                            <Image 
+                                src={Vector} 
+                                alt="vector" 
+                                className={styles.vector}
+                            />
                         </Disclosure.Button>
                         <Disclosure.Panel>
                             Contents

@@ -85,6 +85,14 @@
     display: inline-block;
     font-size: 18px;
     text-align: left;
+    position: relative;
+}
+
+.vector {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .completedSurveyButton {
