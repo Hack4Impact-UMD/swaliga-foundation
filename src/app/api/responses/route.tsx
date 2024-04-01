@@ -1,56 +1,26 @@
-import { Request, Response } from 'express';
-import { db } from "../../../lib/firebase/firebaseConfig";
-import { doc, setDoc, collection, getDocs, DocumentData, DocumentSnapshot, getDoc } from 'firebase/firestore';
+// pages/route.tsx
 
-interface ResponseObject {
-  formId: string;
-  responseId: string;
-  createTime: string;
-  lastSubmittedTime: string;
-  respondentEmail: string;
-  answers: {
-    [key: string]: any;
-  };
-  totalScore?: number;
-}
+import { NextRequest, NextResponse } from 'next/server';
+import { getAllResponses, createResponse } from '../../../lib/firebase/database/response';
+import { Response } from '../../../types/survey-types';
 
-export const getAllResponses = async (req: Request, res: Response) => {
+export async function GET(req: NextRequest) {
   try {
-    const responsesSnapshot = await getDocs(collection(db, 'responses'));
-    const allResponses: ResponseObject[] = [];
-    responsesSnapshot.forEach((doc) => {
-      allResponses.push(doc.data() as ResponseObject);
-    });
-    res.status(200).json(allResponses);
+    const allResponses = await getAllResponses();
+    return NextResponse.json(allResponses, { status: 200 });
   } catch (error) {
     console.error('Error getting responses:', error);
-    res.status(500).send('Internal Server Error');
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
-};
+}
 
-export const createResponse = async (req: Request, res: Response) => {
+export async function POST(req: NextRequest) {
   try {
-    const newResponse: ResponseObject = req.body;
-    await setDoc(doc(db, 'responses', 'new'), newResponse);
-    res.status(201).send('Response created successfully');
+    const newResponse: Response = await req.json();
+    await createResponse(newResponse);
+    return NextResponse.json({ message: 'Response created successfully' }, { status: 201 });
   } catch (error) {
     console.error('Error creating response:', error);
-    res.status(500).send('Internal Server Error');
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
-};
-
-export const getResponseByID = async (req: Request, res: Response) => {
-  try {
-    const responseId = req.params.responseId;
-    const responseDoc: DocumentSnapshot<DocumentData> = await getDoc(doc(db, 'responses', responseId));
-    if (responseDoc.exists()) {
-      const response = responseDoc.data() as ResponseObject;
-      res.status(200).json(response);
-    } else {
-      res.status(404).send('Response not found');
-    }
-  } catch (error) {
-    console.error('Error getting response by ID:', error);
-    res.status(500).send('Internal Server Error');
-  }
-};
+}
