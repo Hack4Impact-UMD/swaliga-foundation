@@ -1,5 +1,6 @@
 import { renewWatch } from "@/lib/firebase/database/watches";
 import { NextRequest, NextResponse } from 'next/server';
+import { Watch } from "@/types/watch-types";
 
 export async function POST(req: NextRequest) {
     try {
@@ -7,16 +8,17 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Missing Request Body' }, { status: 400 });
         }
 
-        if (!('formId' in req.body) || !('watchId' in req.body)) {
-            return NextResponse.json({ error: 'Missing formId or watchId in Request Body' }, { status: 400 });
+        const data = await req.json();  
+        const formId: string = data.formId as string;
+        const watchId: string = data.watchId as string;
+
+        if (!formId || !watchId) {
+            return NextResponse.json({ error: 'Invalid formId or watchId in Request Body' }, { status: 400 });
         }
         
-        const formId: string = req.body.formId as string;
-        const watchId: string = req.body.watchId as string; // double check !!!
-        
         try {
-            await renewWatch(formId, watchId);
-            return NextResponse.json({ message: 'Watch Renewed Successfully' }, { status: 200 });
+            const response = await renewWatch(formId, watchId);
+            return NextResponse.json({ message: response }, { status: 200 });
         } catch {
             return NextResponse.json({ error: 'Error with Renewing the Watch' }, { status: 500 });
         }

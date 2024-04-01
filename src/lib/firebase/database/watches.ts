@@ -35,6 +35,7 @@ export async function renewWatch(formId : string, watchId : string) {
             }
         );
         console.log("Response", response.data);
+        return response.data;
     } catch (error) {
         console.log("Error with renewing watch using given formId and watchId", error);
         throw error;
