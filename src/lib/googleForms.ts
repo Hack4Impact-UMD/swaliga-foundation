@@ -1,71 +1,33 @@
-// import { google } from 'googleapis';
-// import { collection, doc, addDoc, getDoc, updateDoc, deleteDoc, collectionGroup, getDocs, setDoc } from "firebase/firestore";
-// import { db } from "./firebase/firebaseConfig";
-// import { PubSub, Message} from '@google-cloud/pubsub';
+import { collection, doc, where, query, getDocs, setDoc } from "firebase/firestore";
+import { db } from "./firebase/firebaseConfig";
+import { forms } from "@/lib/googleAuthorization";
 
-// export const formsClient = google.forms({
-//   version: 'v1',
-//   auth: oauth2Client,
-// });
+// Retrieve list of existing form responseIDs from firestore
+async function getExistingResponseIds(collectionName: string, formId: string): Promise<string[]> {
+    const firestoreResponses = await getDocs(query(collection(db, collectionName), where("formId", "==", formId)));
+    return firestoreResponses.docs.map((doc) => doc.id);
+}
 
-// // TODO: Figure out Pub/Sub Topic
-// export async function createFormWatch(formId: string, topicName: string) {
-//   try {
-//     const response = await formsClient.forms.watches.create({
-//         formId: formId,
-//         requestBody: {
-//             watch: {  
-//                 target: {
-//                     topic: {
-//                         topicName: topicName
-//                     }
-//                 },
-//                 eventType: 'RESPONSES',
-//             },
-//             watchId: "some-watch"
-//         } 
-//     });
-//     return response.data;
+// Called when a given form has a new response.
+export async function updateOnResponse(collectionName: string, formId: string) {
+    // Retrieve form responses or empty array
+    const googleResponses = await forms.forms.responses.list({ formId });
+    const googleResponseData = googleResponses.data.responses || [];
+    
+    // Get existing response IDs from firestore
+    const existingResponseIds = await getExistingResponseIds(collectionName, formId);
 
-//   } catch (error) {
-//     console.error('Error creating form watch: ', error);
-//     throw error;
-//   }
-// }
+    // Loop through each response 
+    for (const response of googleResponseData) {
+        // Shouldn't be a runtime error hopefully(?) 
+        // But maybe could have some error checking this seems suspicious idk
+        const responseId = response.responseId as string;
 
-// // Google Cloud PubSub
-// const pubsub = new PubSub();
-
-// // Saving google form to firebase
-// export async function listenAndSaveForm(): Promise<void> {
-//   // TODO: Figure out how to use PubSub
-//   const subscription = pubsub.subscription('sub-name');
-
-//   const messageHandler = async (message: Message) => {
-//     console.log(`Received message ${message.id}:`);
-//     console.log(`\nData: ${message.data}`);
-//     console.log(`\nAttributes: ${message.attributes}`);
-
-//     // TODO: Figure out if this works I doubt it does
-//     // Get form data from pubsub message
-//     const formData = JSON.parse(message.data.toString());
-//     console.log('Form Data: ', formData)
-
-//     // Send form data to firebase
-//     try {
-//       const docRef = doc(collection(db, 'forms'));
-//       await setDoc(docRef, formData);
-//       console.log('Form saved successfully');
-//     } catch (error) {
-//       console.error('Error saving form: ', error);
-//     } finally {
-//       // Acknowledge the message
-//       message.ack();
-//     }
-
-//   };
-
-//   subscription.on('message', messageHandler);
-// }
-
-// listenAndSaveForm();
+        // Add response to firestore if it doesn't exist
+        if (!existingResponseIds.includes(responseId)) {
+            const docRef = doc(collection(db, collectionName));
+            await setDoc(docRef, { formId, responseId, ...response });
+            console.log(`Added response with ID: ${responseId}`);
+        } 
+    }
+}
