@@ -6,17 +6,18 @@ export async function POST(req: NextRequest) {
         if (!req.body) {
             return NextResponse.json({ error: 'Missing Request Body' }, { status: 400 });
         }
+
+        const data = await req.json();
         
-        if (!('formId' in req.body) || !('eventType' in req.body)) {
-            return NextResponse.json({ error: 'Missing formId or eventType in Request Body' }, { status: 400 });
+        const formId: string = data.formId as string;
+        const eventType: string = data.eventType as string; // double check !!!
+        if (!formId || !eventType) {
+            return NextResponse.json({ error: 'Invalid formId or eventType in Request Body' }, { status: 400 });
         }
         
-        const formId: string = req.body.formId as string;
-        const eventType: string = req.body.eventType as string; // double check !!!
-        
         try {
-            await createWatch(formId, eventType);
-            return NextResponse.json({ message: 'Watch Created Successfully' }, { status: 200 });
+            const response = await createWatch(formId, eventType);
+            return NextResponse.json({ message: response }, { status: 200 });
         } catch {
             return NextResponse.json({ error: 'Error with Creating the Watch' }, { status: 500 });
         }
