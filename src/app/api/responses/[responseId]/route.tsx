@@ -2,12 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getResponseByID } from '../../../../lib/firebase/database/response';
 import { Response } from '../../../../types/survey-types';
 
-export async function GET(req: NextRequest) {
-  const urlParts = req.url.split('/'); 
-  const responseId: string = urlParts[urlParts.length - 1]; 
-
+export async function GET(req: NextRequest, { params }: { params: { responseId: string } }) {
+  const { responseId } = params; 
   console.log('responseId:', responseId);
-  console.log('urlParts:', urlParts);
 
   try {
     const response: Response | null = await getResponseByID(responseId);
@@ -21,3 +18,4 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }
+
