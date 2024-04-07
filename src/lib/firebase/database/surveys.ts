@@ -1,5 +1,5 @@
-import {forms } from './googleAuthorization';
-import { db } from "./firebase/firebaseConfig";
+import { forms } from '../../googleAuthorization';
+import { db } from "../firebaseConfig";
 import { collection, getDocs, query, setDoc, where } from 'firebase/firestore';
 
 /* Retrieve form data given form id and update it to firebase.
@@ -22,7 +22,7 @@ export async function updateForm(id: string) {
     
     //in any case we have multiple form ids, just change the first
     const docSnapshot = querySnapshot.docs[0];
-    await setDoc(docSnapshot.ref, res.data, { merge: true});
+    await setDoc(docSnapshot.ref, res.data, { merge: true });
 
      // Print the form's content to confirm it contains the updated content
     const formData = docSnapshot.data();
