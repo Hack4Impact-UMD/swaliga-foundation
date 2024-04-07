@@ -1,6 +1,29 @@
 import { forms } from '../../googleAuthorization';
 import { db } from "../firebaseConfig";
-import { collection, getDocs, query, setDoc, where } from 'firebase/firestore';
+import {collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
+
+export async function createSurvey(body: {title: string, documentTitle: string}) {
+  let form = null;
+  try {
+    form = await forms.forms.create({
+      requestBody: {
+        info: {
+          title: body.title,
+          documentTitle: body.documentTitle,
+        },
+      },
+    });
+  } catch (err) {
+    throw Error('unable to create google form');
+  }
+
+  try {
+    await setDoc(doc(db, "surveys", form.data.formId || ''), form.data);
+    return form.data;
+  } catch (err) {
+    throw Error('cannot add survey to firestore')
+  }
+}
 
 /* Retrieve form data given form id and update it to firebase.
 * @params id - id of form, not document id of the form.
