@@ -6,6 +6,7 @@ export interface User {
     address: string;
     school: string;
     birthdate: Date;
+    gradYear: number;
     email: string;
     phone: number;
     guardian?: { 
