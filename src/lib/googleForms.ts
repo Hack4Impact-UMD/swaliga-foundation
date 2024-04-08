@@ -35,6 +35,9 @@ export async function updateOnResponse(collectionName: string, formId: string) {
     }
 }
 
+// TODO: Change assignSurvey parameters to take in lists of strings
+//   - Will be in body of request parameter
+// Both POSTs
 // Assign a survey to a student
 export async function assignSurvey(userId: string, surveyId: string): Promise<void> {
     // Get the user's document from the users collection
@@ -48,6 +51,7 @@ export async function assignSurvey(userId: string, surveyId: string): Promise<vo
     console.log(`Survey ${surveyId} assigned to User ${userId}`);
 }
 
+// TODO: Create two endpoints one for each
 // Unassign a survey from a student
 export async function removeSurvey(userId: string, surveyId: string): Promise<void> {
     // Get the user's document from the users collection
@@ -61,6 +65,7 @@ export async function removeSurvey(userId: string, surveyId: string): Promise<vo
     console.log(`Survey ${surveyId} removed from User ${userId}`);
 }
 
+// TODO: Call this on watch endpoint
 // Adds a response to 1) a user and 2) a survey.
 export async function addResponseToUser(userId: string, response: Response): Promise<void> {
     // Get the user's document from the users collection
