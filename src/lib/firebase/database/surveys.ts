@@ -1,6 +1,6 @@
 import { forms } from '../../googleAuthorization';
 import { db } from "../firebaseConfig";
-import {collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 
 export async function createSurvey(body: {title: string, documentTitle: string}) {
   let form = null;
@@ -21,7 +21,7 @@ export async function createSurvey(body: {title: string, documentTitle: string})
     await setDoc(doc(db, "surveys", form.data.formId || ''), form.data);
     return form.data;
   } catch (err) {
-    throw Error('cannot add survey to firestore')
+    throw Error('cannot add survey to firestore');
   }
 }
 
