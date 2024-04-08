@@ -38,7 +38,7 @@ export default function Settings() {
       console.log("User does not exist");
     }
   };
-  
+
   const q = query(collection(db, "users"), where("id", "==", currUser!.id));
 
   useEffect(() => {
@@ -81,16 +81,21 @@ export default function Settings() {
       await updateDoc(querySnapshot.ref, userData);
       await updateAccount(currUser!.id, userData);
 
-      fetch(`/api/user/${currUser!.id}`, {
+      const response = await fetch(`/api/users/${currUser!.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(userData),
       });
+  
+      if (!response.ok) {
+        throw new Error("Failed to fetch");
+      }
+
       isDisabled(false);
     } catch (error) {
-      console.error("Could not get user or couldn't execute PUT", error);
+      console.error("Could not update user", error);
       throw error;
     }
   }
