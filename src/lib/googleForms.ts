@@ -39,6 +39,8 @@ export async function updateOnResponse(collectionName: string, formId: string) {
 //   - Will be in body of request parameter
 // Both POSTs
 // Assign a survey to a student
+
+// Assign one survey to a student
 export async function assignSurvey(userId: string, surveyId: string): Promise<void> {
     // Get the user's document from the users collection
     const userRef = doc(db, "users", userId);
@@ -50,6 +52,21 @@ export async function assignSurvey(userId: string, surveyId: string): Promise<vo
 
     console.log(`Survey ${surveyId} assigned to User ${userId}`);
 }
+
+// Assign a list of surveys to a list of students
+export async function assignSurveys(userIds: string[], surveyIds: string[]): Promise<void> {
+
+    for (const userId of userIds) {
+        const userRef = doc(db, "users", userId);
+        await updateDoc(userRef, {
+            assignedSurveys: arrayUnion(...surveyIds)
+        });
+
+        console.log(`Surveys ${surveyIds} assigned to User ${userId}`);
+    }
+}
+  
+
 
 // TODO: Create two endpoints one for each
 // Unassign a survey from a student
@@ -63,6 +80,16 @@ export async function removeSurvey(userId: string, surveyId: string): Promise<vo
     });
 
     console.log(`Survey ${surveyId} removed from User ${userId}`);
+}
+
+// Unassign a list of surveys from a list of students.
+export async function removeSurveys(userIds: string[], surveyIds: string[]): Promise<void> {
+    for (const userId of userIds) {
+      const userRef = doc(db, "users", userId);
+      await updateDoc(userRef, {
+        assignedSurveys: arrayRemove(...surveyIds)
+      });
+    }
 }
 
 // TODO: Call this on watch endpoint
