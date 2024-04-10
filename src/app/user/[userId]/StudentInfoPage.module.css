@@ -50,15 +50,15 @@
 }
 
 .leftSideTable img {
-    padding-right: 1.5rem;
+    padding: 0 1.5rem 0 0;
 }
 
 .leftSideTable p {
-    padding-right: 1.5rem;
+    padding: 0 1.5rem 0 0;
 }
 
 .rightSideTable p {
-    padding-left: 1.5rem;
+    padding: 0 0 0 1.5rem;
 }
 
 .surveysStatus span {
