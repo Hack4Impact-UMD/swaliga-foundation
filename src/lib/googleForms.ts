@@ -41,21 +41,10 @@ export async function updateOnResponse(collectionName: string, formId: string) {
 // Assign a survey to a student
 
 // Assign one survey to a student
-export async function assignSurvey(userId: string, surveyId: string): Promise<void> {
-    // Get the user's document from the users collection
-    const userRef = doc(db, "users", userId);
 
-    // Add the surveyId to the user's assignedSurveys array
-    await updateDoc(userRef, {
-        assignedSurveys: arrayUnion(surveyId)
-    });
-
-    console.log(`Survey ${surveyId} assigned to User ${userId}`);
-}
-
-// Assign a list of surveys to a list of students
 export async function assignSurveys(userIds: string[], surveyIds: string[]): Promise<void> {
 
+    // Assign a list of surveys to a list of students
     for (const userId of userIds) {
         const userRef = doc(db, "users", userId);
         await updateDoc(userRef, {
@@ -63,32 +52,34 @@ export async function assignSurveys(userIds: string[], surveyIds: string[]): Pro
         });
 
         console.log(`Surveys ${surveyIds} assigned to User ${userId}`);
+        // If user already added don't do nothing/remove..
+        // TODO Make this both ways...get this done by tomorrow.
+    }
+
+    // Assign a list of students to a list of surveys
+    for (const surveyId of surveyIds) {
+        const surveyRef = doc(db, "surveys", surveyId);
+        await updateDoc(surveyRef, {
+            assignedUsers: arrayUnion(...userIds)
+        });
     }
 }
-  
 
-
-// TODO: Create two endpoints one for each
-// Unassign a survey from a student
-export async function removeSurvey(userId: string, surveyId: string): Promise<void> {
-    // Get the user's document from the users collection
-    const userRef = doc(db, "users", userId);
-
-    // Remove the surveyId from the user's assignedSurveys array
-    await updateDoc(userRef, {
-        assignedSurveys: arrayRemove(surveyId)
-    });
-
-    console.log(`Survey ${surveyId} removed from User ${userId}`);
-}
-
-// Unassign a list of surveys from a list of students.
 export async function removeSurveys(userIds: string[], surveyIds: string[]): Promise<void> {
+    // Unassign a list of surveys from a list of students.
     for (const userId of userIds) {
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, {
         assignedSurveys: arrayRemove(...surveyIds)
       });
+    }
+
+    // Unassign a list of students from a list of surveys
+    for (const surveyId of surveyIds) {
+        const surveyRef = doc(db, "surveys", surveyId);
+        await updateDoc(surveyRef, {
+            assignedUsers: arrayRemove(...userIds)
+        });
     }
 }
 
