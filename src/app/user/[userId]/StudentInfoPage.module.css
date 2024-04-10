@@ -1,0 +1,96 @@
+
+.page {
+    display: grid;
+    text-align: center;
+    justify-content: center;
+    justify-items: center;
+}
+
+.innerPage {    
+    background-color: #D9D9D9;
+    width: max-content;
+    height: max-content;
+    padding: 10% 15% 10% 15%;
+    margin: 5%;
+    border-radius: 85px;
+    justify-content: center;
+}
+
+.regular {    
+    font-family: 'Poppins-Regular', sans-serif;   
+    font-size: 1.5rem; 
+}
+
+.profile img {
+    height: 7.5rem;
+}
+
+
+.semiBold {
+    font-family: 'Poppins-SemiBold', sans-serif;  
+    font-size: 1.75rem;
+    margin: 2.5% 0 0 0;
+}
+
+.studentId {
+    margin-top: 0;
+}
+
+.table caption {
+    font-family: 'Poppins-Medium', sans-serif;   
+    font-size: 1.75rem; 
+    text-align: left;
+    padding-left: 0.75rem;
+}
+
+.leftSideTable {    
+    display: flex;
+    flex-direction: row; 
+    align-items: center;
+}
+
+.leftSideTable img {
+    padding-right: 1.5rem;
+}
+
+.leftSideTable p {
+    padding-right: 1.5rem;
+}
+
+.rightSideTable p {
+    padding-left: 1.5rem;
+}
+
+.surveysStatus span {
+    display: flex;
+    flex-direction: row; 
+    justify-content: left;
+}
+
+.surveysStatus span p {
+    margin-right: 1.75rem;
+    font-family: 'Poppins-Medium', sans-serif;   
+    font-size: 1.75rem; 
+    background-color: black;
+    color: #D9D9D9;
+    padding: 0rem 3.25rem 0rem 3.25rem;
+    border-radius: 10px;
+}
+
+.surveysStatus span img {
+    width: 2.5rem;
+}
+
+.surveysList {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.surveysList p {    
+    border-radius: 20px;
+    width: 100%;
+    padding: 1% 0 1% 0;
+    margin: 1%;
+    border-width: 5px;
+}
