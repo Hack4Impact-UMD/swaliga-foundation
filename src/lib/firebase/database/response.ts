@@ -1,6 +1,6 @@
 import { db } from "../firebaseConfig";
-import { collection, getDocs, addDoc, getDoc, doc } from 'firebase/firestore';
-import { Response } from '../../../types/survey-types';
+import { collection, getDocs, getDoc, doc, setDoc } from 'firebase/firestore';
+import { Response } from '@/types/survey-types';
 
 // GET all responses
 export async function getAllResponses() {
@@ -13,16 +13,16 @@ export async function getAllResponses() {
     return allResponses;
   } catch (error) {
     console.error('Error getting responses:', error);
-    throw new Error('Internal Server Error');
+    throw new Error('unable to get responses');
   }
 }
 
 export async function createResponse(newResponse: Response) {
   try {
-    await addDoc(collection(db, 'responses'), newResponse);
+    await setDoc(doc(db, 'responses', newResponse.responseId), newResponse);
   } catch (error) {
     console.error('Error creating response:', error);
-    throw new Error('Internal Server Error');
+    throw new Error('unable to create response');
   }
 }
 export async function getResponseByID(responseId: string): Promise<Response | null> {
@@ -35,6 +35,6 @@ export async function getResponseByID(responseId: string): Promise<Response | nu
       }
     } catch (error) {
       console.error('Error getting response by ID:', error);
-      throw new Error('Internal Server Error');
+      throw new Error('unable to get response by id');
     }
 }

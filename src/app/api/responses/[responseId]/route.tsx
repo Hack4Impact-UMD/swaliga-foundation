@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getResponseByID } from '../../../../lib/firebase/database/response';
-import { Response } from '../../../../types/survey-types';
+import { getResponseByID } from '@/lib/firebase/database/response';
+import { Response } from '@/types/survey-types';
 
 export async function GET(req: NextRequest, { params }: { params: { responseId: string } }) {
   const { responseId } = params; 
