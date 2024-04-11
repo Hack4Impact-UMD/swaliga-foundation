@@ -4,7 +4,6 @@ import { forms } from "@/lib/googleAuthorization";
 import { Response, Survey } from "@/types/survey-types";
 import { User } from "@/types/user-types";
 
-
 // Retrieve list of existing form responseIDs from firestore
 async function getExistingResponseIds(collectionName: string, formId: string): Promise<string[]> {
     const firestoreResponses = await getDocs(query(collection(db, collectionName), where("formId", "==", formId)));
@@ -34,13 +33,6 @@ export async function updateOnResponse(collectionName: string, formId: string) {
         } 
     }
 }
-
-// TODO: Change assignSurvey parameters to take in lists of strings
-//   - Will be in body of request parameter
-// Both POSTs
-// Assign a survey to a student
-
-// Assign one survey to a student
 
 export async function assignSurveys(userIds: string[], surveyIds: string[]): Promise<void> {
     // Assign a list of surveys to a list of students
