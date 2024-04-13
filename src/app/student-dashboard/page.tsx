@@ -35,12 +35,12 @@ export default function StudentDashboard() {
         }],
         password: 'test1234', 
         id: '000-001-111',
-        assignedSurveys: ['survey1', 'survey2', 'survey3'], // form survey 'url' saved? or form id?
+        assignedSurveys: ['survey1_id', 'survey2_id', 'survey3_id'],
         completedResponses: ['completed1', 'completed2'], // form response (submitted form?) url saved?
     };
 
     const [currentUser, setCurrentUser] = useState<User | null>(null);
-    // const [surveys, setSurveys] = useState<>()
+    const [surveys, setSurveys] = useState();
 
     const fetchCurrentUserData = async (uid: string) => {
         const userRef = doc(db, 'user', uid);
@@ -64,7 +64,7 @@ export default function StudentDashboard() {
         }
     }
 
-    useEffect(() => {
+    useEffect(() => { // variables that there will be no change after initialization
         const auth = getAuth();
         const user = auth.currentUser;
 
@@ -111,8 +111,13 @@ export default function StudentDashboard() {
                                 className={styles.vector}
                             />
                         </Disclosure.Button>
-                        <Disclosure.Panel>
-                            Contents
+                        <Disclosure.Panel className={styles.assignedSurveyPanel}>
+                            <iframe 
+                                src="localhost:3000/student-dashboard"
+                                title="googleForm"
+                                allowFullScreen={true}
+                                className={styles.form}
+                            />
                         </Disclosure.Panel>
                     </Disclosure>
                 ))}
@@ -121,14 +126,9 @@ export default function StudentDashboard() {
                 </p>
                 <hr className={styles.horizontalLine}/>
                 {currentUser?.completedResponses.map((survey) => (
-                    <Disclosure key={survey} as="div">
-                        <Disclosure.Button className={styles.completedSurveyButton}>
-                            <span>{survey}</span>
-                        </Disclosure.Button>
-                        <Disclosure.Panel>
-                            Contents
-                        </Disclosure.Panel>
-                    </Disclosure>
+                    <span key={survey} className={styles.completedSurveyButton}>
+                        {survey}
+                    </span>
                 ))}
             </div>
         </div>
