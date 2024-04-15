@@ -1,5 +1,3 @@
-import { db } from "../firebaseConfig";
-import { doc, setDoc } from 'firebase/firestore';
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
