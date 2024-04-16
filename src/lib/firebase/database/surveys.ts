@@ -1,6 +1,7 @@
+import { Survey } from '@/types/survey-types';
 import { forms } from '../../googleAuthorization';
 import { db } from "../firebaseConfig";
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 export async function createSurvey(body: {title: string, documentTitle: string}) {
   let form = null;
@@ -41,5 +42,14 @@ export async function updateSurvey(id: string) {
     return form;
   } catch (err) {
     throw Error('unable to update survey in firestore');
+  }
+}
+
+export async function getSurveyByID(id: string) {
+  try {
+    const snapshot = await getDoc(doc(db, 'surveys', id));
+    return snapshot.exists() ? snapshot.data() as Survey : null
+  } catch (err) {
+    throw Error('survey with given id not found')
   }
 }
