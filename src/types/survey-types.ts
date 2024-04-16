@@ -1,6 +1,6 @@
 import { Watch } from "./watch-types";
 
-export interface Survey {
+export interface GoogleForm {
   formId: string;
   info: Info;
   settings: FormSettings;
@@ -8,20 +8,26 @@ export interface Survey {
   revisionId: string;
   responderUri: string;
   linkedSheetId?: string;
+}
+
+export interface Survey extends GoogleForm {
   assignedUsers: string[];
   schemaWatch: Watch;
   responsesWatch: Watch;
 }
 
-export interface Response {
+export interface GoogleFormResponse {
   formId: string;
   responseId: string;
-  userId: string;
   createTime: string;
   lastSubmittedTime: string;
   respondentEmail: string;
   answers: { [questionId: string]: Answer };
   totalScore?: number;
+}
+
+export interface Response extends GoogleFormResponse {
+  userId: string;
 }
 
 // Info and settings
