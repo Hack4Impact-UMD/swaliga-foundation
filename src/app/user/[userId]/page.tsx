@@ -12,92 +12,194 @@ import upArrowButton from "@/../public/images/buttonUpIcon.svg";
 import colonIcon from "@/../public/images/colonIcon.svg";
 
 import styles from "./StudentInfoPage.module.css";
-import { NextRequest } from "next/server";
-import { GET } from "@/app/api/users/[userId]/route"
 import { User } from "@/types/user-types";
-import { getResponseByID } from '@/lib/firebase/database/response';
+import { Survey } from "@/types/survey-types";
+import { Response } from "@/types/survey-types";
 
 async function getUserInfo(userid : string) {
     try {
-        const url = new URL(`/api/users/${userid}/route`, window.location.origin);
-        const req = new NextRequest(url);
-        const response = await GET(req, {params : { userId: userid }});
-        console.log(response);
+        const url = new URL(`/api/users/${userid}`, window.location.origin);
+        const response = await fetch(url, {method: "get"});
         
         const data = await response.json();
         try {
             const user : User = data.result;
-            console.log(user);
             return user;
         } catch {
             console.log("Error getting data");
         }
     } catch {
-        console.log("getUserInfo: Error retrieving student information using given userId");
+        console.log("Error retrieving student information using given userId");
     }
 }
 
-async function changePageWithInfo(userid : string) {
-    try {
-        const userInfo = await getUserInfo(userid);
-        
+async function changePageWithInfo(userInfo: User) {
+    if (userInfo) {
         // change all info
         let name = document.querySelector("#name");
-        if (name && userInfo) {
+        if (name) {
             name.innerHTML = userInfo.firstName + " " + userInfo.lastName;
         }
 
         let id = document.querySelector("#studentId");
-        if (id && userInfo) {
+        if (id) {
             id.innerHTML = userInfo.id;
         }
 
         let gradYr = document.querySelector("#gradYr");
-        if (gradYr && userInfo) {
+        if (gradYr) {
             gradYr.innerHTML = String(userInfo.gradYear);
         }
         
         let grade = document.querySelector("#grade");
-        if (grade && userInfo) {
-            grade.innerHTML = "to-fix" //TODO
+        if (grade) {
+            const currDate = new Date();
+            const differenceInYears: number = Math.floor(Math.abs(userInfo.gradYear - currDate.getFullYear()));
+            const gradeNum = (differenceInYears >= 12) ? "Kindergarten or below" : String(12 - differenceInYears);
+            grade.innerHTML = gradeNum;
         }
 
         let gender = document.querySelector("#gender");
-        if (gender && userInfo) {
+        if (gender) {
             gender.innerHTML = userInfo.gender;
         }
 
         let ethnicity = document.querySelector("#ethnicity");
-        if (ethnicity && userInfo) {
+        if (ethnicity) {
             ethnicity.innerHTML = userInfo.ethnicity;
         }
 
         let mobile = document.querySelector("#mobile");
-        if (mobile && userInfo) {
+        if (mobile) {
             mobile.innerHTML = String(userInfo.phone);
         }
 
         let email = document.querySelector("#email");
-        if (email && userInfo) {
+        if (email) {
             email.innerHTML = String(userInfo.email);
         }
 
         let address = document.querySelector("#address");
-        if (address && userInfo) {
+        if (address) {
             address.innerHTML = String(userInfo.address);
         }
         
-        // fix stuff with guardians (only have that entire area if >0 guardian present)
+        if (userInfo.guardian) { // bc guardian is possibly undefined
+            let guardianInfoHTML = "Guardian Information:<br><ol>";
+            for (let currGuardian of userInfo.guardian) {
+                guardianInfoHTML += `<li>${currGuardian.firstName} ${currGuardian.lastName}  <ul><li>Email: ${currGuardian.email}</li> <li>Phone: ${currGuardian.phone}</li></ul>`;
+            }
+            guardianInfoHTML += "</ol>"
+
+            let guardian = document.querySelector("#info");
+            if (guardian) {
+                guardian.innerHTML = guardianInfoHTML;
+            }
+        }
+    }
+}
+
+async function changeIcon(surveyArray: string[], responseArray: string[]) {
+    try {
+        let button = document.querySelector('#dropdown');
+
+        if (button?.getAttribute("src") === dropDownArrowButton.src) {
+            button?.setAttribute("src", upArrowButton.src);
+            let list = document.querySelector("#list");
+
+            if (list) {
+                let newInnerHTML = "";
+                
+                // get all surveys (incomplete)
+                for (let incomplete of surveyArray) {
+                    let currSurvey = await getSurveyInfo(incomplete)
+                    if (currSurvey) {
+                        newInnerHTML += returnSurvey(currSurvey.info.title, false, currSurvey.responderUri);
+                    }
+                }
+
+                // // get all surveys (complete)
+                for (let complete of responseArray) {
+                    let currSurvey = await getSurveyFromResponse(complete);
+                    if (currSurvey) {
+                        newInnerHTML += returnSurvey(currSurvey.info.title, true);
+                    }
+                }
+
+                list.innerHTML = newInnerHTML;
+            }
+        } else {
+            button?.setAttribute("src", dropDownArrowButton.src);
+            let list = document.querySelector("#list");
+            if (list) {
+                list.innerHTML = "";
+            }
+        }
     } catch {
-        console.log("changePageWithInfo: Error retrieving student information using given userId");
+        console.log("Error retrieving surveys")
+    }
+} 
+
+async function getSurveyInfo(surveyId : string) {
+    try {
+        const url = new URL(`/api/surveys/${surveyId}`, window.location.origin);
+        const response = await fetch(url, {method: "get"});
+        
+        const data = await response.json();
+        try {
+            const survey : Survey = data.data; //TODO double check
+            return survey;
+        } catch {
+            console.log("Error getting data");
+        }
+    } catch {
+        console.log("Error retrieving student information using given survey");
+    }
+}
+
+async function getSurveyFromResponse(responseId : string) {
+    try {
+        const url = new URL(`/api/responses/${responseId}`, window.location.origin);
+        const response = await fetch(url, {method: "get"});
+        
+        const data : Response = await response.json();
+        try {
+            if (data) {
+                let surveyId = data.formId;
+                let currSurvey = await getSurveyInfo(surveyId);
+                return currSurvey;
+            }
+        } catch {
+            console.log("Error getting data");
+        }
+    } catch {
+        console.log("Error retrieving student information using given response");
+    }
+}
+
+function returnSurvey(surveyName: string, completed: boolean, formLink?: string) {
+    if (completed) {
+        return (`<p style="background-color: #4caf5033; border: 5px solid #4caf50;">${surveyName}</p>`);
+    } else {
+        return (`<p style="background-color: #d9292933; border: 5px solid #d92929;"><a style="text-decoration: none; color: black;" href=${formLink}>${surveyName}</a></p>`);
     }
 }
 
 export default function StudentInfoPage({ params }: { params: { userId: string }}) {
     // get information associated with given userId
     try {
-        changePageWithInfo(params.userId);
-
+        let surveyArray : string[];
+        let responseArray : string[];
+        getUserInfo(params.userId).then((userInfo) => 
+            {
+                if (userInfo) { 
+                    changePageWithInfo(userInfo); 
+                    surveyArray = userInfo.assignedSurveys;
+                    responseArray = userInfo.completedResponses;
+                }
+            }
+        );
+        
         return(
             <div className={styles.page}> 
                 <div className={styles.innerPage}>
@@ -166,29 +268,16 @@ export default function StudentInfoPage({ params }: { params: { userId: string }
                                     <td><img src={colonIcon.src} alt="Colon Icon"/></td>
                                     <td className={`${styles.rightSideTable} ${styles.regular}`}><p id="address">address</p></td>
                                 </tr>
-                                <tr>
-                                    <td className={styles.leftSideTable}>
-                                        <img src={mobileIcon.src} alt="Guardian Mobile Icon"/>
-                                        <p className={styles.regular} id="guardianNum">Guardian Mobile</p>
-                                    </td>
-                                    <td><img src={colonIcon.src} alt="Colon Icon"/></td>
-                                    <td className={`${styles.rightSideTable} ${styles.regular}`}><p>guardian num</p></td>
-                                </tr>
-                                <tr>
-                                    <td className={styles.leftSideTable}>
-                                        <img src={emailIcon.src} alt="Guardian Email Icon"/>
-                                        <p className={styles.regular}>Guardian Email</p>
-                                    </td>
-                                    <td><img src={colonIcon.src} alt="Colon Icon"/></td>
-                                    <td className={`${styles.rightSideTable} ${styles.regular}`}><p>guardian email</p></td>
-                                </tr>
                             </thead>
                         </table>
+                        <div className={styles.guardian}>
+                            <p id="info"></p>
+                        </div>
                     </div>
                     <div className={styles.surveysStatus}>
                         <span>
                             <p>Surveys Status</p>
-                            <img src={dropDownArrowButton.src} alt="button" id="dropdown" onClick={() => changeIcon(params.userId)}/>
+                            <img src={dropDownArrowButton.src} alt="button" id="dropdown" onClick={() => changeIcon(surveyArray, responseArray)}/>
                         </span>
                         <div className={`${styles.surveysList} ${styles.regular}`} id="list">
                         </div>
@@ -199,55 +288,4 @@ export default function StudentInfoPage({ params }: { params: { userId: string }
     } catch {
         console.log("Error retrieving student information using given userId");
     }
-
-    async function changeIcon(userId : string) {
-        try {
-            const userInfo = await getUserInfo(userId);
-            let button = document.querySelector('#dropdown');
-
-            if (button?.getAttribute("src") === dropDownArrowButton.src) {
-                button?.setAttribute("src", upArrowButton.src);
-                let list = document.querySelector("#list");
-
-                if (list && userInfo) {
-                    let newInnerHTML = "";
-                    
-                    // get all surveys (incomplete)
-                    for (let incomplete of userInfo.assignedSurveys) {
-                        // let currSurvey = getSurveyById(incomplete);
-                        // newInnerHTML += returnSurvey(currSurvey., true);
-                    }
-
-                    // get all surveys (complete)
-                    for (let complete of userInfo.completedResponses) {
-                        let currSurvey = await getResponseByID(complete);
-                        let surveyId = currSurvey?.formId;
-                        // let currSurvey = await getSurveyById(incomplete);
-                    }
-
-                    // check if complete + find name + insert into returnSurvey
-                    newInnerHTML += returnSurvey("sample", true);
-                    newInnerHTML += returnSurvey("sampleSurvey3", false);
-                    newInnerHTML += returnSurvey("sampleSurvey2", true);            
-                    list.innerHTML = newInnerHTML;
-                }
-        } else {
-            button?.setAttribute("src", dropDownArrowButton.src);
-            let list = document.querySelector("#list");
-            if (list) {
-                list.innerHTML = "";
-            }
-        }
-        } catch {
-            console.log("Error retrieving userInfo when retrieving surveys")
-        }
-    } 
 };
-
-function returnSurvey(surveyName: string, completed: boolean) {
-    if (completed) {
-        return (`<p style="background-color: #4caf5033; border: 5px solid #4caf50;">${surveyName}</p>`);
-    } else {
-        return (`<p style="background-color: #d9292933; border: 5px solid #d92929;">${surveyName}</p>`);
-    }
-}
