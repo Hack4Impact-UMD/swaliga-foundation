@@ -11,68 +11,59 @@ import { User } from "@/types/user-types";
 import { Survey } from '@/types/survey-types';
 import { db, auth } from '@/lib/firebase/firebaseConfig';
 import { getAuth } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, 
+        query, 
+        where, 
+        doc, 
+        getDoc, 
+        getDocs, 
+        documentId } from 'firebase/firestore';
 
 
 export default function StudentDashboard() {
-    // test data
-    const testUser: User = {
-        isAdmin: false,
-        firstName: 'Jone',
-        lastName: 'Doe',
-        middleName: 'Test',
-        address: '1000 Baltimore Ave',
-        school: 'University of Maryland',
-        birthdate: new Date('2024-10-20'),
-        email: 'test@gmail.com',
-        phone: 1234567890,
-        guardian: [{ 
-            firstName: 'Chris',
-            lastName: 'Doe',
-            address: '1000 Baltimore Ave',
-            email: 'test2@gmail.com',
-            phone: 1239876543,
-        }],
-        password: 'test1234', 
-        id: '000-001-111',
-        assignedSurveys: ['survey1_id', 'survey2_id', 'survey3_id'],
-        completedResponses: ['completed1', 'completed2'], // form response (submitted form?) url saved?
-    };
-
-    const [currentUser, setCurrentUser] = useState<User | null>(null);
-    const [surveys, setSurveys] = useState();
+    // const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const [currentUser, setCurrentUser] = useState(null);
+    const [surveys, setAssignedSurveys] = useState([]);
 
     const fetchCurrentUserData = async (uid: string) => {
-        const userRef = doc(db, 'user', uid);
+        // const userRef = doc(db, 'users', uid);
+        const userRef = doc(db, 'minji-test-users', uid);
         const userDoc = await getDoc(userRef);
 
+        console.log(userDoc.exists())
+
         if (userDoc.exists()) {
-            setCurrentUser(userDoc.data() as User);
+            // setCurrentUser(userDoc.data() as User);
+            console.log(userDoc.data());
+            // setCurrentUser(userDoc.data());
         } else {
             console.log('No user exists');
         }
     }
 
-    const fetchSurveyData = async (uid: string) => {
-        const surveyRef = doc(db, 'survey', uid);
-        const surveyDoc = await getDoc(surveyRef);
+    const fetchSurveyData = async (surveyIds: string[]) => {
+        // const surveysRef = collection(db, 'surveys');
+        const surveysRef = collection(db, 'minji-test-surveys');
+        const surveysQuery = query(surveysRef, where(documentId(), 'in', surveyIds));
+        const surveyDocs = await getDocs(surveysQuery);
 
-        if (surveyDoc.exists()) {
-            setCurrentUser(surveyDoc.data() as User);
-        } else {
-            console.log('No user exists');
-        }
+        const fetchedSurveys = surveyDocs.docs.map((doc) => {
+            console.log(doc.data)
+        });
     }
 
-    useEffect(() => { // variables that there will be no change after initialization
+    useEffect(() => { 
         const auth = getAuth();
         const user = auth.currentUser;
+        const testUser = "user01";
 
         if (user) {
-            fetchCurrentUserData(user.uid);
-        } else { // for test
-            setCurrentUser(testUser);
+            // fetchCurrentUserData(user.uid);
+            fetchCurrentUserData(testUser);
         }
+        // } else { // for test
+        //     setCurrentUser(testUser);
+        // }
     }, [currentUser]);
 
     return (
@@ -113,7 +104,7 @@ export default function StudentDashboard() {
                         </Disclosure.Button>
                         <Disclosure.Panel className={styles.assignedSurveyPanel}>
                             <iframe 
-                                src="localhost:3000/student-dashboard"
+                                src="https://forms.gle/APv6vdA532nZnp6k7"
                                 title="googleForm"
                                 allowFullScreen={true}
                                 className={styles.form}
