@@ -8,7 +8,7 @@ type flattenDoc = {
 
 export async function survey2csv(surveyIds: string[]) {
     const csv = [];
-    const surveyCollection = collection(db, "minji-test-surveys");
+    const surveyCollection = collection(db, "surveys");
     const q = query(surveyCollection, where("formId", "in", surveyIds));
     const snapshot = await getDocs(q);
 
