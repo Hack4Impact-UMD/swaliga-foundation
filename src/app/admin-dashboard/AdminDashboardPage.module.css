@@ -1,0 +1,84 @@
+
+.body {
+    padding: 1.5rem;
+    color: #D9D9D9;
+}
+
+.innerBody {
+    background-color: #35627A;
+    border-radius: 15px;
+    min-height: 94vh;
+    display: grid;
+    grid-template-rows: 10% 90%;
+    padding: 1rem;
+}
+
+.header {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    font-family: 'ShadowsIntoLightTwo-Regular', 'sans-serif';
+}
+
+.header2 {
+    width: max-content;
+}
+
+.header2 span {    
+    border: #D9D9D9 5px solid;
+    padding: 0.75rem 1rem 0.75rem 1rem;
+    font-size: 32px;
+    display: flex;
+    margin-bottom: -1.35rem;
+    border-radius: 15px;
+}
+
+.header2 p {
+    margin: 0;
+}
+
+.header img {
+    width: 0.85rem;
+    padding-left: 0.45rem;
+}
+
+.dropdown {
+    display: none;
+}
+
+.dropdownShow {
+    width: 100%; 
+    display: flex; 
+    justify-content: right;
+}
+
+.dropdownChild {
+    background-color: #D9D9D9;
+    
+    width: fit-content;
+    text-decoration: none;
+    color: #295972;
+    
+    border: #295972 3px solid;
+    border-radius: 10px;
+    font-size: 18px;
+    font-family: 'ShadowsIntoLightTwo-Regular', 'sans-serif';
+
+    padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+}
+
+
+
+.underHeaderStudents {
+    display: grid;
+    grid-template-rows: 10% 60% 10% 10%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.underHeaderSurveys {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
