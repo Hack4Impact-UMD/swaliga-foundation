@@ -10,8 +10,7 @@ function changeIcon() {
     if (arrow && dropDown) {
         let currSrc = arrow.getAttribute("src");
         arrow.setAttribute("src", currSrc === DownArrow.src ? UpArrow.src : DownArrow.src);
-        //TODO fix below
-        dropDown.setAttribute("style", currSrc === DownArrow.src ? "width: 100%; display: flex; justify-content: right;" : "display: none;");
+        dropDown.setAttribute("class", currSrc === DownArrow.src ? `${styles.dropdownShow}` : `${styles.dropdown}`);
     }
 }
 
@@ -51,7 +50,9 @@ export default function AdminDashboardPage() {
                 <div className={styles.header}>
                     <div className={styles.header2}>
                         <span><p id="headerText">Student Information</p> <img id="arrowButton" src={DownArrow.src} onClick={() => changeIcon()}/></span>
-                        <div id="dropdown" className={styles.dropdown}><button id="dropdownChild" className={styles.dropdownChild} onClick={() => changeDisplay()}>Surveys Info.</button></div>
+                        <div id="dropdown" className={styles.dropdown}>
+                            <button id="dropdownChild" className={styles.dropdownChild} onClick={() => changeDisplay()}>Surveys Info.</button>
+                        </div>
                     </div>
                 </div>
                 <div id="underHeader" className={styles.underHeaderStudents}>
