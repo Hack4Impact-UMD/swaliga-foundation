@@ -9,6 +9,7 @@ export interface Survey {
   responderUri: string;
   linkedSheetId?: string;
   assignedUsers: string[];
+  responseIds: string[];
   schemaWatch: Watch;
   responsesWatch: Watch;
 }
