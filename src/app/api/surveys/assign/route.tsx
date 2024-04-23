@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { assignSurveys } from '@/lib/googleForms';
+import { assignSurveys } from '@/lib/firebase/database/users';
 
 export async function POST(req: NextRequest) {
     try {

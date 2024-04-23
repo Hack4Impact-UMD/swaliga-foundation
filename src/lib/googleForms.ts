@@ -34,52 +34,6 @@ export async function updateOnResponse(collectionName: string, formId: string) {
     }
 }
 
-export async function assignSurveys(userIds: string[], surveyIds: string[]): Promise<void> {
-    // Assign a list of surveys to a list of students
-    for (const userId of userIds) {
-        const userRef = doc(db, "users", userId);
-        await updateDoc(userRef, {
-            assignedSurveys: arrayUnion(...surveyIds)
-        });
-
-        console.log(`Surveys ${surveyIds} assigned to User ${userId}`);
-        // If user already added don't do nothing/remove..
-        // TODO Make this both ways...get this done by tomorrow.
-    }
-
-    // Assign a list of students to a list of surveys
-    for (const surveyId of surveyIds) {
-        const surveyRef = doc(db, "surveys", surveyId);
-        await updateDoc(surveyRef, {
-            assignedUsers: arrayUnion(...userIds)
-        });
-
-        console.log(`Users ${userIds} assigned to Survey ${surveyId}`);
-    }
-}
-
-export async function removeSurveys(userIds: string[], surveyIds: string[]): Promise<void> {
-    // Unassign a list of surveys from a list of students.
-    for (const userId of userIds) {
-        const userRef = doc(db, "users", userId);
-        await updateDoc(userRef, {
-            assignedSurveys: arrayRemove(...surveyIds)
-        });
-        
-        console.log(`Surveys ${surveyIds} removed from User ${userId}`);
-    }
-
-    // Unassign a list of students from a list of surveys
-    for (const surveyId of surveyIds) {
-        const surveyRef = doc(db, "surveys", surveyId);
-        await updateDoc(surveyRef, {
-            assignedUsers: arrayRemove(...userIds)
-        });
-
-        console.log(`Users ${userIds} removed from Survey ${surveyId}`);
-    }
-}
-
 // TODO: Call this on watch endpoint
 // Adds a response to 1) a user and 2) a survey.
 export async function addResponseToUser(userId: string, response: Response): Promise<void> {
