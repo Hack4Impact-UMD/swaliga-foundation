@@ -12,9 +12,9 @@ export async function POST(req: NextRequest) {
 
         try {
             await removeSurveys(userIds, surveyIds);
-            return NextResponse.json({ message: 'Successfully assigned Surveys '}, { status: 200 });
+            return NextResponse.json({ message: 'Successfully assigned Surveys'}, { status: 200 });
         } catch {
-            return NextResponse.json({ error: 'Error with Assigning Surveys' }, { status: 404});
+            return NextResponse.json({ error: 'Error with Assigning Surveys' }, { status: 404 });
         }
 
     } catch (error) {
