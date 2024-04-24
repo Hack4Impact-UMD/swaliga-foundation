@@ -1,9 +1,10 @@
 import { PubSub } from "@google-cloud/pubsub";
-import { updateOnResponse } from "@/lib/googleForms";
+import { newResponseHandler } from "@/lib/googleForms";
+import { updateSurvey } from "./firebase/database/surveys";
 
 export const pubSubClient = new PubSub();
 
-export function listenForMessages() {
+export function listenForMessages()  {
   const subscription = pubSubClient.subscription("forms-sub");
 
   const messageHandler = (message: any) => {
@@ -11,29 +12,16 @@ export function listenForMessages() {
     console.log(`\tData: ${message.data}`);
     console.log(`\tAttributes: ${JSON.stringify(message.attributes)}`);
 
-    // Determine what type of message this is
-    console.log("Further message info:");
-    if (
-      message.attributes.eventType === "RESPONSES" &&
-      message.attributes.watchId === "some-watch" &&
-      message.attributes.formId ===
-      "1_lKj7OZZ7PAxiyP4BaCyYk8o0Oa3KSWogxYFyIFzNTI"
-    ) {
-      // Acknowledge watch trigger and update firestore database accordingly
-      console.log(
-        `${message.attributes.watchId} triggered on form response submission.`
-      );
-
-      // TODO: Implement logic for the collection name to update, right now it's just
-      // the one I used for testing
-      updateOnResponse('gavin-form-testing', message.attributes.formId);
+    if (message.attributes.eventType === "RESPONSES") {
+      // TODO: update userId input using currently logged in user
+      newResponseHandler("1111111111", message.attributes.formId);
     } else {
-      // Not much to do here...
-      console.log("Unknown pubsub message");
+      updateSurvey(message.attributes.formId);
     }
 
     message.ack();
   };
 
   subscription.on("message", messageHandler);
+  console.log('Listening for PubSub messages');
 }

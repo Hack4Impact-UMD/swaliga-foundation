@@ -1,34 +1,31 @@
-import { collection, doc, where, query, getDocs, setDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "./firebase/firebaseConfig";
 import { forms } from "@/lib/googleAuthorization";
-import { Response, Survey } from "@/types/survey-types";
-import { User } from "@/types/user-types";
-
-// Retrieve list of existing form responseIDs from firestore
-async function getExistingResponseIds(collectionName: string, formId: string): Promise<string[]> {
-    const firestoreResponses = await getDocs(query(collection(db, collectionName), where("formId", "==", formId)));
-    return firestoreResponses.docs.map((doc) => doc.id);
-}
+import { GoogleFormResponse, Response } from "@/types/survey-types";
+import { getSurveyByID } from "./firebase/database/surveys";
+import { createResponse } from "./firebase/database/response";
 
 // Called when a given form has a new response. Should be triggered by a watch.
-export async function updateOnResponse(collectionName: string, formId: string) {
+export async function newResponseHandler(userId: string, formId: string) {
     // Retrieve form responses or empty array
     const googleResponses = await forms.forms.responses.list({ formId });
-    const googleResponseData = googleResponses.data.responses || [];
+    const googleResponseData = googleResponses.data.responses as GoogleFormResponse[] || [];
     
     // Get existing response IDs from firestore
-    const existingResponseIds = await getExistingResponseIds(collectionName, formId);
+    const form = await getSurveyByID(formId)
+    const existingResponseIds = form?.responseIds;
 
     // Loop through each response 
     for (const response of googleResponseData) {
         // Shouldn't be a runtime error hopefully(?) 
         // But maybe could have some error checking this seems suspicious idk
-        const responseId = response.responseId as string;
-
+        const updatedResponse: Response = { ...response, formId, userId };
+        const responseId = response.responseId;
+        
         // Add response to firestore if it doesn't exist
-        if (!existingResponseIds.includes(responseId)) {
-            const docRef = doc(collection(db, collectionName));
-            await setDoc(docRef, { formId, responseId, ...response });
+        if (!existingResponseIds?.includes(responseId)) {
+            await createResponse(updatedResponse);
+            await addResponseToUser(updatedResponse);
             console.log(`Added response with ID: ${responseId}`);
         } 
     }
@@ -36,20 +33,16 @@ export async function updateOnResponse(collectionName: string, formId: string) {
 
 // TODO: Call this on watch endpoint
 // Adds a response to 1) a user and 2) a survey.
-export async function addResponseToUser(userId: string, response: Response): Promise<void> {
+export async function addResponseToUser(response: Response): Promise<void> {
     // Get the user's document from the users collection
-    const userRef = doc(db, "users", userId);
-  
+    const userRef = doc(db, "users", response.userId);
     // Add the responseId to the user's completedResponses field
     await updateDoc(userRef, {
       completedResponses: arrayUnion(response.responseId)
     });
-  
     // Get the survey's document from the surveys collection
     const surveyRef = doc(db, "surveys", response.formId);
-  
     // Add the response object to the survey's responses
-    await setDoc(surveyRef, { responses: arrayUnion(response) }, { merge: true });
-  
-    console.log(`Response ${response.responseId} added to user ${userId} and survey ${response.formId}`);
+    await updateDoc(surveyRef, { responseIds: arrayUnion(response.responseId) });
+    console.log(`Response ${response.responseId} added to user ${response.userId} and survey ${response.formId}`);
   }
