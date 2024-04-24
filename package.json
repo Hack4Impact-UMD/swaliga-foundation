@@ -22,6 +22,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-konva": "^18.2.10",
+    "request": "^2.88.2",
     "save-dev": "^0.0.1-security",
     "tls": "^0.0.1",
     "webpack": "^5.90.3",
