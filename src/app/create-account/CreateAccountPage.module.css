@@ -28,7 +28,7 @@
     position: absolute;
     width: 60%;
     max-width: 800px;
-    padding: 20px;
+    padding: 0.5px 20px 20px;
     border-radius: 8px;
     display: flex;
     color: #fff;
@@ -38,23 +38,22 @@
 }
 
 .createAccountTitle {
-    margin-left: 0; /* Aligns title to the left */
-    font-size: 24px; /* Example font size */
+    margin-left: 0;
+    font-size: 24px;
 }
 
 .accountForm {
     position: absolute;
-    /*border: 8px solid white;*/
     top: 50%;
     left: 53%;
     transform: translate(-50%, -50%);
     z-index: 2;
-    width: 87%; /* Adjusted width */
-    height: 85%; /* Adjust height as necessary, or use 'auto' */
+    width: 87%;
+    height: 85%;
     overflow-y: auto;
-    min-width: 300px; /* Adjust min-width as necessary */
+    min-width: 300px;
     max-width: 1600px;
-    padding: 10px 12px; /* This also affects the height indirectly */
+    padding: 10px 12px;
     background-color: #0F0F0D;
     color: #fff;
     font-family: Poppins;
@@ -68,29 +67,29 @@
 .formGroupRow {
     display: flex;
     justify-content: space-between;
-    align-items: center; /* Center-align the items vertically */
+    align-items: center;
     gap: 15px;
     width: 100%;
 }
 
 .formGroup {
-    flex-grow: 1; /* Adjust this if necessary, it's for vertical stacking of label and inputs */
+    flex-grow: 1;
     
 }
 
 .inputRow {
-    display: flex; /* Ensures horizontal layout */
-    justify-content: start; /* Aligns items to the start, change to 'space-between' if you want them spread out */
-    gap: 10px; /* Adjust the gap between input fields */
+    display: flex;
+    justify-content: start;
+    gap: 10px;
     width: 100%;
 }
 
 .contactContainer {
-    flex-direction: column; /* Stack the elements vertically */
+    flex-direction: column;
 }
 
 .contactContainer:not(:first-of-type) {
-    margin-top: 40px; /* Add some space between each contact group except the first one */
+    margin-top: 40px;
 }
 
 .emergencyAddButton {
@@ -135,10 +134,10 @@
 
 .inputIconGroup input {
     width: calc(100% - 50px);
-    padding: 10px 40px; /* Adjust padding to not overlap icons */
+    padding: 10px 40px;
     display: flex;
     background-color: #D9D9D9;
-    color: black; /* Input text color */
+    color: black;
     border: none;
     border-radius: 10px;
     outline: none;
@@ -148,11 +147,11 @@
 .inputIconGroup i {
     position: absolute;
     left: 10px;
-    color: black; /* Icon color */
+    color: black;
 }
 
 .passwordError {
-    color: red; /* Or any color you want */
+    color: red;
 }
 
 .inputError input {
@@ -172,7 +171,7 @@
 
 .submitButton {
     margin-top: auto;
-    background-color: #4CAF50; /* Green background for submit button */
+    background-color: #4CAF50;
     color: white;
     padding: 10px 15px;
     border: none;
@@ -192,4 +191,44 @@
 
 .requiredAsterisk {
     color: red;
+}
+
+.checkboxContainer {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .checkboxGroup {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  
+  .checkboxGroup label {
+    margin-left: 8px;
+    text-transform: capitalize;
+  }
+  
+  .otherTextInput {
+    margin-left: 8px;
+    display: inline-block;
+  }
+  
+
+  .backToLoginButton {
+    position: absolute;
+    bottom: 10px;
+    left: 15px;
+    background-color: black;
+    color: white;
+    padding: 7px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 2;
+}
+
+.backToLoginButton:hover {
+    opacity: 0.8;
 }

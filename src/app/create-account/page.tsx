@@ -155,8 +155,46 @@ export default function CreateAccountPage() {
         strokeWidth={0}
       />
     );
+    
+    interface RaceEthnicity {
+        blackOrAfricanAmerican: boolean;
+        indigenous: boolean;
+        asian: boolean;
+        white: boolean;
+        multiracial: boolean;
+        latin: boolean;
+        other: boolean;
+        otherText: string;
+    }
+    
+    interface AccountInfo {
+        firstName: string;
+        middleName: string;
+        lastName: string;
+        name: string;
+        email: string;
+        bday: string;
+        phoneNumber: string;
+        gender: string,
+        emergencyName: string,
+        emergencyEmail: string;
+        emergencyPhone: string;
+        emergencyStreet: string,
+        emergencyCity: string,
+        emergencyState: string,
+        emergencyZip: string,
+        password: string;
+        confirmPassword: string;
+        streetName: string;
+        city: string;
+        state: string;
+        zipCode: string;
+        grad: string;
+        yearsInSwaliga: string;
+        raceEthnicity: RaceEthnicity;
+    }    
 
-    const [accountInfo, setAccountInfo] = useState({
+    const [accountInfo, setAccountInfo] = useState<AccountInfo>({
           firstName: '',
           middleName: '',
           lastName: '',
@@ -164,8 +202,14 @@ export default function CreateAccountPage() {
           email: '',
           bday: '',
           phoneNumber: '',
+          gender: '',
+          emergencyName: '',
           emergencyEmail: '',
           emergencyPhone: '',
+          emergencyStreet: '',
+          emergencyCity: '',
+          emergencyState: '',
+          emergencyZip: '',
           password: '',
           confirmPassword: '',
           streetName: '',
@@ -174,8 +218,46 @@ export default function CreateAccountPage() {
           zipCode: '',
           grad: '',
           yearsInSwaliga: '',
-        });
-      
+          raceEthnicity: {
+            blackOrAfricanAmerican: false,
+            indigenous: false,
+            asian: false,
+            white: false,
+            multiracial: false,
+            latin: false,
+            other: false,
+            otherText: '',
+          },
+    });
+    
+    // For checkboxes including the 'other' checkbox
+    const handleRaceEthnicityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, checked } = event.target;
+        const isOtherCheckbox = name === 'other';
+
+        setAccountInfo(prev => ({
+            ...prev,
+            raceEthnicity: {
+                ...prev.raceEthnicity,
+                [name]: checked,
+                ...(isOtherCheckbox && { otherText: checked ? prev.raceEthnicity.otherText : '' }),
+            },
+        }));
+    };
+
+    // For the 'otherText' input
+    const handleOtherTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = event.target;
+
+        setAccountInfo(prev => ({
+            ...prev,
+            raceEthnicity: {
+                ...prev.raceEthnicity,
+                otherText: value,
+            },
+        }));
+    };
+
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [passwordError, setPasswordError] = useState("");
@@ -183,34 +265,33 @@ export default function CreateAccountPage() {
     const [gradError, setGradError] = useState("");
     const [yearsInSwaligaError, setYearsInSwaligaError] = useState("");
     const [emergencyContacts, setEmergencyContacts] = useState([
-        { name: '', email: '', phone: '' } // Start with one empty contact
+        { name: '', email: '', phone: '', street: '', city: '', state: '', zip: '' }
     ]);
     
     const addEmergencyContact = () => {
-        setEmergencyContacts([...emergencyContacts, { name: '', email: '', phone: '' }]);
+        setEmergencyContacts([...emergencyContacts, { name: '', email: '', phone: '', street: '', city: '', state: '', zip: '' }]);
     };
     
     const deleteEmergencyContact = (index: number) => {
         setEmergencyContacts(emergencyContacts.filter((_, i) => i !== index));
     };
     
-    const handleEmergencyContactChange = (index: number, field: 'name' | 'email' | 'phone', value: string) => {
+    const handleEmergencyContactChange = (index: number, field: 'name' | 'email' | 'phone' | 'street' | 'city' | 'state' | 'zip', value: string) => {
         const updatedContacts = [...emergencyContacts];
 
-        // Perform letter check only when the field being changed is 'name'
-        if (field === 'name' && value !== '' && !/^[A-Za-z\s]*$/.test(value)) {
-            // If it doesn't, just return without updating the state
-            return;
+        // Only allow letters and spaces
+        if ((field === 'name' || field === 'city' || field === 'state') && value !== '' && !/^[A-Za-z\s]*$/.test(value)) {
+            return; // Invalid input, do not update state
         }
-
-        if (field === 'phone' && value !== '' && !/^\d+$/.test(value)) {
-            // If it doesn't, just return without updating the state
-            return;
+    
+        // only allow digits
+        if ((field === 'phone' || field === 'zip') && value !== '' && !/^\d+$/.test(value)) {
+            return; // Invalid input, do not update state
         }
-
+    
         // Update the specified contact field with the new value
         updatedContacts[index] = { ...updatedContacts[index], [field]: value };
-
+    
         // Update the state with the new contacts array
         setEmergencyContacts(updatedContacts);
     };
@@ -326,6 +407,10 @@ export default function CreateAccountPage() {
                                     <i className="fas fa-phone"></i>
                                     <input type="tel" name="phoneNumber" placeholder="Enter phone number" value={accountInfo.phoneNumber} onChange={handleChange} />
                                 </div>   
+                                <div className={styles.inputIconGroup}>
+                                    <i className="fas fa-venus-mars"></i>
+                                    <input type="text" name="gender" placeholder="Enter gender" value={accountInfo.gender} onChange={handleChange} />
+                                </div>  
                             </div>
                         </div>
                     </div>
@@ -356,35 +441,79 @@ export default function CreateAccountPage() {
                             {emergencyContacts.map((contact, index) => (
                                 <>
                                 <div className={styles.contactContainer} key={index}>
-                                    <div className={styles.inputIconGroup}>
-                                        <i className="fas fa-user"></i>
-                                        <input 
-                                            type="name" 
-                                            name="emergencyName" 
-                                            placeholder="Enter name" 
-                                            value={contact.name} 
-                                            onChange={(e) => handleEmergencyContactChange(index, 'name', e.target.value)} 
-                                        />
+                                    <div className={styles.inputRow}>
+                                        <div className={styles.inputIconGroup}>
+                                            <i className="fas fa-user"></i>
+                                            <input 
+                                                type="name" 
+                                                name="emergencyName" 
+                                                placeholder="Enter name" 
+                                                value={contact.name} 
+                                                onChange={(e) => handleEmergencyContactChange(index, 'name', e.target.value)} 
+                                            />
+                                        </div>
+                                        <div className={styles.inputIconGroup}>
+                                            <i className="fas fa-envelope"></i>
+                                            <input 
+                                                type="email" 
+                                                name="emergencyEmail" 
+                                                placeholder="Enter email" 
+                                                value={contact.email} 
+                                                onChange={(e) => handleEmergencyContactChange(index, 'email', e.target.value)} 
+                                            />
+                                        </div>
+                                        <div className={styles.inputIconGroup}>
+                                            <i className="fas fa-phone"></i>
+                                            <input 
+                                                type="tel" 
+                                                name="emergencyPhone" 
+                                                placeholder="Enter phone number" 
+                                                value={contact.phone} 
+                                                onChange={(e) => handleEmergencyContactChange(index, 'phone', e.target.value)} 
+                                            />
+                                        </div>
                                     </div>
-                                    <div className={styles.inputIconGroup}>
-                                        <i className="fas fa-envelope"></i>
-                                        <input 
-                                            type="email" 
-                                            name="emergencyEmail" 
-                                            placeholder="Enter email" 
-                                            value={contact.email} 
-                                            onChange={(e) => handleEmergencyContactChange(index, 'email', e.target.value)} 
-                                        />
-                                    </div>
-                                    <div className={styles.inputIconGroup}>
-                                        <i className="fas fa-phone"></i>
-                                        <input 
-                                            type="tel" 
-                                            name="emergencyPhone" 
-                                            placeholder="Enter phone number" 
-                                            value={contact.phone} 
-                                            onChange={(e) => handleEmergencyContactChange(index, 'phone', e.target.value)} 
-                                        />
+                                    <div className={styles.inputRow}>
+                                        <div className={styles.inputIconGroup}>
+                                            <i className="fas fa-road"></i>
+                                            <input 
+                                                type="text" 
+                                                name="emergencyStreet" 
+                                                placeholder="Enter street name" 
+                                                value={contact.street} 
+                                                onChange={(e) => handleEmergencyContactChange(index, 'street', e.target.value)} 
+                                            />
+                                        </div>
+                                        <div className={styles.inputIconGroup}>
+                                            <i className="fas fa-city"></i>   
+                                            <input 
+                                                type="text" 
+                                                name="emergencyCity" 
+                                                placeholder="Enter city" 
+                                                value={contact.city} 
+                                                onChange={(e) => handleEmergencyContactChange(index, 'city', e.target.value)} 
+                                            />
+                                        </div>
+                                        <div className={styles.inputIconGroup}>
+                                            <i className="fas fa-landmark"></i>
+                                            <input 
+                                                type="text" 
+                                                name="emergencyState" 
+                                                placeholder="Enter state" 
+                                                value={contact.state} 
+                                                onChange={(e) => handleEmergencyContactChange(index, 'state', e.target.value)} 
+                                            />
+                                        </div>   
+                                        <div className={styles.inputIconGroup}>
+                                            <i className="fas fa-map-pin"></i>
+                                            <input 
+                                                type="text" 
+                                                name="emergencyZip" 
+                                                placeholder="Enter zip code" 
+                                                value={contact.zip} 
+                                                onChange={(e) => handleEmergencyContactChange(index, 'zip', e.target.value)} 
+                                            />
+                                        </div>
                                     </div>
                                     <button className={styles.emergencyRemoveButton} type="button" onClick={() => deleteEmergencyContact(index)}>
                                         Remove Contact
@@ -498,9 +627,105 @@ export default function CreateAccountPage() {
                         </div>
                     </div>
 
+                    {/* Ethinicity field */}
+                    <div className={styles.formGroupRow}>
+                        <div className={styles.formGroup}>
+                            <label>What race/ethnicity do you identify as? (Select all that apply) <span className={styles.requiredAsterisk}>*</span></label>
+                            <div className={styles.checkboxContainer}>
+                                <div className={styles.checkboxGroup}>
+                                <input
+                                    type="checkbox"
+                                    id="blackOrAfricanAmerican"
+                                    name="blackOrAfricanAmerican"
+                                    checked={accountInfo.raceEthnicity.blackOrAfricanAmerican}
+                                    onChange={handleRaceEthnicityChange}
+                                />
+                                <label htmlFor="blackOrAfricanAmerican">Black or African American</label>
+                                </div>
+
+                                <div className={styles.checkboxGroup}>
+                                <input
+                                    type="checkbox"
+                                    id="indigenous"
+                                    name="indigenous"
+                                    checked={accountInfo.raceEthnicity.indigenous}
+                                    onChange={handleRaceEthnicityChange}
+                                />
+                                <label htmlFor="indigenous">Indigenous</label>
+                                </div>
+
+                                <div className={styles.checkboxGroup}>
+                                <input
+                                    type="checkbox"
+                                    id="asian"
+                                    name="asian"
+                                    checked={accountInfo.raceEthnicity.asian}
+                                    onChange={handleRaceEthnicityChange}
+                                />
+                                <label htmlFor="asian">Asian</label>
+                                </div>
+
+                                <div className={styles.checkboxGroup}>
+                                <input
+                                    type="checkbox"
+                                    id="white"
+                                    name="white"
+                                    checked={accountInfo.raceEthnicity.white}
+                                    onChange={handleRaceEthnicityChange}
+                                />
+                                <label htmlFor="white">White</label>
+                                </div>
+
+                                <div className={styles.checkboxGroup}>
+                                <input
+                                    type="checkbox"
+                                    id="multiracial"
+                                    name="multiracial"
+                                    checked={accountInfo.raceEthnicity.multiracial}
+                                    onChange={handleRaceEthnicityChange}
+                                />
+                                <label htmlFor="multiracial">Multiracial</label>
+                                </div>
+
+                                <div className={styles.checkboxGroup}>
+                                <input
+                                    type="checkbox"
+                                    id="latin"
+                                    name="latin"
+                                    checked={accountInfo.raceEthnicity.latin}
+                                    onChange={handleRaceEthnicityChange}
+                                />
+                                <label htmlFor="latin">LatinX/Latina/Latino</label>
+                                </div>
+
+                                <div className={styles.checkboxGroup}>
+                                <input
+                                    type="checkbox"
+                                    id="other"
+                                    name="other"
+                                    checked={accountInfo.raceEthnicity.other}
+                                    onChange={handleRaceEthnicityChange}
+                                />
+                                <label htmlFor="other">Other</label>
+                                <input
+                                    type="text"
+                                    id="otherText"
+                                    name="otherText"
+                                    placeholder="Please specify"
+                                    value={accountInfo.raceEthnicity.otherText}
+                                    disabled={!accountInfo.raceEthnicity.other}
+                                    onChange={handleOtherTextChange}
+                                    className={styles.otherTextInput}
+                                />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <button type="submit" className={styles.submitButton}>Submit</button>
                 </form>
             </div>
+            <button className={styles.backToLoginButton}>Back to Login</button>
         </div>
     );
 };
