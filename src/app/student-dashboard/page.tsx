@@ -19,52 +19,75 @@ import { collection,
         getDocs, 
         documentId } from 'firebase/firestore';
 
-
 export default function StudentDashboard() {
-    // const [currentUser, setCurrentUser] = useState<User | null>(null);
-    const [currentUser, setCurrentUser] = useState(null);
-    const [surveys, setAssignedSurveys] = useState([]);
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const [surveys, setSurveys] = useState<Survey[]>([]);
+    const [responses, setResponses] = useState<string[]>([]);
 
     const fetchCurrentUserData = async (uid: string) => {
-        // const userRef = doc(db, 'users', uid);
-        const userRef = doc(db, 'minji-test-users', uid);
+        const userCollection = collection(db, 'minji-test-users');
+        const userRef = doc(userCollection, uid);
         const userDoc = await getDoc(userRef);
 
-        console.log(userDoc.exists())
+        console.log(userDoc.exists());
 
         if (userDoc.exists()) {
-            // setCurrentUser(userDoc.data() as User);
-            console.log(userDoc.data());
-            // setCurrentUser(userDoc.data());
+            const surveyIds = userDoc.data().assignedSurveys;
+            const responseIds = userDoc.data().completedResponses;
+            
+            setCurrentUser(userDoc.data() as User);
+            setSurveys(await fetchSurveyData(surveyIds));
+            setResponses(await fetchResponseData(responseIds));
         } else {
             console.log('No user exists');
         }
     }
 
     const fetchSurveyData = async (surveyIds: string[]) => {
-        // const surveysRef = collection(db, 'surveys');
-        const surveysRef = collection(db, 'minji-test-surveys');
-        const surveysQuery = query(surveysRef, where(documentId(), 'in', surveyIds));
-        const surveyDocs = await getDocs(surveysQuery);
+        const surveyCollection = collection(db, 'minji-test-surveys');
+        const surveyQuery = query(surveyCollection, where(documentId(), 'in', surveyIds));
+        const surveyDocs = await getDocs(surveyQuery);
 
         const fetchedSurveys = surveyDocs.docs.map((doc) => {
-            console.log(doc.data)
+            return doc.data() as Survey;
         });
+
+        return fetchedSurveys;
     }
 
-    useEffect(() => { 
+    const fetchResponseData = async (responseIds: string[]) => {
+        const responseCollection = collection(db, 'minji-test-responses');
+        const responseQuery = query(responseCollection, where(documentId(), 'in', responseIds));
+        const responseDocs = await getDocs(responseQuery);
+
+        const fetchedRespondedSurvey = responseDocs.docs.map((doc) => {
+            return doc.data().formId;
+        });
+
+        const fetchedSurveys = fetchSurveyData(fetchedRespondedSurvey);
+        const surveyTitles = (await fetchedSurveys).map((survey) => {
+            return survey.info.title;
+        });
+
+        return surveyTitles;
+    }
+
+    useEffect(() => { // initialize currentUser state
         const auth = getAuth();
         const user = auth.currentUser;
         const testUser = "user01";
-
+        
         if (user) {
-            // fetchCurrentUserData(user.uid);
+            console.log("User signed in");
+            fetchCurrentUserData(user.uid);
+        } else {
+            console.log("No user signed in");
+            // setCurrentUser(null);
+            // setSurveys([]);
+            // setResponses([]);
             fetchCurrentUserData(testUser);
         }
-        // } else { // for test
-        //     setCurrentUser(testUser);
-        // }
-    }, [currentUser]);
+    }, []);
 
     return (
         <div className={styles.container}>
@@ -92,10 +115,10 @@ export default function StudentDashboard() {
                     Available Surveys
                 </p>
                 <hr className={styles.horizontalLine}/>
-                {currentUser?.assignedSurveys.map((survey) => (
-                    <Disclosure key={survey} as="div">
+                {surveys.map((survey) => (
+                    <Disclosure key={survey.formId} as="div">
                         <Disclosure.Button className={styles.assignedSurveyButton}>
-                            <span>{survey}</span>
+                            <span>{survey.info.title}</span>
                             <Image 
                                 src={Vector} 
                                 alt="vector" 
@@ -104,7 +127,7 @@ export default function StudentDashboard() {
                         </Disclosure.Button>
                         <Disclosure.Panel className={styles.assignedSurveyPanel}>
                             <iframe 
-                                src="https://forms.gle/APv6vdA532nZnp6k7"
+                                src={survey.responderUri}
                                 title="googleForm"
                                 allowFullScreen={true}
                                 className={styles.form}
@@ -116,9 +139,9 @@ export default function StudentDashboard() {
                     Completed Surveys
                 </p>
                 <hr className={styles.horizontalLine}/>
-                {currentUser?.completedResponses.map((survey) => (
-                    <span key={survey} className={styles.completedSurveyButton}>
-                        {survey}
+                {responses.map((response) => (
+                    <span key={response} className={styles.completedSurveyButton}>
+                        {response}
                     </span>
                 ))}
             </div>
