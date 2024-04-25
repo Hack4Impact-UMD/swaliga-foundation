@@ -9,6 +9,42 @@ export default function Assign() {
     const [allStudentsChecked, setAllStudentsChecked] = useState(false);
     const [highSchoolersChecked, setHighSchoolersChecked] = useState(false);
 
+    const assignSurveys = async () => {
+        const selectedSurveys = [];
+        if (endOfYearChecked) selectedSurveys.push('endOfYear');
+        if (allStudentsChecked) selectedSurveys.push('allStudents');
+        if (highSchoolersChecked) selectedSurveys.push('highSchoolers');
+
+        if (selectedSurveys.length === 0) {
+            return;
+        }
+
+        const userIds = []; //get from where?
+
+        try {
+            const response = await fetch('/api/assignSurveys', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userIds: userIds,
+                    surveyIds: selectedSurveys
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data.message); 
+            } else {
+                const errorData = await response.json();
+                console.error(errorData.error); 
+            }
+        } catch (error) {
+            console.error('Error occurred while assigning surveys:', error);
+        }
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.title}>Assign Surveys</div>
@@ -43,7 +79,7 @@ export default function Assign() {
                 High Schoolers Survey
             </div>
 
-            <button className={styles.button}> Assign </button> 
+            <button className={styles.button} onClick={assignSurveys}> Assign </button> 
             <span className={styles.closeIcon}></span>
             <span className={styles.filterIcon}></span>
         </div>
