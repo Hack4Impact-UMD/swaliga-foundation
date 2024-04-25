@@ -1,5 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createSurvey } from "@/lib/firebase/database/surveys";
+import { createSurvey, getAllSurveys } from "@/lib/firebase/database/surveys";
+
+export async function GET() {
+  try {
+    const allSurveys = await getAllSurveys();
+    return NextResponse.json({ surveys: allSurveys }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error: 'error getting all surveys' }, { status: 500 })
+  }
+}
 
 export async function POST(req: NextRequest) {
   const body = await req.json();

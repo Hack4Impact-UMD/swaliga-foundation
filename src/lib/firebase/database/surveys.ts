@@ -1,7 +1,7 @@
 import { Survey } from '@/types/survey-types';
 import { forms } from '../../googleAuthorization';
 import { db } from "../firebaseConfig";
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
 
 export async function createSurvey(body: {title: string, documentTitle: string}) {
   let form = null;
@@ -42,6 +42,20 @@ export async function updateSurvey(id: string) {
     return form;
   } catch (err) {
     throw Error('unable to update survey in firestore');
+  }
+}
+
+export async function getAllSurveys() {
+  try {
+    const surveySnapshot = await getDocs(collection(db, 'surveys'));
+    const allSurveys: Survey[] = [];
+    surveySnapshot.forEach((doc) => {
+      allSurveys.push(doc.data() as Survey);
+    });
+    return allSurveys;
+  } catch (error) {
+    console.error('unable to get all surveys');
+    throw new Error('unable to get surveys');
   }
 }
 
