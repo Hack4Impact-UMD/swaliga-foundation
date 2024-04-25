@@ -4,7 +4,7 @@ import { Response } from '@/types/survey-types';
 
 export async function GET(req: NextRequest, { params }: { params: { responseId: string } }) {
   const { responseId } = params; 
-  console.log('responseId:', responseId);
+  // console.log('responseId:', responseId);
 
   try {
     const response: Response | null = await getResponseByID(responseId);
