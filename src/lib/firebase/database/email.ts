@@ -23,7 +23,7 @@ export async function sendEmail(body: {recipients: string[], subject: string, te
         try {
             console.log(emailInfo)
         } catch (err) {
-            throw Error('unable to send email');
+            throw Error('Unable to send email');
         }
     }
 }

@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { sendEmail } from "@/lib/firebase/database/email";
 
 export async function POST(req: NextRequest) {
-    const body = await req.json();
     try {
-        const email = await sendEmail(body);
-        return NextResponse.json({message: 'emails successfully sent'}, {status: 200}); 
+        const body = await req.json();
+        await sendEmail(body);
+        return NextResponse.json({message: 'Emails successfully sent'}, {status: 200}); 
     } catch (err) {
-        return NextResponse.json({error: 'error sending email'}, {status: 500});
+        console.error("Error in POST request:", err);
+        return NextResponse.json({error: 'Error sending email'}, {status: 500});
     }
 }
