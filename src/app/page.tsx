@@ -5,6 +5,7 @@ import { Stage, Layer, Line } from "react-konva/lib/ReactKonvaCore";
 import { Polygon, Dims } from "@/types/konva-types";
 import styles from "./LoginPage.module.css";
 import { getPolygonBackground, getPolygonOverlay } from "./polygons";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 // Login page
 export default function LoginPage() {
@@ -13,6 +14,7 @@ export default function LoginPage() {
   const [polygonOverlay, setPolygonOverlay] = useState<Polygon[]>([]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordVisibility, setPasswordVisibility] = useState(false);
 
   useEffect(() => {
     setAllPolygons(window.innerWidth, window.innerHeight);
@@ -58,13 +60,19 @@ export default function LoginPage() {
             value={email}
             onChange={(ev) => setEmail(ev.target.value)}
           />
+          <div className={styles.login_input}>
           <input
-            type="password"
+            type={passwordVisibility ? "text" : "password"}
             className={styles.login_input}
             placeholder="password"
             value={password}
             onChange={(ev) => setPassword(ev.target.value)}
           />
+          <i
+            className={`fas ${passwordVisibility ? "fa-eye" : "fa-eye-slash"}`}
+            onClick={() => setPasswordVisibility(!passwordVisibility)}
+          />
+          </div>
           <a className={styles.forgot_password}>Forgot password?</a>
           <button className={styles.login_button}>Submit</button>
           <p>Click here to sign up for an account</p>
