@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
-import styles from "./surveyInfoPage.module.css";
+import styles from "./SurveyInfo.module.css";
 import { useEffect, useState } from "react";
 import { Survey } from "@/types/survey-types";
 
-export default function SurveyInfoPage(): JSX.Element {
+export default function SurveyInfo(): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [surveyList, setSurveyList] = useState<Survey[]>([]);
   const [isCreateSurveyOpen, setIsCreateSurveyOpen] = useState<boolean>(false);
