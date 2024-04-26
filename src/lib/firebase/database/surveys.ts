@@ -48,10 +48,7 @@ export async function updateSurvey(id: string) {
 export async function getAllSurveys() {
   try {
     const surveySnapshot = await getDocs(collection(db, 'surveys'));
-    const allSurveys: Survey[] = [];
-    surveySnapshot.forEach((doc) => {
-      allSurveys.push(doc.data() as Survey);
-    });
+    const allSurveys: Survey[] = surveySnapshot.docs.map((doc) => doc.data() as Survey);
     return allSurveys;
   } catch (error) {
     console.error('unable to get all surveys');
