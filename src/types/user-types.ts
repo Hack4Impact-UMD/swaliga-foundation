@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface User {
     isAdmin: boolean;
     firstName: string;
@@ -5,7 +7,7 @@ export interface User {
     middleName?: string;
     address: address;
     school: string;
-    birthdate: Date;
+    birthdate: Timestamp;
     gradYear: number;
     email: string;
     phone: number;
