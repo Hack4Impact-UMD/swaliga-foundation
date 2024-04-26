@@ -1,6 +1,8 @@
 .container {
     display: flex;
     min-height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .sidebar {
@@ -8,15 +10,15 @@
     display: flex;
     background-color: #D0D12A;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100%;
     position: relative;
     min-width: 300px;
     max-width: 300px;
 }
 
 .img {
-    height: 10%;
-    width: 30%;
+    height: 100px;
+    width: 300px;
     display: block;
     margin: 10% auto;
 }
@@ -59,7 +61,7 @@
     background-color: #295972;
     min-width: 320px;
     box-sizing: border-box;
-    padding: 0 5%;
+    padding: 20px 5%;
 }
 
 .surveyTitle {
@@ -97,6 +99,7 @@
 
 .completedSurveyButton {
     background-color: #D0D12A;
+    width: 96%
 }
 
 .assignedSurveyPanel {

@@ -9,7 +9,7 @@ import React, { useState, useEffect } from "react";
 import { Disclosure } from "@headlessui/react"
 import { User } from "@/types/user-types";
 import { Survey } from '@/types/survey-types';
-import { db, auth } from '@/lib/firebase/firebaseConfig';
+import { db } from '@/lib/firebase/firebaseConfig';
 import { getAuth } from 'firebase/auth';
 import { collection, 
         query, 
@@ -19,17 +19,46 @@ import { collection,
         getDocs, 
         documentId } from 'firebase/firestore';
 
+
+const fetchSurveyData = async (surveyIds: string[]) => {
+    const surveyCollection = collection(db, 'surveys');
+    const surveyQuery = query(surveyCollection, where(documentId(), 'in', surveyIds));
+    const surveyDocs = await getDocs(surveyQuery);
+
+    const fetchedSurveys = surveyDocs.docs.map((doc) => {
+        return doc.data() as Survey;
+    });
+
+    return fetchedSurveys;
+}
+
+const fetchResponseData = async (responseIds: string[]) => {
+    const responseCollection = collection(db, 'responses');
+    const responseQuery = query(responseCollection, where(documentId(), 'in', responseIds));
+    const responseDocs = await getDocs(responseQuery);
+
+    const fetchedRespondedSurvey = responseDocs.docs.map((doc) => {
+        return doc.data().formId;
+    });
+
+    const fetchedSurveys = fetchSurveyData(fetchedRespondedSurvey);
+    const surveyTitles = (await fetchedSurveys).map((survey) => {
+        return survey.info.title;
+    });
+
+    return surveyTitles;
+}
+
 export default function StudentDashboard() {
-    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const [user, setCurrentUser] = useState<User | null>(null);
     const [surveys, setSurveys] = useState<Survey[]>([]);
     const [responses, setResponses] = useState<string[]>([]);
+    const [openDisclosure, setOpenDisclosure] = useState('');
 
     const fetchCurrentUserData = async (uid: string) => {
-        const userCollection = collection(db, 'minji-test-users');
+        const userCollection = collection(db, 'users');
         const userRef = doc(userCollection, uid);
         const userDoc = await getDoc(userRef);
-
-        console.log(userDoc.exists());
 
         if (userDoc.exists()) {
             const surveyIds = userDoc.data().assignedSurveys;
@@ -43,49 +72,14 @@ export default function StudentDashboard() {
         }
     }
 
-    const fetchSurveyData = async (surveyIds: string[]) => {
-        const surveyCollection = collection(db, 'minji-test-surveys');
-        const surveyQuery = query(surveyCollection, where(documentId(), 'in', surveyIds));
-        const surveyDocs = await getDocs(surveyQuery);
-
-        const fetchedSurveys = surveyDocs.docs.map((doc) => {
-            return doc.data() as Survey;
-        });
-
-        return fetchedSurveys;
-    }
-
-    const fetchResponseData = async (responseIds: string[]) => {
-        const responseCollection = collection(db, 'minji-test-responses');
-        const responseQuery = query(responseCollection, where(documentId(), 'in', responseIds));
-        const responseDocs = await getDocs(responseQuery);
-
-        const fetchedRespondedSurvey = responseDocs.docs.map((doc) => {
-            return doc.data().formId;
-        });
-
-        const fetchedSurveys = fetchSurveyData(fetchedRespondedSurvey);
-        const surveyTitles = (await fetchedSurveys).map((survey) => {
-            return survey.info.title;
-        });
-
-        return surveyTitles;
-    }
-
-    useEffect(() => { // initialize currentUser state
+    useEffect(() => {
         const auth = getAuth();
         const user = auth.currentUser;
-        const testUser = "user01";
         
         if (user) {
-            console.log("User signed in");
             fetchCurrentUserData(user.uid);
         } else {
-            console.log("No user signed in");
-            // setCurrentUser(null);
-            // setSurveys([]);
-            // setResponses([]);
-            fetchCurrentUserData(testUser);
+            console.log('no signed-in user');
         }
     }, []);
 
@@ -101,7 +95,7 @@ export default function StudentDashboard() {
                     Home
                 </Link>
                 <p className={styles.info}>
-                    Student ID: {currentUser?.id || 'No user ID found'}
+                    Student ID: {user?.id || 'No user ID found'}
                 </p>
                 <button className={styles.settingButton}>
                     Settings
