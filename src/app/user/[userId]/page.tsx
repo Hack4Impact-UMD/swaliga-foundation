@@ -7,9 +7,6 @@ import ethnicityIcon from "@/../public/images/ethnicityIcon.svg";
 import mobileIcon from "@/../public/images/mobileIcon.svg";
 import emailIcon from "@/../public/images/emailIcon.svg";
 import addressIcon from "@/../public/images/addressIcon.svg";
-import dropDownArrowButton from "@/../public/images/buttonDownIcon.svg";
-import upArrowButton from "@/../public/images/buttonUpIcon.svg";
-import colonIcon from "@/../public/images/colonIcon.svg";
 
 import styles from "./StudentInfoPage.module.css";
 import { User } from "@/types/user-types";
@@ -96,49 +93,38 @@ async function changePageWithInfo(userInfo: User) {
                 guardian.innerHTML = guardianInfoHTML;
             }
         }
-    }
-}
 
-async function changeIcon(surveyArray: string[], responseArray: string[]) {
-    try {
-        let button = document.querySelector('#dropdown');
-
-        if (button?.getAttribute("src") === dropDownArrowButton.src) {
-            button?.setAttribute("src", upArrowButton.src);
+        let surveyArray = userInfo.assignedSurveys;
+        let responseArray = userInfo.completedResponses;
+        try {
             let list = document.querySelector("#list");
-
+    
             if (list) {
                 let newInnerHTML = "";
                 
                 // get all surveys (incomplete)
                 for (let incomplete of surveyArray) {
-                    let currSurvey = await getSurveyInfo(incomplete)
+                    let currSurvey = await getSurveyInfo(incomplete);
                     if (currSurvey) {
                         newInnerHTML += returnSurvey(currSurvey.info.title, false, currSurvey.responderUri);
                     }
                 }
-
-                // // get all surveys (complete)
+    
+                // get all surveys (complete)
                 for (let complete of responseArray) {
                     let currSurvey = await getSurveyFromResponse(complete);
                     if (currSurvey) {
                         newInnerHTML += returnSurvey(currSurvey.info.title, true);
                     }
                 }
-
+    
                 list.innerHTML = newInnerHTML;
             }
-        } else {
-            button?.setAttribute("src", dropDownArrowButton.src);
-            let list = document.querySelector("#list");
-            if (list) {
-                list.innerHTML = "";
-            }
+        } catch {
+            console.log("Error retrieving surveys");
         }
-    } catch {
-        console.log("Error retrieving surveys")
     }
-} 
+}
 
 async function getSurveyInfo(surveyId : string) {
     try {
@@ -147,7 +133,7 @@ async function getSurveyInfo(surveyId : string) {
         
         const data = await response.json();
         try {
-            const survey : Survey = data.data; //TODO double check
+            const survey : Survey = data.data;
             return survey;
         } catch {
             console.log("Error getting data");
@@ -179,45 +165,42 @@ async function getSurveyFromResponse(responseId : string) {
 
 function returnSurvey(surveyName: string, completed: boolean, formLink?: string) {
     if (completed) {
-        return (`<p style="background-color: #4caf5033; border: 5px solid #4caf50;">${surveyName}</p>`);
+        return (`<p style="background-color: rgba(76, 175, 80, 0.8); border-radius: 10px; color: black;>${surveyName}</p>`);
     } else {
-        return (`<p style="background-color: #d9292933; border: 5px solid #d92929;"><a style="text-decoration: none; color: black;" href=${formLink}>${surveyName}</a></p>`);
+        return (`<a style="text-decoration: none; color: black; background-color: rgba(217, 41, 41, 0.8); border-radius: 10px;" href=${formLink}>${surveyName}</a>`);
     }
 }
 
 export default function StudentInfoPage({ params }: { params: { userId: string }}) {
     // get information associated with given userId
     try {
-        let surveyArray : string[];
-        let responseArray : string[];
         getUserInfo(params.userId).then((userInfo) => 
             {
                 if (userInfo) { 
                     changePageWithInfo(userInfo); 
-                    surveyArray = userInfo.assignedSurveys;
-                    responseArray = userInfo.completedResponses;
                 }
             }
         );
-        
+
         return(
             <div className={styles.page}> 
-                <div className={styles.innerPage}>
+                <div className={styles.leftSide}>  
+                    <div className={styles.polygon}> </div>                 
+                </div>
+                <div className={styles.rightSide}>
                     <div className={styles.profile}>
                         <img src={userPfp.src} alt="Profile Icon"/>
-                        <p className={styles.semiBold} id="name">Name</p>
-                        <p className={`${styles.studentId} ${styles.regular}`} id="studentId">Student ID: </p>
+                        <p className={styles.header} id="name">User Information</p>
+                        <p className={styles.studentId} id="studentId">Student ID: </p>
                     </div>
-                    <div className="basicDetails">
+                    <div>
                         <table className={styles.table}>
-                            <caption>Basic Details</caption>
                             <thead>
                                 <tr>
                                     <td className={styles.leftSideTable}>
                                         <img src={gradYrIcon.src} alt="Grad Year Icon"/>
                                         <p className={styles.regular}>Grad. Yr.</p>
                                     </td>
-                                    <td><img src={colonIcon.src} alt="Colon Icon"/></td>
                                     <td className={`${styles.rightSideTable} ${styles.regular}`}><p id="gradYr">actual year</p></td>
                                 </tr>
                                 <tr>
@@ -225,7 +208,6 @@ export default function StudentInfoPage({ params }: { params: { userId: string }
                                         <img src={gradeIcon.src} alt="Grade Icon"/>
                                         <p className={styles.regular}>Grade</p>
                                     </td>
-                                    <td><img src={colonIcon.src} alt="Colon Icon"/></td>
                                     <td className={`${styles.rightSideTable} ${styles.regular}`}><p id="grade">actual grade</p></td>
                                 </tr>
                                 <tr>
@@ -233,7 +215,6 @@ export default function StudentInfoPage({ params }: { params: { userId: string }
                                         <img src={genderIcon.src} alt="Gender Icon"/>
                                         <p className={styles.regular}>Gender</p>
                                     </td>
-                                    <td><img src={colonIcon.src} alt="Colon Icon"/></td>
                                     <td className={`${styles.rightSideTable} ${styles.regular}`}><p id="gender">gender</p></td>
                                 </tr>
                                 <tr>
@@ -241,7 +222,6 @@ export default function StudentInfoPage({ params }: { params: { userId: string }
                                         <img src={ethnicityIcon.src} alt="Ethnicity Icon"/>
                                         <p className={styles.regular}>Ethnicity</p>
                                     </td>
-                                    <td><img src={colonIcon.src} alt="Colon Icon"/></td>
                                     <td className={`${styles.rightSideTable} ${styles.regular}`}><p id="ethnicity">ethnicity</p></td>
                                 </tr>
                                 <tr>
@@ -249,7 +229,6 @@ export default function StudentInfoPage({ params }: { params: { userId: string }
                                         <img src={mobileIcon.src} alt="Mobile Icon"/>
                                         <p className={styles.regular}>Mobile</p>
                                     </td>
-                                    <td><img src={colonIcon.src} alt="Colon Icon"/></td>
                                     <td className={`${styles.rightSideTable} ${styles.regular}`}><p id="mobile">XXX-XXX-XXXX</p></td>
                                 </tr>
                                 <tr>
@@ -257,7 +236,6 @@ export default function StudentInfoPage({ params }: { params: { userId: string }
                                         <img src={emailIcon.src} alt="Email Icon"/>
                                         <p className={styles.regular}>Email</p>
                                     </td>
-                                    <td><img src={colonIcon.src} alt="Colon Icon"/></td>
                                     <td className={`${styles.rightSideTable} ${styles.regular}`}><p id="email">email</p></td>
                                 </tr>
                                 <tr>
@@ -265,7 +243,6 @@ export default function StudentInfoPage({ params }: { params: { userId: string }
                                         <img src={addressIcon.src} alt="Address Icon"/>
                                         <p className={styles.regular}>Address</p>
                                     </td>
-                                    <td><img src={colonIcon.src} alt="Colon Icon"/></td>
                                     <td className={`${styles.rightSideTable} ${styles.regular}`}><p id="address">address</p></td>
                                 </tr>
                             </thead>
@@ -275,14 +252,10 @@ export default function StudentInfoPage({ params }: { params: { userId: string }
                         </div>
                     </div>
                     <div className={styles.surveysStatus}>
-                        <span>
-                            <p>Surveys Status</p>
-                            <img src={dropDownArrowButton.src} alt="button" id="dropdown" onClick={() => changeIcon(surveyArray, responseArray)}/>
-                        </span>
-                        <div className={`${styles.surveysList} ${styles.regular}`} id="list">
-                        </div>
+                        <p className={styles.surveyTitle}>Surveys</p>
+                        <div className={`${styles.surveysList} ${styles.regular}`} id="list"></div>
                     </div>
-                </div>
+                </div>                
             </div>
         );
     } catch {
