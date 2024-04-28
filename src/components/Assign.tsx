@@ -1,23 +1,54 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './assign.module.css';
+
+interface Survey {
+    id: string;
+    name: string;
+}
 
 interface AssignProps {
     userIds: string[]; 
 }
 
 export default function Assign({ userIds }: AssignProps) {
-    const [endOfYearChecked, setEndOfYearChecked] = useState(false);
-    const [allStudentsChecked, setAllStudentsChecked] = useState(false);
-    const [highSchoolersChecked, setHighSchoolersChecked] = useState(false);
+    const [selectedSurveys, setSelectedSurveys] = useState<string[]>([]);
+    const [surveys, setSurveys] = useState<Survey[]>([]);
 
+    useEffect(() => {
+        // Fetch the list of surveys from the server when the component mounts
+        async function fetchSurveys() {
+            try {
+                const response = await fetch('/api/surveys/');
+                if (response.ok) {
+                    const surveysData: Survey[] = await response.json();
+                    setSurveys(surveysData);
+                } else {
+                    console.error('Failed to fetch surveys:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error occurred while fetching surveys:', error);
+            }
+        }
+
+        fetchSurveys();
+    }, []);
+
+    // Function to toggle the selection of a survey
+    const toggleSurvey = (surveyId: string) => {
+        const isSelected = selectedSurveys.includes(surveyId);
+        setSelectedSurveys(prevSelected => {
+            if (isSelected) {
+                return prevSelected.filter(id => id !== surveyId);
+            } else {
+                return [...prevSelected, surveyId];
+            }
+        });
+    };
+
+    // Function to handle assigning surveys
     const assignSurveys = async () => {
-        const selectedSurveys = [];
-        if (endOfYearChecked) selectedSurveys.push('endOfYear');
-        if (allStudentsChecked) selectedSurveys.push('allStudents');
-        if (highSchoolersChecked) selectedSurveys.push('highSchoolers');
-
         if (selectedSurveys.length === 0) {
             return;
         }
@@ -35,11 +66,11 @@ export default function Assign({ userIds }: AssignProps) {
             });
 
             if (response.ok) {
-                const data = await response.json();
-                console.log(data.message); 
+                const responseData = await response.json();
+                console.log(responseData.message);
             } else {
                 const errorData = await response.json();
-                console.error(errorData.error); 
+                console.error(errorData.error);
             }
         } catch (error) {
             console.error('Error occurred while assigning surveys:', error);
@@ -49,37 +80,19 @@ export default function Assign({ userIds }: AssignProps) {
     return (
         <div className={styles.container}>
             <div className={styles.title}>Assign Surveys</div>
-            <div className={`${styles.centeredOval}`}>
-                <input
-                    type="checkbox"
-                    id="endOfYearCheckbox"
-                    className={styles.inputCheckbox}
-                    checked={endOfYearChecked}
-                    onChange={(ev) => setEndOfYearChecked(ev.target.checked)}
-                />
-                <label htmlFor="endOfYearCheckbox" className={styles.text}>End of Year Survey</label>
-            </div>
-            <div className={styles.centeredOval}>
-                <input
-                    type="checkbox"
-                    id="allStudentsCheckbox"
-                    className={styles.inputCheckbox}
-                    checked={allStudentsChecked}
-                    onChange={(ev) => setAllStudentsChecked(ev.target.checked)}
-                />
-                <label htmlFor="allStudentsCheckbox" className={styles.text}>All Students Survey</label>
-            </div>
-            <div className={styles.centeredOval}>
-                <input
-                    type="checkbox"
-                    id="highSchoolersCheckbox"
-                    className={styles.inputCheckbox}
-                    checked={highSchoolersChecked}
-                    onChange={(ev) => setHighSchoolersChecked(ev.target.checked)}
-                />
-                <label htmlFor="highSchoolersCheckbox" className={styles.text}>High Schoolers Survey</label>
-            </div>
-            <button className={styles.button} onClick={assignSurveys}>Assign</button> 
+            {surveys.map(survey => (
+                <div key={survey.id} className={styles.centeredOval}>
+                    <input
+                        type="checkbox"
+                        id={`surveyCheckbox_${survey.id}`}
+                        className={styles.inputCheckbox}
+                        checked={selectedSurveys.includes(survey.id)}
+                        onChange={() => toggleSurvey(survey.id)}
+                    />
+                    <label htmlFor={`surveyCheckbox_${survey.id}`} className={styles.text}>{survey.name}</label>
+                </div>
+            ))}
+            <button className={styles.button} onClick={assignSurveys}>Assign</button>
             <span className={styles.closeIcon}></span>
             <span className={styles.filterIcon}></span>
         </div>
