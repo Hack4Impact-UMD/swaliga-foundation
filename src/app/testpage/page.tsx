@@ -10,7 +10,7 @@ const Page: React.FC = () => {
   return (
 
     <div className={styles.container}>
-      <Create></Create>
+      <Assign></Assign>
       <h1 className={`${styles.text} ${styles.bold}`}>TEST</h1>
       <p className={styles.text}>TESTPAGE</p>
       <div className={styles.buttonContainer}>
