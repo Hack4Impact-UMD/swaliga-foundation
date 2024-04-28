@@ -393,6 +393,15 @@ export default function CreateAccountPage() {
     }
 
     if (
+        name === "yearsInSwaliga" &&
+        value !== "" &&
+        !/^\d+$/.test(value)
+    ) {
+        return; // Only allow numeric input
+    }
+
+
+    if (
       (name === "city" ||
         name === "state" ||
         name === "firstName" ||
@@ -438,15 +447,6 @@ export default function CreateAccountPage() {
         setGradError("Graduation year must be in YYYY format");
       } else {
         setGradError(""); // Clear error if format is correct
-      }
-    }
-
-    if (name === "yearsInSwaliga") {
-      const regex = /^\d{4}$/; // Matches YYYY format
-      if (!regex.test(value)) {
-        setYearsInSwaligaError("Year must be in YYYY format");
-      } else {
-        setYearsInSwaligaError(""); // Clear error if format is correct
       }
     }
 
@@ -882,7 +882,7 @@ export default function CreateAccountPage() {
                 <span className={styles.requiredAsterisk}>*</span>
               </label>
               <div className={styles.inputIconGroup}>
-                <i className="fas fa-school"></i> 
+                <i className="fas fa-school"></i>
                 <input
                   type="text"
                   name="school"
@@ -946,7 +946,7 @@ export default function CreateAccountPage() {
                 <input
                   type="text"
                   name="yearsInSwaliga"
-                  placeholder="YYYY"
+                  placeholder="Number of years"
                   value={accountInfo.yearsInSwaliga}
                   onChange={handleChange}
                 />
