@@ -91,9 +91,6 @@ export default function StudentDashboard() {
                     alt="Company Logo" 
                     className={styles.img}
                 />
-                <Link href="/" className={styles.info}>
-                    Home
-                </Link>
                 <p className={styles.info}>
                     Student ID: {user?.id || 'No user ID found'}
                 </p>
