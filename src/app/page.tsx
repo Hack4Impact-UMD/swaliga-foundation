@@ -5,7 +5,7 @@ import { Stage, Layer, Line } from "react-konva/lib/ReactKonvaCore";
 import { Polygon, Dims } from "@/types/konva-types";
 import styles from "./LoginPage.module.css";
 import { getPolygonBackground, getPolygonOverlay } from "./polygons";
-// import "@fortawesome/fontawesome-free/css/all.min.css";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 // Login page
 export default function LoginPage() {
