@@ -6,7 +6,6 @@ import Vector from "@/app/student-dashboard/Vector.png"
 import Image from "next/image"
 import Link from "next/link"
 import React, { useState, useEffect } from "react";
-import { Disclosure } from "@headlessui/react"
 import { User } from "@/types/user-types";
 import { Survey } from '@/types/survey-types';
 import { db } from '@/lib/firebase/firebaseConfig';
@@ -53,7 +52,7 @@ export default function StudentDashboard() {
     const [user, setCurrentUser] = useState<User | null>(null);
     const [surveys, setSurveys] = useState<Survey[]>([]);
     const [responses, setResponses] = useState<string[]>([]);
-    const [openDisclosure, setOpenDisclosure] = useState('');
+    const [openedSurvey, setOpenedSurvey] = useState('');
 
     const fetchCurrentUserData = async (uid: string) => {
         const userCollection = collection(db, 'users');
@@ -85,13 +84,9 @@ export default function StudentDashboard() {
         }
     }, []);
 
-    const toggleDisclosure = (formId: string) => {
-        // console.log("Current openPanel:", openDisclosure, "Clicked formId:", formId);
-        setOpenDisclosure(prev => {
-            // console.log("Previous openPanel:", prevOpenPanel);
-            return prev === formId ? '' : formId;
-        });
-    }
+    const handleSurveyButtonClick = (surveyId: string) => {
+        setOpenedSurvey(surveyId === openedSurvey ? '' : surveyId);
+    };
 
     return (
         <div className={styles.container}>
@@ -117,29 +112,28 @@ export default function StudentDashboard() {
                 </p>
                 <hr className={styles.horizontalLine}/>
                 {surveys.map((survey) => (
-                    <Disclosure key={survey.formId} as="div">
-                         <Disclosure.Button 
+                    <div key={survey.formId}>
+                        <button
+                            onClick={() => handleSurveyButtonClick(survey.formId)}
                             className={styles.assignedSurveyButton}
-                            onClick={() => toggleDisclosure(survey.formId)}
-                         >
-                            <span>{survey.info.title}</span>
+                        >
+                            {survey.info.title}
                             <Image 
                                 src={Vector} 
                                 alt="vector" 
                                 className={styles.vector}
                             />
-                        </Disclosure.Button>
-                        {openDisclosure === survey.formId && (
-                            <Disclosure.Panel className={styles.assignedSurveyPanel}>
-                                <iframe 
-                                    src={survey.responderUri}
-                                    title={survey.info.title}
-                                    allowFullScreen={true}
-                                    className={styles.form}
-                                />
-                            </Disclosure.Panel>
+                        </button>
+                        { openedSurvey === survey.formId && (
+                            <iframe 
+                                key={survey.formId}
+                                src={survey.responderUri}
+                                title={survey.info.title}
+                                allowFullScreen={true}
+                                className={styles.form}
+                            />
                         )}
-                    </Disclosure>
+                    </div>
                 ))}
                 <p className={styles.surveyTitle}>
                     Completed Surveys
