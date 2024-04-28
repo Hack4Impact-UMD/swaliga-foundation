@@ -4,8 +4,6 @@ import React, { useState } from 'react';
 import styles from './create.module.css';
 
 export default function Create() {
-
-
     const [documentTitle, setDocumentTitle] = useState("");
     const [surveyTitle, setSurveyTitle] = useState("");
 
@@ -23,7 +21,6 @@ export default function Create() {
             });
 
             if (response.ok) {
-
             } else {
                 console.error('Failed to create survey:', response.statusText);
             }
@@ -32,13 +29,10 @@ export default function Create() {
         }
     };
 
-    const openEditForm = () => {
-        window.open('https://docs.google.com/forms/', '_blank');
-    };
     return (
         <div className={styles.container}>
             <div className={styles.title}>Create Survey</div>
-            <div className={`${styles.centeredOval}`}>
+            <div className={styles.centeredOval}>
                 <input
                     name="documentTitle"
                     placeholder="Document Title"
@@ -47,7 +41,7 @@ export default function Create() {
                     onChange={(ev) => setDocumentTitle(ev.target.value)}
                 />
             </div>
-            <div className={`${styles.centeredOval}`}>
+            <div className={styles.centeredOval}>
                 <input
                     name="surveyTitle"
                     placeholder="Survey Title"
@@ -56,8 +50,7 @@ export default function Create() {
                     onChange={(ev) => setSurveyTitle(ev.target.value)}
                 />
             </div>
-            <button className={styles.button} onClick={createSurvey}>Create Survey</button>
-            <button className={styles.button} onClick={openEditForm}>Edit Survey</button>
+            <button className={styles.button} onClick={createSurvey}>Create</button>
         </div>
     );
 }
