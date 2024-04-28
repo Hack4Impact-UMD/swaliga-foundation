@@ -7,6 +7,8 @@ import styles from "./LoginPage.module.css";
 import { getPolygonBackground, getPolygonOverlay } from "./polygons";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import GoogleButton from "react-google-button";
+import { loginUser } from "@/lib/firebase/authentication/emailPasswordAuthentication";
+import { signInWithGoogle } from "@/lib/firebase/authentication/googleAuthentication";
 
 export default function LoginPage() {
   const [dims, setDims] = useState<Dims>({width: 0, height: 0});
@@ -40,6 +42,13 @@ export default function LoginPage() {
       strokeWidth={0}
     />
   ), []);
+
+  const signInWithEmail = async () => {
+    await loginUser(email, password);
+    setEmail('');
+    setPassword('');
+    console.log(auth.currentUser);
+  }
 
   return (
     <div className={styles.container}>
@@ -80,12 +89,12 @@ export default function LoginPage() {
           <div className={styles.forgot_password}>
             <a href="/forgot-password">Forgot password?</a>
           </div>
-          <button className={styles.login_button}>Submit</button>
+          <button className={styles.login_button} onClick={signInWithEmail}>Submit</button>
           <p>
             Click <a href="/create-account">here</a> to create an account
           </p>
           <div className={styles.google_button}>
-            <GoogleButton />
+            <GoogleButton onClick={signInWithGoogle}/>
           </div>
           <img
             className={styles.logo}
