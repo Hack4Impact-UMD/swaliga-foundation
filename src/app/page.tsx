@@ -53,25 +53,29 @@ export default function LoginPage() {
         </Stage>
         <div className={styles.login}>
           <h1 className={styles.login_title}>Login</h1>
-          <input
-            type="email"
-            className={styles.login_input}
-            placeholder="enter email"
-            value={email}
-            onChange={(ev) => setEmail(ev.target.value)}
-          />
-          <div className={styles.login_input}>
-          <input
-            type={passwordVisibility ? "text" : "password"}
-            className={styles.login_input}
-            placeholder="password"
-            value={password}
-            onChange={(ev) => setPassword(ev.target.value)}
-          />
-          <i
-            className={`fas ${passwordVisibility ? "fa-eye" : "fa-eye-slash"}`}
-            onClick={() => setPasswordVisibility(!passwordVisibility)}
-          />
+          <div className={styles.login_field_container}>
+            <input
+              type="email"
+              className={styles.login_field}
+              placeholder="enter email"
+              value={email}
+              onChange={(ev) => setEmail(ev.target.value)}
+            />
+          </div>
+          <div className={styles.login_field_container}>
+            <input
+              type={passwordVisibility ? "text" : "password"}
+              className={styles.login_field}
+              placeholder="password"
+              value={password}
+              onChange={(ev) => setPassword(ev.target.value)}
+            />
+            <i
+              className={`fas ${
+                passwordVisibility ? "fa-eye" : "fa-eye-slash"
+              }`}
+              onClick={() => setPasswordVisibility(!passwordVisibility)}
+            />
           </div>
           <a className={styles.forgot_password}>Forgot password?</a>
           <button className={styles.login_button}>Submit</button>
