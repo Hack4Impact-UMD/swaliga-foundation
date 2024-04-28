@@ -75,13 +75,23 @@ export default function StudentDashboard() {
     useEffect(() => {
         const auth = getAuth();
         const user = auth.currentUser;
+        const testuser = "11111111112";
         
         if (user) {
             fetchCurrentUserData(user.uid);
         } else {
             console.log('no signed-in user');
+            fetchCurrentUserData(testuser);
         }
     }, []);
+
+    const toggleDisclosure = (formId: string) => {
+        // console.log("Current openPanel:", openDisclosure, "Clicked formId:", formId);
+        setOpenDisclosure(prev => {
+            // console.log("Previous openPanel:", prevOpenPanel);
+            return prev === formId ? '' : formId;
+        });
+    }
 
     return (
         <div className={styles.container}>
@@ -108,7 +118,10 @@ export default function StudentDashboard() {
                 <hr className={styles.horizontalLine}/>
                 {surveys.map((survey) => (
                     <Disclosure key={survey.formId} as="div">
-                        <Disclosure.Button className={styles.assignedSurveyButton}>
+                         <Disclosure.Button 
+                            className={styles.assignedSurveyButton}
+                            onClick={() => toggleDisclosure(survey.formId)}
+                         >
                             <span>{survey.info.title}</span>
                             <Image 
                                 src={Vector} 
@@ -116,14 +129,16 @@ export default function StudentDashboard() {
                                 className={styles.vector}
                             />
                         </Disclosure.Button>
-                        <Disclosure.Panel className={styles.assignedSurveyPanel}>
-                            <iframe 
-                                src={survey.responderUri}
-                                title="googleForm"
-                                allowFullScreen={true}
-                                className={styles.form}
-                            />
-                        </Disclosure.Panel>
+                        {openDisclosure === survey.formId && (
+                            <Disclosure.Panel className={styles.assignedSurveyPanel}>
+                                <iframe 
+                                    src={survey.responderUri}
+                                    title={survey.info.title}
+                                    allowFullScreen={true}
+                                    className={styles.form}
+                                />
+                            </Disclosure.Panel>
+                        )}
                     </Disclosure>
                 ))}
                 <p className={styles.surveyTitle}>
