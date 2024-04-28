@@ -52,7 +52,7 @@ export default function StudentDashboard() {
     const [user, setCurrentUser] = useState<User | null>(null);
     const [surveys, setSurveys] = useState<Survey[]>([]);
     const [responses, setResponses] = useState<string[]>([]);
-    const [openedSurvey, setOpenedSurvey] = useState('');
+    const [openSurvey, setOpenSurvey] = useState('');
 
     const fetchCurrentUserData = async (uid: string) => {
         const userCollection = collection(db, 'users');
@@ -74,18 +74,16 @@ export default function StudentDashboard() {
     useEffect(() => {
         const auth = getAuth();
         const user = auth.currentUser;
-        const testuser = "11111111112";
         
         if (user) {
             fetchCurrentUserData(user.uid);
         } else {
             console.log('no signed-in user');
-            fetchCurrentUserData(testuser);
         }
     }, []);
 
     const handleSurveyButtonClick = (surveyId: string) => {
-        setOpenedSurvey(surveyId === openedSurvey ? '' : surveyId);
+        setOpenSurvey(surveyId === openSurvey ? '' : surveyId);
     };
 
     return (
@@ -124,7 +122,7 @@ export default function StudentDashboard() {
                                 className={styles.vector}
                             />
                         </button>
-                        { openedSurvey === survey.formId && (
+                        { openSurvey === survey.formId && (
                             <iframe 
                                 key={survey.formId}
                                 src={survey.responderUri}
