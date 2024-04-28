@@ -47,7 +47,6 @@ export default function LoginPage() {
     await loginUser(email, password);
     setEmail('');
     setPassword('');
-    console.log(auth.currentUser);
   }
 
   return (
