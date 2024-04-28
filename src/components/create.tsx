@@ -16,7 +16,7 @@ export default function Create() {
                 },
                 body: JSON.stringify({
                     documentTitle,
-                    surveyTitle
+                    title: surveyTitle
                 })
             });
 
