@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useCallback, useLayoutEffect } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import "konva/lib/shapes/Line";
 import { Stage, Layer, Line } from "react-konva/lib/ReactKonvaCore";
 import { Polygon, Dims } from "@/types/konva-types";
