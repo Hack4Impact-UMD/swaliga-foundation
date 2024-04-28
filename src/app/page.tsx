@@ -6,8 +6,8 @@ import { Polygon, Dims } from "@/types/konva-types";
 import styles from "./LoginPage.module.css";
 import { getPolygonBackground, getPolygonOverlay } from "./polygons";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import GoogleButton from "react-google-button";
 
-// Login page
 export default function LoginPage() {
   const [dims, setDims] = useState<Dims>({width: 0, height: 0});
   const [polygonBackground, setPolygonBackground] = useState<Polygon[]>([]);
@@ -41,7 +41,6 @@ export default function LoginPage() {
     />
   ), []);
 
-  // Include a guard to force code to be executed on client side only
   return (
     <div className={styles.container}>
       <div className={styles.background}>
@@ -71,15 +70,23 @@ export default function LoginPage() {
               onChange={(ev) => setPassword(ev.target.value)}
             />
             <i
-              className={`fas ${
-                passwordVisibility ? "fa-eye" : "fa-eye-slash"
-              }`}
+              className={
+                styles.icon +
+                ` fas ${passwordVisibility ? "fa-eye" : "fa-eye-slash"}`
+              }
               onClick={() => setPasswordVisibility(!passwordVisibility)}
             />
           </div>
-          <a className={styles.forgot_password}>Forgot password?</a>
+          <div className={styles.forgot_password}>
+            <a href="/forgot-password">Forgot password?</a>
+          </div>
           <button className={styles.login_button}>Submit</button>
-          <p>Click here to sign up for an account</p>
+          <p>
+            Click <a href="/create-account">here</a> to create an account
+          </p>
+          <div className={styles.google_button}>
+            <GoogleButton />
+          </div>
           <img
             className={styles.logo}
             src="/swaliga-website-logo.png"

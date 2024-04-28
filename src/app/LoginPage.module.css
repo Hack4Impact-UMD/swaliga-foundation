@@ -51,10 +51,6 @@
     box-sizing: border-box;
 }
 
-.login>* {
-    font: Poppins;
-}
-
 .login_title {
     margin-bottom: 50px;
     font-size: 2.5em;
@@ -62,10 +58,14 @@
 
 .login_field_container {
     width: 80%;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: white;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
 }
 
 .login_field {
@@ -88,14 +88,24 @@
     border: none;
     border-radius: 10px;
     cursor: pointer;
+        
 }
 
 .forgot_password {
+    margin-top: 0px;
+    width: 80%;
+    font-size: 10px;
     text-align: right;
 }
-
 
 .logo {
     width: 50%;
     height: auto;
+}
+
+.google_button {
+    width: 80%;
+    height: 100px;
+    display: flex;
+    justify-content: center;
 }
