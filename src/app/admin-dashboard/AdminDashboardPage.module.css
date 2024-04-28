@@ -209,3 +209,22 @@
 .exportButton {
     background: #4CAF50;
 }
+
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1em; /* Adjust as needed */
+  }
+  
+  .paginationButton {
+    background-color: #91A5AF;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1em; /* Adjust font-size as needed */
+  }
+  
+  .paginationButton:disabled {
+    cursor: not-allowed;
+  }
