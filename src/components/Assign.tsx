@@ -1,12 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { Survey } from '@/types/survey-types';
 import styles from './assign.module.css';
-
-interface Survey {
-    id: string;
-    name: string;
-}
 
 interface AssignProps {
     userIds: string[]; 
@@ -20,7 +16,7 @@ export default function Assign({ userIds }: AssignProps) {
         // Fetch the list of surveys from the server when the component mounts
         async function fetchSurveys() {
             try {
-                const response = await fetch('/api/surveys/');
+                const response = await fetch('/api/surveys');
                 if (response.ok) {
                     const surveysData: Survey[] = await response.json();
                     setSurveys(surveysData);
@@ -78,23 +74,30 @@ export default function Assign({ userIds }: AssignProps) {
     };
 
     return (
-        <div className={styles.container}>
-            <div className={styles.title}>Assign Surveys</div>
-            {surveys.map(survey => (
-                <div key={survey.id} className={styles.centeredOval}>
-                    <input
-                        type="checkbox"
-                        id={`surveyCheckbox_${survey.id}`}
-                        className={styles.inputCheckbox}
-                        checked={selectedSurveys.includes(survey.id)}
-                        onChange={() => toggleSurvey(survey.id)}
-                    />
-                    <label htmlFor={`surveyCheckbox_${survey.id}`} className={styles.text}>{survey.name}</label>
-                </div>
-            ))}
-            <button className={styles.button} onClick={assignSurveys}>Assign</button>
-            <span className={styles.closeIcon}></span>
-            <span className={styles.filterIcon}></span>
-        </div>
+      <div className={styles.container}>
+        <div className={styles.title}>Assign Surveys</div>
+        {surveys.map((survey) => (
+          <div key={survey.formId} className={styles.centeredOval}>
+            <input
+              type="checkbox"
+              id={`surveyCheckbox_${survey.formId}`}
+              className={styles.inputCheckbox}
+              checked={selectedSurveys.includes(survey.formId)}
+              onChange={() => toggleSurvey(survey.formId)}
+            />
+            <label
+              htmlFor={`surveyCheckbox_${survey.formId}`}
+              className={styles.text}
+            >
+              {survey.info.title}
+            </label>
+          </div>
+        ))}
+        <button className={styles.button} onClick={assignSurveys}>
+          Assign
+        </button>
+        <span className={styles.closeIcon}></span>
+        <span className={styles.filterIcon}></span>
+      </div>
     );
 }
