@@ -11,13 +11,7 @@ const Page: React.FC = () => {
 
     <div className={styles.container}>
       <Assign userIds={['newUser', 'temp']}></Assign>
-      <h1 className={`${styles.text} ${styles.bold}`}>TEST</h1>
-      <p className={styles.text}>TESTPAGE</p>
-      <div className={styles.buttonContainer}>
-        <Link href="/">
-          <button className={styles.button}>Go to Homepage</button>
-        </Link>
-      </div>
+      <Create></Create>
     </div>
   );
 };
