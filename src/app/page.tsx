@@ -6,6 +6,7 @@ import { Polygon, Dims } from "@/types/konva-types";
 import styles from "./LoginPage.module.css";
 import { getPolygonBackground, getPolygonOverlay } from "./polygons";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import Link from 'next/link'
 
 // Login page
 export default function LoginPage() {
@@ -77,7 +78,7 @@ export default function LoginPage() {
               onClick={() => setPasswordVisibility(!passwordVisibility)}
             />
           </div>
-          <a className={styles.forgot_password}>Forgot password?</a>
+          <Link href="/reset-password" className={styles.forgot_password}>Forgot Password?</Link>
           <button className={styles.login_button}>Submit</button>
           <p>Click here to sign up for an account</p>
           <img
