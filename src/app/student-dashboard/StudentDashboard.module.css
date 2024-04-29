@@ -75,13 +75,21 @@
     width: auto;
 }
 
-.assignedSurveyButton, .completedSurveyButton {
+.surveyContainer {
     background-color: white;
     color: black;
+    border-radius: 25px;
+    padding: 0px;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.assignedSurveyButton, .completedSurveyButton {
     border: none;
     border-radius: 25px;
     width: 100%;
-    margin-top: 27px;;
     padding: 10px;
     padding-left: 25px;
     display: inline-block;
@@ -108,6 +116,6 @@
 
 .form {
     margin-top: 1%;
-    width: 100%;
+    width: 95%;
     height: 600px;
 }

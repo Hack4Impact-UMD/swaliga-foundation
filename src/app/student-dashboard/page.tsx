@@ -103,7 +103,7 @@ export default function StudentDashboard() {
           <p className={styles.surveyTitle}>Available Surveys</p>
           <hr className={styles.horizontalLine} />
           {surveys.map((survey) => (
-            <div key={survey.formId}>
+            <div key={survey.formId} className={styles.surveyContainer}>
               <button
                 onClick={() => handleSurveyButtonClick(survey.formId)}
                 className={styles.assignedSurveyButton}
@@ -111,7 +111,7 @@ export default function StudentDashboard() {
                 {survey.info.title}
                 <Image
                   src={openSurvey === survey.formId ? DownArrow : UpArrow}
-                  alt={openSurvey === survey.formId ? 'DownArrow' : 'UpArrow'}
+                  alt={openSurvey === survey.formId ? "DownArrow" : "UpArrow"}
                   className={styles.vector}
                 />
               </button>
