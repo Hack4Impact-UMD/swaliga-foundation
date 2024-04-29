@@ -29,6 +29,7 @@ export interface GoogleFormResponse {
 
 export interface Response extends GoogleFormResponse {
   userId: string;
+  formTitle: string;
 }
 
 // Info and settings
