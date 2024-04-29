@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Survey } from '@/types/survey-types';
-import styles from './assign.module.css';
+import styles from './Assign.module.css';
 
 interface AssignProps {
     userIds: string[];
@@ -18,9 +18,7 @@ export default function Assign({ userIds }: AssignProps) {
             try {
                 const response = await fetch('/api/surveys');
                 if (response.ok) {
-                    const surveysData = await response.json();
-                    console.log(surveysData); 
-                    const surveysArray: Survey[] = surveysData.surveys; 
+                    const surveysArray: Survey[] = await response.json(); 
                     setSurveys(surveysArray);
                 } else {
                     console.error('Failed to fetch surveys:', response.statusText);
@@ -76,7 +74,6 @@ export default function Assign({ userIds }: AssignProps) {
             console.error('Error occurred while assigning surveys:', error);
         }
     };
-    console.log("Surveys:", surveys);
 
     return (
         <div className={styles.container}>
