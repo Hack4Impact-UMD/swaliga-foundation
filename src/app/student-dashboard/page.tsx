@@ -2,7 +2,8 @@
 
 import styles from "./StudentDashboard.module.css";
 import CompanyLogo from "@/../public/images/logo.svg";
-import Vector from "@/app/student-dashboard/Vector.png"
+import UpArrow from '@/../public/icons/up-arrow-icon.png'
+import DownArrow from '@/../public/icons/down-arrow-icon.png'
 import Image from "next/image"
 import Link from "next/link"
 import React, { useState, useEffect } from "react";
@@ -75,11 +76,11 @@ export default function StudentDashboard() {
         const auth = getAuth();
         const user = auth.currentUser;
         
-        if (user) {
-            fetchCurrentUserData(user.uid);
-        } else {
-            console.log('no signed-in user');
-        }
+        //if (user) {
+            fetchCurrentUserData("1111111111");
+        //} else {
+        //    console.log('no signed-in user');
+        //}
     }, []);
 
     const handleSurveyButtonClick = (surveyId: string) => {
@@ -117,7 +118,7 @@ export default function StudentDashboard() {
                         >
                             {survey.info.title}
                             <Image 
-                                src={Vector} 
+                                src={openSurvey === survey.formId ? DownArrow : UpArrow}
                                 alt="vector" 
                                 className={styles.vector}
                             />
