@@ -9,8 +9,7 @@ import Link from "next/link"
 import React, { useState, useEffect } from "react";
 import { User } from "@/types/user-types";
 import { Survey } from '@/types/survey-types';
-import { db } from '@/lib/firebase/firebaseConfig';
-import { getAuth } from 'firebase/auth';
+import { auth, db } from '@/lib/firebase/firebaseConfig';
 import { collection, 
         query, 
         where, 
@@ -73,7 +72,6 @@ export default function StudentDashboard() {
     }
 
     useEffect(() => {
-        const auth = getAuth();
         const user = auth.currentUser;
         
         //if (user) {
