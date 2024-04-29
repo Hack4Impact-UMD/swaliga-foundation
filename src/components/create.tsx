@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useState } from 'react';
-import styles from './create.module.css';
+import styles from './Create.module.css';
 
 export default function Create() {
-    const [documentTitle, setDocumentTitle] = useState("");
     const [surveyTitle, setSurveyTitle] = useState("");
 
     const createSurvey = async () => {
@@ -15,7 +14,7 @@ export default function Create() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    documentTitle,
+                    documentTitle: surveyTitle,
                     title: surveyTitle
                 })
             });
@@ -32,15 +31,6 @@ export default function Create() {
     return (
         <div className={styles.container}>
             <div className={styles.title}>Create Survey</div>
-            <div className={styles.centeredOval}>
-                <input
-                    name="documentTitle"
-                    placeholder="Document Title"
-                    className={styles.inputField}
-                    value={documentTitle}
-                    onChange={(ev) => setDocumentTitle(ev.target.value)}
-                />
-            </div>
             <div className={styles.centeredOval}>
                 <input
                     name="surveyTitle"
