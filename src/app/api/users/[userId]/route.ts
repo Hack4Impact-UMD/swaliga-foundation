@@ -10,8 +10,8 @@ export async function GET(
   const userid = params.userId;
 
   try {
-    const result = await getAccountById(userid);
-    return NextResponse.json({ result }, { status: 200 });
+    const user = await getAccountById(userid);
+    return NextResponse.json(user, { status: 200 });
   } catch {
     return NextResponse.json(
       { error: "Error with Getting the Account Via the Given ID" },
