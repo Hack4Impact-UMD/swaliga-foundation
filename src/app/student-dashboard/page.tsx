@@ -8,77 +8,45 @@ import Image from "next/image"
 import Link from "next/link"
 import React, { useState, useEffect } from "react";
 import { User } from "@/types/user-types";
-import { Survey } from '@/types/survey-types';
-import { auth, db } from '@/lib/firebase/firebaseConfig';
-import { collection, 
-        query, 
-        where, 
-        doc, 
-        getDoc, 
-        getDocs, 
-        documentId } from 'firebase/firestore';
-
-
-const fetchSurveyData = async (surveyIds: string[]) => {
-    const surveyCollection = collection(db, 'surveys');
-    const surveyQuery = query(surveyCollection, where(documentId(), 'in', surveyIds));
-    const surveyDocs = await getDocs(surveyQuery);
-
-    const fetchedSurveys = surveyDocs.docs.map((doc) => {
-        return doc.data() as Survey;
-    });
-
-    return fetchedSurveys;
-}
-
-const fetchResponseData = async (responseIds: string[]) => {
-    const responseCollection = collection(db, 'responses');
-    const responseQuery = query(responseCollection, where(documentId(), 'in', responseIds));
-    const responseDocs = await getDocs(responseQuery);
-
-    const fetchedRespondedSurvey = responseDocs.docs.map((doc) => {
-        return doc.data().formId;
-    });
-
-    const fetchedSurveys = fetchSurveyData(fetchedRespondedSurvey);
-    const surveyTitles = (await fetchedSurveys).map((survey) => {
-        return survey.info.title;
-    });
-
-    return surveyTitles;
-}
+import { Survey, Response } from '@/types/survey-types';
+import { auth } from '@/lib/firebase/firebaseConfig';
 
 export default function StudentDashboard() {
-    const [user, setCurrentUser] = useState<User | null>(null);
+    const [user, setUser] = useState<User | null>(null);
     const [surveys, setSurveys] = useState<Survey[]>([]);
     const [responses, setResponses] = useState<string[]>([]);
     const [openSurvey, setOpenSurvey] = useState('');
 
-    const fetchCurrentUserData = async (uid: string) => {
-        const userCollection = collection(db, 'users');
-        const userRef = doc(userCollection, uid);
-        const userDoc = await getDoc(userRef);
+    const fetchCurrentUserData = async (userId: string) => {
+      try {
+        const res = await fetch(`/api/users/${userId}`);
+        const user: User = await res.json();
+        setUser(user);
 
-        if (userDoc.exists()) {
-            const surveyIds = userDoc.data().assignedSurveys;
-            const responseIds = userDoc.data().completedResponses;
-            
-            setCurrentUser(userDoc.data() as User);
-            setSurveys(await fetchSurveyData(surveyIds));
-            setResponses(await fetchResponseData(responseIds));
-        } else {
-            console.log('No user exists');
-        }
+        Promise.all(user.assignedSurveys.map(surveyId => fetch(`/api/surveys/${surveyId}`))).then(responses => {
+          Promise.all(responses.map(res => res.json())).then((surveys: Survey[]) => {
+            setSurveys(surveys);
+          })
+        })
+
+        Promise.all(user.completedResponses.map(responseId => fetch(`/api/responses/${responseId}`))).then(responses => {
+          Promise.all(responses.map(res => res.json())).then((responses: Response[]) => {
+            setResponses(responses.map(response => response.formTitle))
+          })
+        })
+      } catch (error) {
+        console.error(error);
+        throw new Error('unable to fetch data for student dashboard');
+      }
     }
 
     useEffect(() => {
         const user = auth.currentUser;
-        
-        //if (user) {
-            fetchCurrentUserData("1111111111");
-        //} else {
-        //    console.log('no signed-in user');
-        //}
+        if (user) {
+            fetchCurrentUserData(user.uid);
+        } else {
+            console.log('no signed-in user');
+        }
     }, []);
 
     const handleSurveyButtonClick = (surveyId: string) => {
