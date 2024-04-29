@@ -6,6 +6,7 @@ import CompanyLogoWords from "@/../public/images/logo2.svg";
 import React, { useState } from "react";
 import { auth } from '@/lib/firebase/firebaseConfig'; // Path to firebaseConfig.ts
 import { sendPasswordResetEmail } from 'firebase/auth'
+import Link from 'next/link'
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState("");
@@ -44,6 +45,9 @@ export default function ResetPasswordPage() {
               type="email"
               placeholder="Enter your email"
             />
+            <div className={styles.login_return}>
+              <Link href="/">Back to Login</Link>
+            </div>
             <button className={styles.submit} type="submit">Reset Password</button>
           </form>
           {message && <p>{message}</p>}
