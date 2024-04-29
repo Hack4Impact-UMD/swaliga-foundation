@@ -1,12 +1,12 @@
 'use client';
-import userPfp from "@/../public/images/pfpIcon.svg";
-import gradYrIcon from "@/../public/images/gradYrIcon.svg";
-import gradeIcon from "@/../public/images/gradeIcon.svg";
-import genderIcon from "@/../public/images/genderIcon.svg";
-import ethnicityIcon from "@/../public/images/ethnicityIcon.svg";
-import mobileIcon from "@/../public/images/mobileIcon.svg";
-import emailIcon from "@/../public/images/emailIcon.svg";
-import addressIcon from "@/../public/images/addressIcon.svg";
+import userPfp from "@/../public/icons/pfpIcon.svg";
+import gradYrIcon from "@/../public/icons/gradYrIcon.svg";
+import gradeIcon from "@/../public/icons/gradeIcon.svg";
+import genderIcon from "@/../public/icons/genderIcon.svg";
+import ethnicityIcon from "@/../public/icons/ethnicityIcon.svg";
+import mobileIcon from "@/../public/icons/mobileIcon.svg";
+import emailIcon from "@/../public/icons/emailIcon.svg";
+import addressIcon from "@/../public/icons/addressIcon.svg";
 
 import styles from "./StudentInfoPage.module.css";
 import { User } from "@/types/user-types";
