@@ -107,7 +107,8 @@
 
 .completedSurveyButton {
     background-color: #D0D12A;
-    width: 96%
+    width: 96%;
+    margin-bottom: 10px;
 }
 
 .assignedSurveyPanel {
