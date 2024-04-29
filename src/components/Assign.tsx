@@ -99,8 +99,7 @@ export default function Assign({ userIds }: AssignProps) {
             <button className={styles.button} onClick={assignSurveys}>
                 Assign
             </button>
-            <span className={styles.closeIcon}></span>
-            <span className={styles.filterIcon}></span>
+            <span className={styles.closeIcon}/>
         </div>
     );
 }
