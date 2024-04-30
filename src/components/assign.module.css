@@ -1,0 +1,75 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    background: #d9d9d9;
+    padding: 50px 30px 30px 30px;
+    border-radius: 20px;
+    /*width: 15%; */
+    width: 350px;
+    position: relative;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.inputGroup {
+
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.button {
+    width: 105px;
+    margin-top: 20px;
+    padding: 4px 0px;
+    background-color: white;
+    color: black;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.closeIcon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    background-image: url('/images/close-icon.png');
+    background-size: cover;
+}
+
+.centeredOval {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 350px; 
+    height: 30px; 
+    border-radius: 50px; 
+    font-size: 16px; 
+    color: black; 
+    background-color: white;
+    margin-bottom: 10px;
+    position: relative;
+
+}
+.title {
+    margin-bottom: 20px;
+    color: black;
+    font-size: 20px;
+}
+
+.inputCheckbox {
+    transform: scale(1.3); 
+    position: absolute;
+    left: 10px;
+
+
+}
+.inputCheckbox:checked {
+    accent-color: black;
+}
+
+
