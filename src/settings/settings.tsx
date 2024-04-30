@@ -1,109 +1,133 @@
 "use client";
 import { useEffect, useState } from "react";
 import styles from "./settings.module.css";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
-import { db } from "@/lib/firebase/firebaseConfig";
 import { User } from "@/types/user-types";
 import { getAuth } from "firebase/auth";
 import Image from "next/image";
 import Link from "next/link";
 import { logOut } from "@/lib/firebase/authentication/googleAuthentication";
-import { updateAccount } from "@/lib/firebase/database/users";
+import { getAccountById, updateAccount } from "@/lib/firebase/database/users";
 
 export default function Settings() {
-  const [currUser, setCurrUser] = useState<User>();
-  const [first, setFirstName] = useState<string>("");
-  const [last, setLastName] = useState<string>("");
-  const [newEmail, setEmail] = useState<string>("");
-  const [phoneNumber, setPhone] = useState<number>(0);
-  const [street, setStreet] = useState<string>("");
-  const [city, setCity] = useState<string>("");
-  const [state, setState] = useState<string>("");
-  const [zip, setZip] = useState<number>(0);
-  const [newGradYear, setGradYear] = useState<number>(0);
-  const [yearsSwaliga, setYearsSwaliga] = useState<number>(0);
-  const [disabled, isDisabled] = useState(true);
-  const [fGuardianFirst, setFGuardianFirst] = useState<string>("");
-  const [fGuardianLast, setFGuardianLast] = useState<string>("");
-  const [fGuardianEmail, setFGuardianEmail] = useState<string>("");
-  const [fGuardianPhone, setFGuardianPhone] = useState<number>(0);
-  const [fGuardianStreet, setFGuardianStreet] = useState<string>("");
-  const [fGuardianCity, setFGuardianCity] = useState<string>("");
-  const [fGuardianState, setFGuardianState] = useState<string>("");
-  const [fGuardianZip, setFGuardianZip] = useState<number>(0);
-  const [SGuardianFirst, setSGuardianFirst] = useState<string>("");
-  const [SGuardianLast, setSGuardianLast] = useState<string>("");
-  const [SGuardianEmail, setSGuardianEmail] = useState<string>("");
-  const [SGuardianPhone, setSGuardianPhone] = useState<number>(0);
-  const [SGuardianStreet, setSGuardianStreet] = useState<string>("");
-  const [SGuardianCity, setSGuardianCity] = useState<string>("");
-  const [SGuardianState, setSGuardianState] = useState<string>("");
-  const [SGuardianZip, setSGuardianZip] = useState<number>(0);
-
-  const q = query(collection(db, "users"), where("id", "==", currUser!.id));
-  useEffect(() => {
-    const fetchCurrUser = async (id: string) => {
-      try {
-        const auth = getAuth();
-        const user = auth.currentUser;
-
-        if (!user) {
-          throw new Error("User is not authenticated.");
-        }
-
-        const userRef = doc(db, "users", id);
-        const userDoc = await getDoc(userRef);
-
-        if (userDoc.exists()) {
-          const userData = userDoc.data() as User;
-          setCurrUser(userData);
-          console.log(userData.firstName);
-          setFirstName(userData.firstName);
-          setLastName(userData.lastName);
-          setEmail(userData.email);
-          setPhone(userData.phone);
-          setStreet(userData.address.street);
-          setCity(userData.address.city);
-          setState(userData.address.state);
-          setZip(userData.address.zip);
-          setGradYear(userData.gradYear);
-          setYearsSwaliga(userData.yearsWithSwaliga);
-
-          if (userData.guardian && userData.guardian.length > 0) {
-            setFGuardianFirst(userData.guardian[0]?.firstName || "");
-            setFGuardianLast(userData.guardian[0]?.lastName || "");
-            setFGuardianEmail(userData.guardian[0]?.email || "");
-            setFGuardianPhone(userData.guardian[0]?.phone || 0);
-            setFGuardianStreet(userData.guardian[0]?.address.street || "");
-            setFGuardianCity(userData.guardian[0]?.address.city || "");
-            setFGuardianState(userData.guardian[0]?.address.state || "");
-            setFGuardianZip(userData.guardian[0]?.address.zip || 0);
-
-            setSGuardianFirst(userData.guardian[1]?.firstName || "");
-            setSGuardianLast(userData.guardian[1]?.lastName || "");
-            setSGuardianEmail(userData.guardian[1]?.email || "");
-            setSGuardianPhone(userData.guardian[1]?.phone || 0);
-            setSGuardianStreet(userData.guardian[1]?.address.street || "");
-            setSGuardianCity(userData.guardian[1]?.address.city || "");
-            setSGuardianState(userData.guardian[1]?.address.state || "");
-            setSGuardianZip(userData.guardian[1]?.address.zip || 0);
-          }
-        } else {
-          console.log("User does not exist");
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-    fetchCurrUser(currUser!.id);
+  const [currUser, setCurrUser] = useState<User | null>(null);
+  const [userState, setUserState] = useState<User>({
+    isAdmin: false,
+    firstName: "",
+    lastName: "",
+    middleName: "",
+    address: { street: "", city: "", state: "", zip: 0, country: "" },
+    school: "",
+    birthdate: new Date(),
+    gradYear: 0,
+    email: "",
+    phone: 0,
+    yearsWithSwaliga: 0,
+    ethnicity: "Black or African American",
+    gender: "Male",
+    guardian: [
+      {
+        firstName: "",
+        lastName: "",
+        address: { street: "", city: "", state: "", zip: 0, country: "" },
+        email: "",
+        phone: 0,
+      },
+      {
+        firstName: "",
+        lastName: "",
+        address: { street: "", city: "", state: "", zip: 0, country: "" },
+        email: "",
+        phone: 0,
+      },
+    ],
+    password: "",
+    id: "",
+    assignedSurveys: [],
+    completedResponses: [],
   });
+  const [disabled, isDisabled] = useState(true);
+  /* //User data test
+  const userTest: User = {
+    isAdmin: false,
+    firstName: "Jane",
+    lastName: "Doe",
+    address: {
+      street: "1234 Example Drive",
+      city: "Bethesda",
+      state: "MD",
+      zip: 21114,
+      country: "United States",
+    },
+    school: "",
+    birthdate: new Date(),
+    gradYear: 2025,
+    email: "janedoe12345@gmail.com",
+    phone: 4435125555,
+    yearsWithSwaliga: 2,
+    ethnicity: "Pacific Islander",
+    gender: "Female",
+    password: "1234abc",
+    id: "0000001",
+    assignedSurveys: [],
+    completedResponses: [],
+    guardian: [
+      {
+        firstName: "Paul",
+        lastName: "Doe",
+        phone: 4436511901,
+        email: "pauldoe123@gmail.com",
+        address: {
+          street: "1234 Example DR",
+          city: "Bethesda",
+          zip: 21145,
+          state: "MD",
+          country: "United States",
+        },
+      },
+      {
+        firstName: "Janice",
+        lastName: "Doe",
+        phone: 4436511921,
+        email: "janicedoe1111@gmail.com",
+        address: {
+          street: "1234 Example DR",
+          city: "Bethesda",
+          zip: 21145,
+          state: "MD",
+          country: "United States",
+        },
+      },
+    ],
+  };
+  */
+
+  useEffect(() => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (user) {
+      fetchCurrUser(user.uid);
+    } else {
+      throw new Error("User not authenticated");
+    }
+    //fetchCurrUser(userTest.id) //uncomment to test
+  }, []);
+
+  const fetchCurrUser = async (id: string) => {
+    try {
+      const userData = await getAccountById(id);
+      setCurrUser(userData);
+      setUserState({
+        ...userData,
+      });
+     
+      // Uncomment to test
+      // setCurrUser(userTest);
+      // setUserState({ ...userTest });
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
 
   function handleLogout() {
     handleHome();
@@ -111,70 +135,14 @@ export default function Settings() {
   }
 
   function handleCancel() {
-    setFirstName(currUser!.firstName);
-    setLastName(currUser!.lastName);
-    setEmail(currUser!.email);
-    setPhone(currUser!.phone);
-    setGradYear(currUser!.gradYear);
-    setStreet(currUser!.address.street);
-    setCity(currUser!.address.city);
-    setState(currUser!.address.state);
-    setZip(currUser!.address.zip);
-
+    setUserState(currUser!);
     isDisabled(true);
   }
 
   async function handleSaveChanges() {
     try {
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        const userData = {
-          firstName: first,
-          lastName: last,
-          email: newEmail,
-          phone: phoneNumber,
-          yearsWithSwaliga: yearsSwaliga,
-          gradYear: newGradYear,
-          address: {
-            street: street,
-            city: city,
-            state: state,
-          },
-          guardian: [
-            {
-              firstName: fGuardianFirst,
-              lastName: fGuardianLast,
-              email: fGuardianEmail,
-              phone: fGuardianPhone,
-              address: {
-                street: fGuardianStreet,
-                city: fGuardianCity,
-                state: fGuardianState,
-                zip: fGuardianZip,
-              },
-            },
-            {
-              firstName: SGuardianFirst,
-              lastName: SGuardianLast,
-              email: SGuardianEmail,
-              phone: SGuardianPhone,
-              address: {
-                street: SGuardianStreet,
-                city: SGuardianCity,
-                state: SGuardianState,
-                zip: SGuardianZip,
-              },
-            },
-          ],
-        };
-
-        const docSnapshot = querySnapshot.docs[0];
-        await updateAccount(docSnapshot.id, userData);
-        console.log("User data updated successfully");
-      } else {
-        console.log("No matching documents found");
-      }
+      await updateAccount(userState.id, userState);
+      console.log("User data updated successfully");
     } catch (error) {
       console.error("Error updating user data:", error);
     }
@@ -192,7 +160,7 @@ export default function Settings() {
             src="/swaliga-website-logo.png"
             alt="swaliga logo"
             id="logo"
-            width="250"
+            width="200"
             height="35"
             className={styles.image}
           />
@@ -222,13 +190,21 @@ export default function Settings() {
               <hr id="hr"></hr>
             </div>
             <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || first}
-                onChange={(event) => setFirstName(event.target.value)}
-                disabled={disabled}
-              />
+              <div className={styles.field}>
+                <p className={styles.fieldName}>First Name</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={userState.firstName}
+                  onChange={(event) =>
+                    setUserState({
+                      ...userState,
+                      firstName: event.target.value,
+                    })
+                  }
+                  disabled={disabled}
+                />
+              </div>
               <button
                 className={styles.editBtn}
                 onClick={() => isDisabled(false)}
@@ -238,13 +214,18 @@ export default function Settings() {
             </div>
 
             <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || last}
-                onChange={(event) => setLastName(event.target.value)}
-                disabled={disabled}
-              />
+              <div className={styles.field}>
+                <p className={styles.fieldName}>Last Name</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={userState.lastName}
+                  onChange={(event) =>
+                    setUserState({ ...userState, lastName: event.target.value })
+                  }
+                  disabled={disabled}
+                />
+              </div>
               <button
                 className={styles.editBtn}
                 onClick={() => isDisabled(false)}
@@ -254,13 +235,18 @@ export default function Settings() {
             </div>
 
             <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || newEmail}
-                onChange={(event) => setEmail(event.target.value)}
-                disabled={disabled}
-              />
+              <div className={styles.field}>
+                <p className={styles.fieldName}>Email</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={userState.email}
+                  onChange={(event) =>
+                    setUserState({ ...userState, email: event.target.value })
+                  }
+                  disabled={disabled}
+                />
+              </div>
               <button
                 className={styles.editBtn}
                 onClick={() => isDisabled(false)}
@@ -270,13 +256,21 @@ export default function Settings() {
             </div>
 
             <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || phoneNumber}
-                onChange={(event) => setPhone(parseInt(event.target.value))}
-                disabled={disabled}
-              />
+              <div className={styles.field}>
+                <p className={styles.fieldName}>Phone Number</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={userState.phone}
+                  onChange={(event) =>
+                    setUserState({
+                      ...userState,
+                      phone: Number(event.target.value),
+                    })
+                  }
+                  disabled={disabled}
+                />
+              </div>
               <button
                 className={styles.editBtn}
                 onClick={() => isDisabled(false)}
@@ -286,13 +280,24 @@ export default function Settings() {
             </div>
 
             <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || street}
-                onChange={(event) => setStreet(event.target.value)}
-                disabled={disabled}
-              />
+              <div className={styles.field}>
+                <p className={styles.fieldName}>Street</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={userState.address.street}
+                  onChange={(event) =>
+                    setUserState({
+                      ...userState,
+                      address: {
+                        ...userState.address,
+                        street: event.target.value,
+                      },
+                    })
+                  }
+                  disabled={disabled}
+                />
+              </div>
               <button
                 className={styles.editBtn}
                 onClick={() => isDisabled(false)}
@@ -302,13 +307,24 @@ export default function Settings() {
             </div>
 
             <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || city}
-                onChange={(event) => setCity(event.target.value)}
-                disabled={disabled}
-              />
+              <div className={styles.field}>
+                <p className={styles.fieldName}>City</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={userState.address.city}
+                  onChange={(event) =>
+                    setUserState({
+                      ...userState,
+                      address: {
+                        ...userState.address,
+                        city: event.target.value,
+                      },
+                    })
+                  }
+                  disabled={disabled}
+                />
+              </div>
               <button
                 className={styles.editBtn}
                 onClick={() => isDisabled(false)}
@@ -318,13 +334,24 @@ export default function Settings() {
             </div>
 
             <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || state}
-                onChange={(event) => setState(event.target.value)}
-                disabled={disabled}
-              />
+              <div className={styles.field}>
+                <p className={styles.fieldName}>State</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={userState.address.state}
+                  onChange={(event) =>
+                    setUserState({
+                      ...userState,
+                      address: {
+                        ...userState.address,
+                        state: event.target.value,
+                      },
+                    })
+                  }
+                  disabled={disabled}
+                />
+              </div>
               <button
                 className={styles.editBtn}
                 onClick={() => isDisabled(false)}
@@ -334,13 +361,24 @@ export default function Settings() {
             </div>
 
             <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || zip}
-                onChange={(event) => setZip(Number(event.target.value))}
-                disabled={disabled}
-              />
+              <div className={styles.field}>
+                <p className={styles.fieldName}>Zipcode</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={userState.address.zip}
+                  onChange={(event) =>
+                    setUserState({
+                      ...userState,
+                      address: {
+                        ...userState.address,
+                        zip: Number(event.target.value),
+                      },
+                    })
+                  }
+                  disabled={disabled}
+                />
+              </div>
               <button
                 className={styles.editBtn}
                 onClick={() => isDisabled(false)}
@@ -350,13 +388,21 @@ export default function Settings() {
             </div>
 
             <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || newGradYear}
-                onChange={(event) => setGradYear(parseInt(event.target.value))}
-                disabled={disabled}
-              />
+              <div className={styles.field}>
+                <p className={styles.fieldName}>Graduation Year</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={userState.gradYear}
+                  onChange={(event) =>
+                    setUserState({
+                      ...userState,
+                      gradYear: Number(event.target.value),
+                    })
+                  }
+                  disabled={disabled}
+                />
+              </div>
               <button
                 className={styles.editBtn}
                 onClick={() => isDisabled(false)}
@@ -366,153 +412,21 @@ export default function Settings() {
             </div>
 
             <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || yearsSwaliga}
-                onChange={(event) =>
-                  setYearsSwaliga(parseInt(event.target.value))
-                }
-                disabled={disabled}
-              />
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
-            </div>
-
-            <div className={styles.headerContainer}>
-              <h2 className={styles.sectionHeader}>
-                Emergency Contact #1 Information
-              </h2>
-              <hr id="hr"></hr>
-            </div>
-            <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || fGuardianFirst}
-                onChange={(event) => setFGuardianFirst(event.target.value)}
-                disabled={disabled}
-              />
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
-            </div>
-
-            <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || fGuardianLast}
-                onChange={(event) => setFGuardianLast(event.target.value)}
-                disabled={disabled}
-              />
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
-            </div>
-
-            <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || fGuardianEmail}
-                onChange={(event) => setFGuardianEmail(event.target.value)}
-                disabled={disabled}
-              />
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
-            </div>
-
-            <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || fGuardianPhone}
-                onChange={(event) =>
-                  setFGuardianPhone(parseInt(event.target.value))
-                }
-                disabled={disabled}
-              />
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
-            </div>
-
-            <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || fGuardianStreet}
-                onChange={(event) => setFGuardianStreet(event.target.value)}
-                disabled={disabled}
-              />
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
-            </div>
-
-            <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || fGuardianCity}
-                onChange={(event) => setFGuardianCity(event.target.value)}
-                disabled={disabled}
-              />
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
-            </div>
-
-            <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || fGuardianState}
-                onChange={(event) => setFGuardianState(event.target.value)}
-                disabled={disabled}
-              />
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
-            </div>
-
-            <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || fGuardianZip}
-                onChange={(event) =>
-                  setFGuardianZip(parseInt(event.target.value))
-                }
-                disabled={disabled}
-              />
+              <div className={styles.field}>
+                <p className={styles.fieldName}># of Years in Swaliga</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={userState.yearsWithSwaliga}
+                  onChange={(event) =>
+                    setUserState({
+                      ...userState,
+                      yearsWithSwaliga: Number(event.target.value),
+                    })
+                  }
+                  disabled={disabled}
+                />
+              </div>
               <button
                 className={styles.editBtn}
                 onClick={() => isDisabled(false)}
@@ -528,13 +442,30 @@ export default function Settings() {
               <hr id="hr"></hr>
             </div>
             <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || SGuardianFirst}
-                onChange={(event) => setSGuardianFirst(event.target.value)}
-                disabled={disabled}
-              />
+              <div className={styles.field}>
+                <p className={styles.fieldName}>First Name</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={
+                    userState.guardian ? userState.guardian[0]?.firstName : ""
+                  }
+                  onChange={(event) => {
+                    const updatedGuardian = userState.guardian
+                      ? [...userState.guardian]
+                      : [];
+                    updatedGuardian[0] = {
+                      ...updatedGuardian[0],
+                      firstName: event.target.value,
+                    };
+                    setUserState({
+                      ...userState,
+                      guardian: updatedGuardian,
+                    });
+                  }}
+                  disabled={disabled}
+                />
+              </div>
               <button
                 className={styles.editBtn}
                 onClick={() => isDisabled(false)}
@@ -544,13 +475,30 @@ export default function Settings() {
             </div>
 
             <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || SGuardianLast}
-                onChange={(event) => setSGuardianLast(event.target.value)}
-                disabled={disabled}
-              />
+              <div className={styles.field}>
+                <p className={styles.fieldName}>Last Name</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={
+                    userState.guardian ? userState.guardian[0]?.lastName : ""
+                  }
+                  onChange={(event) => {
+                    const updatedGuardian = userState.guardian
+                      ? [...userState.guardian]
+                      : [];
+                    updatedGuardian[0] = {
+                      ...updatedGuardian[0],
+                      lastName: event.target.value,
+                    };
+                    setUserState({
+                      ...userState,
+                      guardian: updatedGuardian,
+                    });
+                  }}
+                  disabled={disabled}
+                />
+              </div>
               <button
                 className={styles.editBtn}
                 onClick={() => isDisabled(false)}
@@ -560,13 +508,28 @@ export default function Settings() {
             </div>
 
             <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || SGuardianEmail}
-                onChange={(event) => setSGuardianEmail(event.target.value)}
-                disabled={disabled}
-              />
+              <div className={styles.field}>
+                <p className={styles.fieldName}>Email</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={userState.guardian ? userState.guardian[0]?.email : ""}
+                  onChange={(event) => {
+                    const updatedGuardian = userState.guardian
+                      ? [...userState.guardian]
+                      : [];
+                    updatedGuardian[0] = {
+                      ...updatedGuardian[0],
+                      email: event.target.value,
+                    };
+                    setUserState({
+                      ...userState,
+                      guardian: updatedGuardian,
+                    });
+                  }}
+                  disabled={disabled}
+                />
+              </div>
               <button
                 className={styles.editBtn}
                 onClick={() => isDisabled(false)}
@@ -576,15 +539,28 @@ export default function Settings() {
             </div>
 
             <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || SGuardianPhone}
-                onChange={(event) =>
-                  setSGuardianPhone(parseInt(event.target.value))
-                }
-                disabled={disabled}
-              />
+              <div className={styles.field}>
+                <p className={styles.fieldName}>Phone Number</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={userState.guardian ? userState.guardian[0]?.phone : ""}
+                  onChange={(event) => {
+                    const updatedGuardian = userState.guardian
+                      ? [...userState.guardian]
+                      : [];
+                    updatedGuardian[0] = {
+                      ...updatedGuardian[0],
+                      phone: Number(event.target.value),
+                    };
+                    setUserState({
+                      ...userState,
+                      guardian: updatedGuardian,
+                    });
+                  }}
+                  disabled={disabled}
+                />
+              </div>
               <button
                 className={styles.editBtn}
                 onClick={() => isDisabled(false)}
@@ -594,13 +570,35 @@ export default function Settings() {
             </div>
 
             <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || SGuardianStreet}
-                onChange={(event) => setSGuardianStreet(event.target.value)}
-                disabled={disabled}
-              />
+              <div className={styles.field}>
+                <p className={styles.fieldName}>Street</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={
+                    userState.guardian
+                      ? userState.guardian[0]?.address.street
+                      : ""
+                  }
+                  onChange={(event) => {
+                    const updatedGuardian = userState.guardian
+                      ? [...userState.guardian]
+                      : [];
+                    updatedGuardian[0] = {
+                      ...updatedGuardian[0],
+                      address: {
+                        ...updatedGuardian[0]?.address,
+                        street: event.target.value,
+                      },
+                    };
+                    setUserState({
+                      ...userState,
+                      guardian: updatedGuardian,
+                    });
+                  }}
+                  disabled={disabled}
+                />
+              </div>
               <button
                 className={styles.editBtn}
                 onClick={() => isDisabled(false)}
@@ -610,13 +608,35 @@ export default function Settings() {
             </div>
 
             <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || SGuardianCity}
-                onChange={(event) => setSGuardianCity(event.target.value)}
-                disabled={disabled}
-              />
+              <div className={styles.field}>
+                <p className={styles.fieldName}>City</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={
+                    userState.guardian
+                      ? userState.guardian[0]?.address.city
+                      : ""
+                  }
+                  onChange={(event) => {
+                    const updatedGuardian = userState.guardian
+                      ? [...userState.guardian]
+                      : [];
+                    updatedGuardian[0] = {
+                      ...updatedGuardian[0],
+                      address: {
+                        ...updatedGuardian[0]?.address,
+                        city: event.target.value,
+                      },
+                    };
+                    setUserState({
+                      ...userState,
+                      guardian: updatedGuardian,
+                    });
+                  }}
+                  disabled={disabled}
+                />
+              </div>
               <button
                 className={styles.editBtn}
                 onClick={() => isDisabled(false)}
@@ -626,13 +646,35 @@ export default function Settings() {
             </div>
 
             <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || SGuardianState}
-                onChange={(event) => setSGuardianState(event.target.value)}
-                disabled={disabled}
-              />
+              <div className={styles.field}>
+                <p className={styles.fieldName}>State</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={
+                    userState.guardian
+                      ? userState.guardian[0]?.address.state
+                      : ""
+                  }
+                  onChange={(event) => {
+                    const updatedGuardian = userState.guardian
+                      ? [...userState.guardian]
+                      : [];
+                    updatedGuardian[0] = {
+                      ...updatedGuardian[0],
+                      address: {
+                        ...updatedGuardian[0]?.address,
+                        state: event.target.value,
+                      },
+                    };
+                    setUserState({
+                      ...userState,
+                      guardian: updatedGuardian,
+                    });
+                  }}
+                  disabled={disabled}
+                />
+              </div>
               <button
                 className={styles.editBtn}
                 onClick={() => isDisabled(false)}
@@ -642,15 +684,317 @@ export default function Settings() {
             </div>
 
             <div className={styles.settingField}>
-              <input
-                type="text"
-                className={styles.inputContainer}
-                value={"" || SGuardianZip}
-                onChange={(event) =>
-                  setSGuardianZip(parseInt(event.target.value))
-                }
-                disabled={disabled}
-              />
+              <div className={styles.field}>
+                <p className={styles.fieldName}>Zip</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={
+                    userState.guardian ? userState.guardian[0]?.address.zip : ""
+                  }
+                  onChange={(event) => {
+                    const updatedGuardian = userState.guardian
+                      ? [...userState.guardian]
+                      : [];
+                    updatedGuardian[0] = {
+                      ...updatedGuardian[0],
+                      address: {
+                        ...updatedGuardian[0]?.address,
+                        zip: Number(event.target.value),
+                      },
+                    };
+                    setUserState({
+                      ...userState,
+                      guardian: updatedGuardian,
+                    });
+                  }}
+                  disabled={disabled}
+                />
+              </div>
+              <button
+                className={styles.editBtn}
+                onClick={() => isDisabled(false)}
+              >
+                Edit
+              </button>
+            </div>
+
+            <div className={styles.headerContainer}>
+              <h2 className={styles.sectionHeader}>
+                Emergency Contact #2 Information
+              </h2>
+              <hr id="hr"></hr>
+            </div>
+            <div className={styles.settingField}>
+              <div className={styles.field}>
+                <p className={styles.fieldName}>First Name</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={
+                    userState.guardian ? userState.guardian[1]?.firstName : ""
+                  }
+                  onChange={(event) => {
+                    const updatedGuardian = userState.guardian
+                      ? [...userState.guardian]
+                      : [];
+                    updatedGuardian[1] = {
+                      ...updatedGuardian[1],
+                      firstName: event.target.value,
+                    };
+                    setUserState({
+                      ...userState,
+                      guardian: updatedGuardian,
+                    });
+                  }}
+                  disabled={disabled}
+                />
+              </div>
+              <button
+                className={styles.editBtn}
+                onClick={() => isDisabled(false)}
+              >
+                Edit
+              </button>
+            </div>
+
+            <div className={styles.settingField}>
+              <div className={styles.field}>
+                <p className={styles.fieldName}>Last Name</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={
+                    userState.guardian ? userState.guardian[1]?.lastName : ""
+                  }
+                  onChange={(event) => {
+                    const updatedGuardian = userState.guardian
+                      ? [...userState.guardian]
+                      : [];
+                    updatedGuardian[1] = {
+                      ...updatedGuardian[1],
+                      lastName: event.target.value,
+                    };
+                    setUserState({
+                      ...userState,
+                      guardian: updatedGuardian,
+                    });
+                  }}
+                  disabled={disabled}
+                />
+              </div>
+              <button
+                className={styles.editBtn}
+                onClick={() => isDisabled(false)}
+              >
+                Edit
+              </button>
+            </div>
+
+            <div className={styles.settingField}>
+              <div className={styles.field}>
+                <p className={styles.fieldName}>Email</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={userState.guardian ? userState.guardian[1]?.email : ""}
+                  onChange={(event) => {
+                    const updatedGuardian = userState.guardian
+                      ? [...userState.guardian]
+                      : [];
+                    updatedGuardian[1] = {
+                      ...updatedGuardian[1],
+                      email: event.target.value,
+                    };
+                    setUserState({
+                      ...userState,
+                      guardian: updatedGuardian,
+                    });
+                  }}
+                  disabled={disabled}
+                />
+              </div>
+              <button
+                className={styles.editBtn}
+                onClick={() => isDisabled(false)}
+              >
+                Edit
+              </button>
+            </div>
+
+            <div className={styles.settingField}>
+              <div className={styles.field}>
+                <p className={styles.fieldName}>Phone Number</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={userState.guardian ? userState.guardian[1]?.phone : ""}
+                  onChange={(event) => {
+                    const updatedGuardian = userState.guardian
+                      ? [...userState.guardian]
+                      : [];
+                    updatedGuardian[1] = {
+                      ...updatedGuardian[1],
+                      phone: Number(event.target.value),
+                    };
+                    setUserState({
+                      ...userState,
+                      guardian: updatedGuardian,
+                    });
+                  }}
+                  disabled={disabled}
+                />
+              </div>
+              <button
+                className={styles.editBtn}
+                onClick={() => isDisabled(false)}
+              >
+                Edit
+              </button>
+            </div>
+
+            <div className={styles.settingField}>
+              <div className={styles.field}>
+                <p className={styles.fieldName}>Street</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={
+                    userState.guardian
+                      ? userState.guardian[1]?.address.street
+                      : ""
+                  }
+                  onChange={(event) => {
+                    const updatedGuardian = userState.guardian
+                      ? [...userState.guardian]
+                      : [];
+                    updatedGuardian[1] = {
+                      ...updatedGuardian[1],
+                      address: {
+                        ...updatedGuardian[1]?.address,
+                        street: event.target.value,
+                      },
+                    };
+                    setUserState({
+                      ...userState,
+                      guardian: updatedGuardian,
+                    });
+                  }}
+                  disabled={disabled}
+                />
+              </div>
+              <button
+                className={styles.editBtn}
+                onClick={() => isDisabled(false)}
+              >
+                Edit
+              </button>
+            </div>
+
+            <div className={styles.settingField}>
+              <div className={styles.field}>
+                <p className={styles.fieldName}>City</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={
+                    userState.guardian
+                      ? userState.guardian[1]?.address.city
+                      : ""
+                  }
+                  onChange={(event) => {
+                    const updatedGuardian = userState.guardian
+                      ? [...userState.guardian]
+                      : [];
+                    updatedGuardian[1] = {
+                      ...updatedGuardian[1],
+                      address: {
+                        ...updatedGuardian[1]?.address,
+                        city: event.target.value,
+                      },
+                    };
+                    setUserState({
+                      ...userState,
+                      guardian: updatedGuardian,
+                    });
+                  }}
+                  disabled={disabled}
+                />
+              </div>
+              <button
+                className={styles.editBtn}
+                onClick={() => isDisabled(false)}
+              >
+                Edit
+              </button>
+            </div>
+
+            <div className={styles.settingField}>
+              <div className={styles.field}>
+                <p className={styles.fieldName}>State</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={
+                    userState.guardian
+                      ? userState.guardian[1]?.address.state
+                      : ""
+                  }
+                  onChange={(event) => {
+                    const updatedGuardian = userState.guardian
+                      ? [...userState.guardian]
+                      : [];
+                    updatedGuardian[1] = {
+                      ...updatedGuardian[1],
+                      address: {
+                        ...updatedGuardian[1]?.address,
+                        state: event.target.value,
+                      },
+                    };
+                    setUserState({
+                      ...userState,
+                      guardian: updatedGuardian,
+                    });
+                  }}
+                  disabled={disabled}
+                />
+              </div>
+              <button
+                className={styles.editBtn}
+                onClick={() => isDisabled(false)}
+              >
+                Edit
+              </button>
+            </div>
+
+            <div className={styles.settingField}>
+              <div className={styles.field}>
+                <p className={styles.fieldName}>Zipcode</p>
+                <input
+                  type="text"
+                  className={styles.inputContainer}
+                  value={
+                    userState.guardian ? userState.guardian[1]?.address.zip : ""
+                  }
+                  onChange={(event) => {
+                    const updatedGuardian = userState.guardian
+                      ? [...userState.guardian]
+                      : [];
+                    updatedGuardian[1] = {
+                      ...updatedGuardian[1],
+                      address: {
+                        ...updatedGuardian[1]?.address,
+                        zip: Number(event.target.value),
+                      },
+                    };
+                    setUserState({
+                      ...userState,
+                      guardian: updatedGuardian,
+                    });
+                  }}
+                  disabled={disabled}
+                />
+              </div>
               <button
                 className={styles.editBtn}
                 onClick={() => isDisabled(false)}

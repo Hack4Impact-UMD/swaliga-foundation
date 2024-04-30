@@ -57,7 +57,7 @@
 }
 
 .headerContainer {
-  width: 610px;
+  width: 675px;
 }
 
 #hr {
@@ -89,10 +89,23 @@
   display: flex;
   justify-content: space-between;
   width: 80%;
+
+}
+
+.field {
+  display: flex;
+  width: 80%;
+  justify-content: space-between;
+}
+
+.fieldName {
+  color: white;
+  height: 100%;
+  margin: 0;
+  margin-right: 20px;
 }
 
 .inputContainer {
-  background-color: transparent;
   border-top-style: none;
   border-left-style: none;
   border-right-style: none;
@@ -102,6 +115,7 @@
   color: white;
   font-size: 20px;
   width: 70%;
+  background-color: transparent;
 }
 
 .inputContainer:focus {
