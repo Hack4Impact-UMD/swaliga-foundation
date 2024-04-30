@@ -68,3 +68,6 @@
     border: none;
 }
 
+.inputField:focus {
+    outline: none;
+}
