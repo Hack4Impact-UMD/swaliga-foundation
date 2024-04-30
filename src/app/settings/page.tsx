@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import styles from "./settings.module.css";
+import styles from "./Settings.module.css";
 import { User } from "@/types/user-types";
 import { getAuth } from "firebase/auth";
 import Image from "next/image";
