@@ -1,0 +1,120 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    background: #d9d9d9;
+    padding: 50px 30px 30px 30px;
+    border-radius: 10px;
+    width: 15%;
+    max-width: 350px;
+    position: relative;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.inputGroup {
+
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.inputCheckbox {
+    margin-right: 10px;
+    vertical-align: middle;
+
+    /* Double-sized Checkboxes */
+    -ms-transform: scale(1.275); /* IE */
+    -moz-transform: scale(1.275); /* FF */
+    -webkit-transform: scale(1.275); /* Safari and Chrome */
+    -o-transform: scale(1.275); /* Opera */
+    transform: scale(1.275);
+    padding: 10px;
+
+    /* Hide native checkbox */
+    /* Add if not using autoprefixer */
+    -webkit-appearance: none;
+    appearance: none;
+    /* For iOS < 15 to remove gradient background */
+    background-color: #d9d9d9;
+
+    font: inherit;
+    color: currentColor;
+    width: 1.15em;
+    height: 1.15em;
+    border: 0.15em solid currentColor;
+    border-radius: 0.15em;
+    transform: translateY(-0.075em);
+
+    display: grid;
+    place-content: center;
+}
+
+.inputCheckbox::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em #35627a;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+    background-color: CanvasText;
+}
+
+.inputCheckbox:checked::before {
+    transform: scale(1);
+}
+
+.inputCheckbox:hover {
+    outline: max(2px, 0.15em) solid #35627a;
+    outline-offset: max(2px, 0.15em);
+}
+
+.inputField {
+    flex-grow: 1;
+    padding: 5px 10px;
+    border: 3px solid #35627a;
+    border-radius: 15px;
+    font-size: 16px;
+    color: #35627a;
+}
+
+
+.inputField::placeholder {
+    color: #35627a;
+    opacity: 1;
+}
+
+.button {
+    width: 150px;
+    margin-top: 120px;
+    padding: 10px 20px;
+    background-color: #35627a;
+    color: #d9d9d9;
+    font-weight: bold;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.closeIcon {
+    position: absolute;
+    background-image: url('/images/close-icon.png');
+    background-size: cover;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.filterIcon {
+    position: absolute;
+    background-image: url('/images/filter-icon.png');
+    background-size: cover;
+    top: 10px;
+    left: 10px;
+    width: 24px;
+    height: 24px;
+}

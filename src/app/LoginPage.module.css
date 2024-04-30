@@ -60,12 +60,23 @@
     font-size: 2.5em;
 }
 
-.login_input {
+.login_field_container {
     width: 80%;
     margin-bottom: 20px;
-    padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    background-color: white;
+}
+
+.login_field {
+    margin: 5px;
+    width: 90%;
+    height: 25px;
+    border: none;
+}
+
+.login_field:focus {
+    outline: none;
 }
 
 .login_button {
