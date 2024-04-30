@@ -155,8 +155,8 @@ export default function StudentInfoPage({ params }: { params: { userId: string }
                 <div className={styles.surveysStatus}>
                     <p className={styles.surveyTitle}>Surveys</p>
                     <div className={`${styles.surveysList} ${styles.regular}`} id="list">
-                        {responses?.map((currRes: string, key) => returnSurvey(currRes, true))}
-                        {surveys?.map((currSurvey: Survey, key) => returnSurvey(currSurvey?.info?.title, false, currSurvey.responderUri))}
+                        {responses?.map((currRes: string) => returnSurvey(currRes, true))}
+                        {surveys?.map((currSurvey: Survey) => returnSurvey(currSurvey.info.title, false, currSurvey.responderUri))}
                     </div>
                 </div>
             </div>                
