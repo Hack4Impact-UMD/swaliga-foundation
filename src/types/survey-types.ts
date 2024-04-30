@@ -12,6 +12,7 @@ export interface GoogleForm {
 
 export interface Survey extends GoogleForm {
   assignedUsers: string[];
+  responseIds: string[];
   schemaWatch: Watch;
   responsesWatch: Watch;
 }
@@ -28,6 +29,7 @@ export interface GoogleFormResponse {
 
 export interface Response extends GoogleFormResponse {
   userId: string;
+  formTitle: string;
 }
 
 // Info and settings
