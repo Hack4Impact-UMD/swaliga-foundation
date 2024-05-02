@@ -10,3 +10,18 @@ html, body, #app, #app>div {
     font-family: 'Poppins-Medium';
     src: url('../lib/fonts/Poppins/Poppins-Medium.ttf');
 }
+
+@font-face {
+    font-family: 'Poppins-Regular';
+    src: url('../lib/fonts/Poppins/Poppins-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins-SemiBold';
+    src: url('../lib/fonts/Poppins/Poppins-SemiBold.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins-Thin';
+    src: url('../lib/fonts/Poppins/Poppins-Thin.ttf');
+}

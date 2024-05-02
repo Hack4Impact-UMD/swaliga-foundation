@@ -10,9 +10,10 @@
   },
   "dependencies": {
     "-": "^0.0.1",
-    "@fortawesome/fontawesome-free": "^6.5.2",
     "@google-cloud/pubsub": "^4.3.3",
     "@googleapis/forms": "^2.0.5",
+    "@headlessui/react": "^1.7.18",
+    "@types/nodemailer": "^6.4.14",
     "canvas": "^2.11.2",
     "firebase": "^10.8.1",
     "fs": "^0.0.1-security",
