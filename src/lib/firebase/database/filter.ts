@@ -1,6 +1,6 @@
 import { db } from "../firebaseConfig";
 import { collection, query as fsQuery, where, getDocs } from 'firebase/firestore';
-import { User } from '@/types/User';
+import { User } from "@/types/user-types";
 import { NextRequest, NextResponse } from 'next/server';
 
 // GET all users with filters
