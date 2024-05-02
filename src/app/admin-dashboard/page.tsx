@@ -4,10 +4,12 @@ import styles from "./AdminDashboardPage.module.css";
 import { FaSearch, FaTimes, FaFilter } from 'react-icons/fa'; 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { useRouter } from 'next/navigation';
+import { db } from '../../lib/firebase/firebaseConfig';
+import { collection, getDocs } from 'firebase/firestore';
 
 export default function DashboardPage() {
     type Student = {
-        id: number;
+        id: string;
         name: string;
         birthdate: string;
         hometown: string;
@@ -17,7 +19,7 @@ export default function DashboardPage() {
 
     const [isAllSelected, setIsAllSelected] = useState(false);
     // Sample student data
-    const [students, setStudents] = useState([
+    /*const [students, setStudents] = useState([
         { name: "Jake", id: 1, birthdate: "01-01-2000", hometown: "Ashburn", email: "johndoe@gmail.com", checked: false  },
         { name: "Jane Doe", id: 2, birthdate: "02-02-2001", hometown: "Fairfax", email: "janedoe@gmail.com", checked: false  },
         { name: "Liz Smith", id: 3, birthdate: "03-03-2003", hometown: "Sterling", email: "bobsmith@gmail.com", checked: false  },
@@ -121,15 +123,38 @@ export default function DashboardPage() {
         { name: "John Doe", id: 101, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
         { name: "John Doe", id: 102, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
     ]);
+    */
 
+    const [students, setStudents] = useState<Student[]>([]);
     const [currentStudents, setCurrentStudents] = useState<Student[]>([]);
     const [currentPage, setCurrentPage] = useState(0);
     const studentsPerPage = 50;
     const totalPages = Math.ceil(students.length / studentsPerPage);
 
     useEffect(() => {
-        setCurrentPage(0); // Reset to the first page on students data change
-    }, [students]);
+        const fetchStudents = async () => {
+            const studentRefs = collection(db, 'users');
+            const querySnapshot = await getDocs(studentRefs);
+            const students: Student[] = querySnapshot.docs.map((doc) => {
+                const data = doc.data();
+                const name = data.middleName ? 
+                    `${data.firstName} ${data.middleName} ${data.lastName}` : 
+                    `${data.firstName} ${data.lastName}`;
+                const student: Student = {
+                    id: doc.id,
+                    name,
+                    birthdate: data.bday,
+                    hometown: data.city,
+                    email: data.email,
+                    checked: false,
+                };
+                return student;
+            });
+            setStudents(students);
+        };
+    
+        fetchStudents();
+    }, []);
 
     useEffect(() => {
         const indexOfLastStudent = (currentPage + 1) * studentsPerPage;
@@ -143,13 +168,14 @@ export default function DashboardPage() {
         setStudents(students.map(student => ({ ...student, checked })));
     };
 
-    const handleStudentCheck = (id: number) => {
+    const handleStudentCheck = (id: string) => {
         setStudents(
             students.map(student =>
                 student.id === id ? { ...student, checked: !student.checked } : student
             )
         );
     };
+    
 
     const handleNextPage = useCallback(() => {
         setCurrentPage((prevCurrentPage) => Math.min(prevCurrentPage + 1, totalPages - 1));
