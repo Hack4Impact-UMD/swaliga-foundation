@@ -10,6 +10,7 @@ export default function CreateAccountPage() {
   const [dims, setDims] = useState<Dims>({ width: 0, height: 0 });
   const [polygons, setPolygons] = useState<Polygon[]>([]);
   const [polygonOverlay, setPolygonOverlay] = useState<Polygon[]>([]);
+  const [formError, setFormError] = useState("");
 
   const updateDims = useCallback(() => {
     setDims({ width: window.innerWidth, height: window.innerHeight });
@@ -193,7 +194,6 @@ export default function CreateAccountPage() {
     firstName: string;
     middleName: string;
     lastName: string;
-    name: string;
     email: string;
     bday: string;
     phoneNumber: string;
@@ -232,7 +232,6 @@ export default function CreateAccountPage() {
     firstName: "",
     middleName: "",
     lastName: "",
-    name: "",
     email: "",
     bday: "",
     phoneNumber: "",
@@ -300,6 +299,31 @@ export default function CreateAccountPage() {
       },
     }));
   };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log("Submitting:", accountInfo); 
+    try {
+      console.log("Entered the try block");
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(accountInfo),
+      });
+      const data = await response.json();
+      console.log("Response:", data); 
+      if (response.ok) {
+        console.log("Account created successfully:", data);
+      } else {
+        throw new Error(data.error || `Failed to create account. Status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Error during account creation:", error);
+      setFormError("Unexpected error");
+    }
+};
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -476,7 +500,7 @@ export default function CreateAccountPage() {
         <div className={styles.createAccountContainer}>
           <h2 className={styles.createAccountTitle}>Create Account</h2>
         </div>
-        <form className={styles.accountForm}>
+        <form className={styles.accountForm} onSubmit={handleSubmit}>
           {/* Fields for Name on School Record */}
           <div className={styles.formGroupRow}>
             <div className={styles.formGroup}>
@@ -1064,6 +1088,7 @@ export default function CreateAccountPage() {
             Submit
           </button>
         </form>
+        {formError && <p className={styles.errorText}>{formError}</p>}
       </div>
       <button className={styles.backToLoginButton}>Back to Login</button>
     </div>

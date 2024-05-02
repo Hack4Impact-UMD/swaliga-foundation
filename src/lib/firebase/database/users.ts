@@ -1,5 +1,5 @@
 import { User } from "@/types/user-types";
-import { doc, setDoc, getDoc, updateDoc, deleteDoc, collectionGroup, getDocs, UpdateData } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc, deleteDoc, collectionGroup, getDocs, UpdateData, collection, addDoc} from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
 export async function getAccountById(id: string): Promise<User> {
@@ -19,11 +19,25 @@ export async function getAccountById(id: string): Promise<User> {
   }
 }
 
-export async function createAccount(user: User): Promise<void> {
+/*export async function createAccount(user: User): Promise<void> {
   try {
+    console.log("Attempting to create account: ", user);
+    console.log("User ID:", user.id);
     const usersCollectionRef = doc(db, "users", user.id);
     await setDoc(usersCollectionRef, user);
     console.log("Account created successfully");
+  } catch (error) {
+    console.error("Error creating account:", error);
+    throw error;
+  }
+}
+*/
+export async function createAccount(user: User): Promise<void> {
+  try {
+    console.log("Attempting to create account: ", user);
+    const usersCollectionRef = collection(db, "users");
+    const docRef = await addDoc(usersCollectionRef, user);
+    console.log("Account created successfully with ID: ", docRef.id);
   } catch (error) {
     console.error("Error creating account:", error);
     throw error;
