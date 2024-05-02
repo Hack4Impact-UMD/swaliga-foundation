@@ -4,7 +4,7 @@ export interface Watch {
   eventType: EventType;
   createTime: string;
   expireTime: string;
-  errorType: ErrorType;
+  errorType?: ErrorType;
   state: State;
 }
 
