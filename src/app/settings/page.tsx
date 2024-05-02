@@ -105,11 +105,11 @@ export default function Settings() {
     const auth = getAuth();
     const user = auth.currentUser;
 
-    if (user) {
-      fetchCurrUser(user.uid);
-    } else {
-      throw new Error("User not authenticated");
-    }
+    //if (user) {
+      fetchCurrUser("11111111112");
+    //} else {
+    //  throw new Error("User not authenticated");
+    //}
     //fetchCurrUser(userTest.id) //uncomment to test
   }, []);
 
@@ -205,12 +205,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -226,12 +220,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -247,12 +235,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -271,12 +253,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -298,12 +274,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -325,12 +295,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -352,12 +316,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -379,12 +337,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -403,12 +355,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -427,12 +373,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.headerContainer}>
@@ -466,12 +406,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -499,12 +433,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -530,12 +458,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -561,12 +483,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -599,12 +515,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -637,12 +547,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -675,12 +579,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -711,12 +609,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.headerContainer}>
@@ -750,12 +642,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -783,12 +669,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -814,12 +694,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -845,12 +719,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -883,12 +751,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -921,12 +783,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -959,12 +815,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
 
             <div className={styles.settingField}>
@@ -995,12 +845,6 @@ export default function Settings() {
                   disabled={disabled}
                 />
               </div>
-              <button
-                className={styles.editBtn}
-                onClick={() => isDisabled(false)}
-              >
-                Edit
-              </button>
             </div>
           </div>
 
