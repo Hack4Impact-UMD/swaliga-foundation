@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import styles from "./SurveyInfo.module.css";
+import styles from "./AdminSurveysPage.module.css";
 import { useEffect, useState } from "react";
 import { Survey } from "@/types/survey-types";
 
