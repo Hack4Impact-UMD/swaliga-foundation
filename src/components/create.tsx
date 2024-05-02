@@ -3,7 +3,9 @@
 import React, { useState } from 'react';
 import styles from './Create.module.css';
 
-export default function Create() {
+export default function Create(props: { closeCreateHandler: () => void }) {
+    const { closeCreateHandler } = props
+  
     const [surveyTitle, setSurveyTitle] = useState("");
 
     const createSurvey = async () => {
@@ -43,7 +45,7 @@ export default function Create() {
         <button className={styles.button} onClick={createSurvey}>
           Create
         </button>
-        <span className={styles.closeIcon}/>
+        <span className={styles.closeIcon} onClick={closeCreateHandler} />
       </div>
     );
 }

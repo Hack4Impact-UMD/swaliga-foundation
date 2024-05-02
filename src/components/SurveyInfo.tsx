@@ -27,26 +27,23 @@ export default function SurveyInfo(): JSX.Element {
             <p className={styles.survey}>Fetching Data!</p>
           </div>
         ) : (
-          surveyList.map((singleSurvey, i) => {
-            console.log(singleSurvey);
-            return (
-              <div key={i} className={styles.box}>
-                <Link
-                  href={singleSurvey.responderUri}
-                  target="_blank"
-                  className={styles.view}
-                >
-                  View
-                </Link>
-                <p className={styles.survey}>
-                  {singleSurvey.info && singleSurvey.info.title}
-                </p>
-                <button className={styles.export}>Export</button>
-              </div>
-            );
-          })
+          surveyList.map((singleSurvey, i) => (
+            <div key={i} className={styles.box}>
+              <Link
+                href={singleSurvey.responderUri}
+                target="_blank"
+                className={styles.view}
+              >
+                View
+              </Link>
+              <p className={styles.survey}>
+                {singleSurvey.info && singleSurvey.info.title}
+              </p>
+              <button className={styles.export}>Export</button>
+            </div>
+          ))
         )}
-
+        ;
         <div className={styles.btnContainer}>
           <button
             className={styles.createSurvey}
@@ -55,7 +52,7 @@ export default function SurveyInfo(): JSX.Element {
             Create Survey +
           </button>
         </div>
-        {isCreateSurveyOpen && <Create />}
+        {isCreateSurveyOpen && <Create closeCreateHandler={() => setIsCreateSurveyOpen(false)}/>}
       </div>
     </div>
   );
