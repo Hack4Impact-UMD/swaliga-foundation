@@ -9,39 +9,133 @@ export default function DashboardPage() {
     type Student = {
         id: number;
         name: string;
+        birthdate: string;
+        hometown: string;
+        email: string;
         checked: boolean;
     };
+
     const [isAllSelected, setIsAllSelected] = useState(false);
     // Sample student data
     const [students, setStudents] = useState([
-        { name: "John Doe", id: 100101, birthdate: "01-01-2000", hometown: "Ashburn", email: "johndoe@gmail.com", checked: false  },
-        { name: "Jane Doe", id: 200102, birthdate: "02-02-2001", hometown: "Fairfax", email: "janedoe@gmail.com", checked: false  },
-        { name: "Liz Smith", id: 301103, birthdate: "03-03-2003", hometown: "Sterling", email: "bobsmith@gmail.com", checked: false  },
-        { name: "Gwen Smith", id: 411104, birthdate: "04-04-2004", hometown: "Reston", email: "miasmith@gmail.com", checked: false  },
-        { name: "John Doe", id: 510115, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 510111, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 510112, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 510113, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 510114, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 510116, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 510117, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 5101177, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 510119, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 510110, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 5101178, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 51011996, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 511134, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 5101186, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 5101199, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 5101167, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 5101190, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 51011444, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 51011000, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 510118884, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 5101185885, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 5101199595, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
-        { name: "John Doe", id: 51011569669, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "Jake", id: 1, birthdate: "01-01-2000", hometown: "Ashburn", email: "johndoe@gmail.com", checked: false  },
+        { name: "Jane Doe", id: 2, birthdate: "02-02-2001", hometown: "Fairfax", email: "janedoe@gmail.com", checked: false  },
+        { name: "Liz Smith", id: 3, birthdate: "03-03-2003", hometown: "Sterling", email: "bobsmith@gmail.com", checked: false  },
+        { name: "Gwen Smith", id: 4, birthdate: "04-04-2004", hometown: "Reston", email: "miasmith@gmail.com", checked: false  },
+        { name: "John Doe", id: 5, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 6, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 7, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 8, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 9, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 10, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 11, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 12, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 13, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 14, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 15, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 16, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 17, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 18, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 19, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 20, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 21, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 22, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 23, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 24, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 25, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 26, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 27, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 28, birthdate: "01-01-2000", hometown: "Ashburn", email: "johndoe@gmail.com", checked: false  },
+        { name: "Jane Doe", id: 29, birthdate: "02-02-2001", hometown: "Fairfax", email: "janedoe@gmail.com", checked: false  },
+        { name: "Liz Smith", id: 30, birthdate: "03-03-2003", hometown: "Sterling", email: "bobsmith@gmail.com", checked: false  },
+        { name: "Gwen Smith", id: 31, birthdate: "04-04-2004", hometown: "Reston", email: "miasmith@gmail.com", checked: false  },
+        { name: "John Doe", id: 32, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 33, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 34, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 35, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 36, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 37, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 38, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 39, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 40, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 41, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 42, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 43, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 44, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 45, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 46, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 47, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 48, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 49, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 50, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 51, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 52, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 53, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 54, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 55, birthdate: "01-01-2000", hometown: "Ashburn", email: "johndoe@gmail.com", checked: false  },
+        { name: "Jane Doe", id: 56, birthdate: "02-02-2001", hometown: "Fairfax", email: "janedoe@gmail.com", checked: false  },
+        { name: "Liz Smith", id: 57, birthdate: "03-03-2003", hometown: "Sterling", email: "bobsmith@gmail.com", checked: false  },
+        { name: "Gwen Smith", id: 58, birthdate: "04-04-2004", hometown: "Reston", email: "miasmith@gmail.com", checked: false  },
+        { name: "John Doe", id: 59, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 60, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 61, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 62, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 63, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 64, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 65, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 66, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 67, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 68, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 69, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 70, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 71, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 72, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 73, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 74, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 75, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 76, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 77, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 78, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 79, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 80, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 81, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 82, birthdate: "01-01-2000", hometown: "Ashburn", email: "johndoe@gmail.com", checked: false  },
+        { name: "Jane Doe", id: 83, birthdate: "02-02-2001", hometown: "Fairfax", email: "janedoe@gmail.com", checked: false  },
+        { name: "Liz Smith", id: 84, birthdate: "03-03-2003", hometown: "Sterling", email: "bobsmith@gmail.com", checked: false  },
+        { name: "Gwen Smith", id: 85, birthdate: "04-04-2004", hometown: "Reston", email: "miasmith@gmail.com", checked: false  },
+        { name: "John Doe", id: 86, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 87, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 88, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 89, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 90, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 91, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 92, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 93, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 94, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 95, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 96, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 97, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 98, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 99, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 100, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 101, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
+        { name: "John Doe", id: 102, birthdate: "05-05-2005", hometown: "Richmond", email: "samkim@gmail.com", checked: false  },
     ]);
+
+    const [currentStudents, setCurrentStudents] = useState<Student[]>([]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const studentsPerPage = 50;
+    const totalPages = Math.ceil(students.length / studentsPerPage);
+
+    useEffect(() => {
+        setCurrentPage(0); // Reset to the first page on students data change
+    }, [students]);
+
+    useEffect(() => {
+        const indexOfLastStudent = (currentPage + 1) * studentsPerPage;
+        const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
+        setCurrentStudents(students.slice(indexOfFirstStudent, indexOfLastStudent));
+    }, [currentPage, students]);
 
     const handleSelectAll = (event: ChangeEvent<HTMLInputElement>) => {
         const checked = event.target.checked;
@@ -56,6 +150,14 @@ export default function DashboardPage() {
             )
         );
     };
+
+    const handleNextPage = useCallback(() => {
+        setCurrentPage((prevCurrentPage) => Math.min(prevCurrentPage + 1, totalPages - 1));
+    }, [totalPages]);
+
+    const handlePreviousPage = useCallback(() => {
+        setCurrentPage((prevCurrentPage) => Math.max(prevCurrentPage - 1, 0));
+    }, []);
 
     const router = useRouter();
 
@@ -111,7 +213,7 @@ export default function DashboardPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {students.map((student) => (
+                            {currentStudents.map((student) => (
                                 <tr key={student.id}
                                 className={student.checked ? styles.checkedRow : ''}
                                 >
@@ -131,6 +233,22 @@ export default function DashboardPage() {
                             ))}
                         </tbody>
                     </table>
+                </div>
+                <div className={styles.pagination}>
+                    <button 
+                        className={styles.paginationButton}
+                        onClick={handlePreviousPage} 
+                        disabled={currentPage === 0}
+                    >
+                        Previous 50 Students
+                    </button>
+                    <button 
+                        className={styles.paginationButton}
+                        onClick={handleNextPage} 
+                        disabled={currentPage >= totalPages - 1}
+                    >
+                        Next 50 Students
+                    </button>
                 </div>
             </div>
             <div className={styles.footer}>
