@@ -29,7 +29,6 @@ export default function Settings() {
     try {
       const userData = await getAccountById(id);
       setUserData(userData);
-      handleCancel();
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
@@ -42,6 +41,7 @@ export default function Settings() {
   async function handleSaveChanges() {
     try {
       await updateAccount(userData?.id as string, userData as User);
+      handleCancel();
       console.log("User data updated successfully");
     } catch (error) {
       console.error("Error updating user data:", error);
