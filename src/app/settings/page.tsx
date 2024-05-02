@@ -63,10 +63,10 @@ export default function Settings() {
                 className={styles.image}
               />
               <p className={styles.link}>Student ID: {userData?.id}</p>
+              <Link href="/" className={styles.link} onClick={() => logOut()}>
+                Log Out
+              </Link>
             </div>
-            <Link href="/" className={styles.link} onClick={() => logOut()}>
-              Log Out
-            </Link>
           </div>
 
           <div className={styles.rightPane}>
@@ -225,7 +225,7 @@ export default function Settings() {
                           },
                         })
                       }
-                   />
+                    />
                   </div>
                 </div>
 
@@ -276,9 +276,7 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userData.guardian
-                          ? userData.guardian[0]?.firstName
-                          : ""
+                        userData.guardian ? userData.guardian[0]?.firstName : ""
                       }
                       onChange={(event) => {
                         const updatedGuardian = userData.guardian
@@ -304,9 +302,7 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userData.guardian
-                          ? userData.guardian[0]?.lastName
-                          : ""
+                        userData.guardian ? userData.guardian[0]?.lastName : ""
                       }
                       onChange={(event) => {
                         const updatedGuardian = userData.guardian
@@ -514,9 +510,7 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userData.guardian
-                          ? userData.guardian[1]?.firstName
-                          : ""
+                        userData.guardian ? userData.guardian[1]?.firstName : ""
                       }
                       onChange={(event) => {
                         const updatedGuardian = userData.guardian
@@ -542,9 +536,7 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userData.guardian
-                          ? userData.guardian[1]?.lastName
-                          : ""
+                        userData.guardian ? userData.guardian[1]?.lastName : ""
                       }
                       onChange={(event) => {
                         const updatedGuardian = userData.guardian
@@ -642,7 +634,7 @@ export default function Settings() {
                           guardian: updatedGuardian,
                         });
                       }}
-                   />
+                    />
                   </div>
                 </div>
 
