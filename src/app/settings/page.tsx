@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import styles from "./Settings.module.css";
 import { User } from "@/types/user-types";
-import { getAuth } from "firebase/auth";
+import { auth } from "@/lib/firebase/firebaseConfig";
 import Image from "next/image";
 import Link from "next/link";
 import { logOut } from "@/lib/firebase/authentication/googleAuthentication";
@@ -102,7 +102,6 @@ export default function Settings() {
   */
 
   useEffect(() => {
-    const auth = getAuth();
     const user = auth.currentUser;
 
     //if (user) {
