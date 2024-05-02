@@ -19,6 +19,41 @@ export async function createSurvey(body: {title: string, documentTitle: string})
     
     const schemaWatch = await createWatch(googleForm.formId || '', "SCHEMA");
     const responsesWatch = await createWatch(googleForm.formId || '', "RESPONSES");
+
+    console.log(googleForm.formId);
+    await forms.forms.batchUpdate({
+      formId: googleForm.formId,
+      requestBody: {
+        includeFormInResponse: false,
+        requests: [
+          {
+            createItem: {
+              item: {
+                itemId: "00000000",
+                title: "Swaliga User ID",
+                description:
+                  "Make sure to copy this ID directly from your student dashboard",
+                questionItem: {
+                  question: {
+                    required: true,
+                    textQuestion: {
+                      paragraph: false,
+                    },
+                  },
+                },
+              },
+              location: {
+                index: 0,
+              },
+            },
+          },
+        ],
+        writeControl: {
+          targetRevisionId: googleForm.revisionId,
+        },
+      },
+    });
+
     form = {
       ...googleForm,
       assignedUsers: [],
@@ -27,6 +62,7 @@ export async function createSurvey(body: {title: string, documentTitle: string})
       responsesWatch: responsesWatch as unknown as Watch,
     };
   } catch (err) {
+    console.log(err);
     throw Error('unable to create google form');
   }
 
