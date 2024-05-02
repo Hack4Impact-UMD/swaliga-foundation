@@ -47,7 +47,7 @@ export default function Settings() {
 
   async function handleSaveChanges() {
     try {
-      await updateAccount(userState?.id, userState);
+      await updateAccount(userState?.id as string, userState as User);
       console.log("User data updated successfully");
     } catch (error) {
       console.error("Error updating user data:", error);
