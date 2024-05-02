@@ -14,14 +14,6 @@ import { Survey } from "@/types/survey-types";
 import { Response } from "@/types/survey-types";
 import { useState, useEffect } from "react";
 
-function returnSurvey(surveyName: string, completed: boolean, formLink?: string) {
-    if (completed) {
-        return (<a className={styles.complete}>{surveyName}</a>);
-    } else {
-        return (<a className={styles.incomplete} href={formLink}>{surveyName}</a>);
-    }
-}
-
 function getGrade(gradYr: number | undefined) {
     if (gradYr) {
         const currDate = new Date();
@@ -155,8 +147,8 @@ export default function StudentInfoPage({ params }: { params: { userId: string }
                 <div className={styles.surveysStatus}>
                     <p className={styles.surveyTitle}>Surveys</p>
                     <div className={`${styles.surveysList} ${styles.regular}`} id="list">
-                        {responses?.map((currRes: string) => returnSurvey(currRes, true))}
-                        {surveys?.map((currSurvey: Survey) => returnSurvey(currSurvey.info.title, false, currSurvey.responderUri))}
+                        {responses?.map((completedSurveyName: string) => <a className={styles.complete}>{completedSurveyName}</a>)}
+                        {surveys?.map((survey: Survey) => <a className={styles.incomplete}>{survey.info.title}</a>)}
                     </div>
                 </div>
             </div>                
