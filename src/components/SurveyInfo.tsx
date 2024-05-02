@@ -3,7 +3,7 @@ import Link from "next/link";
 import styles from "./SurveyInfo.module.css";
 import { useEffect, useState } from "react";
 import { Survey } from "@/types/survey-types";
-import Create from "./create";
+import Create from "./Create";
 
 export default function SurveyInfo(): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -19,9 +19,7 @@ export default function SurveyInfo(): JSX.Element {
     });
   }, []);
 
-  return isCreateSurveyOpen ? (
-    <Create />
-  ) : (
+  return (
     <div className={styles.mainContainer}>
       <div className={styles.container}>
         {isLoading ? (
@@ -57,6 +55,7 @@ export default function SurveyInfo(): JSX.Element {
             Create Survey +
           </button>
         </div>
+        {isCreateSurveyOpen && <Create />}
       </div>
     </div>
   );
