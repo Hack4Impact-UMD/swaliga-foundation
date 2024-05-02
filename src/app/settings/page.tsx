@@ -12,60 +12,6 @@ export default function Settings() {
   const [currUser, setCurrUser] = useState<User | null>(null);
   const [userState, setUserState] = useState<User | null>(null);
   const [disabled, isDisabled] = useState(true);
-  /* //User data test
-  const userTest: User = {
-    isAdmin: false,
-    firstName: "Jane",
-    lastName: "Doe",
-    address: {
-      street: "1234 Example Drive",
-      city: "Bethesda",
-      state: "MD",
-      zip: 21114,
-      country: "United States",
-    },
-    school: "",
-    birthdate: new Date(),
-    gradYear: 2025,
-    email: "janedoe12345@gmail.com",
-    phone: 4435125555,
-    yearsWithSwaliga: 2,
-    ethnicity: "Pacific Islander",
-    gender: "Female",
-    password: "1234abc",
-    id: "0000001",
-    assignedSurveys: [],
-    completedResponses: [],
-    guardian: [
-      {
-        firstName: "Paul",
-        lastName: "Doe",
-        phone: 4436511901,
-        email: "pauldoe123@gmail.com",
-        address: {
-          street: "1234 Example DR",
-          city: "Bethesda",
-          zip: 21145,
-          state: "MD",
-          country: "United States",
-        },
-      },
-      {
-        firstName: "Janice",
-        lastName: "Doe",
-        phone: 4436511921,
-        email: "janicedoe1111@gmail.com",
-        address: {
-          street: "1234 Example DR",
-          city: "Bethesda",
-          zip: 21145,
-          state: "MD",
-          country: "United States",
-        },
-      },
-    ],
-  };
-  */
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -84,9 +30,6 @@ export default function Settings() {
       setCurrUser(userData);
       setUserState(userData);
 
-      // Uncomment to test
-      // setCurrUser(userTest);
-      // setUserState({ ...userTest });
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
