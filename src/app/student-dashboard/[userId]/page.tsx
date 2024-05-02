@@ -10,12 +10,18 @@ import React, { useState, useEffect } from "react";
 import { User } from "@/types/user-types";
 import { Survey, Response } from '@/types/survey-types';
 import { auth } from '@/lib/firebase/firebaseConfig';
+import { useRouter } from "next/navigation";
 
-export default function StudentDashboard() {
+export default function StudentDashboard({ params }: { params: { userId: string } }) {
+    const { userId } = params;
+    const router = useRouter();
+
+
     const [user, setUser] = useState<User | null>(null);
     const [surveys, setSurveys] = useState<Survey[]>([]);
     const [responses, setResponses] = useState<string[]>([]);
     const [openSurvey, setOpenSurvey] = useState('');
+
 
     const fetchCurrentUserData = async (userId: string) => {
       try {
@@ -41,12 +47,12 @@ export default function StudentDashboard() {
     }
 
     useEffect(() => {
-        const user = auth.currentUser;
-        if (user) {
-            fetchCurrentUserData(user.uid);
-        } else {
-            console.log('no signed-in user');
-        }
+        //const user = auth.currentUser;
+        //if (user) {
+            fetchCurrentUserData(userId);
+        //} else {
+        //    console.log('no signed-in user');
+        //}
     }, []);
 
     const handleSurveyButtonClick = (surveyId: string) => {
@@ -60,7 +66,7 @@ export default function StudentDashboard() {
           <p className={styles.info}>
             Student ID: {user?.id || "No user ID found"}
           </p>
-          <button className={styles.settingButton}>Settings</button>
+          <button className={styles.settingButton} onClick={() => {router.push(`/settings/${userId}`)}}>Settings</button>
           <Link href="/" className={styles.logOut}>
             Log Out
           </Link>

@@ -9,18 +9,19 @@ import { logOut } from "@/lib/firebase/authentication/googleAuthentication";
 import { getAccountById, updateAccount } from "@/lib/firebase/database/users";
 import { useRouter } from "next/navigation";
 
-export default function Settings() {
+export default function Settings({ params }: { params: { userId: string } }) {
+  const { userId } = params;
   const [userData, setUserData] = useState<User | null>(null);
 
   const router = useRouter();
 
   useEffect(() => {
     const user = auth.currentUser;
-    if (user) {
-      fetchCurrUser("11111111112");
-    } else {
-      throw new Error("User not authenticated");
-    }
+    //if (user) {
+      fetchCurrUser(userId);
+    //} else {
+    //  throw new Error("User not authenticated");
+    //}
   }, []);
 
   const fetchCurrUser = async (id: string) => {
@@ -33,7 +34,7 @@ export default function Settings() {
   };
 
   function handleCancel() {
-    router.push('/student-dashboard');
+    router.push(`/student-dashboard/${userId}`);
   }
 
   async function handleSaveChanges() {

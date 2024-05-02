@@ -9,17 +9,18 @@ export interface User {
     birthdate: Date;
 
     guardian?: { 
-        name: string;
+        firstName: string;
+        lastName: string;
         email: string,
         phone: number,
-        guardianAddress: Address,
+        address: Address,
     }[];
 
     password: string; 
     confirmPassword: string;
     id: string;
 
-    studentAddress: Address;
+    address: Address;
     school: string;
     gradYear: number;
     yearsWithSwaliga: number;
