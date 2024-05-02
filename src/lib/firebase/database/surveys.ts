@@ -1,26 +1,39 @@
-import { Survey } from '@/types/survey-types';
+import { GoogleForm, Survey } from '@/types/survey-types';
 import { forms } from '../../googleAuthorization';
 import { db } from "../firebaseConfig";
 import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
+import { createWatch } from './watches';
+import { Watch } from '@/types/watch-types';
 
 export async function createSurvey(body: {title: string, documentTitle: string}) {
-  let form = null;
+  let form: Survey | null = null;
   try {
-    form = await forms.forms.create({
+    const googleForm: GoogleForm = (await forms.forms.create({
       requestBody: {
         info: {
           title: body.title,
           documentTitle: body.documentTitle,
         },
       },
-    });
+    })).data as unknown as GoogleForm;
+    
+    const schemaWatch = await createWatch(googleForm.formId || '', "SCHEMA");
+    const responsesWatch = await createWatch(googleForm.formId || '', "RESPONSES");
+    form = {
+      ...googleForm,
+      assignedUsers: [],
+      responseIds: [],
+      schemaWatch: schemaWatch as unknown as Watch,
+      responsesWatch: responsesWatch as unknown as Watch,
+    };
   } catch (err) {
     throw Error('unable to create google form');
   }
 
   try {
-    await setDoc(doc(db, "surveys", form.data.formId || ''), form.data);
-    return form.data;
+    console.log('form', form);
+    await setDoc(doc(db, "surveys", form!.formId || ''), form);
+    return form;
   } catch (err) {
     throw Error('cannot add survey to firestore');
   }
