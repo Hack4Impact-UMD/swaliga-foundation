@@ -1,0 +1,158 @@
+.page {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    height: max-content;   
+    width: fixed;
+    position: relative;
+    background: #295972;
+}
+
+.leftSide {
+    height: max-content;
+    width: 100%;
+}
+
+.polygon {
+	border-left: 100vh solid transparent;
+	border-right: 100vh solid transparent;
+	border-bottom: 250vh solid #D0D12A;
+    rotate: -45deg;
+
+    position: fixed;
+    transform: translate(7.95vw, -33.75vh);
+}
+
+.rightSide {
+    height: max-content;
+    width: 98%; 
+    background-color: white;
+
+    display: flex;
+    flex-direction: column;
+    text-align: center;    
+    color: black;
+
+    padding: 1%;
+    position: relative;
+}
+
+.header, .studentId {
+    font-family: 'Poppins-Medium', sans-serif; 
+}
+
+.header {
+    font-size: 2rem; 
+    margin: 2% 0 1% 0;
+}
+
+.studentId {
+    font-size: 1.25rem; 
+    margin: 0;
+}
+
+.regular {    
+    font-family: 'Poppins-Regular', sans-serif;   
+    font-size: 1rem; 
+}
+
+.profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2%;
+}
+
+.profile img {
+    height: 4.5rem;
+}
+
+.table {
+    margin-left: auto;
+    margin-right: auto;
+    width: 85%;
+    padding-top: 2%;
+}
+
+.table tr {
+    display: grid;
+    grid-template-columns: 30.75% 68.5%;
+    margin-top: 5%;
+}
+
+.table td {    
+    background-color: #91A5AF;
+    min-width: fit-content;
+    padding: 0 2.5% 0 8%;
+    border-radius: 10px;
+}
+
+.table td p {
+    margin: 3.5%;
+}
+
+.leftSideTable {    
+    display: flex;
+    flex-direction: row; 
+    align-items: center;
+    text-align: left;
+}
+
+.leftSideTable img {
+    padding: 0 10% 0 5%;
+    height: 38%;
+}
+
+.rightSideTable {  
+    margin-left: 5%;
+    text-align: right;
+}
+
+.rightSideTable p {
+    padding: 0 5% 0 0;
+}
+
+.guardian {
+    display: flex;
+    justify-content: left;
+    margin-left: 7.5%;
+    text-align: left;
+    font-family: 'Poppins-Medium', sans-serif; 
+    font-size: 1.5rem; 
+}
+
+.guardian ol {       
+    align-items: center;  
+    padding-left: 15%;
+    width: 100%;
+    font-family: 'Poppins-Regular', sans-serif; 
+    font-size: 1rem; 
+}
+
+.surveyTitle {
+    text-align: left;
+    font-family: 'Poppins-Thin', sans-serif; 
+    font-size: 1.75rem; 
+    margin: 0 0 0 7.5%;
+}
+
+.surveysList {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 3.25%;
+}
+
+.surveysList a {
+    width: 80%;
+    margin-top: 2.5%;
+    padding: 1.25% 5% 1.25% 0;
+    text-align: right;
+}
+
+.complete {
+    background-color: rgba(76, 175, 80, 0.8); border-radius: 10px; color: black;
+}
+
+.incomplete {
+    text-decoration: none; color: black; background-color: rgba(217, 41, 41, 0.8); border-radius: 10px;
+}
