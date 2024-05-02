@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
-import styles from "./AdminSurveysPage.module.css";
+import styles from "./SurveyInfo.module.css";
 import { useEffect, useState } from "react";
 import { Survey } from "@/types/survey-types";
+import Create from "./create";
 
 export default function SurveyInfo(): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -12,18 +13,15 @@ export default function SurveyInfo(): JSX.Element {
   useEffect(() => {
     fetch("/api/surveys").then((res) => {
       res.json().then((data) => {
-        setSurveyList(data.surveys);
+        setSurveyList(data);
         setIsLoading(false);
       });
     });
   }, []);
 
-  function handleCreateSurvey() {
-    setIsCreateSurveyOpen(true);
-    /* TODO: integrate Create Survey component here */
-  }
-
-  return (
+  return isCreateSurveyOpen ? (
+    <Create />
+  ) : (
     <div className={styles.mainContainer}>
       <div className={styles.container}>
         {isLoading ? (
@@ -31,25 +29,31 @@ export default function SurveyInfo(): JSX.Element {
             <p className={styles.survey}>Fetching Data!</p>
           </div>
         ) : (
-          surveyList.map((singleSurvey, i) => (
-            <div key={i} className={styles.box}>
-              <Link
-                href={singleSurvey.responderUri}
-                target="_blank"
-                className={styles.view}
-              >
-                View
-              </Link>
-              <p className={styles.survey}>
-                {singleSurvey.info && singleSurvey.info.title}
-              </p>
-              <button className={styles.export}>Export</button>
-            </div>
-          ))
+          surveyList.map((singleSurvey, i) => {
+            console.log(singleSurvey);
+            return (
+              <div key={i} className={styles.box}>
+                <Link
+                  href={singleSurvey.responderUri}
+                  target="_blank"
+                  className={styles.view}
+                >
+                  View
+                </Link>
+                <p className={styles.survey}>
+                  {singleSurvey.info && singleSurvey.info.title}
+                </p>
+                <button className={styles.export}>Export</button>
+              </div>
+            );
+          })
         )}
 
         <div className={styles.btnContainer}>
-          <button className={styles.createSurvey} onClick={handleCreateSurvey}>
+          <button
+            className={styles.createSurvey}
+            onClick={() => setIsCreateSurveyOpen(true)}
+          >
             Create Survey +
           </button>
         </div>
