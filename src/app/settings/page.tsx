@@ -72,13 +72,7 @@ export default function Settings() {
                 height="35"
                 className={styles.image}
               />
-              <Link href="/" className={styles.link}>
-                Home
-              </Link>
               <p className={styles.link}>Student ID: {currUser?.id}</p>
-              <Link href="/settings" className={styles.link}>
-                Settings
-              </Link>
             </div>
             <Link href="/" className={styles.link} onClick={handleLogout}>
               Log Out
