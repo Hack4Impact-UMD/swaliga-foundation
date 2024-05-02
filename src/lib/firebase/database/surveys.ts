@@ -8,7 +8,7 @@ import { Watch } from '@/types/watch-types';
 export async function createSurvey(body: {title: string, documentTitle: string}) {
   let form: Survey | null = null;
   try {
-    const googleForm: GoogleForm = (await forms.forms.create({
+    let googleForm: GoogleForm = (await forms.forms.create({
       requestBody: {
         info: {
           title: body.title,
@@ -20,11 +20,10 @@ export async function createSurvey(body: {title: string, documentTitle: string})
     const schemaWatch = await createWatch(googleForm.formId || '', "SCHEMA");
     const responsesWatch = await createWatch(googleForm.formId || '', "RESPONSES");
 
-    console.log(googleForm.formId);
-    await forms.forms.batchUpdate({
+    googleForm = (await forms.forms.batchUpdate({
       formId: googleForm.formId,
       requestBody: {
-        includeFormInResponse: false,
+        includeFormInResponse: true,
         requests: [
           {
             createItem: {
@@ -52,7 +51,7 @@ export async function createSurvey(body: {title: string, documentTitle: string})
           targetRevisionId: googleForm.revisionId,
         },
       },
-    });
+    })).data.form as unknown as GoogleForm;
 
     form = {
       ...googleForm,
@@ -60,6 +59,7 @@ export async function createSurvey(body: {title: string, documentTitle: string})
       responseIds: [],
       schemaWatch: schemaWatch as unknown as Watch,
       responsesWatch: responsesWatch as unknown as Watch,
+      swaligaIdQuestionId: (googleForm.items[0] as any).questionItem.question.questionId,
     };
   } catch (err) {
     console.log(err);

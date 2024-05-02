@@ -15,6 +15,7 @@ export interface Survey extends GoogleForm {
   responseIds: string[];
   schemaWatch: Watch;
   responsesWatch: Watch;
+  swaligaIdQuestionId: string;
 }
 
 export interface GoogleFormResponse {
