@@ -7,7 +7,8 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import { useRouter } from 'next/navigation';
 import { db } from '../../lib/firebase/firebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
-import Assign from '../../components/Assign'; // Import the Assign component
+import Assign from '../../components/Assign'; 
+
 
 export default function DashboardPage() {
     type Student = {
@@ -27,6 +28,7 @@ export default function DashboardPage() {
     const studentsPerPage = 50;
     const totalPages = Math.ceil(students.length / studentsPerPage);
     const [showAssign, setShowAssign] = useState(false);  // State to control the display of the Assign component
+    const toggleAssign = () => setShowAssign(!showAssign);
 
     useEffect(() => {
         const fetchStudents = async () => {
@@ -85,7 +87,7 @@ export default function DashboardPage() {
     const handleDropdownChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const page = event.target.value;
         if (page === 'surveys') {
-            router.push('/create-account'); // Navigate to the Surveys page
+            router.push('/admin-surveys'); // Navigate to the Surveys page
         } else {
             router.push('/admin-dashboard');
         }
@@ -175,7 +177,7 @@ export default function DashboardPage() {
             </div>
             <div className={styles.footer}>
                 <button className={styles.draftEmailButton}>Draft Email</button>
-                <button onClick={() => setShowAssign(true)}>Assign Surveys</button> {}
+                <button onClick={toggleAssign} className={styles.assignSurveysButton}>Assign Surveys</button>
                 <button className={styles.exportButton}>Export to Excel</button>
             </div>
 
