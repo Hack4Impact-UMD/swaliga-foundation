@@ -11,7 +11,6 @@ import { getAccountById, updateAccount } from "@/lib/firebase/database/users";
 export default function Settings() {
   const [currUser, setCurrUser] = useState<User | null>(null);
   const [userState, setUserState] = useState<User | null>(null);
-  const [disabled, isDisabled] = useState(true);
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -37,7 +36,6 @@ export default function Settings() {
 
   function handleCancel() {
     setUserState(currUser!);
-    isDisabled(true);
   }
 
   async function handleSaveChanges() {
@@ -95,7 +93,6 @@ export default function Settings() {
                           firstName: event.target.value,
                         })
                       }
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -113,7 +110,6 @@ export default function Settings() {
                           lastName: event.target.value,
                         })
                       }
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -131,7 +127,6 @@ export default function Settings() {
                           email: event.target.value,
                         })
                       }
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -149,7 +144,6 @@ export default function Settings() {
                           phone: Number(event.target.value),
                         })
                       }
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -170,7 +164,6 @@ export default function Settings() {
                           },
                         })
                       }
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -191,7 +184,6 @@ export default function Settings() {
                           },
                         })
                       }
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -212,7 +204,6 @@ export default function Settings() {
                           },
                         })
                       }
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -233,8 +224,7 @@ export default function Settings() {
                           },
                         })
                       }
-                      disabled={disabled}
-                    />
+                   />
                   </div>
                 </div>
 
@@ -251,7 +241,6 @@ export default function Settings() {
                           gradYear: Number(event.target.value),
                         })
                       }
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -269,7 +258,6 @@ export default function Settings() {
                           yearsWithSwaliga: Number(event.target.value),
                         })
                       }
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -304,7 +292,6 @@ export default function Settings() {
                           guardian: updatedGuardian,
                         });
                       }}
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -333,7 +320,6 @@ export default function Settings() {
                           guardian: updatedGuardian,
                         });
                       }}
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -360,7 +346,6 @@ export default function Settings() {
                           guardian: updatedGuardian,
                         });
                       }}
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -387,7 +372,6 @@ export default function Settings() {
                           guardian: updatedGuardian,
                         });
                       }}
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -419,7 +403,6 @@ export default function Settings() {
                           guardian: updatedGuardian,
                         });
                       }}
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -451,7 +434,6 @@ export default function Settings() {
                           guardian: updatedGuardian,
                         });
                       }}
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -483,7 +465,6 @@ export default function Settings() {
                           guardian: updatedGuardian,
                         });
                       }}
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -515,7 +496,6 @@ export default function Settings() {
                           guardian: updatedGuardian,
                         });
                       }}
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -550,7 +530,6 @@ export default function Settings() {
                           guardian: updatedGuardian,
                         });
                       }}
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -579,7 +558,6 @@ export default function Settings() {
                           guardian: updatedGuardian,
                         });
                       }}
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -606,7 +584,6 @@ export default function Settings() {
                           guardian: updatedGuardian,
                         });
                       }}
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -633,7 +610,6 @@ export default function Settings() {
                           guardian: updatedGuardian,
                         });
                       }}
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -665,8 +641,7 @@ export default function Settings() {
                           guardian: updatedGuardian,
                         });
                       }}
-                      disabled={disabled}
-                    />
+                   />
                   </div>
                 </div>
 
@@ -697,7 +672,6 @@ export default function Settings() {
                           guardian: updatedGuardian,
                         });
                       }}
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -729,7 +703,6 @@ export default function Settings() {
                           guardian: updatedGuardian,
                         });
                       }}
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -761,7 +734,6 @@ export default function Settings() {
                           guardian: updatedGuardian,
                         });
                       }}
-                      disabled={disabled}
                     />
                   </div>
                 </div>
