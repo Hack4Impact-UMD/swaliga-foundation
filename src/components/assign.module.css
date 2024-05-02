@@ -37,7 +37,7 @@
     width: 24px;
     height: 24px;
     cursor: pointer;
-    background-image: url('/images/close-icon.png');
+    background-image: url('/icons/close-icon.png');
     background-size: cover;
 }
 
