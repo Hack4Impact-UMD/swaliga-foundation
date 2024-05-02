@@ -7,10 +7,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { logOut } from "@/lib/firebase/authentication/googleAuthentication";
 import { getAccountById, updateAccount } from "@/lib/firebase/database/users";
+import { useRouter } from "next/navigation";
 
 export default function Settings() {
   const [currUser, setCurrUser] = useState<User | null>(null);
   const [userState, setUserState] = useState<User | null>(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -28,14 +31,14 @@ export default function Settings() {
       const userData = await getAccountById(id);
       setCurrUser(userData);
       setUserState(userData);
-
+      handleCancel();
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
   };
 
   function handleCancel() {
-    setUserState(currUser!);
+    router.push('/student-dashboard');
   }
 
   async function handleSaveChanges() {
