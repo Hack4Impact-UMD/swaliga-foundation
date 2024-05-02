@@ -35,11 +35,6 @@ export default function Settings() {
     }
   };
 
-  function handleLogout() {
-    handleHome();
-    logOut();
-  }
-
   function handleCancel() {
     setUserState(currUser!);
     isDisabled(true);
@@ -52,10 +47,6 @@ export default function Settings() {
     } catch (error) {
       console.error("Error updating user data:", error);
     }
-  }
-
-  function handleHome() {
-    <Link href="/"></Link>;
   }
 
   return (
@@ -74,7 +65,7 @@ export default function Settings() {
               />
               <p className={styles.link}>Student ID: {currUser?.id}</p>
             </div>
-            <Link href="/" className={styles.link} onClick={handleLogout}>
+            <Link href="/" className={styles.link} onClick={() => logOut()}>
               Log Out
             </Link>
           </div>
@@ -777,7 +768,6 @@ export default function Settings() {
               </div>
 
               <div className={styles.btnsContainer}>
-                <button onClick={handleHome}>&larr; Back to Home</button>
                 <button onClick={handleCancel}>Cancel</button>
                 <button onClick={handleSaveChanges}>Save Changes</button>
               </div>
