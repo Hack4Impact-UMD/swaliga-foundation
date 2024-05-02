@@ -10,8 +10,7 @@ import { getAccountById, updateAccount } from "@/lib/firebase/database/users";
 import { useRouter } from "next/navigation";
 
 export default function Settings() {
-  const [currUser, setCurrUser] = useState<User | null>(null);
-  const [userState, setUserState] = useState<User | null>(null);
+  const [userData, setUserData] = useState<User | null>(null);
 
   const router = useRouter();
 
@@ -29,8 +28,7 @@ export default function Settings() {
   const fetchCurrUser = async (id: string) => {
     try {
       const userData = await getAccountById(id);
-      setCurrUser(userData);
-      setUserState(userData);
+      setUserData(userData);
       handleCancel();
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -43,7 +41,7 @@ export default function Settings() {
 
   async function handleSaveChanges() {
     try {
-      await updateAccount(userState?.id as string, userState as User);
+      await updateAccount(userData?.id as string, userData as User);
       console.log("User data updated successfully");
     } catch (error) {
       console.error("Error updating user data:", error);
@@ -52,7 +50,7 @@ export default function Settings() {
 
   return (
     <div className={styles.container}>
-      {userState && (
+      {userData && (
         <>
           <div className={styles.leftPane}>
             <div className={styles.nav}>
@@ -64,7 +62,7 @@ export default function Settings() {
                 height="35"
                 className={styles.image}
               />
-              <p className={styles.link}>Student ID: {currUser?.id}</p>
+              <p className={styles.link}>Student ID: {userData?.id}</p>
             </div>
             <Link href="/" className={styles.link} onClick={() => logOut()}>
               Log Out
@@ -89,10 +87,10 @@ export default function Settings() {
                     <input
                       type="text"
                       className={styles.inputContainer}
-                      value={userState.firstName}
+                      value={userData.firstName}
                       onChange={(event) =>
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           firstName: event.target.value,
                         })
                       }
@@ -106,10 +104,10 @@ export default function Settings() {
                     <input
                       type="text"
                       className={styles.inputContainer}
-                      value={userState.lastName}
+                      value={userData.lastName}
                       onChange={(event) =>
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           lastName: event.target.value,
                         })
                       }
@@ -123,10 +121,10 @@ export default function Settings() {
                     <input
                       type="text"
                       className={styles.inputContainer}
-                      value={userState.email}
+                      value={userData.email}
                       onChange={(event) =>
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           email: event.target.value,
                         })
                       }
@@ -140,10 +138,10 @@ export default function Settings() {
                     <input
                       type="text"
                       className={styles.inputContainer}
-                      value={userState.phone}
+                      value={userData.phone}
                       onChange={(event) =>
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           phone: Number(event.target.value),
                         })
                       }
@@ -157,12 +155,12 @@ export default function Settings() {
                     <input
                       type="text"
                       className={styles.inputContainer}
-                      value={userState.address.street}
+                      value={userData.address.street}
                       onChange={(event) =>
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           address: {
-                            ...userState.address,
+                            ...userData.address,
                             street: event.target.value,
                           },
                         })
@@ -177,12 +175,12 @@ export default function Settings() {
                     <input
                       type="text"
                       className={styles.inputContainer}
-                      value={userState.address.city}
+                      value={userData.address.city}
                       onChange={(event) =>
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           address: {
-                            ...userState.address,
+                            ...userData.address,
                             city: event.target.value,
                           },
                         })
@@ -197,12 +195,12 @@ export default function Settings() {
                     <input
                       type="text"
                       className={styles.inputContainer}
-                      value={userState.address.state}
+                      value={userData.address.state}
                       onChange={(event) =>
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           address: {
-                            ...userState.address,
+                            ...userData.address,
                             state: event.target.value,
                           },
                         })
@@ -217,12 +215,12 @@ export default function Settings() {
                     <input
                       type="text"
                       className={styles.inputContainer}
-                      value={userState.address.zip}
+                      value={userData.address.zip}
                       onChange={(event) =>
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           address: {
-                            ...userState.address,
+                            ...userData.address,
                             zip: Number(event.target.value),
                           },
                         })
@@ -237,10 +235,10 @@ export default function Settings() {
                     <input
                       type="text"
                       className={styles.inputContainer}
-                      value={userState.gradYear}
+                      value={userData.gradYear}
                       onChange={(event) =>
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           gradYear: Number(event.target.value),
                         })
                       }
@@ -254,10 +252,10 @@ export default function Settings() {
                     <input
                       type="text"
                       className={styles.inputContainer}
-                      value={userState.yearsWithSwaliga}
+                      value={userData.yearsWithSwaliga}
                       onChange={(event) =>
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           yearsWithSwaliga: Number(event.target.value),
                         })
                       }
@@ -278,20 +276,20 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userState.guardian
-                          ? userState.guardian[0]?.firstName
+                        userData.guardian
+                          ? userData.guardian[0]?.firstName
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userState.guardian
-                          ? [...userState.guardian]
+                        const updatedGuardian = userData.guardian
+                          ? [...userData.guardian]
                           : [];
                         updatedGuardian[0] = {
                           ...updatedGuardian[0],
                           firstName: event.target.value,
                         };
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           guardian: updatedGuardian,
                         });
                       }}
@@ -306,20 +304,20 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userState.guardian
-                          ? userState.guardian[0]?.lastName
+                        userData.guardian
+                          ? userData.guardian[0]?.lastName
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userState.guardian
-                          ? [...userState.guardian]
+                        const updatedGuardian = userData.guardian
+                          ? [...userData.guardian]
                           : [];
                         updatedGuardian[0] = {
                           ...updatedGuardian[0],
                           lastName: event.target.value,
                         };
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           guardian: updatedGuardian,
                         });
                       }}
@@ -334,18 +332,18 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userState.guardian ? userState.guardian[0]?.email : ""
+                        userData.guardian ? userData.guardian[0]?.email : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userState.guardian
-                          ? [...userState.guardian]
+                        const updatedGuardian = userData.guardian
+                          ? [...userData.guardian]
                           : [];
                         updatedGuardian[0] = {
                           ...updatedGuardian[0],
                           email: event.target.value,
                         };
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           guardian: updatedGuardian,
                         });
                       }}
@@ -360,18 +358,18 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userState.guardian ? userState.guardian[0]?.phone : ""
+                        userData.guardian ? userData.guardian[0]?.phone : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userState.guardian
-                          ? [...userState.guardian]
+                        const updatedGuardian = userData.guardian
+                          ? [...userData.guardian]
                           : [];
                         updatedGuardian[0] = {
                           ...updatedGuardian[0],
                           phone: Number(event.target.value),
                         };
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           guardian: updatedGuardian,
                         });
                       }}
@@ -386,13 +384,13 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userState.guardian
-                          ? userState.guardian[0]?.address.street
+                        userData.guardian
+                          ? userData.guardian[0]?.address.street
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userState.guardian
-                          ? [...userState.guardian]
+                        const updatedGuardian = userData.guardian
+                          ? [...userData.guardian]
                           : [];
                         updatedGuardian[0] = {
                           ...updatedGuardian[0],
@@ -401,8 +399,8 @@ export default function Settings() {
                             street: event.target.value,
                           },
                         };
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           guardian: updatedGuardian,
                         });
                       }}
@@ -417,13 +415,13 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userState.guardian
-                          ? userState.guardian[0]?.address.city
+                        userData.guardian
+                          ? userData.guardian[0]?.address.city
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userState.guardian
-                          ? [...userState.guardian]
+                        const updatedGuardian = userData.guardian
+                          ? [...userData.guardian]
                           : [];
                         updatedGuardian[0] = {
                           ...updatedGuardian[0],
@@ -432,8 +430,8 @@ export default function Settings() {
                             city: event.target.value,
                           },
                         };
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           guardian: updatedGuardian,
                         });
                       }}
@@ -448,13 +446,13 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userState.guardian
-                          ? userState.guardian[0]?.address.state
+                        userData.guardian
+                          ? userData.guardian[0]?.address.state
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userState.guardian
-                          ? [...userState.guardian]
+                        const updatedGuardian = userData.guardian
+                          ? [...userData.guardian]
                           : [];
                         updatedGuardian[0] = {
                           ...updatedGuardian[0],
@@ -463,8 +461,8 @@ export default function Settings() {
                             state: event.target.value,
                           },
                         };
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           guardian: updatedGuardian,
                         });
                       }}
@@ -479,13 +477,13 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userState.guardian
-                          ? userState.guardian[0]?.address.zip
+                        userData.guardian
+                          ? userData.guardian[0]?.address.zip
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userState.guardian
-                          ? [...userState.guardian]
+                        const updatedGuardian = userData.guardian
+                          ? [...userData.guardian]
                           : [];
                         updatedGuardian[0] = {
                           ...updatedGuardian[0],
@@ -494,8 +492,8 @@ export default function Settings() {
                             zip: Number(event.target.value),
                           },
                         };
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           guardian: updatedGuardian,
                         });
                       }}
@@ -516,20 +514,20 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userState.guardian
-                          ? userState.guardian[1]?.firstName
+                        userData.guardian
+                          ? userData.guardian[1]?.firstName
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userState.guardian
-                          ? [...userState.guardian]
+                        const updatedGuardian = userData.guardian
+                          ? [...userData.guardian]
                           : [];
                         updatedGuardian[1] = {
                           ...updatedGuardian[1],
                           firstName: event.target.value,
                         };
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           guardian: updatedGuardian,
                         });
                       }}
@@ -544,20 +542,20 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userState.guardian
-                          ? userState.guardian[1]?.lastName
+                        userData.guardian
+                          ? userData.guardian[1]?.lastName
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userState.guardian
-                          ? [...userState.guardian]
+                        const updatedGuardian = userData.guardian
+                          ? [...userData.guardian]
                           : [];
                         updatedGuardian[1] = {
                           ...updatedGuardian[1],
                           lastName: event.target.value,
                         };
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           guardian: updatedGuardian,
                         });
                       }}
@@ -572,18 +570,18 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userState.guardian ? userState.guardian[1]?.email : ""
+                        userData.guardian ? userData.guardian[1]?.email : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userState.guardian
-                          ? [...userState.guardian]
+                        const updatedGuardian = userData.guardian
+                          ? [...userData.guardian]
                           : [];
                         updatedGuardian[1] = {
                           ...updatedGuardian[1],
                           email: event.target.value,
                         };
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           guardian: updatedGuardian,
                         });
                       }}
@@ -598,18 +596,18 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userState.guardian ? userState.guardian[1]?.phone : ""
+                        userData.guardian ? userData.guardian[1]?.phone : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userState.guardian
-                          ? [...userState.guardian]
+                        const updatedGuardian = userData.guardian
+                          ? [...userData.guardian]
                           : [];
                         updatedGuardian[1] = {
                           ...updatedGuardian[1],
                           phone: Number(event.target.value),
                         };
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           guardian: updatedGuardian,
                         });
                       }}
@@ -624,13 +622,13 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userState.guardian
-                          ? userState.guardian[1]?.address.street
+                        userData.guardian
+                          ? userData.guardian[1]?.address.street
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userState.guardian
-                          ? [...userState.guardian]
+                        const updatedGuardian = userData.guardian
+                          ? [...userData.guardian]
                           : [];
                         updatedGuardian[1] = {
                           ...updatedGuardian[1],
@@ -639,8 +637,8 @@ export default function Settings() {
                             street: event.target.value,
                           },
                         };
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           guardian: updatedGuardian,
                         });
                       }}
@@ -655,13 +653,13 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userState.guardian
-                          ? userState.guardian[1]?.address.city
+                        userData.guardian
+                          ? userData.guardian[1]?.address.city
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userState.guardian
-                          ? [...userState.guardian]
+                        const updatedGuardian = userData.guardian
+                          ? [...userData.guardian]
                           : [];
                         updatedGuardian[1] = {
                           ...updatedGuardian[1],
@@ -670,8 +668,8 @@ export default function Settings() {
                             city: event.target.value,
                           },
                         };
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           guardian: updatedGuardian,
                         });
                       }}
@@ -686,13 +684,13 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userState.guardian
-                          ? userState.guardian[1]?.address.state
+                        userData.guardian
+                          ? userData.guardian[1]?.address.state
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userState.guardian
-                          ? [...userState.guardian]
+                        const updatedGuardian = userData.guardian
+                          ? [...userData.guardian]
                           : [];
                         updatedGuardian[1] = {
                           ...updatedGuardian[1],
@@ -701,8 +699,8 @@ export default function Settings() {
                             state: event.target.value,
                           },
                         };
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           guardian: updatedGuardian,
                         });
                       }}
@@ -717,13 +715,13 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userState.guardian
-                          ? userState.guardian[1]?.address.zip
+                        userData.guardian
+                          ? userData.guardian[1]?.address.zip
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userState.guardian
-                          ? [...userState.guardian]
+                        const updatedGuardian = userData.guardian
+                          ? [...userData.guardian]
                           : [];
                         updatedGuardian[1] = {
                           ...updatedGuardian[1],
@@ -732,8 +730,8 @@ export default function Settings() {
                             zip: Number(event.target.value),
                           },
                         };
-                        setUserState({
-                          ...userState,
+                        setUserData({
+                          ...userData,
                           guardian: updatedGuardian,
                         });
                       }}
