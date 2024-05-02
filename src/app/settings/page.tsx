@@ -16,13 +16,11 @@ export default function Settings() {
 
   useEffect(() => {
     const user = auth.currentUser;
-
-    //if (user) {
-    fetchCurrUser("11111111112");
-    //} else {
-    //  throw new Error("User not authenticated");
-    //}
-    //fetchCurrUser(userTest.id) //uncomment to test
+    if (user) {
+      fetchCurrUser("11111111112");
+    } else {
+      throw new Error("User not authenticated");
+    }
   }, []);
 
   const fetchCurrUser = async (id: string) => {
