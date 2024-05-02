@@ -18,7 +18,6 @@ export async function createWatch(formId: string, eventType: string) {
             }
         );
 
-        console.log("Response", response.data);
         return response.data;
     } catch (error) {
         console.log("Error with creating watch using given information", error);
