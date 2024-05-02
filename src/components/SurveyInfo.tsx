@@ -3,7 +3,7 @@ import Link from "next/link";
 import styles from "./SurveyInfo.module.css";
 import { useEffect, useState } from "react";
 import { Survey } from "@/types/survey-types";
-import Create from "./Create";
+import Create from "./create";
 
 export default function SurveyInfo(): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(true);

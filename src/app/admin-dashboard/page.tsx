@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { db } from '../../lib/firebase/firebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
 import Assign from '../../components/Assign'; 
-
+import SurveyInfo from '../../components/SurveyInfo'; // Import SurveyInfo component
 
 export default function DashboardPage() {
     type Student = {
@@ -29,6 +29,7 @@ export default function DashboardPage() {
     const totalPages = Math.ceil(students.length / studentsPerPage);
     const [showAssign, setShowAssign] = useState(false);  // State to control the display of the Assign component
     const toggleAssign = () => setShowAssign(!showAssign);
+    const [selectedDropdownOption, setSelectedDropdownOption] = useState('student-info'); // State to keep track of selected dropdown option
 
     useEffect(() => {
         const fetchStudents = async () => {
@@ -86,95 +87,95 @@ export default function DashboardPage() {
 
     const handleDropdownChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const page = event.target.value;
-        if (page === 'surveys') {
-            router.push('/admin-surveys'); // Navigate to the Surveys page
-        } else {
-            router.push('/admin-dashboard');
-        }
+        setSelectedDropdownOption(page); // Update selected option
     };
 
     return (
         <div className={styles.container}>
             <div className={styles.header}>
                 <div className={styles.headerContent}>
-                    <select className={styles.dropdown} onChange={handleDropdownChange}>
+                    <select className={styles.dropdown} onChange={handleDropdownChange} value={selectedDropdownOption}>
                         <option value="student-info">Student Info</option>
                         <option value="surveys">Surveys</option>
                     </select>
                     
                 </div>
             </div>
-            <div className={styles.controls}>
-                <div className={styles.searchBox}>
-                    <FaSearch className={styles.searchIcon} />
-                    <input type="text" placeholder="Search" />
-                    <FaTimes className={styles.closeIcon} />
+            {selectedDropdownOption === 'student-info' ? ( // Conditionally render based on selected option
+                <div className={styles.controls}>
+                    <div className={styles.searchBox}>
+                        <FaSearch className={styles.searchIcon} />
+                        <input type="text" placeholder="Search" />
+                        <FaTimes className={styles.closeIcon} />
+                    </div>
+                    <div className={styles.filterBox}>
+                        <FaFilter className={styles.filterIcon} />
+                        <button>Filter</button>
+                        <FaTimes className={styles.closeIcon} />
+                    </div>
                 </div>
-                <div className={styles.filterBox}>
-                    <FaFilter className={styles.filterIcon} />
-                    <button>Filter</button>
-                    <FaTimes className={styles.closeIcon} />
-                </div>
-            </div>
-            <div className={styles.content}>
-                <div className={styles.tableContainer}>
-                    <table className={styles.table}>
-                        <thead>
-                            <tr>
-                            <th>
-                                <input 
-                                    type="checkbox" 
-                                    checked={isAllSelected}
-                                    onChange={handleSelectAll}
-                                />
-                                Select All
-                            </th>
-                            <th>Name</th>
-                            <th>ID</th>
-                            <th>Birthdate</th>
-                            <th>Hometown</th>
-                            <th>Email</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {currentStudents.map((student) => (
-                                <tr key={student.id}
-                                className={student.checked ? styles.checkedRow : ''}
-                                >
-                                    <td>
-                                        <input 
-                                            type="checkbox" 
-                                            checked={student.checked} 
-                                            onChange={() => handleStudentCheck(student.id)}
-                                        />
-                                    </td>
-                                    <td>{student.name}</td>
-                                    <td>{student.id}</td>
-                                    <td>{student.birthdate}</td>
-                                    <td>{student.hometown}</td>
-                                    <td>{student.email}</td>
+            ) : null}
+            {selectedDropdownOption === 'student-info' ? ( // Conditionally render based on selected option
+                <div className={styles.content}>
+                    <div className={styles.tableContainer}>
+                        <table className={styles.table}>
+                            <thead>
+                                <tr>
+                                <th>
+                                    <input 
+                                        type="checkbox" 
+                                        checked={isAllSelected}
+                                        onChange={handleSelectAll}
+                                    />
+                                    Select All
+                                </th>
+                                <th>Name</th>
+                                <th>ID</th>
+                                <th>Birthdate</th>
+                                <th>Hometown</th>
+                                <th>Email</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {currentStudents.map((student) => (
+                                    <tr key={student.id}
+                                    className={student.checked ? styles.checkedRow : ''}
+                                    >
+                                        <td>
+                                            <input 
+                                                type="checkbox" 
+                                                checked={student.checked} 
+                                                onChange={() => handleStudentCheck(student.id)}
+                                            />
+                                        </td>
+                                        <td>{student.name}</td>
+                                        <td>{student.id}</td>
+                                        <td>{student.birthdate}</td>
+                                        <td>{student.hometown}</td>
+                                        <td>{student.email}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className={styles.pagination}>
+                        <button 
+                            className={styles.paginationButton}
+                            onClick={handlePreviousPage} 
+                            disabled={currentPage === 0}
+                        >
+                            Previous 50 Students
+                        </button>
+                        <button 
+                            className={styles.paginationButton}
+                            onClick={handleNextPage} 
+                            disabled={currentPage >= totalPages - 1}
+                        >
+                            Next 50 Students
+                        </button>
+                    </div>
                 </div>
-                <div className={styles.pagination}>
-                    <button 
-                        className={styles.paginationButton}
-                        onClick={handlePreviousPage} 
-                        disabled={currentPage === 0}
-                    >
-                        Previous 50 Students
-                    </button>
-                    <button 
-                        className={styles.paginationButton}
-                        onClick={handleNextPage} 
-                        disabled={currentPage >= totalPages - 1}
-                    >
-                        Next 50 Students
-                    </button>
-                </div>
-            </div>
+            ) : <SurveyInfo />} {/* Render SurveyInfo component when selected option is "Surveys" */}
             <div className={styles.footer}>
                 <button className={styles.draftEmailButton}>Draft Email</button>
                 <button onClick={toggleAssign} className={styles.assignSurveysButton}>Assign Surveys</button>
@@ -189,3 +190,4 @@ export default function DashboardPage() {
         </div>
     );
 }
+

@@ -216,6 +216,8 @@ export default function CreateAccountPage() {
     yearsInSwaliga: string;
     country: string;
     school: string;
+    assignedSurveys: string[];
+    completedResponses: string[];
     raceEthnicity: {
       blackOrAfricanAmerican: boolean;
       indigenous: boolean;
@@ -254,6 +256,8 @@ export default function CreateAccountPage() {
     yearsInSwaliga: "",
     country: "",
     school: "",
+    assignedSurveys: [],
+    completedResponses: [],
     raceEthnicity: {
       blackOrAfricanAmerican: false,
       indigenous: false,
