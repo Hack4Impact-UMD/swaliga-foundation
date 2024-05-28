@@ -28,6 +28,7 @@
 
 .survey {
     width: calc(100%/3);
+    color: black;
 }
 
 .export {

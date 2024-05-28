@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
-import styles from "./AdminSurveysPage.module.css";
+import styles from "./AdminSurveysList.module.css";
 import { useEffect, useState } from "react";
 import { Survey } from "@/types/survey-types";
 
-export default function SurveyInfo(): JSX.Element {
+export default function AdminSurveysList(): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [surveyList, setSurveyList] = useState<Survey[]>([]);
   const [isCreateSurveyOpen, setIsCreateSurveyOpen] = useState<boolean>(false);
@@ -12,7 +12,7 @@ export default function SurveyInfo(): JSX.Element {
   useEffect(() => {
     fetch("/api/surveys").then((res) => {
       res.json().then((data) => {
-        setSurveyList(data.surveys);
+        setSurveyList(data);
         setIsLoading(false);
       });
     });
@@ -24,8 +24,7 @@ export default function SurveyInfo(): JSX.Element {
   }
 
   return (
-    <div className={styles.mainContainer}>
-      <div className={styles.container}>
+      <>
         {isLoading ? (
           <div className={styles.box}>
             <p className={styles.survey}>Fetching Data!</p>
@@ -53,7 +52,6 @@ export default function SurveyInfo(): JSX.Element {
             Create Survey +
           </button>
         </div>
-      </div>
-    </div>
+      </>
   );
 }
