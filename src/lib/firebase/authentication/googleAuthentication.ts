@@ -1,5 +1,4 @@
 import { auth } from '../firebaseConfig';
-import { FirebaseError } from 'firebase/app';
 import { signInWithPopup, signOut, GoogleAuthProvider } from 'firebase/auth';
 
 async function verifyGoogleToken(googleAccessToken: string | undefined): Promise<boolean> {
@@ -31,10 +30,8 @@ async function signInWithGoogle(): Promise<void> {
         } else {
             console.log("Please sign in again");
         }
-    } catch (error: unknown) {
-        if ((error as FirebaseError).code === 'auth/account-exists-with-different-credential') {
-            console.log("Already existing email address");
-        }
+    } catch (error) {
+        console.log("Unexpected error while signing in");
     };
 };
 
