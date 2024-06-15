@@ -12,7 +12,8 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
 
-  const totalPages = Math.ceil(users.length / 50);
+  const studentsPerPage = 50;
+  const totalPages = Math.ceil(users.length / studentsPerPage);
 
   const handleStudentCheck = (id: string): void => {
     if (selectedStudentIds.includes(id)) {
@@ -57,7 +58,7 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
               </tr>
             </thead>
             <tbody>
-              {users.map((student) => (
+              {users.slice(currentPage * studentsPerPage, (currentPage + 1) * studentsPerPage).map((student) => (
                 <tr
                   key={student.id}
                   className={student.id in selectedStudentIds ? styles.checkedRow : ""}
