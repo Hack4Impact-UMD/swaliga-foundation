@@ -4,16 +4,14 @@
     align-items: center;
 
     background: #d9d9d9;
-    padding: 50px 30px 30px 30px;
+    padding: 0px 30px 30px 30px;
     border-radius: 10px;
-    width: 15%;
     max-width: 350px;
     position: relative;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 .inputGroup {
-
     display: flex;
     align-items: center;
     margin-bottom: 10px;
@@ -99,11 +97,10 @@
 }
 
 .closeIcon {
-    position: absolute;
-    background-image: url('/images/close-icon.png');
+    align-self: flex-start;
+    background-image: url('../../public/icons/close-icon.png');
     background-size: cover;
-    top: 10px;
-    right: 10px;
+    margin: 15px 0px;
     width: 24px;
     height: 24px;
     cursor: pointer;
@@ -111,7 +108,7 @@
 
 .filterIcon {
     position: absolute;
-    background-image: url('/images/filter-icon.png');
+    background-image: url('../../public/icons/filter-icon.png');
     background-size: cover;
     top: 10px;
     left: 10px;
