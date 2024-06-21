@@ -29,6 +29,14 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
   };
 
   const toggleFilter = () => setIsFilterOpen(!isFilterOpen);
+  const toggleSelectAll = () => {
+    if (isAllSelected) {
+      setSelectedStudentIds([]);
+    } else {
+      setSelectedStudentIds(users.map((user) => user.id));
+    }
+    setIsAllSelected(!isAllSelected);
+  }
 
   return (
     <>
@@ -41,7 +49,7 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
                   <input
                     type="checkbox"
                     checked={isAllSelected}
-                    onChange={() => setIsAllSelected(!isAllSelected)}
+                    onClick={toggleSelectAll}
                   />
                   Select All
                 </th>
