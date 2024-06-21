@@ -71,6 +71,7 @@
 .inputField {
     flex-grow: 1;
     padding: 5px 10px;
+    margin: 5px 0px;
     border: 3px solid #35627a;
     border-radius: 15px;
     font-size: 16px;
