@@ -5,8 +5,8 @@ import styles from './Filter.module.css';
 import { User } from '@/types/user-types';
 import moment from 'moment';
 
- export default function Filter(props: { users: User[], closeFilter: () => void, setSelectedStudentIds: (ids: string[]) => void }) {
-    const { users, closeFilter, setSelectedStudentIds } = props;
+ export default function Filter(props: { users: User[], closeFilter: () => void, setSelectedStudentIds: (ids: string[]) => void, setFilteredUsers: (users: User[]) => void }) {
+    const { users, closeFilter, setSelectedStudentIds, setFilteredUsers } = props;
 
     const [id, setId] = useState<number | undefined>(undefined);
     const [firstName, setFirstName] = useState<string>("");
@@ -43,8 +43,8 @@ import moment from 'moment';
     };
 
     const filterUsers = (): void => {
-      const studentIds = users.filter((user: User) => includeUser(user)).map((user: User) => user.id);
-      setSelectedStudentIds(studentIds);
+      setFilteredUsers(users.filter((user: User) => includeUser(user)));
+      setSelectedStudentIds([]);
     }
 
     return (

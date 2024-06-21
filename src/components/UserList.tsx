@@ -9,6 +9,7 @@ import Filter from "./Filter";
 
 export default function UserList(props: { users: User[]; surveys: Survey[] }) {
   const { users, surveys } = props;
+  const [filteredUsers, setFilteredUsers] = useState<User[]>(users);
   const [isAllSelected, setIsAllSelected] = useState<boolean>(false);
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
@@ -52,7 +53,7 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
               </tr>
             </thead>
             <tbody>
-              {users
+              {filteredUsers
                 .slice(
                   currentPage * studentsPerPage,
                   (currentPage + 1) * studentsPerPage
@@ -87,7 +88,7 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
         </div>
         <div className={styles.filterContainer}>
           {isFilterOpen ? (
-            <Filter closeFilter={toggleFilter} users={users} setSelectedStudentIds={setSelectedStudentIds}/>
+            <Filter closeFilter={toggleFilter} users={users} setSelectedStudentIds={setSelectedStudentIds} setFilteredUsers={setFilteredUsers}/>
           ) : (
             <div className={styles.filterBox} onClick={toggleFilter}>
               <FaFilter className={styles.filterIcon}/>
