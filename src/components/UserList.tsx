@@ -3,7 +3,7 @@
 import { Survey } from "@/types/survey-types";
 import { User } from "@/types/user-types";
 import styles from "./UserList.module.css";
-import { FaFilter, FaSearch, FaTimes } from "react-icons/fa";
+import { FaFilter } from "react-icons/fa";
 import { useState } from "react";
 import Filter from "./Filter";
 
@@ -87,7 +87,7 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
         </div>
         <div className={styles.filterContainer}>
           {isFilterOpen ? (
-            <Filter onClose={toggleFilter}/>
+            <Filter closeFilter={toggleFilter} users={users} setSelectedStudentIds={setSelectedStudentIds}/>
           ) : (
             <div className={styles.filterBox} onClick={toggleFilter}>
               <FaFilter className={styles.filterIcon}/>

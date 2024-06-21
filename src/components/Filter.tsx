@@ -3,9 +3,10 @@
 import React, { useState } from 'react';
 import styles from './Filter.module.css';
 import { User } from '@/types/user-types';
+import moment from 'moment';
 
- export default function Filter(props: { users: User[], closeFilter: () => void }) {
-    const { users, closeFilter } = props;
+ export default function Filter(props: { users: User[], closeFilter: () => void, setSelectedStudentIds: (ids: string[]) => void }) {
+    const { users, closeFilter, setSelectedStudentIds } = props;
 
     const [id, setId] = useState<number | undefined>(undefined);
     const [firstName, setFirstName] = useState<string>("");
@@ -16,8 +17,36 @@ import { User } from '@/types/user-types';
     const [ethnicity, setEthnicity] = useState<string>("");
     const [city, setCity] = useState<string>("");
     
+    const includeUser = (user: User): boolean => {
+      if (id && user.id !== id + '') return false; // get rid of this typing when ids are changed to numbers
+      if (firstName && !user.firstName.toLowerCase().includes(firstName.toLowerCase())) return false;
+      if (lastName && !user.lastName.toLowerCase().includes(lastName.toLowerCase())) return false;
+      if (gradYear && user.gradYear !== gradYear) return false;
+      if (age) {
+        const currentMoment = moment();
+        if (!(currentMoment.subtract(age + 1, "years").isBefore(user.birthdate) && currentMoment.subtract(age, "years").isAfter(user.birthdate))) return false;
+      }
+      if (gender && user.gender.toLowerCase().startsWith(gender.toLowerCase())) return false;
+      if (ethnicity) {
+        let include = false;
+        const ethnicitySearch = ethnicity.toLowerCase();
+        for (const userEthnicity of user.ethnicity) {
+          if (userEthnicity.toLowerCase().includes(ethnicitySearch)) {
+            include = true;
+            break;
+          }
+        }
+        if (!include) return false;
+      }
+      if (city && !user.address.city.toLowerCase().startsWith(city.toLowerCase())) return false;
+      return true;  
+    };
 
-    // Return the component
+    const filterUsers = (): void => {
+      const studentIds = users.filter((user: User) => includeUser(user)).map((user: User) => user.id);
+      setSelectedStudentIds(studentIds);
+    }
+
     return (
       <div className={styles.container}>
         <div className={styles.closeIcon} onClick={closeFilter} />
@@ -83,7 +112,7 @@ import { User } from '@/types/user-types';
           value={city}
           onChange={(ev) => setCity(ev.target.value)}
         />
-        <button className={styles.button}> APPLY </button>
+        <button className={styles.button} onClick={filterUsers}> APPLY </button>
       </div>
     );
 }
