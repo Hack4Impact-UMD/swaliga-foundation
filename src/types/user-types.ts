@@ -1,32 +1,34 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface User {
-    isAdmin: boolean;
-    firstName: string;
-    middleName?: string;
-    lastName: string;
+  isAdmin: boolean;
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+  email: string;
+  phone: number;
+  gender: Gender;
+  birthdate: Timestamp;
+
+  guardian?: {
+    name: string;
     email: string;
     phone: number;
-    gender: Gender;
-    birthdate: Date;
-
-    guardian?: { 
-        name: string;
-        email: string,
-        phone: number,
-        address: Address,
-    }[];
-
-    password: string; 
-    confirmPassword: string;
-    id: string;
-
     address: Address;
-    school: string;
-    gradYear: number;
-    yearsWithSwaliga: number;
-    ethnicity: Set<Ethnicity | string>;
+  }[];
 
-    assignedSurveys: string[];
-    completedResponses: string[];
+  password: string;
+  confirmPassword: string;
+  id: string;
+
+  address: Address;
+  school: string;
+  gradYear: number;
+  yearsWithSwaliga: number;
+  ethnicity: Set<Ethnicity | string>;
+
+  assignedSurveys: string[];
+  completedResponses: string[];
 }
 
 export interface Address {
