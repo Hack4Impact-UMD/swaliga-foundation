@@ -90,7 +90,7 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
                         : `${student.firstName} ${student.lastName}`}
                     </td>
                     <td>{student.id}</td>
-                    <td>{student.birthdate?.toUTCString()}</td>
+                    <td>{student.birthdate?.toDate().toUTCString()}</td>
                     <td>{student.address?.city}</td>
                     <td>{student.email}</td>
                   </tr>
