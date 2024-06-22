@@ -60,7 +60,7 @@ export default function Assign({ userIds, surveys, closeAssign }: AssignProps) {
 
     return (
       <div className={styles.container}>
-        <div className={styles.closeIcon} onClick={closeAssign}></div>
+        <span className={styles.closeIcon} onClick={closeAssign} />
         <div className={styles.title}>Assign Surveys</div>
         <div className={styles.surveys}>
           {surveys.map((survey) => (
