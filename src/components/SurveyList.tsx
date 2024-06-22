@@ -3,15 +3,12 @@ import Link from "next/link";
 import styles from "./SurveyList.module.css";
 import { useEffect, useState } from "react";
 import { Survey } from "@/types/survey-types";
+import Modal from "./Modal";
+import Create from "./create";
 
 export default function SurveyList(props: { surveys: Survey[] }): JSX.Element {
   const { surveys } = props;
-  const [isCreateSurveyOpen, setIsCreateSurveyOpen] = useState<boolean>(false);
-
-  function handleCreateSurvey() {
-    setIsCreateSurveyOpen(true);
-    /* TODO: integrate Create Survey component here */
-  }
+  const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
 
   return (
     <>
@@ -30,12 +27,19 @@ export default function SurveyList(props: { surveys: Survey[] }): JSX.Element {
           <button className={styles.export}>Export</button>
         </div>
       ))}
-
       <div className={styles.btnContainer}>
-        <button className={styles.createSurvey} onClick={handleCreateSurvey}>
+        <button
+          className={styles.createSurvey}
+          onClick={() => setIsCreateOpen(true)}
+        >
           Create Survey +
         </button>
       </div>
+      {isCreateOpen && (
+        <Modal>
+          <Create closeCreate={() => setIsCreateOpen(false)} />
+        </Modal>
+      )}
     </>
   );
 }
