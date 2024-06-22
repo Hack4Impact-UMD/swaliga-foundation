@@ -151,12 +151,14 @@
 }
 
 .paginationButton {
-    background-color: #91A5AF;
-    color: white;
+    background-color: #e1ecf1;
+    color: black;
     border: none;
     padding: 10px 20px;
+    margin: 5px 0px;
     border-radius: 5px;
     font-size: 1em;
+    width: 200px;
     /* Adjust font-size as needed */
 }
 
@@ -172,4 +174,10 @@
 
 .filterContainer {
     margin: 0px 0px 0px 10px;
+}
+
+.buttonContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

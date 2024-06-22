@@ -6,6 +6,9 @@ import styles from "./UserList.module.css";
 import { FaFilter } from "react-icons/fa";
 import { useState } from "react";
 import Filter from "./Filter";
+import Assign from "./Assign";
+import { Dialog } from '@headlessui/react';
+import Modal from "./Modal";
 
 export default function UserList(props: { users: User[]; surveys: Survey[] }) {
   const { users, surveys } = props;
@@ -14,6 +17,7 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
+  const [isAssignOpen, setIsAssignOpen] = useState<boolean>(false);
 
   const studentsPerPage = 50;
   const totalPages = Math.ceil(users.length / studentsPerPage);
@@ -96,10 +100,15 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
         </div>
         <div className={styles.filterContainer}>
           {isFilterOpen ? (
-            <Filter closeFilter={toggleFilter} users={users} setSelectedStudentIds={setSelectedStudentIds} setFilteredUsers={setFilteredUsers}/>
+            <Filter
+              closeFilter={toggleFilter}
+              users={users}
+              setSelectedStudentIds={setSelectedStudentIds}
+              setFilteredUsers={setFilteredUsers}
+            />
           ) : (
             <div className={styles.filterBox} onClick={toggleFilter}>
-              <FaFilter className={styles.filterIcon}/>
+              <FaFilter className={styles.filterIcon} />
             </div>
           )}
         </div>
@@ -122,6 +131,20 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
           Next 50 Students
         </button>
       </div>
+      <div className={styles.buttonContainer}>
+        <button
+          className={styles.paginationButton}
+          onClick={() => setIsAssignOpen(true)}
+        >
+          Assign Surveys
+        </button>
+        <button className={styles.paginationButton}>Export to CSV</button>
+      </div>
+      {isAssignOpen && (
+        <Modal>
+          <Assign userIds={selectedStudentIds} />
+        </Modal>
+      )}
     </>
   );
 }
