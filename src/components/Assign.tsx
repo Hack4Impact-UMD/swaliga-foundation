@@ -6,30 +6,12 @@ import styles from './assign.module.css';
 
 interface AssignProps {
     userIds: string[];
+    surveys: Survey[];
+    closeAssign: () => void;
 }
 
-export default function Assign({ userIds }: AssignProps) {
+export default function Assign({ userIds, surveys, closeAssign }: AssignProps) {
     const [selectedSurveys, setSelectedSurveys] = useState<string[]>([]);
-    const [surveys, setSurveys] = useState<Survey[]>([]);
-
-    useEffect(() => {
-        // Fetch the list of surveys from the server when the component mounts
-        async function fetchSurveys() {
-            try {
-                const response = await fetch('/api/surveys');
-                if (response.ok) {
-                    const surveysArray: Survey[] = await response.json(); 
-                    setSurveys(surveysArray);
-                } else {
-                    console.error('Failed to fetch surveys:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Error occurred while fetching surveys:', error);
-            }
-        }
-    
-        fetchSurveys();
-    }, []);
 
     // Function to toggle the selection of a survey
     const toggleSurvey = (surveyId: string) => {
@@ -70,6 +52,7 @@ export default function Assign({ userIds }: AssignProps) {
                 const errorData = await response.json();
                 console.error(errorData.error);
             }
+            closeAssign();
         } catch (error) {
             console.error('Error occurred while assigning surveys:', error);
         }
@@ -77,7 +60,7 @@ export default function Assign({ userIds }: AssignProps) {
 
     return (
       <div className={styles.container}>
-        <div className={styles.closeIcon}></div>
+        <div className={styles.closeIcon} onClick={closeAssign}></div>
         <div className={styles.title}>Assign Surveys</div>
         <div className={styles.surveys}>
           {surveys.map((survey) => (

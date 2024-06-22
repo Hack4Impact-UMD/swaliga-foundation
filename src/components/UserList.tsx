@@ -53,7 +53,7 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
                   <input
                     type="checkbox"
                     checked={isAllSelected}
-                    onClick={toggleSelectAll}
+                    onChange={toggleSelectAll}
                   />
                   Select All
                 </th>
@@ -142,7 +142,7 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
       </div>
       {isAssignOpen && (
         <Modal>
-          <Assign userIds={selectedStudentIds} />
+          <Assign userIds={selectedStudentIds} surveys={surveys} closeAssign={() => setIsAssignOpen(false)}/>
         </Modal>
       )}
     </>
