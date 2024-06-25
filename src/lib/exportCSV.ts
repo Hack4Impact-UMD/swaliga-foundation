@@ -37,9 +37,7 @@ export function exportUsersToCSV(users: User[]): void {
             }
             //only mapping guardian's first name and last name for now because if map individual properties of guardian, it will overwrite the student's properties that share the same field spelling
             //can try to map g again like we did with users
-            return user.guardian
-              ?.map((g) => `${g.name}`)
-              .join("; ");
+            return user.guardian?.map((g) => `${g.name} (${g.email}, ${g.phone})`).join("; ");
           case "birthdate":
             const timestamp = (user[field] as Timestamp | undefined)?.seconds;
             if (timestamp) {
@@ -61,7 +59,12 @@ export function exportUsersToCSV(users: User[]): void {
             if (!user[field]) {
               return "N/A";
             }
-            return `${user[field]}`.replaceAll(",", " ");
+            const address = user[field];
+            return `${address.street} ${address.city}, ${address.state}, ${address.country} ${address.zip}`;
+          case "ethnicity":
+            const ethnicities: string[] = [];
+            user[field].forEach((val) => ethnicities.push(val));
+            return ethnicities.join(", ");
           default:
             return user[field];
         }
