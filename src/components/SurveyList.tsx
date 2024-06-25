@@ -24,7 +24,26 @@ export default function SurveyList(props: { surveys: Survey[] }): JSX.Element {
           <p className={styles.survey}>
             {singleSurvey.info && singleSurvey.info.title}
           </p>
-          <button className={styles.export}>Export</button>
+          {singleSurvey.linkedSheetId ? (
+            <Link
+              href={singleSurvey.linkedSheetId}
+              target="_blank"
+              className={styles.view}
+            >
+              View Responses
+            </Link>
+          ) : (
+            <p className={styles.view}>
+              Go{" "}
+              <Link
+                href={`https://docs.google.com/forms/d/${singleSurvey.formId}/edit`}
+                target="_blank"
+              >
+                here
+              </Link>{" "}
+              to create responses spreadsheet
+            </p>
+          )}
         </div>
       ))}
       <div className={styles.btnContainer}>
