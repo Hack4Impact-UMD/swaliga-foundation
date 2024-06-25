@@ -21,7 +21,6 @@ export function exportUsersToCSV(users: User[]): void {
     "ethnicity",
     "gender",
     "guardian",
-    "password",
     "id",
     "assignedSurveys",
     "completedResponses",
