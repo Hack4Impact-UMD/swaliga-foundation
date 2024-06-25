@@ -17,7 +17,6 @@ export interface User {
     address: Address;
   }[];
 
-  password: string;
   id: string;
 
   address: Address;
