@@ -7,8 +7,8 @@ import { FaFilter } from "react-icons/fa";
 import { useState } from "react";
 import Filter from "./Filter";
 import Assign from "./Assign";
-import { Dialog } from '@headlessui/react';
 import Modal from "./Modal";
+import { exportUsersToCSV } from "@/lib/exportCSV";
 
 export default function UserList(props: { users: User[]; surveys: Survey[] }) {
   const { users, surveys } = props;
@@ -138,7 +138,7 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
         >
           Assign Surveys
         </button>
-        <button className={styles.paginationButton}>Export to CSV</button>
+        <button className={styles.paginationButton} onClick={() => exportUsersToCSV(users.filter(user => selectedStudentIds.includes(user.id)))}>Export Selected Users to CSV</button>
       </div>
       {isAssignOpen && (
         <Modal>

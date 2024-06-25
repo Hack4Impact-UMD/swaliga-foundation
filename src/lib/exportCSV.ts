@@ -79,7 +79,7 @@ export function exportUsersToCSV(users: User[]): void {
   const encodedUri = encodeURI(csvContent);
   var link = document.createElement("a");
   link.setAttribute("href", encodedUri);
-  link.setAttribute("download", "my_data.csv");
+  link.setAttribute("download", "students.csv");
   document.body.appendChild(link); // Required for FF
   link.click();
   document.body.removeChild(link)
