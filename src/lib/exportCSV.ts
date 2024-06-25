@@ -1,11 +1,12 @@
-"use client";
-import { useEffect, useRef, useState } from "react";
-import os from "os";
 import { User } from "@/types/user-types";
-import { getUserList } from "@/lib/firebase/database/users";
 import { Timestamp } from "firebase/firestore";
+import os from 'os';
 
-const users2csv = (users: User[]): string => {
+type flattenDoc = {
+  [key: string]: any;
+};
+
+export function exportUsersToCSV(users: User[]): void {
   const fields: (keyof User)[] = [
     "firstName",
     "lastName",
@@ -38,7 +39,7 @@ const users2csv = (users: User[]): string => {
             //only mapping guardian's first name and last name for now because if map individual properties of guardian, it will overwrite the student's properties that share the same field spelling
             //can try to map g again like we did with users
             return user.guardian
-              ?.map((g) => `${g.firstName} ${g.lastName}`)
+              ?.map((g) => `${g.name}`)
               .join("; ");
           case "birthdate":
             const timestamp = (user[field] as Timestamp | undefined)?.seconds;
@@ -71,52 +72,13 @@ const users2csv = (users: User[]): string => {
   });
 
   csv.unshift(fields.join(","));
-  return csv.join(os.EOL);
+
+  const csvContent = "data:text/csv;charset=utf-8," + csv.join(os.EOL);
+  const encodedUri = encodeURI(csvContent);
+  var link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", "my_data.csv");
+  document.body.appendChild(link); // Required for FF
+  link.click();
+  document.body.removeChild(link)
 };
-
-const Home = () => {
-  const [download, setDownload] = useState("");
-  const downloadLink = useRef<HTMLAnchorElement>(null);
-
-  const downloadUserList = async () => {
-    try {
-      const users = await getUserList();
-      setDownload(users2csv(users));
-    } catch (error) {
-      console.error("Error downloading user list:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (download.length > 0) {
-      downloadLink.current?.click();
-      setDownload("");
-    }
-  }, [download]);
-
-  return (
-    <>
-      <div>
-        <button
-          style={{
-            width: "160px",
-            height: "40px",
-            margin: "10px",
-          }}
-          className="downloadButton"
-          onClick={downloadUserList}
-        >
-          Download Users
-        </button>
-        <a
-          href={`data:text/csv;charset=utf-8,${encodeURIComponent(download)}`}
-          download="students.csv"
-          hidden={true}
-          ref={downloadLink}
-        ></a>
-      </div>
-    </>
-  );
-};
-
-export default Home;
