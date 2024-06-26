@@ -1,7 +1,7 @@
 import { PubSub } from "@google-cloud/pubsub";
 import { getSurveyByID, updateSurvey } from "./firebase/database/surveys";
 import { forms } from "./googleAuthorization";
-import { GoogleFormResponse, Response } from "@/types/survey-types";
+import { GoogleFormResponse, Response, Survey } from "@/types/survey-types";
 import { createResponse } from "./firebase/database/response";
 
 export const pubSubClient = new PubSub();
@@ -16,7 +16,7 @@ export function listenForMessages()  {
 
     if (message.attributes.eventType === "RESPONSES") {
       // TODO: update userId input using currently logged in user
-      newResponseHandler("1111111111", message.attributes.formId);
+      newResponseHandler(message.attributes.formId);
     } else {
       updateSurvey(message.attributes.formId);
     }
@@ -28,7 +28,7 @@ export function listenForMessages()  {
   console.log('Listening for PubSub messages');
 }
 
-async function newResponseHandler(userId: string, formId: string) {
+async function newResponseHandler(formId: string) {
   // Retrieve form responses or empty array
   const googleResponses = await forms.forms.responses.list({ formId });
   const googleResponseData =
@@ -42,13 +42,16 @@ async function newResponseHandler(userId: string, formId: string) {
   for (const response of googleResponseData) {
     // Shouldn't be a runtime error hopefully(?)
     // But maybe could have some error checking this seems suspicious idk
-    const updatedResponse: Response = { ...response, formId, userId };
-    const responseId = response.responseId;
 
     // Add response to firestore if it doesn't exist
-    if (!existingResponseIds?.includes(responseId)) {
+    if (!existingResponseIds?.includes(response.responseId)) {
+      const survey: Survey = await getSurveyByID(formId) as Survey;
+      const formTitle = survey.info.title;
+      const userId = (response.answers[survey.swaligaIdQuestionId] as any).textAnswers.answers[0].value;
+      
+      const updatedResponse: Response = { ...response, formId, userId, formTitle };
       await createResponse(updatedResponse);
-      console.log(`Added response with ID: ${responseId}`);
+      console.log(`Added response with ID: ${response.responseId}`);
     }
   }
 }

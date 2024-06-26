@@ -8,7 +8,7 @@ export async function GET(
   const { surveyId } = params;
   try {
     const survey = await getSurveyByID(surveyId);
-    return NextResponse.json({ data: survey }, { status: 200 });
+    return NextResponse.json(survey, { status: 200 });
   } catch (err) {
     return NextResponse.json(
       { error: "error getting survey by id" },

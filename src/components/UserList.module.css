@@ -1,0 +1,183 @@
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    padding-bottom: 45px;
+}
+
+.filterBox {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    gap: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    height: 20px;
+    width: 20px;
+    margin-left: auto;
+}
+
+.searchBox input,
+.filterBox button {
+    border: none;
+    outline: none;
+    background-color: transparent;
+    padding: 5px 10px;
+}
+
+.searchIcon,
+.filterIcon {
+    color: #555;
+}
+
+.closeIcon {
+    margin-left: auto;
+    color: #555;
+    cursor: pointer;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tableContainer {
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    flex-grow: 1;
+}
+
+.table thead th {
+    background-color: #91A5AF;
+}
+
+.table th,
+.table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #334257;
+}
+
+.checkedRow {
+    background-color: #D6D69A;
+    color: #000000;
+}
+
+.table tbody tr:not(.checkedRow):hover {
+    background-color: #D6D69A;
+}
+
+.table td {
+    padding: 10px;
+    vertical-align: middle;
+}
+
+.table td i {
+    margin-right: 8px;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding: 20px;
+}
+
+.draftEmailButton,
+.exportButton {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    color: white;
+}
+
+.draftEmailButton {
+    background: #5568FE;
+}
+
+.assignSurveysDropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.assignSurveysButton {
+    background-color: #F49F0A;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.assignSurveysButton:hover,
+.assignSurveysButton:focus {
+    background-color: #F49F0A;
+}
+
+.dropdownContent {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdownContent a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.assignSurveysDropdown:hover .dropdownContent {
+    display: block;
+}
+
+
+.exportButton {
+    background: #4CAF50;
+}
+
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1em;
+    /* Adjust as needed */
+}
+
+.paginationButton {
+    background-color: #e1ecf1;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px 0px;
+    border-radius: 5px;
+    font-size: 1em;
+    width: 300px;
+    /* Adjust font-size as needed */
+}
+
+.paginationButton:disabled {
+    cursor: not-allowed;
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.filterContainer {
+    margin: 0px 0px 0px 10px;
+}
+
+.buttonContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

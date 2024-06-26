@@ -5,7 +5,7 @@ import { Stage, Layer, Line } from "react-konva/lib/ReactKonvaCore";
 import { Polygon, Dims } from "@/types/konva-types";
 import styles from "./LoginPage.module.css";
 import { getPolygonBackground, getPolygonOverlay } from "./polygons";
-import "@fortawesome/fontawesome-free/css/all.min.css";
+//import "@fortawesome/fontawesome-free/css/all.min.css";
 import GoogleButton from "react-google-button";
 import { loginUser } from "@/lib/firebase/authentication/emailPasswordAuthentication";
 import { signInWithGoogle } from "@/lib/firebase/authentication/googleAuthentication";
