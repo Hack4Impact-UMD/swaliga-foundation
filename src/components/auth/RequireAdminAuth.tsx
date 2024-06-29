@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import AuthProvider, { useAuth } from "./AuthProvider";
 
-export default function RequireStudentAuth({
+export default function RequireAdminAuth({
   children,
 }: {
   children: JSX.Element;

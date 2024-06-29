@@ -5,6 +5,7 @@ import { User } from "@/types/user-types";
 import { Survey } from "@/types/survey-types";
 import UserList from "@/components/UserList";
 import SurveyList from "@/components/SurveyList";
+import RequireAdminAuth from "@/components/auth/RequireAdminAuth";
 
 export default function AdminDashboard() {
   const [showUserList, setShowUserList] = useState<boolean>(true);
@@ -29,7 +30,7 @@ export default function AdminDashboard() {
   const handleDropdownChange = () => setShowUserList(!showUserList);
 
   return (
-    <>
+    <RequireAdminAuth>
       {isLoading ? (
         <p>Loading...</p>
       ) : (
@@ -54,6 +55,6 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
-    </>
+    </RequireAdminAuth>
   );
 }
