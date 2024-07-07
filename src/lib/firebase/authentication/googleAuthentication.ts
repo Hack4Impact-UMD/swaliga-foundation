@@ -1,6 +1,6 @@
 import { auth } from '../firebaseConfig';
 import { FirebaseError } from 'firebase/app';
-import { signInWithPopup, signOut, GoogleAuthProvider } from 'firebase/auth';
+import { signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 async function verifyGoogleToken(googleAccessToken: string | undefined): Promise<boolean> {
     const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?access_token=${googleAccessToken}`);
@@ -17,17 +17,18 @@ async function verifyGoogleToken(googleAccessToken: string | undefined): Promise
 
 async function signInWithGoogle(): Promise<void> {
     const provider = new GoogleAuthProvider();
+    provider.addScope("https://www.googleapis.com/auth/forms.body");
+    provider.addScope("https://www.googleapis.com/auth/forms.responses.readonly");
+    provider.addScope("https://www.googleapis.com/auth/spreadsheets");
     try {
         const result = await signInWithPopup(auth, provider);
-        const user = result.user;
-
+        await fetch("/api/auth/user", { method: "POST", body: JSON.stringify({ uid: result.user.uid }) });
         const credential = GoogleAuthProvider.credentialFromResult(result);
-        const googleToken = credential?.accessToken; 
-
+        const googleToken = credential?.accessToken;
         const verified = await verifyGoogleToken(googleToken);
 
         if (verified) {
-            console.log("Current user verified");
+            console.log("Current user verified:", auth.currentUser?.uid);
         } else {
             console.log("Please sign in again");
         }
