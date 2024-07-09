@@ -216,6 +216,9 @@ export default function CreateAccountPage() {
     yearsInSwaliga: string;
     country: string;
     school: string;
+    id: string;
+    assignedSurveys: string[];
+    completedResponses: string[];
     raceEthnicity: {
       blackOrAfricanAmerican: boolean;
       indigenous: boolean;
@@ -236,6 +239,7 @@ export default function CreateAccountPage() {
     bday: "",
     phoneNumber: "",
     gender: "",
+    id: "",
     emergencyName: "",
     emergencyEmail: "",
     emergencyPhone: "",
@@ -254,6 +258,8 @@ export default function CreateAccountPage() {
     yearsInSwaliga: "",
     country: "",
     school: "",
+    assignedSurveys: [],
+    completedResponses: [],
     raceEthnicity: {
       blackOrAfricanAmerican: false,
       indigenous: false,
@@ -302,28 +308,30 @@ export default function CreateAccountPage() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("Submitting:", accountInfo); 
+    console.log("Submitting:", accountInfo);
     try {
       console.log("Entered the try block");
-      const response = await fetch('/api/users', {
-        method: 'POST',
+      const response = await fetch("/api/users", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(accountInfo),
       });
       const data = await response.json();
-      console.log("Response:", data); 
+      console.log("Response:", data);
       if (response.ok) {
         console.log("Account created successfully:", data);
       } else {
-        throw new Error(data.error || `Failed to create account. Status: ${response.status}`);
+        throw new Error(
+          data.error || `Failed to create account. Status: ${response.status}`
+        );
       }
     } catch (error) {
       console.error("Error during account creation:", error);
       setFormError("Unexpected error");
     }
-};
+  };
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -364,51 +372,22 @@ export default function CreateAccountPage() {
     setEmergencyContacts(emergencyContacts.filter((_, i) => i !== index));
   };
 
-  const handleEmergencyContactChange = (
-    index: number,
-    field:
-      | "name"
-      | "email"
-      | "phone"
-      | "street"
-      | "city"
-      | "state"
-      | "zip"
-      | "country",
-    value: string
-  ) => {
-    const updatedContacts = [...emergencyContacts];
+  const handleEmergencyContactChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setAccountInfo((prevState) => ({
+        ...prevState,
+        [name]: value,
+    }));
+};
 
-    // Only allow letters and spaces
-    if (
-      (field === "name" || field === "city" || field === "state") &&
-      value !== "" &&
-      !/^[A-Za-z\s]*$/.test(value)
-    ) {
-      return; // Invalid input, do not update state
-    }
-
-    // only allow digits
-    if (
-      (field === "phone" || field === "zip") &&
-      value !== "" &&
-      !/^\d+$/.test(value)
-    ) {
-      return; // Invalid input, do not update state
-    }
-
-    // Update the specified contact field with the new value
-    updatedContacts[index] = { ...updatedContacts[index], [field]: value };
-
-    // Update the state with the new contacts array
-    setEmergencyContacts(updatedContacts);
-  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     if (
-      (name === "phoneNumber" || name === "zipCode") &&
+      (name === "phoneNumber" ||
+        name === "zipCode" ||
+        name.startsWith("emergency")) &&
       value !== "" &&
       !/^\d+$/.test(value)
     ) {
@@ -416,21 +395,17 @@ export default function CreateAccountPage() {
       return;
     }
 
-    if (
-        name === "yearsInSwaliga" &&
-        value !== "" &&
-        !/^\d+$/.test(value)
-    ) {
-        return; // Only allow numeric input
+    if (name === "yearsInSwaliga" && value !== "" && !/^\d+$/.test(value)) {
+      return; // Only allow numeric input
     }
-
 
     if (
       (name === "city" ||
         name === "state" ||
         name === "firstName" ||
         name === "middleName" ||
-        name === "lastName") &&
+        name === "lastName" ||
+        name.startsWith("emergency")) &&
       value !== "" &&
       !/^[A-Za-z ]*$/.test(value)
     ) {
@@ -622,158 +597,90 @@ export default function CreateAccountPage() {
                 Emergency Contact Info{" "}
                 <span className={styles.requiredAsterisk}>*</span>
               </label>
-              {emergencyContacts.map((contact, index) => (
-                <>
-                  <div className={styles.contactContainer} key={index}>
-                    <div className={styles.inputRow}>
-                      <div className={styles.inputIconGroup}>
-                        <i className="fas fa-user"></i>
-                        <input
-                          type="name"
-                          name="emergencyName"
-                          placeholder="Enter name"
-                          value={contact.name}
-                          onChange={(e) =>
-                            handleEmergencyContactChange(
-                              index,
-                              "name",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                      <div className={styles.inputIconGroup}>
-                        <i className="fas fa-envelope"></i>
-                        <input
-                          type="email"
-                          name="emergencyEmail"
-                          placeholder="Enter email"
-                          value={contact.email}
-                          onChange={(e) =>
-                            handleEmergencyContactChange(
-                              index,
-                              "email",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                      <div className={styles.inputIconGroup}>
-                        <i className="fas fa-phone"></i>
-                        <input
-                          type="tel"
-                          name="emergencyPhone"
-                          placeholder="Enter phone number"
-                          value={contact.phone}
-                          onChange={(e) =>
-                            handleEmergencyContactChange(
-                              index,
-                              "phone",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                    </div>
-                    <div className={styles.inputRow}>
-                      <div className={styles.inputIconGroup}>
-                        <i className="fas fa-road"></i>
-                        <input
-                          type="text"
-                          name="emergencyStreet"
-                          placeholder="Enter street name"
-                          value={contact.street}
-                          onChange={(e) =>
-                            handleEmergencyContactChange(
-                              index,
-                              "street",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                      <div className={styles.inputIconGroup}>
-                        <i className="fas fa-city"></i>
-                        <input
-                          type="text"
-                          name="emergencyCity"
-                          placeholder="Enter city"
-                          value={contact.city}
-                          onChange={(e) =>
-                            handleEmergencyContactChange(
-                              index,
-                              "city",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                      <div className={styles.inputIconGroup}>
-                        <i className="fas fa-landmark"></i>
-                        <input
-                          type="text"
-                          name="emergencyState"
-                          placeholder="Enter state"
-                          value={contact.state}
-                          onChange={(e) =>
-                            handleEmergencyContactChange(
-                              index,
-                              "state",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                      <div className={styles.inputIconGroup}>
-                        <i className="fas fa-flag"></i>{" "}
-                        <input
-                          type="text"
-                          name="emergencyCountry"
-                          placeholder="Enter country"
-                          value={contact.country}
-                          onChange={(e) =>
-                            handleEmergencyContactChange(
-                              index,
-                              "country",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                      <div className={styles.inputIconGroup}>
-                        <i className="fas fa-map-pin"></i>
-                        <input
-                          type="text"
-                          name="emergencyZip"
-                          placeholder="Enter zip code"
-                          value={contact.zip}
-                          onChange={(e) =>
-                            handleEmergencyContactChange(
-                              index,
-                              "zip",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                    </div>
-                    <button
-                      className={styles.emergencyRemoveButton}
-                      type="button"
-                      onClick={() => deleteEmergencyContact(index)}
-                    >
-                      Remove Contact
-                    </button>
-                  </div>
-                </>
-              ))}
-              <button
-                className={styles.emergencyAddButton}
-                type="button"
-                onClick={addEmergencyContact}
-              >
-                Add Emergency Contact
-              </button>
+              <div className={styles.inputRow}>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-user"></i>
+                  <input
+                    type="text"
+                    name="emergencyName"
+                    placeholder="Enter name"
+                    value={accountInfo.emergencyName}
+                    onChange={handleEmergencyContactChange}
+                  />
+                </div>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-envelope"></i>
+                  <input
+                    type="email"
+                    name="emergencyEmail"
+                    placeholder="Enter email"
+                    value={accountInfo.emergencyEmail}
+                    onChange={handleEmergencyContactChange}
+                  />
+                </div>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-phone"></i>
+                  <input
+                    type="tel"
+                    name="emergencyPhone"
+                    placeholder="Enter phone number"
+                    value={accountInfo.emergencyPhone}
+                    onChange={handleEmergencyContactChange}
+                  />
+                </div>
+              </div>
+              <div className={styles.inputRow}>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-road"></i>
+                  <input
+                    type="text"
+                    name="emergencyStreet"
+                    placeholder="Enter street name"
+                    value={accountInfo.emergencyStreet}
+                    onChange={handleEmergencyContactChange}
+                  />
+                </div>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-city"></i>
+                  <input
+                    type="text"
+                    name="emergencyCity"
+                    placeholder="Enter city"
+                    value={accountInfo.emergencyCity}
+                    onChange={handleEmergencyContactChange}
+                  />
+                </div>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-landmark"></i>
+                  <input
+                    type="text"
+                    name="emergencyState"
+                    placeholder="Enter state"
+                    value={accountInfo.emergencyState}
+                    onChange={handleEmergencyContactChange}
+                  />
+                </div>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-flag"></i>
+                  <input
+                    type="text"
+                    name="emergencyCountry"
+                    placeholder="Enter country"
+                    value={accountInfo.emergencyCountry}
+                    onChange={handleEmergencyContactChange}
+                  />
+                </div>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-map-pin"></i>
+                  <input
+                    type="text"
+                    name="emergencyZip"
+                    placeholder="Enter zip code"
+                    value={accountInfo.emergencyZip}
+                    onChange={handleEmergencyContactChange}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
