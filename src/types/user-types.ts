@@ -1,35 +1,35 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface User {
-    isAdmin: boolean;
-    firstName: string;
-    middleName?: string;
-    lastName: string;
+  isAdmin: boolean;
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+  email: string;
+  phone: number;
+  gender: Gender;
+  birthdate: Timestamp;
+
+  guardian?: {
+    name: string;
     email: string;
     phone: number;
-    gender: Gender;
-    birthdate: Date;
+    address: Address;
+  }[];
 
-    guardian?: { 
-        name: string;
-        email: string,
-        phone: number,
-        guardianAddress: Address,
-    }[];
+  id: string;
 
-    password: string; 
-    confirmPassword: string;
-    id: string;
+  address: Address;
+  school: string;
+  gradYear: number;
+  yearsWithSwaliga: number;
+  ethnicity: Set<Ethnicity | string>;
 
-    studentAddress: Address;
-    school: string;
-    gradYear: number;
-    yearsWithSwaliga: number;
-    ethnicity: RaceEthnicity;
-
-    assignedSurveys: string[];
-    completedResponses: string[];
+  assignedSurveys: string[];
+  completedResponses: string[];
 }
 
-interface Address {
+export interface Address {
     street: string;
     city: string;
     state: string;
@@ -37,17 +37,18 @@ interface Address {
     country: string;
 }
 
-interface RaceEthnicity {
-    blackOrAfricanAmerican: boolean;
-    indigenous: boolean;
-    asian: boolean;
-    white: boolean;
-    multiracial: boolean;
-    latin: boolean;
-    other: boolean;
-    otherText: string;
+export enum Ethnicity {
+    BlackOrAfricanAmerican = "Black or African American",
+    Indigenous = "Indigenous",
+    Asian = "Asian",
+    White = "White",
+    Multiracial = "Multiracial",
+    Latin = "Latin",
 }
 
-type Gender = "Male" | "Female" | "Other"
-
-export type { RaceEthnicity, Gender, Address }
+export enum Gender {
+    Male = "Male",
+    Female = "Female",
+    NonBinary = "Non-Binary",
+    Other = "Other"
+}

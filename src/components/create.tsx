@@ -1,9 +1,13 @@
 "use client";
 
 import React, { useState } from 'react';
-import styles from './Create.module.css';
+import styles from './create.module.css';
 
-export default function Create() {
+interface CreateProps {
+  closeCreate: () => void;
+}
+
+export default function Create({ closeCreate }: CreateProps) {
     const [surveyTitle, setSurveyTitle] = useState("");
 
     const createSurvey = async () => {
@@ -23,6 +27,7 @@ export default function Create() {
             } else {
                 console.error('Failed to create survey:', response.statusText);
             }
+            closeCreate();
         } catch (error) {
             console.error('Error occurred while creating survey:', error);
         }
@@ -43,7 +48,7 @@ export default function Create() {
         <button className={styles.button} onClick={createSurvey}>
           Create
         </button>
-        <span className={styles.closeIcon}/>
+        <span className={styles.closeIcon} onClick={closeCreate}/>
       </div>
     );
 }

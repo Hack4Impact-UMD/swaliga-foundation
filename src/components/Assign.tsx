@@ -2,34 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { Survey } from '@/types/survey-types';
-import styles from './Assign.module.css';
+import styles from './assign.module.css';
 
 interface AssignProps {
     userIds: string[];
+    surveys: Survey[];
+    closeAssign: () => void;
 }
 
-export default function Assign({ userIds }: AssignProps) {
+export default function Assign({ userIds, surveys, closeAssign }: AssignProps) {
     const [selectedSurveys, setSelectedSurveys] = useState<string[]>([]);
-    const [surveys, setSurveys] = useState<Survey[]>([]);
-
-    useEffect(() => {
-        // Fetch the list of surveys from the server when the component mounts
-        async function fetchSurveys() {
-            try {
-                const response = await fetch('/api/surveys');
-                if (response.ok) {
-                    const surveysArray: Survey[] = await response.json(); 
-                    setSurveys(surveysArray);
-                } else {
-                    console.error('Failed to fetch surveys:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Error occurred while fetching surveys:', error);
-            }
-        }
-    
-        fetchSurveys();
-    }, []);
 
     // Function to toggle the selection of a survey
     const toggleSurvey = (surveyId: string) => {
@@ -70,36 +52,38 @@ export default function Assign({ userIds }: AssignProps) {
                 const errorData = await response.json();
                 console.error(errorData.error);
             }
+            closeAssign();
         } catch (error) {
             console.error('Error occurred while assigning surveys:', error);
         }
     };
 
     return (
-        <div className={styles.container}>
-            <div className={styles.title}>Assign Surveys</div>
-            
-            {surveys.map((survey) => (
-                <div key={survey.formId} className={styles.centeredOval}>
-                    <input
-                        type="checkbox"
-                        id={`surveyCheckbox_${survey.formId}`}
-                        className={styles.inputCheckbox}
-                        checked={selectedSurveys.includes(survey.formId)}
-                        onChange={() => toggleSurvey(survey.formId)}
-                    />
-                    <label
-                        htmlFor={`surveyCheckbox_${survey.formId}`}
-                        className={styles.text}
-                    >
-                        {survey.info.title}
-                    </label>
-                </div>
-            ))}
-            <button className={styles.button} onClick={assignSurveys}>
-                Assign
-            </button>
-            <span className={styles.closeIcon}/>
+      <div className={styles.container}>
+        <span className={styles.closeIcon} onClick={closeAssign} />
+        <div className={styles.title}>Assign Surveys</div>
+        <div className={styles.surveys}>
+          {surveys.map((survey) => (
+            <div key={survey.formId} className={styles.centeredOval}>
+              <input
+                type="checkbox"
+                id={`surveyCheckbox_${survey.formId}`}
+                className={styles.inputCheckbox}
+                checked={selectedSurveys.includes(survey.formId)}
+                onChange={() => toggleSurvey(survey.formId)}
+              />
+              <label
+                htmlFor={`surveyCheckbox_${survey.formId}`}
+                className={styles.text}
+              >
+                {survey.info.title}
+              </label>
+            </div>
+          ))}
         </div>
+        <button className={styles.button} onClick={assignSurveys}>
+          Assign
+        </button>
+      </div>
     );
 }
