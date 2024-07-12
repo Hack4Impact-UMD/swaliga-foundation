@@ -22,7 +22,7 @@ async function signInWithGoogle(): Promise<void> {
     provider.addScope("https://www.googleapis.com/auth/spreadsheets");
     try {
         const result = await signInWithPopup(auth, provider);
-        await fetch("/api/auth/user", { method: "POST", body: JSON.stringify({ uid: result.user.uid }) });
+        await fetch("/api/auth/user/claims", { method: "POST", body: JSON.stringify({ uid: result.user.uid }) });
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const googleToken = credential?.accessToken;
         const verified = await verifyGoogleToken(googleToken);
