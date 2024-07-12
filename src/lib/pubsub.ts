@@ -1,6 +1,6 @@
 import { PubSub } from "@google-cloud/pubsub";
 import { getSurveyByID, updateSurvey } from "./firebase/database/surveys";
-import { forms } from "./googleAuthorization";
+import { getFormsClient } from "./googleAuthorization";
 import { GoogleFormResponse, Response, Survey } from "@/types/survey-types";
 import { createResponse } from "./firebase/database/response";
 
@@ -30,6 +30,7 @@ export function listenForMessages()  {
 
 async function newResponseHandler(formId: string) {
   // Retrieve form responses or empty array
+  const forms = await getFormsClient();
   const googleResponses = await forms.forms.responses.list({ formId });
   const googleResponseData =
     (googleResponses.data.responses as GoogleFormResponse[]) || [];
