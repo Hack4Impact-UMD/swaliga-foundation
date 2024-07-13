@@ -5,11 +5,11 @@ import { Stage, Layer, Line } from "react-konva/lib/ReactKonvaCore";
 import { Polygon, Dims } from "@/types/konva-types";
 import styles from "./LoginPage.module.css";
 import { getPolygonBackground, getPolygonOverlay } from "./polygons";
-//import "@fortawesome/fontawesome-free/css/all.min.css";
 import GoogleButton from "react-google-button";
 import { loginUser } from "@/lib/firebase/authentication/emailPasswordAuthentication";
 import { signInWithGoogle } from "@/lib/firebase/authentication/googleAuthentication";
 import RequireSignedOut from "@/components/auth/RequireSignedOut";
+import Image from "next/image";
 
 export default function LoginPage() {
   const [dims, setDims] = useState<Dims>({width: 0, height: 0});
@@ -103,7 +103,7 @@ export default function LoginPage() {
             <div className={styles.google_button}>
               <GoogleButton onClick={signInWithGoogle} />
             </div>
-            <img
+            <Image
               className={styles.logo}
               src="/swaliga-website-logo.png"
               alt="swaliga-logo"

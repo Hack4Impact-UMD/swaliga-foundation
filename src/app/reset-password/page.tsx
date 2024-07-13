@@ -7,6 +7,7 @@ import React, { useState } from "react";
 import { auth } from '@/lib/firebase/firebaseConfig'; // Path to firebaseConfig.ts
 import { sendPasswordResetEmail } from 'firebase/auth'
 import RequireSignedOut from "@/components/auth/RequireSignedOut";
+import Image from "next/image";
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState("");
@@ -28,8 +29,8 @@ export default function ResetPasswordPage() {
     <RequireSignedOut>
       <div className={styles.page}>
         <div className={styles.logoSide}>
-          <img id={styles.design} src={CompanyLogo.src} alt="Company Logo" />
-          <img
+          <Image id={styles.design} src={CompanyLogo.src} alt="Company Logo" />
+          <Image
             id={styles.sitename}
             src={CompanyLogoWords.src}
             alt="Company Logo with Words (SwaligaFoundation.org)"
