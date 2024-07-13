@@ -107,6 +107,8 @@ export default function LoginPage() {
               className={styles.logo}
               src="/swaliga-website-logo.png"
               alt="swaliga-logo"
+              width={200}
+              height={200}
             />
           </div>
         </div>

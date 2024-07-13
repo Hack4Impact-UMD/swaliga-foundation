@@ -83,7 +83,7 @@ export default function StudentInfoPage({ params }: { params: { userId: string }
             </div>
             <div className={styles.rightSide}>
                 <div className={styles.profile}>
-                    <Image src={userPfp.src} alt="Profile Icon"/>
+                    <Image src={userPfp} alt="Profile Icon" className={styles.icon}/>
                     <p className={styles.header}>{`${user?.firstName ?? "first name"} ${user?.lastName ?? "last name"}`}</p>
                     <p className={styles.studentId}>{user?.id ?? "student id"}</p>
                 </div>
@@ -92,49 +92,49 @@ export default function StudentInfoPage({ params }: { params: { userId: string }
                         <thead>
                             <tr>
                                 <td className={styles.leftSideTable}>
-                                    <Image src={gradYrIcon.src} alt="Grad Year Icon"/>
+                                    <Image src={gradYrIcon} alt="Grad Year Icon"/>
                                     <p className={styles.regular}>Grad. Yr.</p>
                                 </td>
                                 <td className={`${styles.rightSideTable} ${styles.regular}`}><p>{user?.gradYear ?? "graduation year"}</p></td>
                             </tr>
                             <tr>
                                 <td className={styles.leftSideTable}>
-                                    <Image src={gradeIcon.src} alt="Grade Icon"/>
+                                    <Image src={gradeIcon} alt="Grade Icon"/>
                                     <p className={styles.regular}>Grade</p>
                                 </td>
                                 <td className={`${styles.rightSideTable} ${styles.regular}`}><p>{getGrade(user?.gradYear) ?? "grade"}</p></td>
                             </tr>
                             <tr>
                                 <td className={styles.leftSideTable}>
-                                    <Image src={genderIcon.src} alt="Gender Icon"/>
+                                    <Image src={genderIcon} alt="Gender Icon"/>
                                     <p className={styles.regular}>Gender</p>
                                 </td>
                                 <td className={`${styles.rightSideTable} ${styles.regular}`}><p>{user?.gender ?? "gender"}</p></td>
                             </tr>
                             <tr>
                                 <td className={styles.leftSideTable}>
-                                    <Image src={ethnicityIcon.src} alt="Ethnicity Icon"/>
+                                    <Image src={ethnicityIcon} alt="Ethnicity Icon"/>
                                     <p className={styles.regular}>Ethnicity</p>
                                 </td>
                                 <td className={`${styles.rightSideTable} ${styles.regular}`}><p>{user?.ethnicity ?? "ethnicity"}</p></td>
                             </tr>
                             <tr>
                                 <td className={styles.leftSideTable}>
-                                    <Image src={mobileIcon.src} alt="Mobile Icon"/>
+                                    <Image src={mobileIcon} alt="Mobile Icon"/>
                                     <p className={styles.regular}>Mobile</p>
                                 </td>
                                 <td className={`${styles.rightSideTable} ${styles.regular}`}><p>{user?.phone ?? "phone"}</p></td>
                             </tr>
                             <tr>
                                 <td className={styles.leftSideTable}>
-                                    <Image src={emailIcon.src} alt="Email Icon"/>
+                                    <Image src={emailIcon} alt="Email Icon"/>
                                     <p className={styles.regular}>Email</p>
                                 </td>
                                 <td className={`${styles.rightSideTable} ${styles.regular}`}><p>{user?.email ?? "email"}</p></td>
                             </tr>
                             <tr>
                                 <td className={styles.leftSideTable}>
-                                    <Image src={addressIcon.src} alt="Address Icon"/>
+                                    <Image src={addressIcon} alt="Address Icon"/>
                                     <p className={styles.regular}>Address</p>
                                 </td>
                                 <td className={`${styles.rightSideTable} ${styles.regular}`}><p>{`${user?.address.street ?? "street"}, ${user?.address.city ?? "city"}, ${user?.address.state ?? "state"} ${user?.address.zip ?? "zip code"}`}</p></td>
