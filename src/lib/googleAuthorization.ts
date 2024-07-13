@@ -6,7 +6,6 @@ import { auth, db } from "./firebase/firebaseConfig";
 const oauth2Client = new google.auth.OAuth2(
   process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
   process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
-  "http://localhost:3000/api/auth/handler"
 );
 
 export async function getFormsClient() {
