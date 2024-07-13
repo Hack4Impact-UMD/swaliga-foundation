@@ -1,5 +1,4 @@
 import { google } from "googleapis";
-import { redirect } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "./firebase/firebaseConfig";
 
