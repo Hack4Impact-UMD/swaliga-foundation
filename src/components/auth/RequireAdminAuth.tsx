@@ -12,11 +12,7 @@ export default function RequireAdminAuth({
   } else if (!authContext.user) {
     redirect("/");
   } else if (authContext.token?.claims?.role != "ADMIN") {
-    return (
-      <div>
-        <p>You do not have permission to access this page.</p>
-      </div>
-    );
+    redirect("/student-dashboard");
   }
 
   return <AuthProvider>{children}</AuthProvider>;

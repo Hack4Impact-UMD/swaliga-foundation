@@ -3,18 +3,13 @@ import AuthProvider, { useAuth } from './AuthProvider';
 
 export default function RequireStudentAuth({ children }: { children: JSX.Element }): JSX.Element {
   const authContext = useAuth();
+  console.log(authContext);
   if (authContext.loading) {
     return <p>Loading</p>
   } else if (!authContext.user) {
     redirect('/');
   } else if (authContext.token?.claims?.role != "STUDENT") {
-    return (
-      <div>
-        <p>
-          You do not have permission to access this page.
-        </p>
-      </div>
-    );
+    redirect('/admin-dashboard');
   }
 
   return <AuthProvider>{children}</AuthProvider>;
