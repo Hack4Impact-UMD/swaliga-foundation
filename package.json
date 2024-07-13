@@ -24,6 +24,7 @@
     "moment": "^2.30.1",
     "net": "^1.0.2",
     "next": "^14.2.4",
+    "nodemailer": "^6.9.14",
     "react": "^18",
     "react-dom": "^18",
     "react-google-button": "^0.7.2",
