@@ -9,6 +9,7 @@ import Filter from "./Filter";
 import Assign from "./Assign";
 import Modal from "./Modal";
 import { exportUsersToCSV } from "@/lib/exportCSV";
+import { useRouter } from "next/navigation";
 
 export default function UserList(props: { users: User[]; surveys: Survey[] }) {
   const { users, surveys } = props;
@@ -41,6 +42,8 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
     }
     setIsAllSelected(!isAllSelected);
   }
+
+  const router = useRouter();
 
   return (
     <>
@@ -84,7 +87,7 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
                         onChange={() => handleStudentCheck(student.id)}
                       />
                     </td>
-                    <td>
+                    <td onClick={() => router.push(`/user/${student.id}`)}>
                       {student.middleName
                         ? `${student.firstName} ${student.middleName} ${student.lastName}`
                         : `${student.firstName} ${student.lastName}`}
