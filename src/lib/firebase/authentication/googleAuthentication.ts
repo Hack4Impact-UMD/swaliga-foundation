@@ -23,6 +23,7 @@ async function signInWithGoogle(): Promise<void> {
     try {
         const result = await signInWithPopup(auth, provider);
         await fetch("/api/auth/user/claims", { method: "POST", body: JSON.stringify({ uid: result.user.uid }) });
+        await auth.currentUser?.getIdToken(true);
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const accessToken = credential?.accessToken;
         const verified = await verifyGoogleToken(accessToken);   
