@@ -2,6 +2,12 @@ import { getAccountById, updateAccount, createAccount } from "@/lib/firebase/dat
 import { User } from "@/types/user-types";
 import { NextRequest, NextResponse } from "next/server";
 import { UpdateData } from "firebase/firestore";
+import { getAllUsers } from "@/lib/firebase/database/users";
+
+export async function generateStaticParams() {
+  const users = await getAllUsers();
+  return users.map((user: User) => ({ userId: user.id || 'bruh' }));
+}
 
 export async function GET(
   req: NextRequest,
