@@ -106,7 +106,7 @@ export default function LoginPage() {
               />
             </div>
             <div className={styles.forgot_password}>
-              <a href="/forgot-password">Forgot password?</a>
+              <a href="/reset-password">Forgot password?</a>
             </div>
             <button className={styles.login_button} onClick={signInWithEmail}>
               Submit

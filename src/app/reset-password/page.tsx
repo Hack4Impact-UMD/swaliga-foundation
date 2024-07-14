@@ -6,13 +6,14 @@ import CompanyLogoWords from "@/../public/images/logo2.svg";
 import React, { useState } from "react";
 import { auth } from '@/lib/firebase/firebaseConfig'; // Path to firebaseConfig.ts
 import { sendPasswordResetEmail } from 'firebase/auth'
-//import RequireSignedOut from "@/components/auth/RequireSignedOut";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleReset = async (e: any) => {
     e.preventDefault();
@@ -60,6 +61,9 @@ export default function ResetPasswordPage() {
           </form>
           {message && <p>{message}</p>}
           {error && <p>{error}</p>}
+          <button className={styles.backToLoginButton} onClick={() => router.push("/")}>
+            Back to Login
+          </button>
         </div>
       </div>
     </div>
