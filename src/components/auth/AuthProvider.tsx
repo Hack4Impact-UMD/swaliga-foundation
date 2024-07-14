@@ -1,38 +1,37 @@
 'use client';
 import {
   onIdTokenChanged,
-  type User,
-  type IdTokenResult,
+  User,
+  IdTokenResult,
 } from "@firebase/auth";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "@/lib/firebase/firebaseConfig";
 
 interface AuthContextType {
-  user: User;
-  token: IdTokenResult;
+  user: User | null;
+  token: IdTokenResult | null;
   loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>(null!);
 
 export default function AuthProvider({children}: {children: JSX.Element}): JSX.Element {
-  const [user, setUser] = useState<User | any>(null!);
-  const [token, setToken] = useState<IdTokenResult>(null!);
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<IdTokenResult | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    onIdTokenChanged(auth, (newUser) => {
+    const unsubscribe = onIdTokenChanged(auth, async (newUser) => {
       setUser(newUser);
-      if (newUser != null) {
-        newUser
-          .getIdTokenResult()
-          .then((newToken) => {
-            setToken(newToken);
-          })
-          .catch(() => {});
+      if (newUser) {
+        const newToken = await newUser.getIdTokenResult();
+        setToken(newToken);
+      } else {
+        setToken(null);
       }
       setLoading(false);
     });
+    return () => unsubscribe();
   }, []);
 
   return (
@@ -40,8 +39,8 @@ export default function AuthProvider({children}: {children: JSX.Element}): JSX.E
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
 export function useAuth() {
   return useContext(AuthContext);
-};
+}
