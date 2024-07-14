@@ -3,7 +3,7 @@ import { getApps, initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 
 const existingApps = getApps();
-const app =
+const adminApp =
   existingApps.length === 0
     ? initializeApp(
         {
@@ -18,4 +18,4 @@ const app =
       )
     : existingApps[0];
 
-export const adminAuth = getAuth(app);
+export const adminAuth = getAuth(adminApp);
