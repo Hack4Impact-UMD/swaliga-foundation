@@ -1,4 +1,4 @@
-import { getAccountById, updateAccount } from "@/lib/firebase/database/users";
+import { getAccountById, updateAccount, createAccount } from "@/lib/firebase/database/users";
 import { User } from "@/types/user-types";
 import { NextRequest, NextResponse } from "next/server";
 import { UpdateData } from "firebase/firestore";
@@ -47,6 +47,33 @@ export async function PUT(
     return NextResponse.json(
       { error: "Error with Updating the Account" },
       { status: 404 }
+    );
+  }
+}
+
+export async function POST(req: NextRequest) {
+  if (!req.body) {
+    return NextResponse.json(
+      { error: "Missing Request Body" },
+      { status: 400 }
+    );
+  }
+
+  const data: User = await req.json();
+  if (!data) {
+    return NextResponse.json({ error: "Invalid User Data" }, { status: 400 });
+  }
+
+  try {
+    await createAccount(data);
+    return NextResponse.json(
+      { message: "Account Successfully Created" },
+      { status: 201 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Error with Creating the Account" },
+      { status: 500 }
     );
   }
 }

@@ -5,6 +5,7 @@ import { Stage, Layer, Line } from "react-konva/lib/ReactKonvaCore";
 import { Polygon, Dims } from "@/types/konva-types";
 import styles from "./CreateAccountPage.module.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import { Timestamp } from "firebase/firestore";
 
 export default function CreateAccountPage() {
   const [dims, setDims] = useState<Dims>({ width: 0, height: 0 });
@@ -22,48 +23,30 @@ export default function CreateAccountPage() {
     return () => window.removeEventListener("resize", updateDims);
   }, [updateDims]);
 
-  //Generating the polygons present in the background
+  // Generating the polygons present in the background
   const generatePolygons = useCallback((dims: Dims) => {
     const coords: Polygon[] = [
       {
         points: [
-          0,
-          0,
-          0,
-
+          0, 0, 0,
           dims.height / 30,
           (50 / 100) * dims.width,
           dims.height,
-
-          dims.width,
-          dims.height,
-          dims.width,
-
+          dims.width, dims.height, dims.width,
           0.45 * dims.height,
-          dims.height / 60,
-          0,
+          dims.height / 60, 0,
         ],
         fill: "#D0D12A",
       },
       {
         points: [
-          0,
-          dims.height / 60,
-          0,
-          dims.height,
-          (50 / 85) * dims.width,
-          dims.height,
+          0, dims.height / 60, 0, dims.height, (50 / 85) * dims.width, dims.height,
         ],
         fill: "#295972",
       },
       {
         points: [
-          dims.height / 60,
-          0,
-          dims.width,
-          0,
-          dims.width,
-          0.45 * dims.height,
+          dims.height / 60, 0, dims.width, 0, dims.width, 0.45 * dims.height,
         ],
         fill: "#295972",
       },
@@ -74,80 +57,56 @@ export default function CreateAccountPage() {
     const coords: Polygon[] = [
       {
         points: [
-          dims.width / 2,
-          0.15 * dims.height,
-          0.875 * dims.width,
-          0.15 * dims.height,
-          0.875 * dims.width,
-          0.39375 * dims.height,
-          dims.width / 2,
-          0.225 * dims.height,
+          dims.width / 2, 0.15 * dims.height,
+          0.875 * dims.width, 0.15 * dims.height,
+          0.875 * dims.width, 0.39375 * dims.height,
+          dims.width / 2, 0.225 * dims.height,
         ],
         fill: "#D0D12A",
       },
       {
         points: [
-          dims.width / 2,
-          0.225 * dims.height,
-          0.875 * dims.width,
-          0.39375 * dims.height,
-          0.875 * dims.width,
-          0.85 * dims.height,
-          0.5 * dims.width,
-          0.85 * dims.height,
+          dims.width / 2, 0.225 * dims.height,
+          0.875 * dims.width, 0.39375 * dims.height,
+          0.875 * dims.width, 0.85 * dims.height,
+          0.5 * dims.width, 0.85 * dims.height,
         ],
         fill: "#295972",
       },
     ];
     const borderPolygon1 = {
       points: [
-        dims.width / 2 + 670,
-        0.15 * dims.height - 55, // top-left corner
-        dims.width / 2 + 678,
-        0.15 * dims.height - 54, // top-right corner
-        dims.width / 2 + 678,
-        0.15 * dims.height + 557, // bottom-right corner
-        dims.width / 2 + 670,
-        0.15 * dims.height + 556, // bottom-left corner
+        dims.width / 2 + 670, 0.15 * dims.height - 55, // top-left corner
+        dims.width / 2 + 678, 0.15 * dims.height - 54, // top-right corner
+        dims.width / 2 + 678, 0.15 * dims.height + 557, // bottom-right corner
+        dims.width / 2 + 670, 0.15 * dims.height + 556, // bottom-left corner
       ],
       fill: "white",
     };
     const borderPolygon2 = {
       points: [
-        dims.width / 2 - 591,
-        0.15 * dims.height - 55, // top-left corner
-        dims.width / 2 - 583,
-        0.15 * dims.height - 54, // top-right corner
-        dims.width / 2 - 583,
-        0.15 * dims.height + 557, // bottom-right corner
-        dims.width / 2 - 591,
-        0.15 * dims.height + 556, // bottom-left corner
+        dims.width / 2 - 591, 0.15 * dims.height - 55, // top-left corner
+        dims.width / 2 - 583, 0.15 * dims.height - 54, // top-right corner
+        dims.width / 2 - 583, 0.15 * dims.height + 557, // bottom-right corner
+        dims.width / 2 - 591, 0.15 * dims.height + 556, // bottom-left corner
       ],
       fill: "white",
     };
     const borderPolygon3 = {
       points: [
-        dims.width / 2 - 583,
-        0.15 * dims.height + 549, // bottom-right corner
-        dims.width / 2 - 591,
-        0.15 * dims.height + 557, // bottom-left corner
-        dims.width / 2 + 678,
-        0.15 * dims.height + 557, // bottom-right corner
-        dims.width / 2 + 670,
-        0.15 * dims.height + 549, // bottom-left corner
+        dims.width / 2 - 583, 0.15 * dims.height + 549, // bottom-right corner
+        dims.width / 2 - 591, 0.15 * dims.height + 557, // bottom-left corner
+        dims.width / 2 + 678, 0.15 * dims.height + 557, // bottom-right corner
+        dims.width / 2 + 670, 0.15 * dims.height + 549, // bottom-left corner
       ],
       fill: "white",
     };
     const borderPolygon4 = {
       points: [
-        dims.width / 2 - 591,
-        0.15 * dims.height - 57, // bottom-right corner
-        dims.width / 2 - 591,
-        0.15 * dims.height - 49, // bottom-left corner
-        dims.width / 2 + 678,
-        0.15 * dims.height - 49, // bottom-right corner
-        dims.width / 2 + 678,
-        0.15 * dims.height - 57, // bottom-left corner
+        dims.width / 2 - 591, 0.15 * dims.height - 57, // bottom-right corner
+        dims.width / 2 - 591, 0.15 * dims.height - 49, // bottom-left corner
+        dims.width / 2 + 678, 0.15 * dims.height - 49, // bottom-right corner
+        dims.width / 2 + 678, 0.15 * dims.height - 57, // bottom-left corner
       ],
       fill: "white",
     };
@@ -310,7 +269,10 @@ export default function CreateAccountPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(accountInfo),
+        body: JSON.stringify({
+          ...accountInfo,
+          birthdate: Timestamp.fromDate(new Date(accountInfo.bday)),
+        }),
       });
       const data = await response.json();
       console.log("Response:", data); 
@@ -323,7 +285,7 @@ export default function CreateAccountPage() {
       console.error("Error during account creation:", error);
       setFormError("Unexpected error");
     }
-};
+  };
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -366,15 +328,7 @@ export default function CreateAccountPage() {
 
   const handleEmergencyContactChange = (
     index: number,
-    field:
-      | "name"
-      | "email"
-      | "phone"
-      | "street"
-      | "city"
-      | "state"
-      | "zip"
-      | "country",
+    field: "name" | "email" | "phone" | "street" | "city" | "state" | "zip" | "country",
     value: string
   ) => {
     const updatedContacts = [...emergencyContacts];
@@ -388,7 +342,7 @@ export default function CreateAccountPage() {
       return; // Invalid input, do not update state
     }
 
-    // only allow digits
+    // Only allow digits
     if (
       (field === "phone" || field === "zip") &&
       value !== "" &&
@@ -416,21 +370,12 @@ export default function CreateAccountPage() {
       return;
     }
 
-    if (
-        name === "yearsInSwaliga" &&
-        value !== "" &&
-        !/^\d+$/.test(value)
-    ) {
-        return; // Only allow numeric input
+    if (name === "yearsInSwaliga" && value !== "" && !/^\d+$/.test(value)) {
+      return; // Only allow numeric input
     }
 
-
     if (
-      (name === "city" ||
-        name === "state" ||
-        name === "firstName" ||
-        name === "middleName" ||
-        name === "lastName") &&
+      (name === "city" || name === "state" || name === "firstName" || name === "middleName" || name === "lastName") &&
       value !== "" &&
       !/^[A-Za-z ]*$/.test(value)
     ) {
@@ -439,17 +384,9 @@ export default function CreateAccountPage() {
     }
 
     if (name === "password" || name === "confirmPassword") {
-      if (
-        name === "password" &&
-        accountInfo.confirmPassword &&
-        value !== accountInfo.confirmPassword
-      ) {
+      if (name === "password" && accountInfo.confirmPassword && value !== accountInfo.confirmPassword) {
         setPasswordError("Passwords do not match");
-      } else if (
-        name === "confirmPassword" &&
-        accountInfo.password &&
-        value !== accountInfo.password
-      ) {
+      } else if (name === "confirmPassword" && accountInfo.password && value !== accountInfo.password) {
         setPasswordError("Passwords do not match");
       } else {
         setPasswordError(""); // Clear error if passwords match
@@ -802,7 +739,9 @@ export default function CreateAccountPage() {
                   onChange={handleChange}
                 />
                 <i
-                  className={`fas ${showPassword ? "fa-eye-slash" : "fa-eye"}`}
+                  className={`fas ${
+                    showPassword ? "fa-eye-slash" : "fa-eye"
+                  }`}
                   onClick={togglePasswordVisibility}
                 ></i>
               </div>

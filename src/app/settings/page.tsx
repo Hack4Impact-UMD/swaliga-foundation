@@ -8,6 +8,7 @@ import Link from "next/link";
 import { logOut } from "@/lib/firebase/authentication/googleAuthentication";
 import { getAccountById, updateAccount } from "@/lib/firebase/database/users";
 import { useRouter } from "next/navigation";
+import { Timestamp } from "firebase/firestore";
 
 export default function Settings() {
   const [userData, setUserData] = useState<User | null>(null);
@@ -38,13 +39,39 @@ export default function Settings() {
 
   async function handleSaveChanges() {
     try {
-      await updateAccount(userData?.id as string, userData as User);
+      await updateAccount(userData?.id as string, {
+        ...userData,
+        birthdate: Timestamp.fromDate(new Date(userData?.birthdate as unknown as string))
+      });
       handleCancel();
       console.log("User data updated successfully");
     } catch (error) {
       console.error("Error updating user data:", error);
     }
   }
+
+  const handleInputChange = (field: string, value: any) => {
+    if (userData) {
+      setUserData({
+        ...userData,
+        [field]: value,
+      });
+    }
+  };
+
+  const handleGuardianChange = (index: number, field: string, value: any) => {
+    if (userData) {
+      const updatedGuardian = userData.guardian ? [...userData.guardian] : [];
+      updatedGuardian[index] = {
+        ...updatedGuardian[index],
+        [field]: value,
+      };
+      setUserData({
+        ...userData,
+        guardian: updatedGuardian,
+      });
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -87,10 +114,7 @@ export default function Settings() {
                       className={styles.inputContainer}
                       value={userData.firstName}
                       onChange={(event) =>
-                        setUserData({
-                          ...userData,
-                          firstName: event.target.value,
-                        })
+                        handleInputChange('firstName', event.target.value)
                       }
                     />
                   </div>
@@ -104,10 +128,7 @@ export default function Settings() {
                       className={styles.inputContainer}
                       value={userData.lastName}
                       onChange={(event) =>
-                        setUserData({
-                          ...userData,
-                          lastName: event.target.value,
-                        })
+                        handleInputChange('lastName', event.target.value)
                       }
                     />
                   </div>
@@ -121,10 +142,7 @@ export default function Settings() {
                       className={styles.inputContainer}
                       value={userData.email}
                       onChange={(event) =>
-                        setUserData({
-                          ...userData,
-                          email: event.target.value,
-                        })
+                        handleInputChange('email', event.target.value)
                       }
                     />
                   </div>
@@ -136,12 +154,9 @@ export default function Settings() {
                     <input
                       type="text"
                       className={styles.inputContainer}
-                      value={userData.phone}
+                      value={userData.phone.toString()}
                       onChange={(event) =>
-                        setUserData({
-                          ...userData,
-                          phone: Number(event.target.value),
-                        })
+                        handleInputChange('phone', Number(event.target.value))
                       }
                     />
                   </div>
@@ -213,7 +228,7 @@ export default function Settings() {
                     <input
                       type="text"
                       className={styles.inputContainer}
-                      value={userData.address.zip}
+                      value={userData.address.zip.toString()}
                       onChange={(event) =>
                         setUserData({
                           ...userData,
@@ -233,12 +248,9 @@ export default function Settings() {
                     <input
                       type="text"
                       className={styles.inputContainer}
-                      value={userData.gradYear}
+                      value={userData.gradYear.toString()}
                       onChange={(event) =>
-                        setUserData({
-                          ...userData,
-                          gradYear: Number(event.target.value),
-                        })
+                        handleInputChange('gradYear', Number(event.target.value))
                       }
                     />
                   </div>
@@ -250,12 +262,9 @@ export default function Settings() {
                     <input
                       type="text"
                       className={styles.inputContainer}
-                      value={userData.yearsWithSwaliga}
+                      value={userData.yearsWithSwaliga.toString()}
                       onChange={(event) =>
-                        setUserData({
-                          ...userData,
-                          yearsWithSwaliga: Number(event.target.value),
-                        })
+                        handleInputChange('yearsWithSwaliga', Number(event.target.value))
                       }
                     />
                   </div>
@@ -274,46 +283,10 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userData.guardian ? userData.guardian[0]?.firstName : ""
+                        userData.guardian ? userData.guardian[0]?.name : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userData.guardian
-                          ? [...userData.guardian]
-                          : [];
-                        updatedGuardian[0] = {
-                          ...updatedGuardian[0],
-                          firstName: event.target.value,
-                        };
-                        setUserData({
-                          ...userData,
-                          guardian: updatedGuardian,
-                        });
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div className={styles.settingField}>
-                  <div className={styles.field}>
-                    <p className={styles.fieldName}>Last Name</p>
-                    <input
-                      type="text"
-                      className={styles.inputContainer}
-                      value={
-                        userData.guardian ? userData.guardian[0]?.lastName : ""
-                      }
-                      onChange={(event) => {
-                        const updatedGuardian = userData.guardian
-                          ? [...userData.guardian]
-                          : [];
-                        updatedGuardian[0] = {
-                          ...updatedGuardian[0],
-                          lastName: event.target.value,
-                        };
-                        setUserData({
-                          ...userData,
-                          guardian: updatedGuardian,
-                        });
+                        handleGuardianChange(0, 'name', event.target.value);
                       }}
                     />
                   </div>
@@ -329,17 +302,7 @@ export default function Settings() {
                         userData.guardian ? userData.guardian[0]?.email : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userData.guardian
-                          ? [...userData.guardian]
-                          : [];
-                        updatedGuardian[0] = {
-                          ...updatedGuardian[0],
-                          email: event.target.value,
-                        };
-                        setUserData({
-                          ...userData,
-                          guardian: updatedGuardian,
-                        });
+                        handleGuardianChange(0, 'email', event.target.value);
                       }}
                     />
                   </div>
@@ -352,20 +315,10 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userData.guardian ? userData.guardian[0]?.phone : ""
+                        userData.guardian ? userData.guardian[0]?.phone.toString() : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userData.guardian
-                          ? [...userData.guardian]
-                          : [];
-                        updatedGuardian[0] = {
-                          ...updatedGuardian[0],
-                          phone: Number(event.target.value),
-                        };
-                        setUserData({
-                          ...userData,
-                          guardian: updatedGuardian,
-                        });
+                        handleGuardianChange(0, 'phone', Number(event.target.value));
                       }}
                     />
                   </div>
@@ -383,19 +336,9 @@ export default function Settings() {
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userData.guardian
-                          ? [...userData.guardian]
-                          : [];
-                        updatedGuardian[0] = {
-                          ...updatedGuardian[0],
-                          address: {
-                            ...updatedGuardian[0]?.address,
-                            street: event.target.value,
-                          },
-                        };
-                        setUserData({
-                          ...userData,
-                          guardian: updatedGuardian,
+                        handleGuardianChange(0, 'address', {
+                          ...userData.guardian?.[0].address,
+                          street: event.target.value
                         });
                       }}
                     />
@@ -414,19 +357,9 @@ export default function Settings() {
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userData.guardian
-                          ? [...userData.guardian]
-                          : [];
-                        updatedGuardian[0] = {
-                          ...updatedGuardian[0],
-                          address: {
-                            ...updatedGuardian[0]?.address,
-                            city: event.target.value,
-                          },
-                        };
-                        setUserData({
-                          ...userData,
-                          guardian: updatedGuardian,
+                        handleGuardianChange(0, 'address', {
+                          ...userData.guardian?.[0].address,
+                          city: event.target.value
                         });
                       }}
                     />
@@ -445,19 +378,9 @@ export default function Settings() {
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userData.guardian
-                          ? [...userData.guardian]
-                          : [];
-                        updatedGuardian[0] = {
-                          ...updatedGuardian[0],
-                          address: {
-                            ...updatedGuardian[0]?.address,
-                            state: event.target.value,
-                          },
-                        };
-                        setUserData({
-                          ...userData,
-                          guardian: updatedGuardian,
+                        handleGuardianChange(0, 'address', {
+                          ...userData.guardian?.[0].address,
+                          state: event.target.value
                         });
                       }}
                     />
@@ -466,29 +389,19 @@ export default function Settings() {
 
                 <div className={styles.settingField}>
                   <div className={styles.field}>
-                    <p className={styles.fieldName}>Zip</p>
+                    <p className={styles.fieldName}>Zipcode</p>
                     <input
                       type="text"
                       className={styles.inputContainer}
                       value={
                         userData.guardian
-                          ? userData.guardian[0]?.address.zip
+                          ? userData.guardian[0]?.address.zip.toString()
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userData.guardian
-                          ? [...userData.guardian]
-                          : [];
-                        updatedGuardian[0] = {
-                          ...updatedGuardian[0],
-                          address: {
-                            ...updatedGuardian[0]?.address,
-                            zip: Number(event.target.value),
-                          },
-                        };
-                        setUserData({
-                          ...userData,
-                          guardian: updatedGuardian,
+                        handleGuardianChange(0, 'address', {
+                          ...userData.guardian?.[0].address,
+                          zip: Number(event.target.value)
                         });
                       }}
                     />
@@ -508,46 +421,10 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userData.guardian ? userData.guardian[1]?.firstName : ""
+                        userData.guardian ? userData.guardian[1]?.name : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userData.guardian
-                          ? [...userData.guardian]
-                          : [];
-                        updatedGuardian[1] = {
-                          ...updatedGuardian[1],
-                          firstName: event.target.value,
-                        };
-                        setUserData({
-                          ...userData,
-                          guardian: updatedGuardian,
-                        });
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div className={styles.settingField}>
-                  <div className={styles.field}>
-                    <p className={styles.fieldName}>Last Name</p>
-                    <input
-                      type="text"
-                      className={styles.inputContainer}
-                      value={
-                        userData.guardian ? userData.guardian[1]?.lastName : ""
-                      }
-                      onChange={(event) => {
-                        const updatedGuardian = userData.guardian
-                          ? [...userData.guardian]
-                          : [];
-                        updatedGuardian[1] = {
-                          ...updatedGuardian[1],
-                          lastName: event.target.value,
-                        };
-                        setUserData({
-                          ...userData,
-                          guardian: updatedGuardian,
-                        });
+                        handleGuardianChange(1, 'name', event.target.value);
                       }}
                     />
                   </div>
@@ -563,17 +440,7 @@ export default function Settings() {
                         userData.guardian ? userData.guardian[1]?.email : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userData.guardian
-                          ? [...userData.guardian]
-                          : [];
-                        updatedGuardian[1] = {
-                          ...updatedGuardian[1],
-                          email: event.target.value,
-                        };
-                        setUserData({
-                          ...userData,
-                          guardian: updatedGuardian,
-                        });
+                        handleGuardianChange(1, 'email', event.target.value);
                       }}
                     />
                   </div>
@@ -586,20 +453,10 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userData.guardian ? userData.guardian[1]?.phone : ""
+                        userData.guardian ? userData.guardian[1]?.phone.toString() : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userData.guardian
-                          ? [...userData.guardian]
-                          : [];
-                        updatedGuardian[1] = {
-                          ...updatedGuardian[1],
-                          phone: Number(event.target.value),
-                        };
-                        setUserData({
-                          ...userData,
-                          guardian: updatedGuardian,
-                        });
+                        handleGuardianChange(1, 'phone', Number(event.target.value));
                       }}
                     />
                   </div>
@@ -617,19 +474,9 @@ export default function Settings() {
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userData.guardian
-                          ? [...userData.guardian]
-                          : [];
-                        updatedGuardian[1] = {
-                          ...updatedGuardian[1],
-                          address: {
-                            ...updatedGuardian[1]?.address,
-                            street: event.target.value,
-                          },
-                        };
-                        setUserData({
-                          ...userData,
-                          guardian: updatedGuardian,
+                        handleGuardianChange(1, 'address', {
+                          ...userData.guardian?.[1].address,
+                          street: event.target.value
                         });
                       }}
                     />
@@ -648,19 +495,9 @@ export default function Settings() {
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userData.guardian
-                          ? [...userData.guardian]
-                          : [];
-                        updatedGuardian[1] = {
-                          ...updatedGuardian[1],
-                          address: {
-                            ...updatedGuardian[1]?.address,
-                            city: event.target.value,
-                          },
-                        };
-                        setUserData({
-                          ...userData,
-                          guardian: updatedGuardian,
+                        handleGuardianChange(1, 'address', {
+                          ...userData.guardian?.[1].address,
+                          city: event.target.value
                         });
                       }}
                     />
@@ -679,19 +516,9 @@ export default function Settings() {
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userData.guardian
-                          ? [...userData.guardian]
-                          : [];
-                        updatedGuardian[1] = {
-                          ...updatedGuardian[1],
-                          address: {
-                            ...updatedGuardian[1]?.address,
-                            state: event.target.value,
-                          },
-                        };
-                        setUserData({
-                          ...userData,
-                          guardian: updatedGuardian,
+                        handleGuardianChange(1, 'address', {
+                          ...userData.guardian?.[1].address,
+                          state: event.target.value
                         });
                       }}
                     />
@@ -706,23 +533,13 @@ export default function Settings() {
                       className={styles.inputContainer}
                       value={
                         userData.guardian
-                          ? userData.guardian[1]?.address.zip
+                          ? userData.guardian[1]?.address.zip.toString()
                           : ""
                       }
                       onChange={(event) => {
-                        const updatedGuardian = userData.guardian
-                          ? [...userData.guardian]
-                          : [];
-                        updatedGuardian[1] = {
-                          ...updatedGuardian[1],
-                          address: {
-                            ...updatedGuardian[1]?.address,
-                            zip: Number(event.target.value),
-                          },
-                        };
-                        setUserData({
-                          ...userData,
-                          guardian: updatedGuardian,
+                        handleGuardianChange(1, 'address', {
+                          ...userData.guardian?.[1].address,
+                          zip: Number(event.target.value)
                         });
                       }}
                     />
