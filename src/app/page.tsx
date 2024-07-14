@@ -1,4 +1,5 @@
-"use client";
+'use client';
+
 import React, { useEffect, useState, useCallback } from "react";
 import "konva/lib/shapes/Line";
 import { Stage, Layer, Line } from "react-konva/lib/ReactKonvaCore";
@@ -9,56 +10,69 @@ import GoogleButton from "react-google-button";
 import { loginUser } from "@/lib/firebase/authentication/emailPasswordAuthentication";
 import { signInWithGoogle } from "@/lib/firebase/authentication/googleAuthentication";
 import RequireSignedOut from "@/components/auth/RequireSignedOut";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 export default function LoginPage() {
-  const [dims, setDims] = useState<Dims>({width: 0, height: 0});
+  const [dims, setDims] = useState<Dims>({ width: 0, height: 0 });
   const [polygonBackground, setPolygonBackground] = useState<Polygon[]>([]);
   const [polygonOverlay, setPolygonOverlay] = useState<Polygon[]>([]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisibility, setPasswordVisibility] = useState(false);
+  const router = useRouter();
+
+  const setAllPolygons = (width: number, height: number) => {
+    setDims({ width, height });
+    setPolygonBackground(getPolygonBackground(width, height));
+    setPolygonOverlay(getPolygonOverlay(width, height));
+  };
 
   useEffect(() => {
     setAllPolygons(window.innerWidth, window.innerHeight);
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
       setAllPolygons(window.innerWidth, window.innerHeight);
-    })
+    });
   }, []);
 
-  const setAllPolygons = (width: number, height: number) => {
-    setDims({width, height});
-    setPolygonBackground(getPolygonBackground(width, height));
-    setPolygonOverlay(getPolygonOverlay(width, height));
-  }
-
-  // Function to draw a given polygon
-  const drawPolygon = useCallback((polygon: Polygon) => (
-    <Line
-      key={polygon.points.toString()}
-      points={polygon.points}
-      fill={polygon.fill}
-      closed
-      stroke="black"
-      strokeWidth={0}
-    />
-  ), []);
-
   const signInWithEmail = async () => {
-    await loginUser(email, password);
-    setEmail('');
-    setPassword('');
-  }
+    const response = await loginUser(email, password);
+    if (response.success) {
+      // Fetch user details and check if the user is admin or student
+      const user = await fetch(`/api/users/${response.userId}`).then((res) =>
+        res.json()
+      );
+      if (user.isAdmin) {
+        router.push("/admin-dashboard");
+      } else {
+        router.push("/student-dashboard");
+      }
+    } else {
+      console.log("Login failed");
+    }
+    setEmail("");
+    setPassword("");
+  };
+
+  const drawPolygon = useCallback(
+    (polygon: Polygon) => (
+      <Line
+        key={polygon.points.toString()}
+        points={polygon.points}
+        fill={polygon.fill}
+        closed
+        stroke="black"
+        strokeWidth={0}
+      />
+    ),
+    []
+  );
 
   return (
     <RequireSignedOut>
       <div className={styles.container}>
         <div className={styles.background}>
-          <Stage
-            className={styles.stage}
-            width={dims.width}
-            height={dims.height}
-          >
+          <Stage className={styles.stage} width={dims.width} height={dims.height}>
             <Layer>
               {polygonBackground.map(drawPolygon)}
               {polygonOverlay.map(drawPolygon)}

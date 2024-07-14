@@ -48,7 +48,7 @@ export default function ForgotPasswordPage() {
   );
 
   return (
-    <RequireStudentAuth>
+    //<RequireStudentAuth>
       <div className={styles.container}>
         <div className={styles.background}>
           <Stage
@@ -76,6 +76,6 @@ export default function ForgotPasswordPage() {
           </div>
         </div>
       </div>
-    </RequireStudentAuth>
+    //</RequireStudentAuth>
   );
 }
