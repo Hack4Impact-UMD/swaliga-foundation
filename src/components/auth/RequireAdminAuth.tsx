@@ -1,24 +1,19 @@
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from './AuthProvider';
+import { redirect } from "next/navigation";
+import AuthProvider, { useAuth } from "./AuthProvider";
 
-export default function RequireAdminAuth({ children }: { children: JSX.Element }): JSX.Element {
+export default function RequireAdminAuth({
+  children,
+}: {
+  children: JSX.Element;
+}): JSX.Element {
   const authContext = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!authContext.loading) {
-      if (!authContext.user) {
-        router.push('/');
-      } else if (authContext.token?.claims?.role !== "ADMIN") {
-        router.push('/student-dashboard');
-      }
-    }
-  }, [authContext, router]);
-
-  if (authContext.loading || !authContext.user || authContext.token?.claims?.role !== "ADMIN") {
-    return <p>Loading...</p>;
+  if (authContext.loading) {
+    return <p>Loading</p>;
+  } else if (!authContext.user) {
+    redirect("/");
+  } else if (authContext.token?.claims?.role != "ADMIN") {
+    redirect("/student-dashboard");
   }
 
-  return children;
+  return <AuthProvider>{children}</AuthProvider>;
 }

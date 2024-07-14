@@ -1,26 +1,18 @@
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from './AuthProvider';
+import { redirect } from "next/navigation";
+import AuthProvider, { useAuth } from "./AuthProvider";
+import { auth } from "@/lib/firebase/firebaseConfig";
 
-export default function RequireSignedOut({ children }: { children: JSX.Element }): JSX.Element {
+export default function RequireSignedOut({
+  children,
+}: {
+  children: JSX.Element;
+}): JSX.Element {
   const authContext = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!authContext.loading) {
-      if (authContext.user) {
-        if (authContext.token?.claims?.role === "ADMIN") {
-          router.push('/admin-dashboard');
-        } else if (authContext.token?.claims?.role === "STUDENT") {
-          router.push('/student-dashboard');
-        }
-      }
-    }
-  }, [authContext, router]);
-
   if (authContext.loading) {
-    return <p>Loading...</p>;
+    return <p>Loading</p>;
+  } else if (authContext.user && authContext.token?.claims?.role) {
+    redirect(authContext.token?.claims?.role == "ADMIN" ? '/admin-dashboard' : '/student-dashboard');
   }
 
-  return children;
+  return <AuthProvider>{children}</AuthProvider>;
 }

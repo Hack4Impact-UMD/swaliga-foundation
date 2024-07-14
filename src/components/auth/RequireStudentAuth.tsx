@@ -1,24 +1,16 @@
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from './AuthProvider';
+import { redirect } from 'next/navigation'
+import AuthProvider, { useAuth } from './AuthProvider';
 
 export default function RequireStudentAuth({ children }: { children: JSX.Element }): JSX.Element {
   const authContext = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!authContext.loading) {
-      if (!authContext.user) {
-        router.push('/');
-      } else if (authContext.token?.claims?.role !== "STUDENT") {
-        router.push('/admin-dashboard');
-      }
-    }
-  }, [authContext.loading, authContext.user, authContext.token?.claims?.role, router]);
-
+  console.log(authContext);
   if (authContext.loading) {
-    return <p>Loading...</p>;
+    return <p>Loading</p>
+  } else if (!authContext.user) {
+    redirect('/');
+  } else if (authContext.token?.claims?.role != "STUDENT") {
+    redirect('/admin-dashboard');
   }
 
-  return children;
-}
+  return <AuthProvider>{children}</AuthProvider>;
+};
