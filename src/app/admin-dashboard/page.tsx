@@ -9,15 +9,12 @@ import RequireAdminAuth from "@/components/auth/RequireAdminAuth";
 import logoutIcon from "@/../public/icons/logout.svg";
 import Image from "next/image";
 import { auth } from "@/lib/firebase/firebaseConfig";
-import { useAuth } from "@/components/auth/AuthProvider";
 
 export default function AdminDashboard() {
   const [showUserList, setShowUserList] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [users, setUsers] = useState<User[]>([]);
   const [surveys, setSurveys] = useState<Survey[]>([]);
-
-  const authContext = useAuth();
   
   useEffect(() => {
     const promises = [];
