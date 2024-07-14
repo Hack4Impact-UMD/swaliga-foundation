@@ -6,6 +6,10 @@ import { Survey } from "@/types/survey-types";
 import UserList from "@/components/UserList";
 import SurveyList from "@/components/SurveyList";
 import RequireAdminAuth from "@/components/auth/RequireAdminAuth";
+import logoutIcon from "@/../public/icons/logout.svg";
+import Image from "next/image";
+import { auth } from "@/lib/firebase/firebaseConfig";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 export default function AdminDashboard() {
   const [showUserList, setShowUserList] = useState<boolean>(true);
@@ -13,6 +17,8 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [surveys, setSurveys] = useState<Survey[]>([]);
 
+  const authContext = useAuth();
+  
   useEffect(() => {
     const promises = [];
     promises.push(fetch("/api/users"));
@@ -36,6 +42,12 @@ export default function AdminDashboard() {
       ) : (
         <div className={styles.background}>
           <div className={styles.container}>
+            <Image
+              src={logoutIcon}
+              alt="Logout Icon"
+              className={styles.logout}
+              onClick={() => auth.signOut()}
+            />
             <div className={styles.header}>
               <div className={styles.headerContent}>
                 <select
