@@ -1,11 +1,11 @@
-'use client';
-
+'use client'
 import React, { useState, useEffect, useCallback, ChangeEvent } from "react";
 import "konva/lib/shapes/Line";
 import { Stage, Layer, Line } from "react-konva/lib/ReactKonvaCore";
 import { Polygon, Dims } from "@/types/konva-types";
 import styles from "./CreateAccountPage.module.css";
 import RequireSignedOut from "@/components/auth/RequireSignedOut";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 import { Timestamp } from "firebase/firestore";
 import { User, Gender } from "@/types/user-types";
 import { signUpUser } from "@/lib/firebase/authentication/emailPasswordAuthentication";
