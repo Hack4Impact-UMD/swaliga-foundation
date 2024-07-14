@@ -7,15 +7,23 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { userId: string } }
 ) {
-  const userid = params.userId;
+  const userId = params.userId;
 
   try {
-    const user = await getAccountById(userid);
-    return NextResponse.json(user, { status: 200 });
-  } catch {
+    const user = await getAccountById(userId);
+    if (user) {
+      return NextResponse.json(user, { status: 200 });
+    } else {
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404 }
+      );
+    }
+  } catch (error) {
+    console.error("Error with Getting the Account Via the Given ID", error);
     return NextResponse.json(
       { error: "Error with Getting the Account Via the Given ID" },
-      { status: 404 }
+      { status: 500 }
     );
   }
 }
@@ -31,19 +39,20 @@ export async function PUT(
     );
   }
 
-  const userid = params.userId;
+  const userId = params.userId;
   const data: UpdateData<User> = await req.json();
   if (!data) {
     return NextResponse.json({ error: "Invalid User Data" }, { status: 400 });
   }
 
   try {
-    await updateAccount(userid, data);
+    await updateAccount(userId, data);
     return NextResponse.json(
       { message: "Account Successfully Updated" },
       { status: 200 }
     );
-  } catch {
+  } catch (error) {
+    console.error("Error with Updating the Account", error);
     return NextResponse.json(
       { error: "Error with Updating the Account" },
       { status: 404 }
