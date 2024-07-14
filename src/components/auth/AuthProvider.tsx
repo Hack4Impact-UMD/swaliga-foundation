@@ -24,7 +24,7 @@ export default function AuthProvider({children}: {children: JSX.Element}): JSX.E
     const unsubscribe = onIdTokenChanged(auth, async (newUser) => {
       setUser(newUser);
       if (newUser) {
-        const newToken = await newUser.getIdTokenResult();
+        const newToken = await newUser.getIdTokenResult(true); // Force refresh the token
         setToken(newToken);
       } else {
         setToken(null);

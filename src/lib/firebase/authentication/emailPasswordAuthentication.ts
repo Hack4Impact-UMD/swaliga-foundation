@@ -29,6 +29,16 @@ export const signUpUser = async (
 
     await updateAccount(user.uid, { isAdmin: false });
 
+    await fetch("/api/auth/user/claims", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ uid: user.uid })
+    });
+
+    await auth.currentUser?.getIdToken(true);
+
     return { success: true, userId: user.uid };
   } catch (error) {
     console.log(error);
