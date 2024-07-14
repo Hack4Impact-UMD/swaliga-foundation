@@ -1,5 +1,4 @@
-import { getAllUsers } from "@/lib/firebase/database/filter";
-import { createAccount } from "@/lib/firebase/database/users";
+import { createAccount, getAllUsers } from "@/lib/firebase/database/users";
 import { User } from "@/types/user-types";
 import { NextRequest, NextResponse } from 'next/server';
 
