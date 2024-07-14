@@ -5,6 +5,9 @@ import { Stage, Layer, Line } from "react-konva/lib/ReactKonvaCore";
 import { Polygon, Dims } from "@/types/konva-types";
 import styles from "./CreateAccountPage.module.css";
 import RequireSignedOut from "@/components/auth/RequireSignedOut";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import { Timestamp } from "firebase/firestore";
+import { User, Gender, Address, Ethnicity } from "@/types/user-types";
 
 export default function CreateAccountPage() {
   const [dims, setDims] = useState<Dims>({ width: 0, height: 0 });
@@ -22,48 +25,30 @@ export default function CreateAccountPage() {
     return () => window.removeEventListener("resize", updateDims);
   }, [updateDims]);
 
-  //Generating the polygons present in the background
+  // Generating the polygons present in the background
   const generatePolygons = useCallback((dims: Dims) => {
     const coords: Polygon[] = [
       {
         points: [
-          0,
-          0,
-          0,
-
+          0, 0, 0,
           dims.height / 30,
           (50 / 100) * dims.width,
           dims.height,
-
-          dims.width,
-          dims.height,
-          dims.width,
-
+          dims.width, dims.height, dims.width,
           0.45 * dims.height,
-          dims.height / 60,
-          0,
+          dims.height / 60, 0,
         ],
         fill: "#D0D12A",
       },
       {
         points: [
-          0,
-          dims.height / 60,
-          0,
-          dims.height,
-          (50 / 85) * dims.width,
-          dims.height,
+          0, dims.height / 60, 0, dims.height, (50 / 85) * dims.width, dims.height,
         ],
         fill: "#295972",
       },
       {
         points: [
-          dims.height / 60,
-          0,
-          dims.width,
-          0,
-          dims.width,
-          0.45 * dims.height,
+          dims.height / 60, 0, dims.width, 0, dims.width, 0.45 * dims.height,
         ],
         fill: "#295972",
       },
@@ -74,80 +59,56 @@ export default function CreateAccountPage() {
     const coords: Polygon[] = [
       {
         points: [
-          dims.width / 2,
-          0.15 * dims.height,
-          0.875 * dims.width,
-          0.15 * dims.height,
-          0.875 * dims.width,
-          0.39375 * dims.height,
-          dims.width / 2,
-          0.225 * dims.height,
+          dims.width / 2, 0.15 * dims.height,
+          0.875 * dims.width, 0.15 * dims.height,
+          0.875 * dims.width, 0.39375 * dims.height,
+          dims.width / 2, 0.225 * dims.height,
         ],
         fill: "#D0D12A",
       },
       {
         points: [
-          dims.width / 2,
-          0.225 * dims.height,
-          0.875 * dims.width,
-          0.39375 * dims.height,
-          0.875 * dims.width,
-          0.85 * dims.height,
-          0.5 * dims.width,
-          0.85 * dims.height,
+          dims.width / 2, 0.225 * dims.height,
+          0.875 * dims.width, 0.39375 * dims.height,
+          0.875 * dims.width, 0.85 * dims.height,
+          0.5 * dims.width, 0.85 * dims.height,
         ],
         fill: "#295972",
       },
     ];
     const borderPolygon1 = {
       points: [
-        dims.width / 2 + 670,
-        0.15 * dims.height - 55, // top-left corner
-        dims.width / 2 + 678,
-        0.15 * dims.height - 54, // top-right corner
-        dims.width / 2 + 678,
-        0.15 * dims.height + 557, // bottom-right corner
-        dims.width / 2 + 670,
-        0.15 * dims.height + 556, // bottom-left corner
+        dims.width / 2 + 670, 0.15 * dims.height - 55, // top-left corner
+        dims.width / 2 + 678, 0.15 * dims.height - 54, // top-right corner
+        dims.width / 2 + 678, 0.15 * dims.height + 557, // bottom-right corner
+        dims.width / 2 + 670, 0.15 * dims.height + 556, // bottom-left corner
       ],
       fill: "white",
     };
     const borderPolygon2 = {
       points: [
-        dims.width / 2 - 591,
-        0.15 * dims.height - 55, // top-left corner
-        dims.width / 2 - 583,
-        0.15 * dims.height - 54, // top-right corner
-        dims.width / 2 - 583,
-        0.15 * dims.height + 557, // bottom-right corner
-        dims.width / 2 - 591,
-        0.15 * dims.height + 556, // bottom-left corner
+        dims.width / 2 - 591, 0.15 * dims.height - 55, // top-left corner
+        dims.width / 2 - 583, 0.15 * dims.height - 54, // top-right corner
+        dims.width / 2 - 583, 0.15 * dims.height + 557, // bottom-right corner
+        dims.width / 2 - 591, 0.15 * dims.height + 556, // bottom-left corner
       ],
       fill: "white",
     };
     const borderPolygon3 = {
       points: [
-        dims.width / 2 - 583,
-        0.15 * dims.height + 549, // bottom-right corner
-        dims.width / 2 - 591,
-        0.15 * dims.height + 557, // bottom-left corner
-        dims.width / 2 + 678,
-        0.15 * dims.height + 557, // bottom-right corner
-        dims.width / 2 + 670,
-        0.15 * dims.height + 549, // bottom-left corner
+        dims.width / 2 - 583, 0.15 * dims.height + 549, // bottom-right corner
+        dims.width / 2 - 591, 0.15 * dims.height + 557, // bottom-left corner
+        dims.width / 2 + 678, 0.15 * dims.height + 557, // bottom-right corner
+        dims.width / 2 + 670, 0.15 * dims.height + 549, // bottom-left corner
       ],
       fill: "white",
     };
     const borderPolygon4 = {
       points: [
-        dims.width / 2 - 591,
-        0.15 * dims.height - 57, // bottom-right corner
-        dims.width / 2 - 591,
-        0.15 * dims.height - 49, // bottom-left corner
-        dims.width / 2 + 678,
-        0.15 * dims.height - 49, // bottom-right corner
-        dims.width / 2 + 678,
-        0.15 * dims.height - 57, // bottom-left corner
+        dims.width / 2 - 591, 0.15 * dims.height - 57, // bottom-right corner
+        dims.width / 2 - 591, 0.15 * dims.height - 49, // bottom-left corner
+        dims.width / 2 + 678, 0.15 * dims.height - 49, // bottom-right corner
+        dims.width / 2 + 678, 0.15 * dims.height - 57, // bottom-left corner
       ],
       fill: "white",
     };
@@ -192,43 +153,33 @@ export default function CreateAccountPage() {
 
   interface AccountInfo {
     firstName: string;
-    middleName: string;
+    middleName?: string;
     lastName: string;
     email: string;
     bday: string;
     phoneNumber: string;
-    gender: string;
-    emergencyName: string;
-    emergencyEmail: string;
-    emergencyPhone: string;
-    emergencyStreet: string;
-    emergencyCity: string;
-    emergencyState: string;
-    emergencyZip: string;
-    emergencyCountry: string;
+    gender: Gender;
     password: string;
     confirmPassword: string;
     streetName: string;
     city: string;
     state: string;
     zipCode: string;
-    grad: string;
-    yearsInSwaliga: string;
     country: string;
     school: string;
-    id: string;
-    assignedSurveys: string[];
-    completedResponses: string[];
-    raceEthnicity: {
-      blackOrAfricanAmerican: boolean;
-      indigenous: boolean;
-      asian: boolean;
-      white: boolean;
-      multiracial: boolean;
-      latin: boolean;
-      other: boolean;
-      otherText: string;
-    };
+    grad: string;
+    yearsInSwaliga: string;
+    raceEthnicity: RaceEthnicity;
+    emergencyContacts: {
+      name: string;
+      email: string;
+      phone: string;
+      street: string;
+      city: string;
+      state: string;
+      zip: string;
+      country: string;
+    }[];
   }
 
   const [accountInfo, setAccountInfo] = useState<AccountInfo>({
@@ -238,28 +189,17 @@ export default function CreateAccountPage() {
     email: "",
     bday: "",
     phoneNumber: "",
-    gender: "",
-    id: "",
-    emergencyName: "",
-    emergencyEmail: "",
-    emergencyPhone: "",
-    emergencyStreet: "",
-    emergencyCity: "",
-    emergencyCountry: "",
-    emergencyState: "",
-    emergencyZip: "",
+    gender: Gender.Other,
     password: "",
     confirmPassword: "",
     streetName: "",
     city: "",
     state: "",
     zipCode: "",
-    grad: "",
-    yearsInSwaliga: "",
     country: "",
     school: "",
-    assignedSurveys: [],
-    completedResponses: [],
+    grad: "",
+    yearsInSwaliga: "",
     raceEthnicity: {
       blackOrAfricanAmerican: false,
       indigenous: false,
@@ -270,6 +210,18 @@ export default function CreateAccountPage() {
       other: false,
       otherText: "",
     },
+    emergencyContacts: [
+      {
+        name: "",
+        email: "",
+        phone: "",
+        street: "",
+        city: "",
+        state: "",
+        zip: "",
+        country: "",
+      },
+    ],
   });
 
   // For checkboxes including the 'other' checkbox
@@ -308,24 +260,59 @@ export default function CreateAccountPage() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("Submitting:", accountInfo);
+    console.log("Submitting:", accountInfo); 
     try {
       console.log("Entered the try block");
-      const response = await fetch("/api/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const user: User = {
+        isAdmin: false,
+        firstName: accountInfo.firstName,
+        middleName: accountInfo.middleName,
+        lastName: accountInfo.lastName,
+        email: accountInfo.email,
+        phone: parseInt(accountInfo.phoneNumber),
+        gender: accountInfo.gender,
+        birthdate: Timestamp.fromDate(new Date(accountInfo.bday)),
+        guardian: accountInfo.emergencyContacts.map(contact => ({
+          name: contact.name,
+          email: contact.email,
+          phone: parseInt(contact.phone),
+          address: {
+            street: contact.street,
+            city: contact.city,
+            state: contact.state,
+            zip: parseInt(contact.zip),
+            country: contact.country,
+          }
+        })),
+        id: "", // This should be generated by the backend
+        address: {
+          street: accountInfo.streetName,
+          city: accountInfo.city,
+          state: accountInfo.state,
+          zip: parseInt(accountInfo.zipCode),
+          country: accountInfo.country,
         },
-        body: JSON.stringify(accountInfo),
+        school: accountInfo.school,
+        gradYear: parseInt(accountInfo.grad),
+        yearsWithSwaliga: parseInt(accountInfo.yearsInSwaliga),
+        ethnicity: new Set(Object.keys(accountInfo.raceEthnicity).filter(key => (accountInfo.raceEthnicity as any)[key] === true)),
+        assignedSurveys: [],
+        completedResponses: [],
+      };
+
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
       });
       const data = await response.json();
-      console.log("Response:", data);
+      console.log("Response:", data); 
       if (response.ok) {
         console.log("Account created successfully:", data);
       } else {
-        throw new Error(
-          data.error || `Failed to create account. Status: ${response.status}`
-        );
+        throw new Error(data.error || `Failed to create account. Status: ${response.status}`);
       }
     } catch (error) {
       console.error("Error during account creation:", error);
@@ -339,55 +326,73 @@ export default function CreateAccountPage() {
   const [bdayError, setBdayError] = useState("");
   const [gradError, setGradError] = useState("");
   const [yearsInSwaligaError, setYearsInSwaligaError] = useState("");
-  const [emergencyContacts, setEmergencyContacts] = useState([
-    {
-      name: "",
-      email: "",
-      phone: "",
-      street: "",
-      city: "",
-      state: "",
-      zip: "",
-      country: "",
-    },
-  ]);
 
   const addEmergencyContact = () => {
-    setEmergencyContacts([
-      ...emergencyContacts,
-      {
-        name: "",
-        email: "",
-        phone: "",
-        street: "",
-        city: "",
-        state: "",
-        zip: "",
-        country: "",
-      },
-    ]);
+    setAccountInfo((prev) => ({
+      ...prev,
+      emergencyContacts: [
+        ...prev.emergencyContacts,
+        {
+          name: "",
+          email: "",
+          phone: "",
+          street: "",
+          city: "",
+          state: "",
+          zip: "",
+          country: "",
+        },
+      ],
+    }));
   };
 
   const deleteEmergencyContact = (index: number) => {
-    setEmergencyContacts(emergencyContacts.filter((_, i) => i !== index));
+    setAccountInfo((prev) => ({
+      ...prev,
+      emergencyContacts: prev.emergencyContacts.filter((_, i) => i !== index),
+    }));
   };
 
-  const handleEmergencyContactChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setAccountInfo((prevState) => ({
-        ...prevState,
-        [name]: value,
-    }));
-};
+  const handleEmergencyContactChange = (
+    index: number,
+    field: keyof AccountInfo['emergencyContacts'][0],
+    value: string
+  ) => {
+    const updatedContacts = [...accountInfo.emergencyContacts];
 
+    // Only allow letters and spaces
+    if (
+      (field === "name" || field === "city" || field === "state") &&
+      value !== "" &&
+      !/^[A-Za-z\s]*$/.test(value)
+    ) {
+      return; // Invalid input, do not update state
+    }
+
+    // Only allow digits
+    if (
+      (field === "phone" || field === "zip") &&
+      value !== "" &&
+      !/^\d+$/.test(value)
+    ) {
+      return; // Invalid input, do not update state
+    }
+
+    // Update the specified contact field with the new value
+    updatedContacts[index] = { ...updatedContacts[index], [field]: value };
+
+    // Update the state with the new contacts array
+    setAccountInfo((prev) => ({
+      ...prev,
+      emergencyContacts: updatedContacts,
+    }));
+  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     if (
-      (name === "phoneNumber" ||
-        name === "zipCode" ||
-        name.startsWith("emergency")) &&
+      (name === "phoneNumber" || name === "zipCode") &&
       value !== "" &&
       !/^\d+$/.test(value)
     ) {
@@ -400,12 +405,7 @@ export default function CreateAccountPage() {
     }
 
     if (
-      (name === "city" ||
-        name === "state" ||
-        name === "firstName" ||
-        name === "middleName" ||
-        name === "lastName" ||
-        name.startsWith("emergency")) &&
+      (name === "city" || name === "state" || name === "firstName" || name === "middleName" || name === "lastName") &&
       value !== "" &&
       !/^[A-Za-z ]*$/.test(value)
     ) {
@@ -414,17 +414,9 @@ export default function CreateAccountPage() {
     }
 
     if (name === "password" || name === "confirmPassword") {
-      if (
-        name === "password" &&
-        accountInfo.confirmPassword &&
-        value !== accountInfo.confirmPassword
-      ) {
+      if (name === "password" && accountInfo.confirmPassword && value !== accountInfo.confirmPassword) {
         setPasswordError("Passwords do not match");
-      } else if (
-        name === "confirmPassword" &&
-        accountInfo.password &&
-        value !== accountInfo.password
-      ) {
+      } else if (name === "confirmPassword" && accountInfo.password && value !== accountInfo.password) {
         setPasswordError("Passwords do not match");
       } else {
         setPasswordError(""); // Clear error if passwords match
@@ -464,137 +456,131 @@ export default function CreateAccountPage() {
   };
 
   return (
-    <RequireSignedOut>
-      <div className={styles.container}>
-        <div className={styles.background}>
-          <Stage
-            className={styles.stage}
-            width={dims.width}
-            height={dims.height}
-          >
-            <Layer>
-              {polygons.map(drawPolygon)}
-              {polygonOverlay.map(drawPolygon)}
-            </Layer>
-          </Stage>
-          <div className={styles.createAccountContainer}>
-            <h2 className={styles.createAccountTitle}>Create Account</h2>
+    <div className={styles.container}>
+      <div className={styles.background}>
+        <Stage className={styles.stage} width={dims.width} height={dims.height}>
+          <Layer>
+            {polygons.map(drawPolygon)}
+            {polygonOverlay.map(drawPolygon)}
+          </Layer>
+        </Stage>
+        <div className={styles.createAccountContainer}>
+          <h2 className={styles.createAccountTitle}>Create Account</h2>
+        </div>
+        <form className={styles.accountForm} onSubmit={handleSubmit}>
+          {/* Fields for Name on School Record */}
+          <div className={styles.formGroupRow}>
+            <div className={styles.formGroup}>
+              <label>
+                Name on School Record{" "}
+                <span className={styles.requiredAsterisk}>*</span>
+              </label>
+              <div className={styles.inputRow}>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-address-card"></i>
+                  <input
+                    type="text"
+                    name="firstName"
+                    placeholder="First"
+                    value={accountInfo.firstName}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-address-card"></i>
+                  <input
+                    type="text"
+                    name="middleName"
+                    placeholder="Middle"
+                    value={accountInfo.middleName}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-address-card"></i>
+                  <input
+                    type="text"
+                    name="lastName"
+                    placeholder="Last"
+                    value={accountInfo.lastName}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
-          <form className={styles.accountForm} onSubmit={handleSubmit}>
-            {/* Fields for Name on School Record */}
-            <div className={styles.formGroupRow}>
-              <div className={styles.formGroup}>
-                <label>
-                  Name on School Record{" "}
-                  <span className={styles.requiredAsterisk}>*</span>
-                </label>
-                <div className={styles.inputRow}>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-address-card"></i>
-                    <input
-                      type="text"
-                      name="firstName"
-                      placeholder="First"
-                      value={accountInfo.firstName}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-address-card"></i>
-                    <input
-                      type="text"
-                      name="middleName"
-                      placeholder="Middle"
-                      value={accountInfo.middleName}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-address-card"></i>
-                    <input
-                      type="text"
-                      name="lastName"
-                      placeholder="Last"
-                      value={accountInfo.lastName}
-                      onChange={handleChange}
-                    />
-                  </div>
+
+          {/* Fields for Personal Info */}
+          <div className={styles.formGroupRow}>
+            <div className={styles.formGroup}>
+              <label>
+                Personal Info <span className={styles.requiredAsterisk}>*</span>
+              </label>
+              <div className={styles.inputRow}>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-envelope"></i>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter email"
+                    value={accountInfo.email}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-phone"></i>
+                  <input
+                    type="tel"
+                    name="phoneNumber"
+                    placeholder="Enter phone number"
+                    value={accountInfo.phoneNumber}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-venus-mars"></i>
+                  <input
+                    type="text"
+                    name="gender"
+                    placeholder="Enter gender"
+                    value={accountInfo.gender}
+                    onChange={handleChange}
+                  />
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Fields for Personal Info */}
-            <div className={styles.formGroupRow}>
-              <div className={styles.formGroup}>
-                <label>
-                  Personal Info{" "}
-                  <span className={styles.requiredAsterisk}>*</span>
-                </label>
-                <div className={styles.inputRow}>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-envelope"></i>
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="Enter email"
-                      value={accountInfo.email}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-phone"></i>
-                    <input
-                      type="tel"
-                      name="phoneNumber"
-                      placeholder="Enter phone number"
-                      value={accountInfo.phoneNumber}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-venus-mars"></i>
-                    <input
-                      type="text"
-                      name="gender"
-                      placeholder="Enter gender"
-                      value={accountInfo.gender}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Birthdate */}
-            <div className={styles.formGroupRow}>
-              <div className={styles.formGroup}>
-                <label style={{ color: bdayError ? "red" : "inherit" }}>
-                  Birthdate <span className={styles.requiredAsterisk}>*</span>
-                </label>
-                <div
+          {/* Birthdate */}
+          <div className={styles.formGroupRow}>
+            <div className={styles.formGroup}>
+              <label style={{ color: bdayError ? "red" : "inherit" }}>
+                Birthdate <span className={styles.requiredAsterisk}>*</span>
+              </label>
+              <div
+                className={`${styles.inputIconGroup} ${
+                  bdayError ? styles.inputError : ""
+                }`}
+              >
+                <i
                   className={`${styles.inputIconGroup} ${
                     bdayError ? styles.inputError : ""
                   }`}
-                >
-                  <i
-                    className={`${styles.inputIconGroup} ${
-                      bdayError ? styles.inputError : ""
-                    }`}
-                  ></i>
-                  <input
-                    type="text"
-                    name="bday"
-                    placeholder="YYYY/MM/DD"
-                    value={accountInfo.bday}
-                    onChange={handleChange}
-                  />
-                  <i className="fas fa-birthday-cake"></i>
-                </div>
-                {bdayError && (
-                  <div className={styles.passwordError}>{bdayError}</div>
-                )}
+                ></i>
+                <input
+                  type="text"
+                  name="bday"
+                  placeholder="YYYY/MM/DD"
+                  value={accountInfo.bday}
+                  onChange={handleChange}
+                />
+                <i className="fas fa-birthday-cake"></i>
               </div>
+              {bdayError && (
+                <div className={styles.passwordError}>{bdayError}</div>
+              )}
             </div>
+          </div>
 
           {/* Fields for Emergency Contact Info */}
           <div className={styles.formGroupRow}>
@@ -603,413 +589,475 @@ export default function CreateAccountPage() {
                 Emergency Contact Info{" "}
                 <span className={styles.requiredAsterisk}>*</span>
               </label>
-              <div className={styles.inputRow}>
-                <div className={styles.inputIconGroup}>
-                  <i className="fas fa-user"></i>
-                  <input
-                    type="text"
-                    name="emergencyName"
-                    placeholder="Enter name"
-                    value={accountInfo.emergencyName}
-                    onChange={handleEmergencyContactChange}
-                  />
+              {accountInfo.emergencyContacts.map((contact, index) => (
+                <div className={styles.contactContainer} key={index}>
+                  <div className={styles.inputRow}>
+                    <div className={styles.inputIconGroup}>
+                      <i className="fas fa-user"></i>
+                      <input
+                        type="name"
+                        name={`emergencyName${index}`}
+                        placeholder="Enter name"
+                        value={contact.name}
+                        onChange={(e) =>
+                          handleEmergencyContactChange(
+                            index,
+                            "name",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                    <div className={styles.inputIconGroup}>
+                      <i className="fas fa-envelope"></i>
+                      <input
+                        type="email"
+                        name={`emergencyEmail${index}`}
+                        placeholder="Enter email"
+                        value={contact.email}
+                        onChange={(e) =>
+                          handleEmergencyContactChange(
+                            index,
+                            "email",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                    <div className={styles.inputIconGroup}>
+                      <i className="fas fa-phone"></i>
+                      <input
+                        type="tel"
+                        name={`emergencyPhone${index}`}
+                        placeholder="Enter phone number"
+                        value={contact.phone}
+                        onChange={(e) =>
+                          handleEmergencyContactChange(
+                            index,
+                            "phone",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className={styles.inputRow}>
+                    <div className={styles.inputIconGroup}>
+                      <i className="fas fa-road"></i>
+                      <input
+                        type="text"
+                        name={`emergencyStreet${index}`}
+                        placeholder="Enter street name"
+                        value={contact.street}
+                        onChange={(e) =>
+                          handleEmergencyContactChange(
+                            index,
+                            "street",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                    <div className={styles.inputIconGroup}>
+                      <i className="fas fa-city"></i>
+                      <input
+                        type="text"
+                        name={`emergencyCity${index}`}
+                        placeholder="Enter city"
+                        value={contact.city}
+                        onChange={(e) =>
+                          handleEmergencyContactChange(
+                            index,
+                            "city",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                    <div className={styles.inputIconGroup}>
+                      <i className="fas fa-landmark"></i>
+                      <input
+                        type="text"
+                        name={`emergencyState${index}`}
+                        placeholder="Enter state"
+                        value={contact.state}
+                        onChange={(e) =>
+                          handleEmergencyContactChange(
+                            index,
+                            "state",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                    <div className={styles.inputIconGroup}>
+                      <i className="fas fa-flag"></i>{" "}
+                      <input
+                        type="text"
+                        name={`emergencyCountry${index}`}
+                        placeholder="Enter country"
+                        value={contact.country}
+                        onChange={(e) =>
+                          handleEmergencyContactChange(
+                            index,
+                            "country",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                    <div className={styles.inputIconGroup}>
+                      <i className="fas fa-map-pin"></i>
+                      <input
+                        type="text"
+                        name={`emergencyZip${index}`}
+                        placeholder="Enter zip code"
+                        value={contact.zip}
+                        onChange={(e) =>
+                          handleEmergencyContactChange(
+                            index,
+                            "zip",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                  </div>
+                  <button
+                    className={styles.emergencyRemoveButton}
+                    type="button"
+                    onClick={() => deleteEmergencyContact(index)}
+                  >
+                    Remove Contact
+                  </button>
                 </div>
-                <div className={styles.inputIconGroup}>
-                  <i className="fas fa-envelope"></i>
-                  <input
-                    type="email"
-                    name="emergencyEmail"
-                    placeholder="Enter email"
-                    value={accountInfo.emergencyEmail}
-                    onChange={handleEmergencyContactChange}
-                  />
-                </div>
-                <div className={styles.inputIconGroup}>
-                  <i className="fas fa-phone"></i>
-                  <input
-                    type="tel"
-                    name="emergencyPhone"
-                    placeholder="Enter phone number"
-                    value={accountInfo.emergencyPhone}
-                    onChange={handleEmergencyContactChange}
-                  />
-                </div>
+              ))}
+              <button
+                className={styles.emergencyAddButton}
+                type="button"
+                onClick={addEmergencyContact}
+              >
+                Add Emergency Contact
+              </button>
+            </div>
+          </div>
+
+          {/* Fields for Password with Visibility Toggle */}
+          <div className={styles.formGroupRow}>
+            <div className={styles.formGroup}>
+              <label style={{ color: passwordError ? "red" : "inherit" }}>
+                Create Password{" "}
+                <span className={styles.requiredAsterisk}>*</span>
+              </label>
+              <div
+                className={`${styles.inputIconGroup} ${
+                  passwordError ? styles.inputError : ""
+                }`}
+              >
+                <i
+                  className={`${styles.inputIconGroup} ${
+                    passwordError ? styles.inputError : ""
+                  }`}
+                ></i>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Enter password"
+                  value={accountInfo.password}
+                  onChange={handleChange}
+                />
+                <i
+                  className={`fas ${
+                    showPassword ? "fa-eye-slash" : "fa-eye"
+                  }`}
+                  onClick={togglePasswordVisibility}
+                ></i>
               </div>
+              <div
+                className={`${styles.inputIconGroup} ${
+                  passwordError ? styles.inputError : ""
+                }`}
+              >
+                <i
+                  className={`${styles.inputIconGroup} ${
+                    passwordError ? styles.inputError : ""
+                  }`}
+                ></i>
+                <input
+                  className={passwordError ? styles.inputError : ""}
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  placeholder="Confirm password"
+                  value={accountInfo.confirmPassword}
+                  onChange={handleChange}
+                />
+                <i
+                  className={`fas ${
+                    showConfirmPassword ? "fa-eye-slash" : "fa-eye"
+                  }`}
+                  onClick={toggleConfirmPasswordVisibility}
+                ></i>
+              </div>
+              {passwordError && (
+                <div className={styles.passwordError}>{passwordError}</div>
+              )}
+            </div>
+          </div>
+
+          {/* Address Fields */}
+          <div className={styles.formGroupRow}>
+            <div className={styles.formGroup}>
+              <label>
+                Home Address <span className={styles.requiredAsterisk}>*</span>
+              </label>
               <div className={styles.inputRow}>
                 <div className={styles.inputIconGroup}>
                   <i className="fas fa-road"></i>
                   <input
                     type="text"
-                    name="emergencyStreet"
-                    placeholder="Enter street name"
-                    value={accountInfo.emergencyStreet}
-                    onChange={handleEmergencyContactChange}
+                    name="streetName"
+                    placeholder="Street Name"
+                    value={accountInfo.streetName}
+                    onChange={handleChange}
                   />
                 </div>
                 <div className={styles.inputIconGroup}>
                   <i className="fas fa-city"></i>
                   <input
                     type="text"
-                    name="emergencyCity"
-                    placeholder="Enter city"
-                    value={accountInfo.emergencyCity}
-                    onChange={handleEmergencyContactChange}
+                    name="city"
+                    placeholder="City"
+                    value={accountInfo.city}
+                    onChange={handleChange}
                   />
                 </div>
                 <div className={styles.inputIconGroup}>
                   <i className="fas fa-landmark"></i>
                   <input
                     type="text"
-                    name="emergencyState"
-                    placeholder="Enter state"
-                    value={accountInfo.emergencyState}
-                    onChange={handleEmergencyContactChange}
+                    name="state"
+                    placeholder="State"
+                    value={accountInfo.state}
+                    onChange={handleChange}
                   />
                 </div>
                 <div className={styles.inputIconGroup}>
                   <i className="fas fa-flag"></i>
                   <input
                     type="text"
-                    name="emergencyCountry"
-                    placeholder="Enter country"
-                    value={accountInfo.emergencyCountry}
-                    onChange={handleEmergencyContactChange}
+                    name="country"
+                    placeholder="Country"
+                    value={accountInfo.country}
+                    onChange={handleChange}
                   />
                 </div>
                 <div className={styles.inputIconGroup}>
                   <i className="fas fa-map-pin"></i>
                   <input
                     type="text"
-                    name="emergencyZip"
-                    placeholder="Enter zip code"
-                    value={accountInfo.emergencyZip}
-                    onChange={handleEmergencyContactChange}
+                    name="zipCode"
+                    placeholder="Zip Code"
+                    value={accountInfo.zipCode}
+                    onChange={handleChange}
                   />
                 </div>
               </div>
             </div>
           </div>
 
-            {/* Fields for Password with Visibility Toggle */}
-            <div className={styles.formGroupRow}>
-              <div className={styles.formGroup}>
-                <label style={{ color: passwordError ? "red" : "inherit" }}>
-                  Create Password{" "}
-                  <span className={styles.requiredAsterisk}>*</span>
-                </label>
-                <div
-                  className={`${styles.inputIconGroup} ${
-                    passwordError ? styles.inputError : ""
-                  }`}
-                >
-                  <i
-                    className={`${styles.inputIconGroup} ${
-                      passwordError ? styles.inputError : ""
-                    }`}
-                  ></i>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    placeholder="Enter password"
-                    value={accountInfo.password}
-                    onChange={handleChange}
-                  />
-                  <i
-                    className={`fas ${
-                      showPassword ? "fa-eye-slash" : "fa-eye"
-                    }`}
-                    onClick={togglePasswordVisibility}
-                  ></i>
-                </div>
-                <div
-                  className={`${styles.inputIconGroup} ${
-                    passwordError ? styles.inputError : ""
-                  }`}
-                >
-                  <i
-                    className={`${styles.inputIconGroup} ${
-                      passwordError ? styles.inputError : ""
-                    }`}
-                  ></i>
-                  <input
-                    className={passwordError ? styles.inputError : ""}
-                    type={showConfirmPassword ? "text" : "password"}
-                    name="confirmPassword"
-                    placeholder="Confirm password"
-                    value={accountInfo.confirmPassword}
-                    onChange={handleChange}
-                  />
-                  <i
-                    className={`fas ${
-                      showConfirmPassword ? "fa-eye-slash" : "fa-eye"
-                    }`}
-                    onClick={toggleConfirmPasswordVisibility}
-                  ></i>
-                </div>
-                {passwordError && (
-                  <div className={styles.passwordError}>{passwordError}</div>
-                )}
+          {/*School field */}
+          <div className={styles.formGroupRow}>
+            <div className={styles.formGroup}>
+              <label>
+                What school do you go to?{" "}
+                <span className={styles.requiredAsterisk}>*</span>
+              </label>
+              <div className={styles.inputIconGroup}>
+                <i className="fas fa-school"></i>
+                <input
+                  type="text"
+                  name="school"
+                  placeholder="Enter your school"
+                  value={accountInfo.school}
+                  onChange={handleChange}
+                />
               </div>
             </div>
+          </div>
 
-            {/* Address Fields */}
-            <div className={styles.formGroupRow}>
-              <div className={styles.formGroup}>
-                <label>
-                  Home Address{" "}
-                  <span className={styles.requiredAsterisk}>*</span>
-                </label>
-                <div className={styles.inputRow}>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-road"></i>
-                    <input
-                      type="text"
-                      name="streetName"
-                      placeholder="Street Name"
-                      value={accountInfo.streetName}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-city"></i>
-                    <input
-                      type="text"
-                      name="city"
-                      placeholder="City"
-                      value={accountInfo.city}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-landmark"></i>
-                    <input
-                      type="text"
-                      name="state"
-                      placeholder="State"
-                      value={accountInfo.state}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-flag"></i>
-                    <input
-                      type="text"
-                      name="country"
-                      placeholder="Country"
-                      value={accountInfo.country}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-map-pin"></i>
-                    <input
-                      type="text"
-                      name="zipCode"
-                      placeholder="Zip Code"
-                      value={accountInfo.zipCode}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/*School field */}
-            <div className={styles.formGroupRow}>
-              <div className={styles.formGroup}>
-                <label>
-                  What school do you go to?{" "}
-                  <span className={styles.requiredAsterisk}>*</span>
-                </label>
-                <div className={styles.inputIconGroup}>
-                  <i className="fas fa-school"></i>
-                  <input
-                    type="text"
-                    name="school"
-                    placeholder="Enter your school"
-                    value={accountInfo.school}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Year you graduate field */}
-            <div className={styles.formGroupRow}>
-              <div className={styles.formGroup}>
-                <label style={{ color: gradError ? "red" : "inherit" }}>
-                  What year do you plan to graduate?{" "}
-                  <span className={styles.requiredAsterisk}>*</span>
-                </label>
-                <div
+          {/* Year you graduate field */}
+          <div className={styles.formGroupRow}>
+            <div className={styles.formGroup}>
+              <label style={{ color: gradError ? "red" : "inherit" }}>
+                What year do you plan to graduate?{" "}
+                <span className={styles.requiredAsterisk}>*</span>
+              </label>
+              <div
+                className={`${styles.inputIconGroup} ${
+                  gradError ? styles.inputError : ""
+                }`}
+              >
+                <i
                   className={`${styles.inputIconGroup} ${
                     gradError ? styles.inputError : ""
                   }`}
-                >
-                  <i
-                    className={`${styles.inputIconGroup} ${
-                      gradError ? styles.inputError : ""
-                    }`}
-                  ></i>
-                  <input
-                    type="text"
-                    name="grad"
-                    placeholder="YYYY"
-                    value={accountInfo.grad}
-                    onChange={handleChange}
-                  />
-                  <i className="fas fa-graduation-cap"></i>
-                </div>
-                {gradError && (
-                  <div className={styles.passwordError}>{gradError}</div>
-                )}
+                ></i>
+                <input
+                  type="text"
+                  name="grad"
+                  placeholder="YYYY"
+                  value={accountInfo.grad}
+                  onChange={handleChange}
+                />
+                <i className="fas fa-graduation-cap"></i>
               </div>
+              {gradError && (
+                <div className={styles.passwordError}>{gradError}</div>
+              )}
             </div>
+          </div>
 
-            {/* Year you graduate field */}
-            <div className={styles.formGroupRow}>
-              <div className={styles.formGroup}>
-                <label
-                  style={{ color: yearsInSwaligaError ? "red" : "inherit" }}
-                >
-                  How many years have you been in the Swaliga STEM club at HSRA{" "}
-                  <span className={styles.requiredAsterisk}>*</span>
-                </label>
-                <div
+          {/* Year you graduate field */}
+          <div className={styles.formGroupRow}>
+            <div className={styles.formGroup}>
+              <label style={{ color: yearsInSwaligaError ? "red" : "inherit" }}>
+                How many years have you been in the Swaliga STEM club at HSRA{" "}
+                <span className={styles.requiredAsterisk}>*</span>
+              </label>
+              <div
+                className={`${styles.inputIconGroup} ${
+                  yearsInSwaligaError ? styles.inputError : ""
+                }`}
+              >
+                <i
                   className={`${styles.inputIconGroup} ${
                     yearsInSwaligaError ? styles.inputError : ""
                   }`}
-                >
-                  <i
-                    className={`${styles.inputIconGroup} ${
-                      yearsInSwaligaError ? styles.inputError : ""
-                    }`}
-                  ></i>
+                ></i>
+                <input
+                  type="text"
+                  name="yearsInSwaliga"
+                  placeholder="Number of years"
+                  value={accountInfo.yearsInSwaliga}
+                  onChange={handleChange}
+                />
+                <i className="fas fa-flask"></i>
+              </div>
+              {yearsInSwaligaError && (
+                <div className={styles.passwordError}>
+                  {yearsInSwaligaError}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Ethinicity field */}
+          <div className={styles.formGroupRow}>
+            <div className={styles.formGroup}>
+              <label>
+                What race/ethnicity do you identify as? (Select all that apply){" "}
+                <span className={styles.requiredAsterisk}>*</span>
+              </label>
+              <div className={styles.checkboxContainer}>
+                <div className={styles.checkboxGroup}>
+                  <input
+                    type="checkbox"
+                    id="blackOrAfricanAmerican"
+                    name="blackOrAfricanAmerican"
+                    checked={accountInfo.raceEthnicity.blackOrAfricanAmerican}
+                    onChange={handleRaceEthnicityChange}
+                  />
+                  <label htmlFor="blackOrAfricanAmerican">
+                    Black or African American
+                  </label>
+                </div>
+
+                <div className={styles.checkboxGroup}>
+                  <input
+                    type="checkbox"
+                    id="indigenous"
+                    name="indigenous"
+                    checked={accountInfo.raceEthnicity.indigenous}
+                    onChange={handleRaceEthnicityChange}
+                  />
+                  <label htmlFor="indigenous">Indigenous</label>
+                </div>
+
+                <div className={styles.checkboxGroup}>
+                  <input
+                    type="checkbox"
+                    id="asian"
+                    name="asian"
+                    checked={accountInfo.raceEthnicity.asian}
+                    onChange={handleRaceEthnicityChange}
+                  />
+                  <label htmlFor="asian">Asian</label>
+                </div>
+
+                <div className={styles.checkboxGroup}>
+                  <input
+                    type="checkbox"
+                    id="white"
+                    name="white"
+                    checked={accountInfo.raceEthnicity.white}
+                    onChange={handleRaceEthnicityChange}
+                  />
+                  <label htmlFor="white">White</label>
+                </div>
+
+                <div className={styles.checkboxGroup}>
+                  <input
+                    type="checkbox"
+                    id="multiracial"
+                    name="multiracial"
+                    checked={accountInfo.raceEthnicity.multiracial}
+                    onChange={handleRaceEthnicityChange}
+                  />
+                  <label htmlFor="multiracial">Multiracial</label>
+                </div>
+
+                <div className={styles.checkboxGroup}>
+                  <input
+                    type="checkbox"
+                    id="latin"
+                    name="latin"
+                    checked={accountInfo.raceEthnicity.latin}
+                    onChange={handleRaceEthnicityChange}
+                  />
+                  <label htmlFor="latin">LatinX/Latina/Latino</label>
+                </div>
+
+                <div className={styles.checkboxGroup}>
+                  <input
+                    type="checkbox"
+                    id="other"
+                    name="other"
+                    checked={accountInfo.raceEthnicity.other}
+                    onChange={handleRaceEthnicityChange}
+                  />
+                  <label htmlFor="other">Other</label>
                   <input
                     type="text"
-                    name="yearsInSwaliga"
-                    placeholder="Number of years"
-                    value={accountInfo.yearsInSwaliga}
-                    onChange={handleChange}
+                    id="otherText"
+                    name="otherText"
+                    placeholder="Please specify"
+                    value={accountInfo.raceEthnicity.otherText}
+                    disabled={!accountInfo.raceEthnicity.other}
+                    onChange={handleOtherTextChange}
+                    className={styles.otherTextInput}
                   />
-                  <i className="fas fa-flask"></i>
-                </div>
-                {yearsInSwaligaError && (
-                  <div className={styles.passwordError}>
-                    {yearsInSwaligaError}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Ethinicity field */}
-            <div className={styles.formGroupRow}>
-              <div className={styles.formGroup}>
-                <label>
-                  What race/ethnicity do you identify as? (Select all that
-                  apply) <span className={styles.requiredAsterisk}>*</span>
-                </label>
-                <div className={styles.checkboxContainer}>
-                  <div className={styles.checkboxGroup}>
-                    <input
-                      type="checkbox"
-                      id="blackOrAfricanAmerican"
-                      name="blackOrAfricanAmerican"
-                      checked={accountInfo.raceEthnicity.blackOrAfricanAmerican}
-                      onChange={handleRaceEthnicityChange}
-                    />
-                    <label htmlFor="blackOrAfricanAmerican">
-                      Black or African American
-                    </label>
-                  </div>
-
-                  <div className={styles.checkboxGroup}>
-                    <input
-                      type="checkbox"
-                      id="indigenous"
-                      name="indigenous"
-                      checked={accountInfo.raceEthnicity.indigenous}
-                      onChange={handleRaceEthnicityChange}
-                    />
-                    <label htmlFor="indigenous">Indigenous</label>
-                  </div>
-
-                  <div className={styles.checkboxGroup}>
-                    <input
-                      type="checkbox"
-                      id="asian"
-                      name="asian"
-                      checked={accountInfo.raceEthnicity.asian}
-                      onChange={handleRaceEthnicityChange}
-                    />
-                    <label htmlFor="asian">Asian</label>
-                  </div>
-
-                  <div className={styles.checkboxGroup}>
-                    <input
-                      type="checkbox"
-                      id="white"
-                      name="white"
-                      checked={accountInfo.raceEthnicity.white}
-                      onChange={handleRaceEthnicityChange}
-                    />
-                    <label htmlFor="white">White</label>
-                  </div>
-
-                  <div className={styles.checkboxGroup}>
-                    <input
-                      type="checkbox"
-                      id="multiracial"
-                      name="multiracial"
-                      checked={accountInfo.raceEthnicity.multiracial}
-                      onChange={handleRaceEthnicityChange}
-                    />
-                    <label htmlFor="multiracial">Multiracial</label>
-                  </div>
-
-                  <div className={styles.checkboxGroup}>
-                    <input
-                      type="checkbox"
-                      id="latin"
-                      name="latin"
-                      checked={accountInfo.raceEthnicity.latin}
-                      onChange={handleRaceEthnicityChange}
-                    />
-                    <label htmlFor="latin">LatinX/Latina/Latino</label>
-                  </div>
-
-                  <div className={styles.checkboxGroup}>
-                    <input
-                      type="checkbox"
-                      id="other"
-                      name="other"
-                      checked={accountInfo.raceEthnicity.other}
-                      onChange={handleRaceEthnicityChange}
-                    />
-                    <label htmlFor="other">Other</label>
-                    <input
-                      type="text"
-                      id="otherText"
-                      name="otherText"
-                      placeholder="Please specify"
-                      value={accountInfo.raceEthnicity.otherText}
-                      disabled={!accountInfo.raceEthnicity.other}
-                      onChange={handleOtherTextChange}
-                      className={styles.otherTextInput}
-                    />
-                  </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <button type="submit" className={styles.submitButton}>
-              Submit
-            </button>
-          </form>
-          {formError && <p className={styles.errorText}>{formError}</p>}
-        </div>
-        <button className={styles.backToLoginButton}>Back to Login</button>
+          <button type="submit" className={styles.submitButton}>
+            Submit
+          </button>
+        </form>
+        {formError && <p className={styles.errorText}>{formError}</p>}
       </div>
-    </RequireSignedOut>
+      <button className={styles.backToLoginButton}>Back to Login</button>
+    </div>
   );
 }

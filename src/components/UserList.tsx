@@ -9,7 +9,7 @@ import Filter from "./Filter";
 import Assign from "./Assign";
 import Modal from "./Modal";
 import { exportUsersToCSV } from "@/lib/exportCSV";
-import { useRouter } from "next/navigation";
+import { Timestamp } from "firebase/firestore";
 
 export default function UserList(props: { users: User[]; surveys: Survey[] }) {
   const { users, surveys } = props;
@@ -41,9 +41,15 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
       setSelectedStudentIds(users.map((user) => user.id));
     }
     setIsAllSelected(!isAllSelected);
-  }
+  };
 
-  const router = useRouter();
+  const formatDate = (timestamp: Timestamp | null): string => {
+    if (!timestamp) {
+      return "N/A"; 
+    }
+    const date = new Date(timestamp.seconds * 1000);
+    return date.toLocaleDateString('en-US');
+  };
 
   return (
     <>
@@ -77,7 +83,7 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
                   <tr
                     key={student.id}
                     className={
-                      student.id in selectedStudentIds ? styles.checkedRow : ""
+                      selectedStudentIds.includes(student.id) ? styles.checkedRow : ""
                     }
                   >
                     <td>
@@ -87,13 +93,13 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
                         onChange={() => handleStudentCheck(student.id)}
                       />
                     </td>
-                    <td onClick={() => router.push(`/user/${student.id}`)}>
+                    <td>
                       {student.middleName
                         ? `${student.firstName} ${student.middleName} ${student.lastName}`
                         : `${student.firstName} ${student.lastName}`}
                     </td>
                     <td>{student.id}</td>
-                    <td>{student.birthdate?.toDate().toUTCString()}</td>
+                    <td>{formatDate(student.birthdate)}</td>
                     <td>{student.address?.city}</td>
                     <td>{student.email}</td>
                   </tr>
