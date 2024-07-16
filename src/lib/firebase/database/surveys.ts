@@ -1,5 +1,5 @@
 import { GoogleForm, Survey } from '@/types/survey-types';
-import { forms } from '../../googleAuthorization';
+import { getFormsClient } from '../../googleAuthorization';
 import { db } from "../firebaseConfig";
 import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
 import { createWatch } from './watches';
@@ -8,6 +8,7 @@ import { Watch } from '@/types/watch-types';
 export async function createSurvey(body: {title: string, documentTitle: string}) {
   let form: Survey | null = null;
   try {
+    const forms = await getFormsClient();
     let googleForm: GoogleForm = (await forms.forms.create({
       requestBody: {
         info: {
@@ -81,6 +82,7 @@ export async function createSurvey(body: {title: string, documentTitle: string})
 export async function updateSurvey(id: string) {
   let form = null;
   try {
+    const forms = await getFormsClient();
     form = await forms.forms.get({formId: id})
   } catch (err) {
     throw Error('unable to get google form');

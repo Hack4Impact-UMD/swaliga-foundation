@@ -6,11 +6,14 @@ import CompanyLogoWords from "@/../public/images/logo2.svg";
 import React, { useState } from "react";
 import { auth } from '@/lib/firebase/firebaseConfig'; // Path to firebaseConfig.ts
 import { sendPasswordResetEmail } from 'firebase/auth'
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleReset = async (e: any) => {
     e.preventDefault();
@@ -26,11 +29,19 @@ export default function ResetPasswordPage() {
   return (
     <div className={styles.page}>
       <div className={styles.logoSide}>
-        <img id={styles.design} src={CompanyLogo.src} alt="Company Logo" />
-        <img
+        <Image
+          id={styles.design}
+          src={CompanyLogo.src}
+          alt="Company Logo"
+          width={500} 
+          height={200} 
+        />
+        <Image
           id={styles.sitename}
           src={CompanyLogoWords.src}
           alt="Company Logo with Words (SwaligaFoundation.org)"
+          width={1000} 
+          height={400} 
         />
       </div>
       <div className={styles.formSide}>
@@ -44,10 +55,15 @@ export default function ResetPasswordPage() {
               type="email"
               placeholder="Enter your email"
             />
-            <button className={styles.submit} type="submit">Reset Password</button>
+            <button className={styles.submit} type="submit">
+              Reset Password
+            </button>
           </form>
           {message && <p>{message}</p>}
           {error && <p>{error}</p>}
+          <button className={styles.backToLoginButton} onClick={() => router.push("/")}>
+            Back to Login
+          </button>
         </div>
       </div>
     </div>

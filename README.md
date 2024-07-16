@@ -1,10 +1,17 @@
-Swaliga Foundation App made by Hack4Impact-UMD
+# Swaliga Foundation App made by Hack4Impact-UMD
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
 
 First, run the development server:
+
+1. **Clone the Repository**:
+   ```bash
+   git clone <repository-url>
+   cd swaliga-foundation-app
+
+2. **Install Dependencies**
 
 ```bash
 npm run dev
@@ -14,25 +21,36 @@ yarn dev
 pnpm dev
 # or
 bun dev
+
+Open http://localhost:3000 with your browser to see the result.
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+You can start editing the page by modifying app/page.tsx. The page auto-updates as you edit the file.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Overview of the Swaliga Foundation App
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+The Swaliga Foundation App is designed to streamline interactions between students and staff, facilitate data collection and analysis, and provide various functionalities to enhance the overall user experience. Below is a high-level overview of its key features:
 
-## Learn More
+## Student Functions
+- **Profile Data Entry**: Students can enter personal information such as their name, city, school, parent contact information, etc.
+- **Surveys**: Students can participate in surveys before and after participating in programs.
+- **Student ID Login**: Each student is assigned a student ID number, which serves as their username for logging into the portal.
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Staff Functions
+- **Student Outreach**: Staff can routinely reach out to students after they complete programs, prompting them to update their profiles with new information.
+- **Email Nudges**: Staff can send emails to select students via the admin dashboard, encouraging them to engage with the platform.
+- **Manual Data Entry**: Swaliga Foundation personnel can manually enter/modify student information.
+- **Survey Administration**: Staff can administer surveys before and after programs.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Data Collection & Analysis
+- **Integrated Forms**: The platform integrates with Google Forms, allowing forms to be created and managed within the Admin's Google Drive.
+- **Data Export**: Data collected through the platform can be exported into spreadsheets for manual data analysis.
 
-## Deploy on Vercel
+## User Types
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Student Account
+- **Permissions**: Students can edit their information, answer surveys, and create portfolios of their experiences in Swaliga programs.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Admin / Swaliga Foundation Account
+- **Permissions**: Admin users have access to the admin dashboard, where they can view all student accounts, send email nudges to graduated and current students, distribute surveys to specific students, edit student information, and access website data and metrics. They can also export data to spreadsheets for further analysis.

@@ -71,3 +71,10 @@
     transform: translateY(-50%);
     pointer-events: none;
 }
+
+.logout {
+    width: 30px;
+    height: 30px;
+    align-self: flex-end;
+    cursor: pointer;
+}

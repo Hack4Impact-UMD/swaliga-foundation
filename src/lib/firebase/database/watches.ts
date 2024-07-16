@@ -1,7 +1,8 @@
-import { forms } from "@/lib/googleAuthorization";
+import { getFormsClient } from "@/lib/googleAuthorization";
 
 export async function createWatch(formId: string, eventType: string) {
     try {
+        const forms = await getFormsClient();
         const response = await forms.forms.watches.create(
             {
                 "formId": formId,
@@ -27,6 +28,7 @@ export async function createWatch(formId: string, eventType: string) {
 
 export async function renewWatch(formId : string, watchId : string) {
     try {
+        const forms = await getFormsClient();
         const response = await forms.forms.watches.renew(
             {
                 "formId": formId, 

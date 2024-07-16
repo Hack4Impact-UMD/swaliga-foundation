@@ -2,6 +2,8 @@
 
 .env
 .firebase
+.github
+swaliga-foundation-firebase-adminsdk-9z7ld-58d895fd73.json
 
 # dependencies
 /node_modules

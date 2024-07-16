@@ -10,6 +10,8 @@ import React, { useState, useEffect } from "react";
 import { User } from "@/types/user-types";
 import { Survey, Response } from '@/types/survey-types';
 import { auth } from '@/lib/firebase/firebaseConfig';
+import { signOut } from "firebase/auth";
+import RequireStudentAuth from "@/components/auth/RequireStudentAuth";
 
 export default function StudentDashboard() {
     const [user, setUser] = useState<User | null>(null);
@@ -54,52 +56,62 @@ export default function StudentDashboard() {
     };
 
     return (
-      <div className={styles.container}>
-        <div className={styles.sidebar}>
-          <Image src={CompanyLogo} alt="Company Logo" className={styles.img} />
-          <p className={styles.info}>
-            Student ID: {user?.id || "No user ID found"}
-          </p>
-          <button className={styles.settingButton}>Settings</button>
-          <Link href="/" className={styles.logOut}>
-            Log Out
-          </Link>
+      <RequireStudentAuth>
+        <div className={styles.container}>
+          <div className={styles.sidebar}>
+            <Image
+              src={CompanyLogo}
+              alt="Company Logo"
+              className={styles.img}
+            />
+            <p className={styles.info}>
+              Student ID: {user?.id || "No user ID found"}
+            </p>
+            <button className={styles.settingButton}>Settings</button>
+            <Link
+              href="/"
+              className={styles.logOut}
+              onClick={() => signOut(auth)}
+            >
+              Log Out
+            </Link>
+          </div>
+          <div className={styles.mainContent}>
+            <p className={styles.surveyTitle}>Available Surveys</p>
+            <hr className={styles.horizontalLine} />
+            {surveys.map((survey) => (
+              <div key={survey.formId} className={styles.surveyContainer}>
+                <button
+                  onClick={() => handleSurveyButtonClick(survey.formId)}
+                  className={styles.assignedSurveyButton}
+                >
+                  {survey.info.title}
+                  <Image
+                    src={openSurvey === survey.formId ? DownArrow : UpArrow}
+                    alt={openSurvey === survey.formId ? "DownArrow" : "UpArrow"}
+                    className={styles.vector}
+                  />
+                </button>
+                {openSurvey === survey.formId && (
+                  <iframe
+                    key={survey.formId}
+                    src={survey.responderUri}
+                    title={survey.info.title}
+                    allowFullScreen={true}
+                    className={styles.form}
+                  />
+                )}
+              </div>
+            ))}
+            <p className={styles.surveyTitle}>Completed Surveys</p>
+            <hr className={styles.horizontalLine} />
+            {responses.map((response) => (
+              <span key={response} className={styles.completedSurveyButton}>
+                {response}
+              </span>
+            ))}
+          </div>
         </div>
-        <div className={styles.mainContent}>
-          <p className={styles.surveyTitle}>Available Surveys</p>
-          <hr className={styles.horizontalLine} />
-          {surveys.map((survey) => (
-            <div key={survey.formId} className={styles.surveyContainer}>
-              <button
-                onClick={() => handleSurveyButtonClick(survey.formId)}
-                className={styles.assignedSurveyButton}
-              >
-                {survey.info.title}
-                <Image
-                  src={openSurvey === survey.formId ? DownArrow : UpArrow}
-                  alt={openSurvey === survey.formId ? "DownArrow" : "UpArrow"}
-                  className={styles.vector}
-                />
-              </button>
-              {openSurvey === survey.formId && (
-                <iframe
-                  key={survey.formId}
-                  src={survey.responderUri}
-                  title={survey.info.title}
-                  allowFullScreen={true}
-                  className={styles.form}
-                />
-              )}
-            </div>
-          ))}
-          <p className={styles.surveyTitle}>Completed Surveys</p>
-          <hr className={styles.horizontalLine} />
-          {responses.map((response) => (
-            <span key={response} className={styles.completedSurveyButton}>
-              {response}
-            </span>
-          ))}
-        </div>
-      </div>
+      </RequireStudentAuth>
     );
 }

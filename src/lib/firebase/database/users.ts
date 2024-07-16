@@ -1,5 +1,5 @@
 import { User } from "@/types/user-types";
-import { doc, setDoc, getDoc, updateDoc, deleteDoc, collectionGroup, getDocs, UpdateData, arrayUnion, arrayRemove, collection, addDoc} from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc, deleteDoc, collectionGroup, getDocs, UpdateData, arrayUnion, arrayRemove, collection, addDoc, query as fsQuery, where } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
 export async function getAccountById(id: string): Promise<User> {
@@ -77,20 +77,20 @@ export async function updatePassword(id: string, newPassword: string): Promise<v
   }
 }
 
-export async function getUserList(): Promise<User[]> {
-    try {
-        const usersList: User[] = [];
-        const querySnapshot = await getDocs(collectionGroup(db, "users"));
-        
-        querySnapshot.forEach((doc) => {
-          usersList.push(doc.data() as User);
-        });
-        return usersList;
-
-    } catch (error) {
-        console.error("Error getting list of users: ", error);
-        throw error;
+export async function getAllUsers(filters: Record<string, any> = {}) {
+  let query = fsQuery(collection(db, "users"));
+  Object.keys(filters).forEach((key) => {
+    if (filters[key]) {
+      query = fsQuery(query, where(key, "==", filters[key]));
     }
+  });
+
+  const snapshot = await getDocs(query);
+  const users = snapshot.docs.map(
+    (doc) => ({ id: doc.id, ...doc.data() } as User)
+  );
+
+  return users;
 }
 
 export async function assignSurveys(

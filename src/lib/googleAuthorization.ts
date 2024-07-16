@@ -1,40 +1,31 @@
 import { google } from "googleapis";
-import { redirect } from "next/navigation";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "./firebase/firebaseConfig";
 
 const oauth2Client = new google.auth.OAuth2(
   process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
   process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
-  "http://localhost:3000/api/auth/handler"
 );
 
-export const forms = google.forms({
-  version: 'v1',
-  auth: oauth2Client
-})
-
-export function authorizeWithGoogle() {
-  const scopes = [
-    "https://www.googleapis.com/auth/forms.body",
-    "https://www.googleapis.com/auth/forms.responses.readonly",
-    "https://www.googleapis.com/auth/spreadsheets",
-  ];
-
-  const authorizationUrl = oauth2Client.generateAuthUrl({
-    access_type: "offline",
-    scope: scopes,
-    include_granted_scopes: true,
-  });
-
-  redirect(authorizationUrl);
-}
-
-export async function setCredentials(authCode: string): Promise<boolean> {
-  try {
-    const { tokens } = await oauth2Client.getToken(authCode);
-    oauth2Client.setCredentials(tokens);
-    return true;
-  } catch (err) {
-    console.error('getting tokens failed');
-    return false;
+export async function getFormsClient() {
+  if (!oauth2Client.credentials.refresh_token) {
+    const response = await getDoc(doc(db, 'metadata', 'adminRefreshToken'));
+    if (!response.exists()) {
+      throw new Error("no refresh token found");
+    }
+    const { adminRefreshToken } = response.data();
+    oauth2Client.setCredentials({ refresh_token: adminRefreshToken });
+    console.log(auth.currentUser)
   }
+
+  if (!oauth2Client.credentials.access_token || (oauth2Client.credentials.expiry_date && Date.now() > oauth2Client.credentials.expiry_date)) {
+    const { credentials } = await oauth2Client.refreshAccessToken();
+    oauth2Client.setCredentials(credentials);
+    console.log(oauth2Client.credentials);
+  }
+
+  return google.forms({
+    version: 'v1',
+    auth: oauth2Client
+  })
 }
