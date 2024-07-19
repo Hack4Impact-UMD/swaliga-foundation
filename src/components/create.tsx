@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import styles from './create.module.css';
+import Modal from './Modal';
 
 interface CreateProps {
   closeCreate: () => void;
@@ -34,21 +35,22 @@ export default function Create({ closeCreate }: CreateProps) {
     };
 
     return (
-      <div className={styles.container}>
-        <div className={styles.title}>Create Survey</div>
-        <div className={styles.centeredOval}>
-          <input
-            name="surveyTitle"
-            placeholder="Survey Title"
-            className={styles.inputField}
-            value={surveyTitle}
-            onChange={(ev) => setSurveyTitle(ev.target.value)}
-          />
-        </div>
-        <button className={styles.button} onClick={createSurvey}>
-          Create
-        </button>
-        <span className={styles.closeIcon} onClick={closeCreate}/>
-      </div>
+      <Modal closeModal={closeCreate} width={500} height={200}>
+        <>
+          <div className={styles.title}>Create Survey</div>
+          <div className={styles.centeredOval}>
+            <input
+              name="surveyTitle"
+              placeholder="Survey Title"
+              className={styles.inputField}
+              value={surveyTitle}
+              onChange={(ev) => setSurveyTitle(ev.target.value)}
+            />
+          </div>
+          <button className={styles.button} onClick={createSurvey}>
+            Create
+          </button>
+        </>
+      </Modal>
     );
 }

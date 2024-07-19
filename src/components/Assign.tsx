@@ -3,14 +3,15 @@
 import React, { useState, useEffect } from 'react';
 import { Survey } from '@/types/survey-types';
 import styles from './assign.module.css';
+import Modal from './Modal';
 
 interface AssignProps {
-    userIds: string[];
+    studentIds: string[];
     surveys: Survey[];
     closeAssign: () => void;
 }
 
-export default function Assign({ userIds, surveys, closeAssign }: AssignProps) {
+export default function Assign({ studentIds, surveys, closeAssign }: AssignProps) {
     const [selectedSurveys, setSelectedSurveys] = useState<string[]>([]);
 
     // Function to toggle the selection of a survey
@@ -32,17 +33,17 @@ export default function Assign({ userIds, surveys, closeAssign }: AssignProps) {
         }
 
         try {
-            console.log(userIds)
+            console.log(studentIds);
             console.log(selectedSurveys)
-            const response = await fetch('/api/surveys/assign', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    userIds: userIds,
-                    surveyIds: selectedSurveys
-                })
+            const response = await fetch("/api/surveys/assign", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                userIds: studentIds,
+                surveyIds: selectedSurveys,
+              }),
             });
 
             if (response.ok) {
@@ -59,31 +60,32 @@ export default function Assign({ userIds, surveys, closeAssign }: AssignProps) {
     };
 
     return (
-      <div className={styles.container}>
-        <span className={styles.closeIcon} onClick={closeAssign} />
-        <div className={styles.title}>Assign Surveys</div>
-        <div className={styles.surveys}>
-          {surveys.map((survey) => (
-            <div key={survey.formId} className={styles.centeredOval}>
-              <input
-                type="checkbox"
-                id={`surveyCheckbox_${survey.formId}`}
-                className={styles.inputCheckbox}
-                checked={selectedSurveys.includes(survey.formId)}
-                onChange={() => toggleSurvey(survey.formId)}
-              />
-              <label
-                htmlFor={`surveyCheckbox_${survey.formId}`}
-                className={styles.text}
-              >
-                {survey.info.title}
-              </label>
-            </div>
-          ))}
-        </div>
-        <button className={styles.button} onClick={assignSurveys}>
-          Assign
-        </button>
-      </div>
+      <Modal closeModal={closeAssign} width={500} height={500}>
+        <>
+          <div className={styles.title}>Assign Surveys</div>
+          <div className={styles.surveys}>
+            {surveys.map((survey) => (
+              <div key={survey.formId} className={styles.centeredOval}>
+                <input
+                  type="checkbox"
+                  id={`surveyCheckbox_${survey.formId}`}
+                  className={styles.inputCheckbox}
+                  checked={selectedSurveys.includes(survey.formId)}
+                  onChange={() => toggleSurvey(survey.formId)}
+                />
+                <label
+                  htmlFor={`surveyCheckbox_${survey.formId}`}
+                  className={styles.text}
+                >
+                  {survey.info.title}
+                </label>
+              </div>
+            ))}
+          </div>
+          <button className={styles.button} onClick={assignSurveys}>
+            Assign
+          </button>
+        </>
+      </Modal>
     );
 }

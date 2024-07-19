@@ -1,15 +1,3 @@
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: #d9d9d9;
-    padding: 50px 30px 30px 30px;
-    border-radius: 20px;
-    width: 330px;
-    position: relative;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
 .inputGroup {
     display: flex;
     align-items: center;

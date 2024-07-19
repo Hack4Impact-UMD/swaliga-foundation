@@ -1,9 +1,8 @@
 "use client";
 import Link from "next/link";
 import styles from "./SurveyList.module.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Survey } from "@/types/survey-types";
-import Modal from "./Modal";
 import Create from "./create";
 
 export default function SurveyList(props: { surveys: Survey[] }): JSX.Element {
@@ -54,11 +53,7 @@ export default function SurveyList(props: { surveys: Survey[] }): JSX.Element {
           Create Survey +
         </button>
       </div>
-      {isCreateOpen && (
-        <Modal>
-          <Create closeCreate={() => setIsCreateOpen(false)} />
-        </Modal>
-      )}
+      {isCreateOpen && <Create closeCreate={() => setIsCreateOpen(false)} />}
     </>
   );
 }

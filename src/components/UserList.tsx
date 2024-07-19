@@ -7,7 +7,6 @@ import { FaFilter } from "react-icons/fa";
 import { useState } from "react";
 import Filter from "./Filter";
 import Assign from "./Assign";
-import Modal from "./Modal";
 import { exportUsersToCSV } from "@/lib/exportCSV";
 import { Timestamp } from "firebase/firestore";
 
@@ -149,11 +148,7 @@ export default function UserList(props: { users: User[]; surveys: Survey[] }) {
         </button>
         <button className={styles.paginationButton} onClick={() => exportUsersToCSV(users.filter(user => selectedStudentIds.includes(user.id)))}>Export Selected Users to CSV</button>
       </div>
-      {isAssignOpen && (
-        <Modal>
-          <Assign userIds={selectedStudentIds} surveys={surveys} closeAssign={() => setIsAssignOpen(false)}/>
-        </Modal>
-      )}
+      {isAssignOpen && <Assign studentIds={selectedStudentIds} surveys={surveys} closeAssign={() => setIsAssignOpen(false)}/>}
     </>
   );
 }
