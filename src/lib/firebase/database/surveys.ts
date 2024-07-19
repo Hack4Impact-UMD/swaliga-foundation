@@ -1,7 +1,7 @@
 import { GoogleForm, Survey } from '@/types/survey-types';
 import { getFormsClient } from '../../googleAuthorization';
 import { db } from "../firebaseConfig";
-import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
 import { createWatch } from './watches';
 import { Watch } from '@/types/watch-types';
 
@@ -113,5 +113,14 @@ export async function getSurveyByID(id: string) {
     return snapshot.exists() ? snapshot.data() as Survey : null
   } catch (err) {
     throw Error('survey with given id not found')
+  }
+}
+
+export async function deleteSurveyByID(id: string) {
+  try {
+    await deleteDoc(doc(db, 'surveys', id));
+  } catch (err) {
+    console.log(err);
+    throw Error('unable to delete survey');
   }
 }

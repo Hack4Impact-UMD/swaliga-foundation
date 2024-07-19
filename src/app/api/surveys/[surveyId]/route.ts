@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAllSurveys, getSurveyByID } from "@/lib/firebase/database/surveys";
+import { deleteSurveyByID, getAllSurveys, getSurveyByID } from "@/lib/firebase/database/surveys";
 
 export async function generateStaticParams() {
   const surveys = await getAllSurveys();
@@ -19,5 +19,16 @@ export async function GET(
       { error: "error getting survey by id" },
       { status: 500 }
     );
+  }
+}
+
+export async function DELETE(req: NextRequest, { params }: { params: { surveyId: string } }) {
+  const { surveyId } = params;
+  try {
+    await deleteSurveyByID(surveyId);
+    return NextResponse.json({ message: "survey deleted successfully" }, { status: 200 });
+  } catch (err) {
+    console.log('error deleting survey', err);
+    return NextResponse.json({ message: "error deleting survey" }, { status: 500 });
   }
 }
