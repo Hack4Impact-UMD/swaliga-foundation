@@ -4,6 +4,8 @@ import { db } from "../firebaseConfig";
 import { collection, deleteDoc, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
 import { createWatch } from './watches';
 import { Watch } from '@/types/watch-types';
+import { unassignSurveys } from './users';
+import { deleteResponseByID } from './response';
 
 export async function createSurvey(body: {title: string, documentTitle: string}) {
   let form: Survey | null = null;
@@ -116,9 +118,16 @@ export async function getSurveyByID(id: string) {
   }
 }
 
-export async function deleteSurveyByID(id: string) {
+export async function deleteSurveyByID(surveyId: string) {
   try {
-    await deleteDoc(doc(db, 'surveys', id));
+    const survey = await getSurveyByID(surveyId);
+    if (!survey) {
+      throw Error('survey with given id not found');
+    }
+    await unassignSurveys(survey.assignedUsers, [survey.formId]);
+    Promise.all(survey.responseIds.map((responseId: string) => deleteResponseByID(responseId))).then(async () => {
+      await deleteDoc(doc(db, "surveys", surveyId));
+    });
   } catch (err) {
     console.log(err);
     throw Error('unable to delete survey');
