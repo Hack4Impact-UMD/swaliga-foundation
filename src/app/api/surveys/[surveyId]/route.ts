@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { deleteSurveyByID, getAllSurveys, getSurveyByID } from "@/lib/firebase/database/surveys";
-
-export async function generateStaticParams() {
-  const surveys = await getAllSurveys();
-  return surveys.map((survey) => ({ surveyId: survey.formId }));
-}
+import { deleteSurveyByID, getSurveyByID } from "@/lib/firebase/database/surveys";
 
 export async function GET(
   req: NextRequest,
