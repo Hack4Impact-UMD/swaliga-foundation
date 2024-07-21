@@ -120,7 +120,7 @@ export async function assignSurveys(
   }
 }
 
-export async function removeSurveys(
+export async function unassignSurveys(
   userIds: string[],
   surveyIds: string[]
 ): Promise<void> {
