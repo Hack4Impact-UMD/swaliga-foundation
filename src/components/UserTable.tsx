@@ -2,7 +2,7 @@
 
 import { Survey } from "@/types/survey-types";
 import { User } from "@/types/user-types";
-import styles from "./UserList.module.css";
+import styles from "./UserTable.module.css";
 import { useState } from "react";
 import { FilterCondition } from "./Filter";
 import Assign from "./Assign";
@@ -11,7 +11,7 @@ import { Timestamp } from "firebase/firestore";
 import Table, { Column } from "./Table";
 import moment from "moment";
 
-export default function UserList(props: { users: User[]; surveys: Survey[] }) {
+export default function UserTable(props: { users: User[]; surveys: Survey[] }) {
   const { users, surveys } = props;
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
   const [isAssignOpen, setIsAssignOpen] = useState<boolean>(false);

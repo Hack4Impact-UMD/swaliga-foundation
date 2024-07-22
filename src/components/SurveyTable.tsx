@@ -1,11 +1,11 @@
 "use client";
 import Link from "next/link";
-import styles from "./SurveyList.module.css";
+import styles from "./SurveyTable.module.css";
 import { useState } from "react";
 import { Survey } from "@/types/survey-types";
 import Create from "./create";
 
-export default function SurveyList(props: { surveys: Survey[] }): JSX.Element {
+export default function SurveyTable(props: { surveys: Survey[] }): JSX.Element {
   const { surveys } = props;
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
 
