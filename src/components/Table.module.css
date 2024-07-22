@@ -1,0 +1,96 @@
+.content {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.tableContainer {
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    flex-grow: 1;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table thead th {
+    background-color: #91A5AF;
+}
+
+.table th,
+.table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #334257;
+}
+
+.checkedRow {
+    background-color: #D6D69A;
+    color: #000000;
+}
+
+.table tbody tr:not(.checkedRow):hover {
+    background-color: #D6D69A;
+}
+
+.table td {
+    padding: 10px;
+    vertical-align: middle;
+}
+
+.table td i {
+    margin-right: 8px;
+}
+
+.filterContainer {
+    margin: 0px 0px 0px 10px;
+}
+
+.filterBox {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    gap: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    height: 20px;
+    width: 20px;
+    margin-left: auto;
+}
+
+.filterBox button {
+    border: none;
+    outline: none;
+    background-color: transparent;
+    padding: 5px 10px;
+}
+
+.filterIcon {
+    color: #555;
+}
+
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1em;
+}
+
+.paginationButton {
+    background-color: #e1ecf1;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px 0px;
+    border-radius: 5px;
+    font-size: 1em;
+    width: 300px;
+    /* Adjust font-size as needed */
+}
+
+.paginationButton:disabled {
+    cursor: not-allowed;
+}

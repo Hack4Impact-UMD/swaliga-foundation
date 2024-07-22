@@ -3,150 +3,147 @@
 import { Survey } from "@/types/survey-types";
 import { User } from "@/types/user-types";
 import styles from "./UserList.module.css";
-import { FaFilter } from "react-icons/fa";
 import { useState } from "react";
-import Filter from "./Filter";
+import { FilterCondition } from "./Filter";
 import Assign from "./Assign";
 import { exportUsersToCSV } from "@/lib/exportCSV";
 import { Timestamp } from "firebase/firestore";
+import Table, { Column } from "./Table";
+import moment from "moment";
 
 export default function UserList(props: { users: User[]; surveys: Survey[] }) {
   const { users, surveys } = props;
-  const [filteredUsers, setFilteredUsers] = useState<User[]>(users);
-  const [isAllSelected, setIsAllSelected] = useState<boolean>(false);
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(0);
-  const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
   const [isAssignOpen, setIsAssignOpen] = useState<boolean>(false);
-
-  const studentsPerPage = 50;
-  const totalPages = Math.ceil(users.length / studentsPerPage);
-
-  const handleStudentCheck = (id: string): void => {
-    if (selectedStudentIds.includes(id)) {
-      setSelectedStudentIds(
-        selectedStudentIds.filter((studentId) => studentId !== id)
-      );
-    } else {
-      setSelectedStudentIds([...selectedStudentIds, id]);
-    }
-  };
-
-  const toggleFilter = () => setIsFilterOpen(!isFilterOpen);
-  const toggleSelectAll = () => {
-    if (isAllSelected) {
-      setSelectedStudentIds([]);
-    } else {
-      setSelectedStudentIds(users.map((user) => user.id));
-    }
-    setIsAllSelected(!isAllSelected);
-  };
-
+  
   const formatDate = (timestamp: Timestamp | null): string => {
     if (!timestamp) {
-      return "N/A"; 
+      return "N/A";
     }
     const date = new Date(timestamp.seconds * 1000);
-    return date.toLocaleDateString('en-US');
+    return date.toLocaleDateString("en-US");
   };
+
+  const userColumns: Column<User>[] = [
+    {
+      id: "name",
+      name: "Name",
+      valueSelector: (user: User) =>
+        user.middleName
+          ? `${user.firstName} ${user.middleName} ${user.lastName}`
+          : `${user.firstName} ${user.lastName}`,
+    },
+    {
+      id: "id",
+      name: "ID",
+      valueSelector: (user: User) => user.id,
+    },
+    {
+      id: "birthdate",
+      name: "Birthdate",
+      valueSelector: (user: User) => formatDate(user.birthdate),
+    },
+    {
+      id: "hometown",
+      name: "Hometown",
+      valueSelector: (user: User) => user.address.city,
+    },
+    {
+      id: "email",
+      name: "Email",
+      valueSelector: (user: User) => user.email,
+    },
+  ];
+
+  const userFilterConditions: FilterCondition<User>[] = [
+    {
+      id: "id",
+      name: "ID",
+      inputType: "number",
+    },
+    {
+      id: "firstName",
+      name: "First Name",
+      inputType: "text",
+    },
+    {
+      id: "lastName",
+      name: "Last Name",
+      inputType: "text",
+    },
+    {
+      id: "gradYear",
+      name: "Grad Year",
+      inputType: "number",
+    },
+    {
+      id: "age",
+      name: "Age",
+      inputType: "number",
+    },
+    {
+      id: "gender",
+      name: "Gender",
+      inputType: "text",
+    },
+    {
+      id: "ethnicity",
+      name: "Ethnicity",
+      inputType: "text",
+    },
+    {
+      id: "city",
+      name: "City",
+      inputType: "text",
+    },
+  ]
+
+  const includeUser = (user: User, filterValues: { [key: string]: any }) => {
+    const { id, firstName, lastName, gradYear, age, gender, ethnicity, city } = filterValues;
+    if (id && user.id !== id) return false;
+    if (firstName && !user.firstName.toLowerCase().includes(firstName.toLowerCase())) return false;
+    if (lastName && !user.lastName.toLowerCase().includes(lastName.toLowerCase())) return false;
+    if (gradYear && user.gradYear !== gradYear) return false;
+    if (age) {
+      const currentMoment = moment();
+      const birthDate = user.birthdate.toDate();
+      const userAge = currentMoment.diff(birthDate, 'years');
+      if (userAge !== age) return false;
+    }
+    if (gender && !user.gender.toLowerCase().startsWith(gender.toLowerCase())) return false;
+    if (ethnicity) {
+      let include = false;
+      const ethnicitySearch = ethnicity.toLowerCase();
+      for (const userEthnicity of user.ethnicity) {
+        if (userEthnicity.toLowerCase().includes(ethnicitySearch)) {
+          include = true;
+          break;
+        }
+      }
+      if (!include) return false;
+    }
+    if (city && !user.address.city.toLowerCase().startsWith(city.toLowerCase())) return false;
+    return true;
+  }
 
   return (
     <>
-      <div className={styles.content}>
-        <div className={styles.tableContainer}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>
-                  <input
-                    type="checkbox"
-                    checked={isAllSelected}
-                    onChange={toggleSelectAll}
-                  />
-                  Select All
-                </th>
-                <th>Name</th>
-                <th>ID</th>
-                <th>Birthdate</th>
-                <th>Hometown</th>
-                <th>Email</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredUsers
-                .slice(
-                  currentPage * studentsPerPage,
-                  (currentPage + 1) * studentsPerPage
-                )
-                .map((student) => (
-                  <tr
-                    key={student.id}
-                    className={
-                      selectedStudentIds.includes(student.id) ? styles.checkedRow : ""
-                    }
-                  >
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={selectedStudentIds.includes(student.id)}
-                        onChange={() => handleStudentCheck(student.id)}
-                      />
-                    </td>
-                    <td>
-                      {student.middleName
-                        ? `${student.firstName} ${student.middleName} ${student.lastName}`
-                        : `${student.firstName} ${student.lastName}`}
-                    </td>
-                    <td>{student.id}</td>
-                    <td>{formatDate(student.birthdate)}</td>
-                    <td>{student.address?.city}</td>
-                    <td>{student.email}</td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
-        <div className={styles.filterContainer}>
-          {isFilterOpen ? (
-            <Filter
-              closeFilter={toggleFilter}
-              users={users}
-              setSelectedStudentIds={setSelectedStudentIds}
-              setFilteredUsers={setFilteredUsers}
-            />
-          ) : (
-            <div className={styles.filterBox} onClick={toggleFilter}>
-              <FaFilter className={styles.filterIcon} />
-            </div>
-          )}
-        </div>
-      </div>
-      <div className={styles.pagination}>
-        <button
-          className={styles.paginationButton}
-          onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
-          disabled={currentPage === 0}
-        >
-          Previous 50 Students
-        </button>
-        <button
-          className={styles.paginationButton}
-          onClick={() =>
-            setCurrentPage(Math.min(totalPages - 1, currentPage + 1))
-          }
-          disabled={currentPage >= totalPages - 1}
-        >
-          Next 50 Students
-        </button>
-      </div>
+      <Table
+        columns={userColumns}
+        items={users}
+        selectedItemIds={selectedStudentIds}
+        filterConditions={userFilterConditions}
+        filterFunction={includeUser}
+        setSelectedItemIds={setSelectedStudentIds}
+      />
       <div className={styles.buttonContainer}>
         <button
-          className={styles.paginationButton}
+          className={styles.button}
           onClick={() => setIsAssignOpen(true)}
         >
           Assign Surveys
         </button>
-        <button className={styles.paginationButton} onClick={() => exportUsersToCSV(users.filter(user => selectedStudentIds.includes(user.id)))}>Export Selected Users to CSV</button>
+        <button className={styles.button} onClick={() => exportUsersToCSV(users.filter(user => selectedStudentIds.includes(user.id)))}>Export Selected Users to CSV</button>
       </div>
       {isAssignOpen && <Assign studentIds={selectedStudentIds} surveys={surveys} closeAssign={() => setIsAssignOpen(false)}/>}
     </>
