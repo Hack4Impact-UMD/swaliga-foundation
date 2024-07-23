@@ -12,6 +12,7 @@ import { signInWithGoogle } from "@/lib/firebase/authentication/googleAuthentica
 import RequireSignedOut from "@/components/auth/RequireSignedOut";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default function LoginPage() {
   const [dims, setDims] = useState<Dims>({ width: 0, height: 0 });
