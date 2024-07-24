@@ -29,8 +29,6 @@
     height: 24px;
     margin: 10px;
     cursor: pointer;
-    background-image: url('../../public/icons/close-icon.png');
-    background-size: cover;
     justify-self: flex-start;
     align-self: flex-end;
 }
