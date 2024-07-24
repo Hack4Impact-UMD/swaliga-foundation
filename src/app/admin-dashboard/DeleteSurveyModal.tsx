@@ -1,18 +1,18 @@
 import Modal from "@/components/Modal";
 import styles from './DeleteSurveyModal.module.css';
+import { Survey } from "@/types/survey-types";
 
 interface DeleteSurveyModalProps {
-  surveyId: string;
-  surveyName: string;
+  survey: Survey;
   closeDelete: () => void;
 }
 
 export default function DeleteSurveyModal(props: DeleteSurveyModalProps) {
-  const { surveyId, surveyName, closeDelete } = props;
+  const { survey, closeDelete } = props;
   
   const confirmDelete = async () => {
     try {
-      await fetch(`/api/surveys/${surveyId}`, {
+      await fetch(`/api/surveys/${survey.formId}`, {
         method: 'DELETE',
       })
       closeDelete();
@@ -28,7 +28,7 @@ export default function DeleteSurveyModal(props: DeleteSurveyModalProps) {
           Are you sure you want to delete the following survey?
         </p>
         <p className={styles.text}>
-          <b>{surveyName}</b>
+          <b>{survey.info.title}</b>
         </p>
         <p className={styles.disclaimer}>
           If you delete this survey, all of its data and responses will be
