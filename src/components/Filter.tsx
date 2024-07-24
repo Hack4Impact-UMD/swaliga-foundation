@@ -2,12 +2,13 @@
 
 import React, { useState } from 'react';
 import styles from './Filter.module.css';
+import { Item } from './Table';
 
 interface FilterProps<T> {
   filterConditions: FilterCondition<T>[];
-  items: T[],
+  items: Item<T>[],
   closeFilter: () => void,
-  setFilteredItems: (items: T[]) => void;
+  setFilteredItems: (items: Item<T>[]) => void;
   filterFunction: (item: T, filterValues: { [key: string]: any }) => boolean;
 }
 
@@ -35,7 +36,7 @@ export default function Filter<T>(props: FilterProps<T>) {
           onChange={(ev) => setFilterValues({ ...filterValues, [condition.id]: ev.target.value })}
         />
       ))}
-      <button className={styles.button} onClick={() => setFilteredItems(items.filter((item: T) => filterFunction(item, filterValues)))}> APPLY </button>
+      <button className={styles.button} onClick={() => setFilteredItems(items.filter((item: Item<T>) => filterFunction(item.data, filterValues)))}> APPLY </button>
     </div>
   );
 }

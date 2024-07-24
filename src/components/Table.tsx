@@ -6,28 +6,35 @@ import { FaFilter } from "react-icons/fa";
 export interface Column<T> {
   id: string,
   name: string,
-  valueSelector: (item: T) => string;
+  getValue: (item: T) => JSX.Element;
+}
+
+export interface Item<T> {
+  id: string;
+  data: T;
 }
 
 interface TableProps<T> {
   columns: Column<T>[];
-  items: T[];
-  selectedItemIds: string[];
+  items: Item<T>[];
+  selectedItemIds?: string[];
   filterConditions: FilterCondition<T>[];
   filterFunction: (item: T, filterConditions: { [key: string]: any }) => boolean;
-  setSelectedItemIds: (ids: string[]) => void;
+  setSelectedItemIds?: (ids: string[]) => void;
 }
 
-export default function Table<T extends { id: string; }>(props: TableProps<T>) {
+export default function Table<T>(props: TableProps<T>) {
   const { columns, items, selectedItemIds, filterConditions, filterFunction, setSelectedItemIds } = props;
-  const [filteredItems, setFilteredItems] = useState<T[]>(items);
+  const [filteredItems, setFilteredItems] = useState<Item<T>[]>(items);
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const itemsPerPage = 50;
   const totalPages = Math.ceil(items.length / itemsPerPage);
 
   const toggleSelectAll = () => {
-    if (selectedItemIds.length === 0) {
+    if (!selectedItemIds || !setSelectedItemIds) {
+      return;
+    } else if (selectedItemIds.length === 0) {
       setSelectedItemIds(items.map((item) => item.id));
     } else {
       setSelectedItemIds([]);
@@ -35,7 +42,9 @@ export default function Table<T extends { id: string; }>(props: TableProps<T>) {
   }
 
   const handleStudentCheck = (id: string) => {
-    if (selectedItemIds.includes(id)) {
+    if (!selectedItemIds || !setSelectedItemIds) {
+      return;
+    } else if (selectedItemIds.includes(id)) {
       setSelectedItemIds(selectedItemIds.filter((studentId) => studentId !== id));
     } else {
       setSelectedItemIds([...selectedItemIds, id]);
@@ -49,13 +58,13 @@ export default function Table<T extends { id: string; }>(props: TableProps<T>) {
           <table className={styles.table}>
             <thead>
               <tr>
-                <th>
+                {selectedItemIds && <th>
                   <input
                     type="checkbox"
                     checked={selectedItemIds.length !== 0}
                     onChange={toggleSelectAll}
                   />
-                </th>
+                </th>}
                 {columns.map((column) => (
                   <th key={column.id}>{column.name}</th>
                 ))}
@@ -71,17 +80,17 @@ export default function Table<T extends { id: string; }>(props: TableProps<T>) {
                   <tr
                     key={item.id}
                     className={
-                      selectedItemIds.includes(item.id) ? styles.checkedRow : ""
+                      selectedItemIds && selectedItemIds.includes(item.id) ? styles.checkedRow : ""
                     }
                   >
-                    <td>
+                    {selectedItemIds && <td>
                       <input
                         type="checkbox"
                         checked={selectedItemIds.includes(item.id)}
                         onChange={() => handleStudentCheck(item.id)}
                       />
-                    </td>
-                    {columns.map((column) => <td>{column.valueSelector(item)}</td>)} 
+                    </td>}
+                    {columns.map((column) => <td>{column.getValue(item.data)}</td>)} 
                   </tr>
                 ))}
             </tbody>
