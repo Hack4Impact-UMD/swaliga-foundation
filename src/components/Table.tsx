@@ -118,7 +118,7 @@ export default function Table<T>(props: TableProps<T>) {
           onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
           disabled={currentPage === 0}
         >
-          Previous 50 Students
+          Previous 50
         </button>
         <button
           className={styles.paginationButton}
@@ -127,7 +127,7 @@ export default function Table<T>(props: TableProps<T>) {
           }
           disabled={currentPage >= totalPages - 1}
         >
-          Next 50 Students
+          Next 50
         </button>
       </div>
     </>
