@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import styles from "./AdminDashboard.module.css";
 import { User } from "@/types/user-types";
 import { Survey } from "@/types/survey-types";
-import UserTable from "@/components/UserTable";
-import SurveyTable from "@/components/SurveyTable";
+import StudentDisplay from "@/components/StudentDisplay";
+import SurveyDisplay from "@/components/SurveyDisplay";
 import RequireAdminAuth from "@/components/auth/RequireAdminAuth";
 import logoutIcon from "@/../public/icons/logout.svg";
 import Image from "next/image";
@@ -59,9 +59,9 @@ export default function AdminDashboard() {
               </div>
             </div>
             {showUserList ? (
-              <UserTable users={users} surveys={surveys} />
+              <StudentDisplay users={users} surveys={surveys} />
             ) : (
-              <SurveyTable surveys={surveys} handleDeleteSurvey={() => setForceUpdate(!forceUpdate)}/>
+              <SurveyDisplay surveys={surveys} handleDeleteSurvey={() => setForceUpdate(!forceUpdate)}/>
             )}
           </div>
         </div>

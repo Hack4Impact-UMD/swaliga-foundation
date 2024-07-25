@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import styles from "./SurveyTable.module.css";
+import styles from "./SurveyDisplay.module.css";
 import { useState } from "react";
 import { Survey } from "@/types/survey-types";
 import Create from "./create";
@@ -11,12 +11,12 @@ import trashIcon from "@/../public/icons/trashIcon.svg";
 import Image from "next/image";
 import DeleteSurveyModal from "@/app/admin-dashboard/DeleteSurveyModal";
 
-interface SurveyTableProps {
+interface SurveyDisplayProps {
   surveys: Survey[];
   handleDeleteSurvey: () => void;
 }
 
-export default function SurveyTable(props: SurveyTableProps): JSX.Element {
+export default function SurveyDisplay(props: SurveyDisplayProps): JSX.Element {
   const { surveys, handleDeleteSurvey } = props;
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const [deleteSurvey, setDeleteSurvey] = useState<Survey | null>(null);
@@ -60,7 +60,14 @@ export default function SurveyTable(props: SurveyTableProps): JSX.Element {
     {
       id: "delete",
       name: "Delete",
-      getValue: (survey: Survey) => <Image src={trashIcon} alt="Trash Icon" className={styles.trashIcon} onClick={() => setDeleteSurvey(survey)}/>,
+      getValue: (survey: Survey) => (
+        <Image
+          src={trashIcon}
+          alt="Trash Icon"
+          className={styles.trashIcon}
+          onClick={() => setDeleteSurvey(survey)}
+        />
+      ),
     },
   ];
 
@@ -74,13 +81,17 @@ export default function SurveyTable(props: SurveyTableProps): JSX.Element {
       id: "title",
       name: "Title",
       inputType: "text",
-    }
+    },
   ];
 
-  const includeSurvey = (survey: Survey, filterValues: { [key: string]: any }): boolean => {
+  const includeSurvey = (
+    survey: Survey,
+    filterValues: { [key: string]: any }
+  ): boolean => {
     const { id, title } = filterValues;
     if (id && survey.formId !== id) return false;
-    if (title && !survey.info.title.toLowerCase().includes(title.toLowerCase())) return false;
+    if (title && !survey.info.title.toLowerCase().includes(title.toLowerCase()))
+      return false;
     return true;
   };
 
@@ -88,7 +99,10 @@ export default function SurveyTable(props: SurveyTableProps): JSX.Element {
     <>
       <Table<Survey>
         columns={surveyColumns}
-        items={surveys.map((survey: Survey) => ({ id: survey.formId, data: survey}))}
+        items={surveys.map((survey: Survey) => ({
+          id: survey.formId,
+          data: survey,
+        }))}
         filterConditions={surveyFilterConditions}
         filterFunction={includeSurvey}
       />
@@ -101,7 +115,13 @@ export default function SurveyTable(props: SurveyTableProps): JSX.Element {
         </button>
       </div>
       {isCreateOpen && <Create closeCreate={() => setIsCreateOpen(false)} />}
-      {deleteSurvey && <DeleteSurveyModal survey={deleteSurvey} closeDelete={() => setDeleteSurvey(null)} handleDeleteSurvey={handleDeleteSurvey} />}
+      {deleteSurvey && (
+        <DeleteSurveyModal
+          survey={deleteSurvey}
+          closeDelete={() => setDeleteSurvey(null)}
+          handleDeleteSurvey={handleDeleteSurvey}
+        />
+      )}
     </>
   );
 }
