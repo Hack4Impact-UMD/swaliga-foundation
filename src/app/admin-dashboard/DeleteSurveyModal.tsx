@@ -5,16 +5,18 @@ import { Survey } from "@/types/survey-types";
 interface DeleteSurveyModalProps {
   survey: Survey;
   closeDelete: () => void;
+  handleDeleteSurvey: () => void;
 }
 
 export default function DeleteSurveyModal(props: DeleteSurveyModalProps) {
-  const { survey, closeDelete } = props;
+  const { survey, closeDelete, handleDeleteSurvey } = props;
   
   const confirmDelete = async () => {
     try {
       await fetch(`/api/surveys/${survey.formId}`, {
         method: 'DELETE',
-      })
+      });
+      handleDeleteSurvey();
       closeDelete();
     } catch (err) {
       console.error('unable to delete survey', err);

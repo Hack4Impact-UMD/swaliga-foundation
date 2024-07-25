@@ -13,10 +13,11 @@ import DeleteSurveyModal from "@/app/admin-dashboard/DeleteSurveyModal";
 
 interface SurveyTableProps {
   surveys: Survey[];
+  handleDeleteSurvey: () => void;
 }
 
 export default function SurveyTable(props: SurveyTableProps): JSX.Element {
-  const { surveys } = props;
+  const { surveys, handleDeleteSurvey } = props;
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const [deleteSurvey, setDeleteSurvey] = useState<Survey | null>(null);
 
@@ -100,7 +101,7 @@ export default function SurveyTable(props: SurveyTableProps): JSX.Element {
         </button>
       </div>
       {isCreateOpen && <Create closeCreate={() => setIsCreateOpen(false)} />}
-      {deleteSurvey && <DeleteSurveyModal survey={deleteSurvey} closeDelete={() => setDeleteSurvey(null)}/>}
+      {deleteSurvey && <DeleteSurveyModal survey={deleteSurvey} closeDelete={() => setDeleteSurvey(null)} handleDeleteSurvey={handleDeleteSurvey} />}
     </>
   );
 }

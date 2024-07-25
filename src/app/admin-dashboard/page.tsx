@@ -15,8 +15,10 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [users, setUsers] = useState<User[]>([]);
   const [surveys, setSurveys] = useState<Survey[]>([]);
+  const [forceUpdate, setForceUpdate] = useState<boolean>(false); // not the best way to rerender page once a survey is deleted, but it works
   
   useEffect(() => {
+    setIsLoading(true);
     const promises = [];
     promises.push(fetch("/api/users"));
     promises.push(fetch("/api/surveys"));
@@ -28,12 +30,12 @@ export default function AdminDashboard() {
         setIsLoading(false);
       });
     });
-  }, []);
+  }, [forceUpdate]);
 
   const handleDropdownChange = () => setShowUserList(!showUserList);
 
   return (
-    <RequireAdminAuth>
+    <>
       {isLoading ? (
         <p>Loading...</p>
       ) : (
@@ -59,11 +61,11 @@ export default function AdminDashboard() {
             {showUserList ? (
               <UserTable users={users} surveys={surveys} />
             ) : (
-              <SurveyTable surveys={surveys} />
+              <SurveyTable surveys={surveys} handleDeleteSurvey={() => setForceUpdate(!forceUpdate)}/>
             )}
           </div>
         </div>
       )}
-    </RequireAdminAuth>
+    </>
   );
 }
