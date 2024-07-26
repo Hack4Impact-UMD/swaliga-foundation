@@ -49,5 +49,6 @@
 
 .surveys {
     height: 75%;
+    width: 80%;
     overflow-y: scroll;
 }

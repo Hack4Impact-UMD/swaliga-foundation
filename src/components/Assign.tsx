@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { Survey } from '@/types/survey-types';
 import styles from './assign.module.css';
 import Modal from './Modal';
+import Table, { Column } from './Table';
+import { FilterCondition } from './Filter';
 
 interface AssignProps {
     studentIds: string[];
@@ -12,12 +14,12 @@ interface AssignProps {
 }
 
 export default function Assign({ studentIds, surveys, closeAssign }: AssignProps) {
-    const [selectedSurveys, setSelectedSurveys] = useState<string[]>([]);
+    const [selectedSurveyIds, setSelectedSurveyIds] = useState<string[]>([]);
 
     // Function to toggle the selection of a survey
     const toggleSurvey = (surveyId: string) => {
-        const isSelected = selectedSurveys.includes(surveyId);
-        setSelectedSurveys(prevSelected => {
+        const isSelected = selectedSurveyIds.includes(surveyId);
+        setSelectedSurveyIds(prevSelected => {
             if (isSelected) {
                 return prevSelected.filter(id => id !== surveyId);
             } else {
@@ -28,13 +30,13 @@ export default function Assign({ studentIds, surveys, closeAssign }: AssignProps
 
     // Function to handle assigning surveys
     const assignSurveys = async () => {
-        if (selectedSurveys.length === 0) {
+        if (selectedSurveyIds.length === 0) {
             return;
         }
 
         try {
             console.log(studentIds);
-            console.log(selectedSurveys)
+            console.log(selectedSurveyIds)
             const response = await fetch("/api/surveys/assign", {
               method: "POST",
               headers: {
@@ -42,7 +44,7 @@ export default function Assign({ studentIds, surveys, closeAssign }: AssignProps
               },
               body: JSON.stringify({
                 userIds: studentIds,
-                surveyIds: selectedSurveys,
+                surveyIds: selectedSurveyIds,
               }),
             });
 
@@ -59,28 +61,51 @@ export default function Assign({ studentIds, surveys, closeAssign }: AssignProps
         }
     };
 
+    const surveyColumns: Column<Survey>[] = [
+      {
+        id: "name",
+        name: "Name",
+        getValue: (survey: Survey) => <p>{survey.info && survey.info.title}</p>,
+      },
+    ];
+
+    const surveyFilterConditions: FilterCondition<Survey>[] = [
+      {
+        id: "id",
+        name: "ID",
+        inputType: "text",
+      },
+      {
+        id: "title",
+        name: "Title",
+        inputType: "text",
+      },
+    ];
+
+    const includeSurvey = (
+      survey: Survey,
+      filterValues: { [key: string]: any }
+    ): boolean => {
+      const { id, title } = filterValues;
+      if (id && survey.formId !== id) return false;
+      if (title && !survey.info.title.toLowerCase().includes(title.toLowerCase()))
+        return false;
+      return true;
+    };
+
     return (
-      <Modal closeModal={closeAssign} width={500} height={500}>
+      <Modal closeModal={closeAssign} width={1000} height={800}>
         <>
           <div className={styles.title}>Assign Surveys</div>
           <div className={styles.surveys}>
-            {surveys.map((survey) => (
-              <div key={survey.formId} className={styles.centeredOval}>
-                <input
-                  type="checkbox"
-                  id={`surveyCheckbox_${survey.formId}`}
-                  className={styles.inputCheckbox}
-                  checked={selectedSurveys.includes(survey.formId)}
-                  onChange={() => toggleSurvey(survey.formId)}
-                />
-                <label
-                  htmlFor={`surveyCheckbox_${survey.formId}`}
-                  className={styles.text}
-                >
-                  {survey.info.title}
-                </label>
-              </div>
-            ))}
+            <Table<Survey>
+              columns={surveyColumns}
+              items={surveys.map((survey: Survey) => ({ id: survey.formId, data: survey }))}
+              selectedItemIds={selectedSurveyIds}
+              filterConditions={surveyFilterConditions}
+              filterFunction={includeSurvey}
+              setSelectedItemIds={setSelectedSurveyIds}
+            />
           </div>
           <button className={styles.button} onClick={assignSurveys}>
             Assign
