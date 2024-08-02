@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
         }
 
         // IMPORTANT: Assumes userIds, surveyIds are string arrays!
-        const { userIds, surveyIds } = await req.json();
+        const { userIds, surveyIds }: { userIds: string[]; surveyIds: string[] } = await req.json();
 
         try {
             await assignSurveys(userIds, surveyIds);
