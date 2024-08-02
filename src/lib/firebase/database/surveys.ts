@@ -81,11 +81,11 @@ export async function createSurvey(body: {title: string, documentTitle: string})
 /* Retrieve form data given form id and update it to firebase.
 * @params id - id of form
 */
-export async function updateSurvey(id: string) {
+export async function updateSurvey(formId: string) {
   let form = null;
   try {
     const forms = await getFormsClient();
-    form = await forms.forms.get({formId: id})
+    form = await forms.forms.get({ formId })
   } catch (err) {
     throw Error('unable to get google form');
   }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { deleteSurveyByID, getSurveyByID } from "@/lib/firebase/database/surveys";
+import { deleteSurveyByID, getSurveyByID, updateSurvey } from "@/lib/firebase/database/surveys";
 
 export async function GET(
   req: NextRequest,
@@ -14,6 +14,17 @@ export async function GET(
       { error: "error getting survey by id" },
       { status: 500 }
     );
+  }
+}
+
+export async function PUT(req: NextRequest, { params }: { params: { surveyId: string } }) {
+  const { surveyId } = params;
+  try {
+    await updateSurvey(surveyId);
+    return NextResponse.json({ message: "survey updated successfully" }, { status: 200 });
+  } catch (err) {
+    console.log('error updating survey', err);
+    return NextResponse.json({ message: "error updating survey" }, { status: 500 });
   }
 }
 
