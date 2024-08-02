@@ -1,17 +1,32 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
+import { onMessagePublished } from "firebase-functions/v2/pubsub";
+import { onDocumentCreated } from "firebase-functions/v2/firestore";
 
+const URL_PREFIX = 'https://swaliga-foundation.web.app'
 
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
+exports.handleFormWatch = onMessagePublished("projects/swaliga-foundation/topics/forms", async (event) => {
+  const { eventType, formId } = event.data.message.attributes;
+  console.log('formId', formId, 'eventType', eventType);
+  if (eventType === "RESPONSES") {
+    const res = await fetch(`${URL_PREFIX}/api/responses`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        formId
+      })
+    })
+    console.log(res);
+  } else {
+    console.log(await fetch(`${URL_PREFIX}/api/surveys/${formId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }));
+  }
+});
 
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+exports.setWatchRenewal = onDocumentCreated("surveys/{surveyId}", async (event) => {
+  console.log(event);
+})
