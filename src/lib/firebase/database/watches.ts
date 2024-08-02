@@ -1,4 +1,4 @@
-import { getFormsClient } from "@/lib/googleAuthorization";
+import { getFormsClient } from "@/lib/googleForms";
 
 export async function createWatch(formId: string, eventType: string) {
     try {

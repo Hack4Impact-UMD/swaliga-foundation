@@ -1,5 +1,5 @@
 import { GoogleForm, Survey } from '@/types/survey-types';
-import { getFormsClient } from '../../googleAuthorization';
+import { getFormsClient } from '../../googleForms';
 import { db } from "../firebaseConfig";
 import { collection, deleteDoc, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
 import { createWatch } from './watches';
