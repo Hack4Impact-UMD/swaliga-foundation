@@ -101,3 +101,7 @@
     flex-direction: column;
     align-items: center;
 }
+
+.cursorPointer {
+    cursor: pointer;
+}

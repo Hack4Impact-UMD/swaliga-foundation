@@ -10,11 +10,14 @@ import { exportUsersToCSV } from "@/lib/exportCSV";
 import { Timestamp } from "firebase/firestore";
 import Table, { Column } from "./Table";
 import moment from "moment";
+import { useRouter } from "next/navigation";
 
 export default function StudentDisplay(props: { users: User[]; surveys: Survey[] }) {
   const { users, surveys } = props;
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
   const [isAssignOpen, setIsAssignOpen] = useState<boolean>(false);
+
+  const router = useRouter();
 
   const formatDate = (timestamp: Timestamp | null): string => {
     if (!timestamp) {
@@ -29,7 +32,7 @@ export default function StudentDisplay(props: { users: User[]; surveys: Survey[]
       id: "name",
       name: "Name",
       getValue: (user: User) => (
-        <p>
+        <p className={styles.cursorPointer} onClick={() => router.push(`/user/${user.id}`)}>
           {user.middleName
             ? `${user.firstName} ${user.middleName} ${user.lastName}`
             : `${user.firstName} ${user.lastName}`}
