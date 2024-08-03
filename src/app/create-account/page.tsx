@@ -130,7 +130,7 @@ export default function CreateAccountPage() {
       generatePolygons(dims);
       generatePolygonOverlay(dims);
     }
-  }, [dims, generatePolygons]);
+  }, [dims, generatePolygons, generatePolygonOverlay]);
 
   const drawPolygon = (polygon: Polygon) => (
     <Line

@@ -7,9 +7,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Missing Request Body' }, { status: 400 });
         }
 
-        const data = await req.json();  
-        const formId: string = data.formId as string;
-        const watchId: string = data.watchId as string;
+        const body: { formId: string; watchId: string } = await req.json();  
+        const { formId, watchId } = body;
 
         if (!formId || !watchId) {
             return NextResponse.json({ error: 'Invalid formId or watchId in Request Body' }, { status: 400 });

@@ -90,7 +90,7 @@ export default function Table<T>(props: TableProps<T>) {
                         onChange={() => handleStudentCheck(item.id)}
                       />
                     </td>}
-                    {columns.map((column) => <td>{column.getValue(item.data)}</td>)} 
+                    {columns.map((column) => <td key={column.id}>{column.getValue(item.data)}</td>)} 
                   </tr>
                 ))}
             </tbody>

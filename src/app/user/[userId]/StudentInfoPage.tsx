@@ -95,7 +95,7 @@ export default function StudentInfoPage({
     if (!user) {
       fetchData(params.userId);
     }
-  }, []);
+  }, [params.userId, user]);
 
   return (
     <div className={styles.page}>
