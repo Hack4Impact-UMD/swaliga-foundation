@@ -14,8 +14,8 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   try {
     const survey = await createSurvey(body);
-    return NextResponse.json(survey, {status: 200});
+    return NextResponse.json(survey, { status: 200 });
   } catch (err) {
-    return NextResponse.json({error: 'error creating survey'}, {status: 500});
+    return NextResponse.json({ error: 'error creating survey' }, { status: 500 });
   }
 }

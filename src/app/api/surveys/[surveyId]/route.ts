@@ -24,7 +24,7 @@ export async function PUT(req: NextRequest, { params }: { params: { surveyId: st
     return NextResponse.json({ message: "survey updated successfully" }, { status: 200 });
   } catch (err) {
     console.log('error updating survey', err);
-    return NextResponse.json({ message: "error updating survey" }, { status: 500 });
+    return NextResponse.json({ error: "error updating survey" }, { status: 500 });
   }
 }
 
@@ -35,6 +35,6 @@ export async function DELETE(req: NextRequest, { params }: { params: { surveyId:
     return NextResponse.json({ message: "survey deleted successfully" }, { status: 200 });
   } catch (err) {
     console.log('error deleting survey', err);
-    return NextResponse.json({ message: "error deleting survey" }, { status: 500 });
+    return NextResponse.json({ error: "error deleting survey" }, { status: 500 });
   }
 }

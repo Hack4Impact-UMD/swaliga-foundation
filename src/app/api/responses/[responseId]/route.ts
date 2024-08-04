@@ -11,11 +11,11 @@ export async function GET(req: NextRequest, { params }: { params: { responseId: 
     if (response) {
       return NextResponse.json(response, { status: 200 });
     } else {
-      return NextResponse.json({ message: 'Response not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Response not found' }, { status: 404 });
     }
   } catch (error) {
     console.error('Error getting response by ID:', error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
