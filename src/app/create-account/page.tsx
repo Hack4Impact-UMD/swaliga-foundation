@@ -10,6 +10,8 @@ import { Timestamp } from "firebase/firestore";
 import { User, Gender } from "@/types/user-types";
 import { signUpUser } from "@/lib/firebase/authentication/emailPasswordAuthentication";
 import { useRouter } from "next/navigation";
+import { getDoc, doc, setDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase/firebaseConfig";  
 
 export default function CreateAccountPage() {
   const [dims, setDims] = useState<Dims>({ width: 0, height: 0 });
@@ -172,6 +174,7 @@ export default function CreateAccountPage() {
     school: string;
     grad: string;
     yearsInSwaliga: string;
+    swaligaID: number;
     raceEthnicity: RaceEthnicity;
     emergencyContacts: {
       name: string;
@@ -203,6 +206,7 @@ export default function CreateAccountPage() {
     school: "",
     grad: "",
     yearsInSwaliga: "",
+    swaligaID: 0, 
     raceEthnicity: {
       blackOrAfricanAmerican: false,
       indigenous: false,
@@ -264,6 +268,14 @@ export default function CreateAccountPage() {
     console.log("Submitting:", accountInfo);
     try {
       console.log("Entered the try block");
+
+      // Gets current SwaligaID
+      const swaligaIDDoc = await getDoc(doc(db, 'metadata', 'nextUserId'));
+      let currentSwaligaID = swaligaIDDoc.exists() ? swaligaIDDoc.data().nextUserId : 0;
+
+      // Increments it
+      const newSwaligaID = currentSwaligaID + 1;
+
       const user: User = {
         isAdmin: false,
         firstName: accountInfo.firstName,
@@ -296,6 +308,7 @@ export default function CreateAccountPage() {
         school: accountInfo.school,
         gradYear: parseInt(accountInfo.grad),
         yearsWithSwaliga: parseInt(accountInfo.yearsInSwaliga),
+        swaligaID: newSwaligaID, 
         ethnicity: new Set(Object.keys(accountInfo.raceEthnicity).filter(key => (accountInfo.raceEthnicity as any)[key] === true)),
         assignedSurveys: [],
         completedResponses: [],
@@ -312,6 +325,9 @@ export default function CreateAccountPage() {
       console.log("Response:", data);
       if (response.ok) {
         console.log("Account created successfully:", data);
+
+        await setDoc(doc(db, 'metadata', 'nextUserId'), { nextUserId: newSwaligaID });
+
         const authResponse = await signUpUser(accountInfo.email, accountInfo.password);
         if (authResponse.success) {
           router.push("/student-dashboard");
@@ -873,7 +889,7 @@ export default function CreateAccountPage() {
               </div>
             </div>
 
-            {/*School field */}
+            {/* School field */}
             <div className={styles.formGroupRow}>
               <div className={styles.formGroup}>
                 <label>
@@ -925,7 +941,7 @@ export default function CreateAccountPage() {
               </div>
             </div>
 
-            {/* Year you graduate field */}
+            {/* Years in Swaliga field */}
             <div className={styles.formGroupRow}>
               <div className={styles.formGroup}>
                 <label style={{ color: yearsInSwaligaError ? "red" : "inherit" }}>
@@ -959,7 +975,7 @@ export default function CreateAccountPage() {
               </div>
             </div>
 
-            {/* Ethinicity field */}
+            {/* Ethnicity field */}
             <div className={styles.formGroupRow}>
               <div className={styles.formGroup}>
                 <label>

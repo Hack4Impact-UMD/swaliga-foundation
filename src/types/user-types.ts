@@ -18,6 +18,7 @@ export interface User {
   }[];
 
   id: string;
+  swaligaID: number;
 
   address: Address;
   school: string;
