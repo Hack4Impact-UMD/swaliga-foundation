@@ -9,28 +9,32 @@ import { logOut } from "@/lib/firebase/authentication/googleAuthentication";
 import { getAccountById, updateAccount } from "@/lib/firebase/database/users";
 import { useRouter } from "next/navigation";
 import { Timestamp } from "firebase/firestore";
+import Loading from "@/components/Loading";
 
 export default function Settings() {
   const [userData, setUserData] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const router = useRouter();
 
   useEffect(() => {
     const user = auth.currentUser;
     if (user) {
-      fetchCurrUser("11111111112");
+      fetchCurrUser(user.uid);
     } else {
       throw new Error("User not authenticated");
     }
   }, []);
 
   const fetchCurrUser = async (id: string) => {
+    setLoading(true);
     try {
       const userData = await getAccountById(id);
       setUserData(userData);
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
+    setLoading(false);
   };
 
   function handleCancel() {
@@ -72,6 +76,10 @@ export default function Settings() {
       });
     }
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className={styles.container}>

@@ -9,6 +9,7 @@ import RequireAdminAuth from "@/components/auth/RequireAdminAuth";
 import logoutIcon from "@/../public/icons/logout.svg";
 import Image from "next/image";
 import { auth } from "@/lib/firebase/firebaseConfig";
+import Loading from "@/components/Loading";
 
 export default function AdminDashboard() {
   const [showUserList, setShowUserList] = useState<boolean>(true);
@@ -18,6 +19,7 @@ export default function AdminDashboard() {
   const [forceUpdate, setForceUpdate] = useState<boolean>(false); // not the best way to rerender page once a survey is deleted, but it works
   
   useEffect(() => {
+    // get all users & surveys for use in child components
     setIsLoading(true);
     const promises = [];
     promises.push(fetch("/api/users"));
@@ -37,7 +39,7 @@ export default function AdminDashboard() {
   return (
     <>
       {isLoading ? (
-        <p>Loading...</p>
+        <Loading />
       ) : (
         <div className={styles.background}>
           <div className={styles.container}>
@@ -61,7 +63,10 @@ export default function AdminDashboard() {
             {showUserList ? (
               <StudentDisplay users={users} surveys={surveys} />
             ) : (
-              <SurveyDisplay surveys={surveys} handleDeleteSurvey={() => setForceUpdate(!forceUpdate)}/>
+              <SurveyDisplay
+                surveys={surveys}
+                handleDeleteSurvey={() => setForceUpdate(!forceUpdate)}
+              />
             )}
           </div>
         </div>

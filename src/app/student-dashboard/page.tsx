@@ -12,14 +12,17 @@ import { Survey, Response } from '@/types/survey-types';
 import { auth } from '@/lib/firebase/firebaseConfig';
 import { signOut } from "firebase/auth";
 import RequireStudentAuth from "@/components/auth/RequireStudentAuth";
+import Loading from "@/components/Loading";
 
 export default function StudentDashboard() {
     const [user, setUser] = useState<User | null>(null);
     const [surveys, setSurveys] = useState<Survey[]>([]);
     const [responses, setResponses] = useState<string[]>([]);
     const [openSurvey, setOpenSurvey] = useState('');
+    const [loading, setLoading] = useState<boolean>(false);
 
     const fetchCurrentUserData = async (userId: string) => {
+      setLoading(true);
       try {
         const res = await fetch(`/api/users/${userId}`);
         const user: User = await res.json();
@@ -40,6 +43,7 @@ export default function StudentDashboard() {
         console.error(error);
         throw new Error('unable to fetch data for student dashboard');
       }
+      setLoading(false);
     }
 
     useEffect(() => {
@@ -54,6 +58,10 @@ export default function StudentDashboard() {
     const handleSurveyButtonClick = (surveyId: string) => {
         setOpenSurvey(surveyId === openSurvey ? '' : surveyId);
     };
+
+    if (loading) {
+      return <Loading />;
+    }
 
     return (
       <RequireStudentAuth>

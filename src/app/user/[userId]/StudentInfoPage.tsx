@@ -14,6 +14,7 @@ import { Survey } from "@/types/survey-types";
 import { Response } from "@/types/survey-types";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Loading from "@/components/Loading";
 
 function getGrade(gradYr: number | undefined) {
   if (gradYr) {
@@ -56,8 +57,10 @@ export default function StudentInfoPage({
   const [user, setUser] = useState<User>();
   const [surveys, setSurveys] = useState<Survey[]>();
   const [responses, setResponses] = useState<string[]>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const fetchData = async (userId: string) => {
+    setLoading(true);
     try {
       // set user info
       const res = await fetch(`/api/users/${userId}`);
@@ -89,6 +92,7 @@ export default function StudentInfoPage({
     } catch {
       console.log("Error retrieving student information using given userId");
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -96,6 +100,10 @@ export default function StudentInfoPage({
       fetchData(params.userId);
     }
   }, [params.userId, user]);
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className={styles.page}>
