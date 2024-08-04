@@ -6,7 +6,7 @@
 
 .button {
     width: 105px;
-    margin-top: 20px;
+    margin: 0px;
     padding: 4px 0px;
     background-color: white;
     color: black;
@@ -51,4 +51,11 @@
     height: 75%;
     width: 80%;
     overflow-y: scroll;
+}
+
+.error {
+    margin: 5px 0px 0px 0px;
+    color: red;
+    font-size: small;
+    align-self: flex-start;
 }

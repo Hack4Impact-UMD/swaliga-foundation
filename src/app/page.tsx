@@ -21,6 +21,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisibility, setPasswordVisibility] = useState(false);
+  const [error, setError] = useState<string>("weuifg");
   const router = useRouter();
 
   const setAllPolygons = (width: number, height: number) => {
@@ -50,6 +51,7 @@ export default function LoginPage() {
       }
     } else {
       console.log("Login failed");
+      setError("Invalid login credentials");
     }
     setEmail("");
     setPassword("");
@@ -73,7 +75,11 @@ export default function LoginPage() {
     <RequireSignedOut>
       <div className={styles.container}>
         <div className={styles.background}>
-          <Stage className={styles.stage} width={dims.width} height={dims.height}>
+          <Stage
+            className={styles.stage}
+            width={dims.width}
+            height={dims.height}
+          >
             <Layer>
               {polygonBackground.map(drawPolygon)}
               {polygonOverlay.map(drawPolygon)}
@@ -109,6 +115,7 @@ export default function LoginPage() {
             <div className={styles.forgot_password}>
               <a href="/reset-password">Forgot password?</a>
             </div>
+            <p className={styles.error}>{error}</p>
             <button className={styles.login_button} onClick={signInWithEmail}>
               Submit
             </button>

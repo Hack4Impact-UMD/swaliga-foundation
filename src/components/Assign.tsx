@@ -15,18 +15,7 @@ interface AssignProps {
 
 export default function Assign({ studentIds, surveys, closeAssign }: AssignProps) {
     const [selectedSurveyIds, setSelectedSurveyIds] = useState<string[]>([]);
-
-    // Function to toggle the selection of a survey
-    const toggleSurvey = (surveyId: string) => {
-        const isSelected = selectedSurveyIds.includes(surveyId);
-        setSelectedSurveyIds(prevSelected => {
-            if (isSelected) {
-                return prevSelected.filter(id => id !== surveyId);
-            } else {
-                return [...prevSelected, surveyId];
-            }
-        });
-    };
+    const [error, setError] = useState<string>("");
 
     // Function to handle assigning surveys
     const assignSurveys = async () => {
@@ -54,6 +43,7 @@ export default function Assign({ studentIds, surveys, closeAssign }: AssignProps
             } else {
                 const errorData = await response.json();
                 console.error(errorData.error);
+                setError("Error assigning surveys");
             }
             closeAssign();
         } catch (error) {
@@ -100,16 +90,22 @@ export default function Assign({ studentIds, surveys, closeAssign }: AssignProps
           <div className={styles.surveys}>
             <Table<Survey>
               columns={surveyColumns}
-              items={surveys.map((survey: Survey) => ({ id: survey.formId, data: survey }))}
+              items={surveys.map((survey: Survey) => ({
+                id: survey.formId,
+                data: survey,
+              }))}
               selectedItemIds={selectedSurveyIds}
               filterConditions={surveyFilterConditions}
               filterFunction={includeSurvey}
               setSelectedItemIds={setSelectedSurveyIds}
             />
           </div>
-          <button className={styles.button} onClick={assignSurveys}>
-            Assign
-          </button>
+          <div>
+            <p className={styles.error}>{error}</p>
+            <button className={styles.button} onClick={assignSurveys}>
+              Assign
+            </button>
+          </div>
         </>
       </Modal>
     );

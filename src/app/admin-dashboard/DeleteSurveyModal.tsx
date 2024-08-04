@@ -1,6 +1,7 @@
 import Modal from "@/components/Modal";
 import styles from './DeleteSurveyModal.module.css';
 import { Survey } from "@/types/survey-types";
+import { useState } from "react";
 
 interface DeleteSurveyModalProps {
   survey: Survey;
@@ -10,12 +11,17 @@ interface DeleteSurveyModalProps {
 
 export default function DeleteSurveyModal(props: DeleteSurveyModalProps) {
   const { survey, closeDelete, handleDeleteSurvey } = props;
+  const [error, setError] = useState<string>("")
   
   const confirmDelete = async () => {
     try {
-      await fetch(`/api/surveys/${survey.formId}`, {
+      const response = await fetch(`/api/surveys/${survey.formId}`, {
         method: 'DELETE',
       });
+      if (response.status !== 200) {
+        setError("Unable to delete survey");
+        return;
+      }
       handleDeleteSurvey();
       closeDelete();
     } catch (err) {
@@ -24,7 +30,7 @@ export default function DeleteSurveyModal(props: DeleteSurveyModalProps) {
   }
 
   return (
-    <Modal closeModal={closeDelete} width={500} height={400}>
+    <Modal closeModal={closeDelete} width={500} height={500}>
       <>
         <p className={styles.text}>
           Are you sure you want to delete the following survey?
@@ -38,9 +44,12 @@ export default function DeleteSurveyModal(props: DeleteSurveyModalProps) {
           from Google Drive. This step must be done manually in your Google
           account.
         </p>
-        <button className={styles.button} onClick={confirmDelete}>
-          <b>Confirm</b>
-        </button>
+        <div>
+          <p className={styles.error}>{error}</p>
+          <button className={styles.button} onClick={confirmDelete}>
+            <b>Confirm</b>
+          </button>
+        </div>
       </>
     </Modal>
   );

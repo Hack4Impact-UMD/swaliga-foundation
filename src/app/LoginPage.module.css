@@ -109,3 +109,9 @@
     display: flex;
     justify-content: center;
 }
+
+.error {
+    margin: 0px;
+    color: red;
+    font-size: small;
+}

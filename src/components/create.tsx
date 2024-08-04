@@ -10,6 +10,7 @@ interface CreateProps {
 
 export default function Create({ closeCreate }: CreateProps) {
     const [surveyTitle, setSurveyTitle] = useState("");
+    const [error, setError] = useState<string>("");
 
     const createSurvey = async () => {
         try {
@@ -31,6 +32,7 @@ export default function Create({ closeCreate }: CreateProps) {
             closeCreate();
         } catch (error) {
             console.error('Error occurred while creating survey:', error);
+            setError("Error creating survey");
         }
     };
 
@@ -47,9 +49,12 @@ export default function Create({ closeCreate }: CreateProps) {
               onChange={(ev) => setSurveyTitle(ev.target.value)}
             />
           </div>
-          <button className={styles.button} onClick={createSurvey}>
-            Create
-          </button>
+          <div>
+            <p className={styles.error}>{error}</p>
+            <button className={styles.button} onClick={createSurvey}>
+              Create
+            </button>
+          </div>
         </>
       </Modal>
     );
