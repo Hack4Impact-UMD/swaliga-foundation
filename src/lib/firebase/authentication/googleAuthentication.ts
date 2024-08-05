@@ -20,6 +20,7 @@ async function signInWithGoogle(): Promise<void> {
     provider.addScope("https://www.googleapis.com/auth/forms.body");
     provider.addScope("https://www.googleapis.com/auth/forms.responses.readonly");
     provider.addScope("https://www.googleapis.com/auth/spreadsheets");
+    provider.addScope("https://www.googleapis.com/auth/gmail.send")
     try {
         const result = await signInWithPopup(auth, provider);
         await fetch("/api/auth/user/claims", { method: "POST", body: JSON.stringify({ uid: result.user.uid }) });

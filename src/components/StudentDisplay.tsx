@@ -11,11 +11,13 @@ import { Timestamp } from "firebase/firestore";
 import Table, { Column } from "./Table";
 import moment from "moment";
 import { useRouter } from "next/navigation";
+import SendEmailModal from "./SendEmailModal";
 
 export default function StudentDisplay(props: { users: User[]; surveys: Survey[] }) {
   const { users, surveys } = props;
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
   const [isAssignOpen, setIsAssignOpen] = useState<boolean>(false);
+  const [isSendEmailOpen, setIsSendEmailOpen] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -159,6 +161,12 @@ export default function StudentDisplay(props: { users: User[]; surveys: Survey[]
         </button>
         <button
           className={styles.button}
+          onClick={() => setIsSendEmailOpen(true)}
+        >
+          Send Emails
+        </button>
+        <button
+          className={styles.button}
           onClick={() =>
             exportUsersToCSV(
               users.filter((user) => selectedStudentIds.includes(user.id))
@@ -173,6 +181,14 @@ export default function StudentDisplay(props: { users: User[]; surveys: Survey[]
           studentIds={selectedStudentIds}
           surveys={surveys}
           closeAssign={() => setIsAssignOpen(false)}
+        />
+      )}
+      {isSendEmailOpen && (
+        <SendEmailModal
+          emails={users
+            .filter((user) => selectedStudentIds.includes(user.id))
+            .map((user) => user.email)}
+          closeModal={() => setIsSendEmailOpen(false)}
         />
       )}
     </>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendEmail } from "@/lib/firebase/database/email";
+import { sendEmail } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
     try {
