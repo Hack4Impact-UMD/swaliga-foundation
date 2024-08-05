@@ -37,7 +37,7 @@ export default function AdminDashboard() {
   const handleDropdownChange = () => setShowUserList(!showUserList);
 
   return (
-    <>
+    <RequireAdminAuth>
       {isLoading ? (
         <Loading />
       ) : (
@@ -71,6 +71,6 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
-    </>
+    </RequireAdminAuth>
   );
 }
