@@ -21,7 +21,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisibility, setPasswordVisibility] = useState(false);
-  const [error, setError] = useState<string>("weuifg");
+  const [error, setError] = useState<string>("");
   const router = useRouter();
 
   const setAllPolygons = (width: number, height: number) => {
