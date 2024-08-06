@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { assignSurveys } from '@/lib/firebase/database/users';
 
+// assigns each of the surveys in the surveyIds array to each of the users in the userIds array
+// already assigned surveys are not reassigned
 export async function POST(req: NextRequest) {
     try {
         if (!req.body) {

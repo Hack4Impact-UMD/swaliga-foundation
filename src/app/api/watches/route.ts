@@ -1,6 +1,7 @@
 import { createWatch } from "@/lib/firebase/database/watches";
 import { NextRequest, NextResponse } from 'next/server';
 
+// creates a watch for the given formId & eventType
 export async function POST(req: NextRequest) {
     try {
         if (!req.body) {

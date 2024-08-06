@@ -21,6 +21,7 @@ export default function SurveyDisplay(props: SurveyDisplayProps): JSX.Element {
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const [deleteSurvey, setDeleteSurvey] = useState<Survey | null>(null);
 
+  // defines the columns for the Survey table
   const surveyColumns: Column<Survey>[] = [
     {
       id: "view",
@@ -71,6 +72,7 @@ export default function SurveyDisplay(props: SurveyDisplayProps): JSX.Element {
     },
   ];
 
+  // defines the conditions that will be used to filter the Survey table
   const surveyFilterConditions: FilterCondition<Survey>[] = [
     {
       id: "id",
@@ -84,6 +86,7 @@ export default function SurveyDisplay(props: SurveyDisplayProps): JSX.Element {
     },
   ];
 
+  // determines if a survey should be included in the table based on the provided filter values
   const includeSurvey = (
     survey: Survey,
     filterValues: { [key: string]: any }

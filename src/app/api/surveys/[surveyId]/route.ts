@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { deleteSurveyByID, getSurveyByID, updateSurvey } from "@/lib/firebase/database/surveys";
 
+// gets survey by ID
 export async function GET(
   req: NextRequest,
   { params }: { params: { surveyId: string } }
@@ -17,6 +18,7 @@ export async function GET(
   }
 }
 
+// syncs a survey in Firestore with the latest version from Google Forms
 export async function PUT(req: NextRequest, { params }: { params: { surveyId: string } }) {
   const { surveyId } = params;
   try {
@@ -28,6 +30,7 @@ export async function PUT(req: NextRequest, { params }: { params: { surveyId: st
   }
 }
 
+// deletes a survey from Firestore, but not from Google Forms
 export async function DELETE(req: NextRequest, { params }: { params: { surveyId: string } }) {
   const { surveyId } = params;
   try {

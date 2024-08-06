@@ -15,6 +15,7 @@ export default function DeleteSurveyModal(props: DeleteSurveyModalProps) {
   
   const confirmDelete = async () => {
     try {
+      // delete survey from Firestore
       const response = await fetch(`/api/surveys/${survey.formId}`, {
         method: 'DELETE',
       });
@@ -22,8 +23,8 @@ export default function DeleteSurveyModal(props: DeleteSurveyModalProps) {
         setError("Unable to delete survey");
         return;
       }
-      handleDeleteSurvey();
-      closeDelete();
+      handleDeleteSurvey(); // force admin dashboard to refresh to remove survey from list
+      closeDelete(); // close modal
     } catch (err) {
       console.error('unable to delete survey', err);
     }

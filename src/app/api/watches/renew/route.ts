@@ -1,6 +1,7 @@
 import { renewWatch } from "@/lib/firebase/database/watches";
 import { NextRequest, NextResponse } from 'next/server';
 
+// renews the watch associated with the given formId & eventType
 export async function POST(req: NextRequest) {
     try {
         if (!req.body) {

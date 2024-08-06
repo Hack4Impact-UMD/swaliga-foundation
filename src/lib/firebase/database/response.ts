@@ -31,20 +31,19 @@ export async function createResponse(response: Response) {
   try {
     await setDoc(doc(db, "responses", response.responseId), response);
 
+    // adds response to the user that completed the response
     const userRef = doc(db, "users", response.userId);
     await updateDoc(userRef, {
       completedResponses: arrayUnion(response.responseId),
       assignedSurveys: arrayRemove(response.formId)
     });
 
+    // adds response to the survey that it is a response to
     const surveyRef = doc(db, "surveys", response.formId);
     await updateDoc(surveyRef, {
       responseIds: arrayUnion(response.responseId),
       assignedUsers: arrayRemove(response.userId),
     });
-    console.log(
-      `Response ${response.responseId} added to user ${response.userId} and survey ${response.formId}`
-    );
   } catch (error) {
     console.error("Error creating response:", error);
     console.log('error', error);

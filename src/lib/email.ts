@@ -1,5 +1,3 @@
-import nodemailer from "nodemailer";
-import { auth } from "./firebase/firebaseConfig";
 import { oauth2Client, setCredentials } from "./googleAuthorization";
 import { google } from "googleapis";
 
@@ -15,9 +13,9 @@ export async function sendEmail(body: { recipients: string[], subject: string, t
         const emailInfo = await gmailClient.users.messages.send({
          userId: "me",
          requestBody: {
-           raw: Buffer.from(`To: ${"nitin.kanchinadam@gmail.com"}
-           Subject: ${"test 123"}
-           ${"pls fucking work"}`).toString("base64"),
+           raw: Buffer.from(`To: ${recipient}
+           Subject: ${subject}
+           ${text}`).toString("base64"),
          }
         });
 

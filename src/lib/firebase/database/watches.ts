@@ -27,6 +27,7 @@ export async function createWatch(formId: string, eventType: string) {
   }
 }
 
+// watches expire 7 days after they are created, so they must be renewed
 export async function renewWatch(formId: string, watchId: string) {
   try {
     const forms = await getFormsClient();

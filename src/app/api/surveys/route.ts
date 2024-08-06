@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSurvey, getAllSurveys } from "@/lib/firebase/database/surveys";
 
+// gets all surveys
 export async function GET() {
   try {
     const allSurveys = await getAllSurveys();
@@ -10,6 +11,7 @@ export async function GET() {
   }
 }
 
+// creates a survey in Firestore
 export async function POST(req: NextRequest) {
   const body = await req.json();
   try {

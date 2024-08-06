@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { unassignSurveys } from '@/lib/firebase/database/users'; 
 
+// unassigns each of the surveys in the surveyIds array from each of the users in the userIds array
 export async function POST(req: NextRequest) {
     try {
         if (!req.body) {

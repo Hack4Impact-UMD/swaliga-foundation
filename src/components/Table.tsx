@@ -41,6 +41,7 @@ export default function Table<T>(props: TableProps<T>) {
     }
   }
 
+  // adds and removes the item ID from the selectedItemIds array for use by parent component
   const handleStudentCheck = (id: string) => {
     if (!selectedItemIds || !setSelectedItemIds) {
       return;

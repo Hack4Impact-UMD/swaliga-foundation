@@ -3,6 +3,7 @@ import { User } from "@/types/user-types";
 import { NextRequest, NextResponse } from "next/server";
 import { UpdateData } from "firebase/firestore";
 
+// gets user by ID
 export async function GET(
   req: NextRequest,
   { params }: { params: { userId: string } }
@@ -28,6 +29,7 @@ export async function GET(
   }
 }
 
+// updates fields of a user to the new values provided
 export async function PUT(
   req: NextRequest,
   { params }: { params: { userId: string } }
@@ -60,6 +62,7 @@ export async function PUT(
   }
 }
 
+// creates a new user in Firestore
 export async function POST(req: NextRequest) {
   if (!req.body) {
     return NextResponse.json(

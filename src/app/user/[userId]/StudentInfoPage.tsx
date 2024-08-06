@@ -16,6 +16,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Loading from "@/components/Loading";
 
+// converts birthdate to grade, so grade does not need to be updated in database
 function getGrade(gradYr: number | undefined) {
   if (gradYr) {
     const currDate = new Date();
@@ -62,7 +63,7 @@ export default function StudentInfoPage({
   const fetchData = async (userId: string) => {
     setLoading(true);
     try {
-      // set user info
+      // get user info
       const res = await fetch(`/api/users/${userId}`);
       const user: User = await res.json();
       setUser(user);

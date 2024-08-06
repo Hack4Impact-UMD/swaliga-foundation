@@ -20,6 +20,7 @@ export default function AdminDashboard() {
   
   useEffect(() => {
     // get all users & surveys for use in child components
+    // forceUpdate is used to rerender page once a survey is deleted
     setIsLoading(true);
     const promises = [];
     promises.push(fetch("/api/users"));

@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getResponseByID } from '@/lib/firebase/database/response';
 import { Response } from '@/types/survey-types';
 
+// gets response by ID
 export async function GET(req: NextRequest, { params }: { params: { responseId: string } }) {
   const { responseId } = params; 
-  // console.log('responseId:', responseId);
 
   try {
     const response: Response | null = await getResponseByID(responseId);

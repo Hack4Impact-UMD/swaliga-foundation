@@ -12,6 +12,7 @@ export default function SendEmailModal(props: SendEmailModalProps) {
   const [subject, setSubject] = useState<string>("");
   const [content, setContent] = useState<string>("");
 
+
   const sendEmails = async () => {
     const response = await fetch('/api/email', {
       method: 'POST',
@@ -19,12 +20,11 @@ export default function SendEmailModal(props: SendEmailModalProps) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        recipients: ['nitin.kanchinadam@gmail.com'],
+        recipients: emails,
         subject: subject,
         text: content
       })
     });
-    console.log(response);
     closeModal();
   }
 

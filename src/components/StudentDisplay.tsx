@@ -29,6 +29,7 @@ export default function StudentDisplay(props: { users: User[]; surveys: Survey[]
     return date.toLocaleDateString("en-US");
   };
 
+  // defines the columns that will be displayed in the User table
   const userColumns: Column<User>[] = [
     {
       id: "name",
@@ -63,6 +64,7 @@ export default function StudentDisplay(props: { users: User[]; surveys: Survey[]
     },
   ];
 
+  // defines the filter conditions that will be used to filter the User table
   const userFilterConditions: FilterCondition<User>[] = [
     {
       id: "id",
@@ -106,6 +108,7 @@ export default function StudentDisplay(props: { users: User[]; surveys: Survey[]
     },
   ];
 
+  // checks if a user matches the provided filter values
   const includeUser = (user: User, filterValues: { [key: string]: any }) => {
     const { id, firstName, lastName, gradYear, age, gender, ethnicity, city } =
       filterValues;

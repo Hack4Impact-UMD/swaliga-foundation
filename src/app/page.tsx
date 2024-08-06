@@ -37,6 +37,7 @@ export default function LoginPage() {
     });
   }, []);
 
+  // authenticates user and redirects to dashboard depending on role
   const signInWithEmail = async () => {
     const response = await loginUser(email, password);
     if (response.success) {
@@ -57,6 +58,7 @@ export default function LoginPage() {
     setPassword("");
   };
 
+  // renders the polygons in the background of the Login Page from ./polygons.ts
   const drawPolygon = useCallback(
     (polygon: Polygon) => (
       <Line

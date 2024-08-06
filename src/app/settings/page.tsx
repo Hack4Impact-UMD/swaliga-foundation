@@ -37,15 +37,19 @@ export default function Settings() {
     setLoading(false);
   };
 
+  // cancels updating changes to the user
   function handleCancel() {
-    router.push('/student-dashboard');
+    router.push("/student-dashboard");
   }
 
+  // updates changes to the user in Firestore and redirect to the student dashboard
   async function handleSaveChanges() {
     try {
       await updateAccount(userData?.id as string, {
         ...userData,
-        birthdate: Timestamp.fromDate(new Date(userData?.birthdate as unknown as string))
+        birthdate: Timestamp.fromDate(
+          new Date(userData?.birthdate as unknown as string)
+        ),
       });
       handleCancel();
       console.log("User data updated successfully");
@@ -63,6 +67,7 @@ export default function Settings() {
     }
   };
 
+  // handleGuardianChange is a separate function because guardian is a nested object
   const handleGuardianChange = (index: number, field: string, value: any) => {
     if (userData) {
       const updatedGuardian = userData.guardian ? [...userData.guardian] : [];
@@ -122,7 +127,7 @@ export default function Settings() {
                       className={styles.inputContainer}
                       value={userData.firstName}
                       onChange={(event) =>
-                        handleInputChange('firstName', event.target.value)
+                        handleInputChange("firstName", event.target.value)
                       }
                     />
                   </div>
@@ -136,7 +141,7 @@ export default function Settings() {
                       className={styles.inputContainer}
                       value={userData.lastName}
                       onChange={(event) =>
-                        handleInputChange('lastName', event.target.value)
+                        handleInputChange("lastName", event.target.value)
                       }
                     />
                   </div>
@@ -150,7 +155,7 @@ export default function Settings() {
                       className={styles.inputContainer}
                       value={userData.email}
                       onChange={(event) =>
-                        handleInputChange('email', event.target.value)
+                        handleInputChange("email", event.target.value)
                       }
                     />
                   </div>
@@ -164,7 +169,7 @@ export default function Settings() {
                       className={styles.inputContainer}
                       value={userData.phone.toString()}
                       onChange={(event) =>
-                        handleInputChange('phone', Number(event.target.value))
+                        handleInputChange("phone", Number(event.target.value))
                       }
                     />
                   </div>
@@ -258,7 +263,10 @@ export default function Settings() {
                       className={styles.inputContainer}
                       value={userData.gradYear.toString()}
                       onChange={(event) =>
-                        handleInputChange('gradYear', Number(event.target.value))
+                        handleInputChange(
+                          "gradYear",
+                          Number(event.target.value)
+                        )
                       }
                     />
                   </div>
@@ -272,7 +280,10 @@ export default function Settings() {
                       className={styles.inputContainer}
                       value={userData.yearsWithSwaliga.toString()}
                       onChange={(event) =>
-                        handleInputChange('yearsWithSwaliga', Number(event.target.value))
+                        handleInputChange(
+                          "yearsWithSwaliga",
+                          Number(event.target.value)
+                        )
                       }
                     />
                   </div>
@@ -294,7 +305,7 @@ export default function Settings() {
                         userData.guardian ? userData.guardian[0]?.name : ""
                       }
                       onChange={(event) => {
-                        handleGuardianChange(0, 'name', event.target.value);
+                        handleGuardianChange(0, "name", event.target.value);
                       }}
                     />
                   </div>
@@ -310,7 +321,7 @@ export default function Settings() {
                         userData.guardian ? userData.guardian[0]?.email : ""
                       }
                       onChange={(event) => {
-                        handleGuardianChange(0, 'email', event.target.value);
+                        handleGuardianChange(0, "email", event.target.value);
                       }}
                     />
                   </div>
@@ -323,10 +334,16 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userData.guardian ? userData.guardian[0]?.phone.toString() : ""
+                        userData.guardian
+                          ? userData.guardian[0]?.phone.toString()
+                          : ""
                       }
                       onChange={(event) => {
-                        handleGuardianChange(0, 'phone', Number(event.target.value));
+                        handleGuardianChange(
+                          0,
+                          "phone",
+                          Number(event.target.value)
+                        );
                       }}
                     />
                   </div>
@@ -344,9 +361,9 @@ export default function Settings() {
                           : ""
                       }
                       onChange={(event) => {
-                        handleGuardianChange(0, 'address', {
+                        handleGuardianChange(0, "address", {
                           ...userData.guardian?.[0].address,
-                          street: event.target.value
+                          street: event.target.value,
                         });
                       }}
                     />
@@ -365,9 +382,9 @@ export default function Settings() {
                           : ""
                       }
                       onChange={(event) => {
-                        handleGuardianChange(0, 'address', {
+                        handleGuardianChange(0, "address", {
                           ...userData.guardian?.[0].address,
-                          city: event.target.value
+                          city: event.target.value,
                         });
                       }}
                     />
@@ -386,9 +403,9 @@ export default function Settings() {
                           : ""
                       }
                       onChange={(event) => {
-                        handleGuardianChange(0, 'address', {
+                        handleGuardianChange(0, "address", {
                           ...userData.guardian?.[0].address,
-                          state: event.target.value
+                          state: event.target.value,
                         });
                       }}
                     />
@@ -407,9 +424,9 @@ export default function Settings() {
                           : ""
                       }
                       onChange={(event) => {
-                        handleGuardianChange(0, 'address', {
+                        handleGuardianChange(0, "address", {
                           ...userData.guardian?.[0].address,
-                          zip: Number(event.target.value)
+                          zip: Number(event.target.value),
                         });
                       }}
                     />
@@ -432,7 +449,7 @@ export default function Settings() {
                         userData.guardian ? userData.guardian[1]?.name : ""
                       }
                       onChange={(event) => {
-                        handleGuardianChange(1, 'name', event.target.value);
+                        handleGuardianChange(1, "name", event.target.value);
                       }}
                     />
                   </div>
@@ -448,7 +465,7 @@ export default function Settings() {
                         userData.guardian ? userData.guardian[1]?.email : ""
                       }
                       onChange={(event) => {
-                        handleGuardianChange(1, 'email', event.target.value);
+                        handleGuardianChange(1, "email", event.target.value);
                       }}
                     />
                   </div>
@@ -461,10 +478,16 @@ export default function Settings() {
                       type="text"
                       className={styles.inputContainer}
                       value={
-                        userData.guardian ? userData.guardian[1]?.phone.toString() : ""
+                        userData.guardian
+                          ? userData.guardian[1]?.phone.toString()
+                          : ""
                       }
                       onChange={(event) => {
-                        handleGuardianChange(1, 'phone', Number(event.target.value));
+                        handleGuardianChange(
+                          1,
+                          "phone",
+                          Number(event.target.value)
+                        );
                       }}
                     />
                   </div>
@@ -482,9 +505,9 @@ export default function Settings() {
                           : ""
                       }
                       onChange={(event) => {
-                        handleGuardianChange(1, 'address', {
+                        handleGuardianChange(1, "address", {
                           ...userData.guardian?.[1].address,
-                          street: event.target.value
+                          street: event.target.value,
                         });
                       }}
                     />
@@ -503,9 +526,9 @@ export default function Settings() {
                           : ""
                       }
                       onChange={(event) => {
-                        handleGuardianChange(1, 'address', {
+                        handleGuardianChange(1, "address", {
                           ...userData.guardian?.[1].address,
-                          city: event.target.value
+                          city: event.target.value,
                         });
                       }}
                     />
@@ -524,9 +547,9 @@ export default function Settings() {
                           : ""
                       }
                       onChange={(event) => {
-                        handleGuardianChange(1, 'address', {
+                        handleGuardianChange(1, "address", {
                           ...userData.guardian?.[1].address,
-                          state: event.target.value
+                          state: event.target.value,
                         });
                       }}
                     />
@@ -545,9 +568,9 @@ export default function Settings() {
                           : ""
                       }
                       onChange={(event) => {
-                        handleGuardianChange(1, 'address', {
+                        handleGuardianChange(1, "address", {
                           ...userData.guardian?.[1].address,
-                          zip: Number(event.target.value)
+                          zip: Number(event.target.value),
                         });
                       }}
                     />

@@ -3,6 +3,7 @@ import { renewWatch } from "@/lib/firebase/database/watches";
 import { Survey } from "@/types/survey-types";
 import { NextRequest, NextResponse } from "next/server";
 
+// renews all watches for currently active surveys
 export async function POST(req: NextRequest) {
   try {
     const surveys: Survey[] = await getAllSurveys();

@@ -8,6 +8,7 @@ import { unassignSurveys } from './users';
 import { deleteResponseByID } from './response';
 
 export async function createSurvey(body: {title: string, documentTitle: string}) {
+  // creates a new form in Google Forms
   let form: Survey | null = null;
   try {
     const forms = await getFormsClient();
@@ -20,9 +21,12 @@ export async function createSurvey(body: {title: string, documentTitle: string})
       },
     })).data as unknown as GoogleForm;
     
+    // creates watches for the form for update & response handling
     const schemaWatch = await createWatch(googleForm.formId || '', "SCHEMA");
     const responsesWatch = await createWatch(googleForm.formId || '', "RESPONSES");
 
+    // adds a question for Swaliga User ID to the form
+    // important because watch event inputs do not contain the id of the user that submitted the form, which makes this id field necessary to identify the user later on
     googleForm = (await forms.forms.batchUpdate({
       formId: googleForm.formId,
       requestBody: {
@@ -56,6 +60,7 @@ export async function createSurvey(body: {title: string, documentTitle: string})
       },
     })).data.form as unknown as GoogleForm;
 
+    // adds extra data to the form object for Firestore
     form = {
       ...googleForm,
       assignedUsers: [],
@@ -70,7 +75,7 @@ export async function createSurvey(body: {title: string, documentTitle: string})
   }
 
   try {
-    console.log('form', form);
+    // updates the survey in Firestore
     await setDoc(doc(db, "surveys", form!.formId || ''), form);
     return form;
   } catch (err) {

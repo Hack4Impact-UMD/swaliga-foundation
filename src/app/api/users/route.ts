@@ -2,6 +2,7 @@ import { createAccount, getAllUsers } from "@/lib/firebase/database/users";
 import { User } from "@/types/user-types";
 import { NextRequest, NextResponse } from 'next/server';
 
+// gets all users
 export async function GET() {
   try {
     const users: User[] = await getAllUsers();
@@ -11,6 +12,7 @@ export async function GET() {
   }
 }
 
+// creates a new user in Firestore
 export async function POST(req: NextRequest) {
   try {
     if (!req.body) {

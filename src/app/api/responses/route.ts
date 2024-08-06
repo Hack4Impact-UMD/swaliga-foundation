@@ -6,6 +6,7 @@ import { GoogleFormResponse, Response, Survey } from '@/types/survey-types';
 import { getFormsClient } from '@/lib/googleForms';
 import { getSurveyByID } from '@/lib/firebase/database/surveys';
 
+// gets all responses
 export async function GET(req: NextRequest) {
   try {
     const allResponses = await getAllResponses();
@@ -16,6 +17,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
+// given a formId, syncs all the responses in Firestore with those in Google Forms 
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { formId } = body;

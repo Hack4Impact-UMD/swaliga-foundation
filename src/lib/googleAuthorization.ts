@@ -7,6 +7,7 @@ export const oauth2Client = new google.auth.OAuth2(
   process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET
 );
 
+// ensures the credentials in oauth2Client are up to date
 export async function setCredentials() {
   if (!oauth2Client.credentials.refresh_token) {
     const response = await getDoc(doc(db, "metadata", "adminRefreshToken"));

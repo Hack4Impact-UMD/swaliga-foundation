@@ -24,8 +24,6 @@ export default function Assign({ studentIds, surveys, closeAssign }: AssignProps
         }
 
         try {
-            console.log(studentIds);
-            console.log(selectedSurveyIds)
             const response = await fetch("/api/surveys/assign", {
               method: "POST",
               headers: {

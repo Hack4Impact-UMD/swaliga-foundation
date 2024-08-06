@@ -17,6 +17,7 @@ async function verifyGoogleToken(googleAccessToken: string | undefined): Promise
 
 async function signInWithGoogle(): Promise<void> {
     const provider = new GoogleAuthProvider();
+    // add scopes for access to Google Forms and Gmail
     provider.addScope("https://www.googleapis.com/auth/forms.body");
     provider.addScope("https://www.googleapis.com/auth/forms.responses.readonly");
     provider.addScope("https://www.googleapis.com/auth/spreadsheets");
@@ -24,7 +25,7 @@ async function signInWithGoogle(): Promise<void> {
     try {
         const result = await signInWithPopup(auth, provider);
         await fetch("/api/auth/user/claims", { method: "POST", body: JSON.stringify({ uid: result.user.uid }) });
-        await auth.currentUser?.getIdToken(true);
+        await auth.currentUser?.getIdToken(true); // refresh ID token upon account creation to set role in user claims
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const accessToken = credential?.accessToken;
         const verified = await verifyGoogleToken(accessToken);   
