@@ -11,6 +11,7 @@ export default function RequireSignedOut({
   if (authContext.loading) {
     return <p>Loading</p>;
   } else if (authContext.user && authContext.token?.claims?.role) {
+    console.log("Signed out" + authContext.token)
     redirect(authContext.token?.claims?.role == "ADMIN" ? '/admin-dashboard' : '/student-dashboard');
   }
 

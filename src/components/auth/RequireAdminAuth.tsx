@@ -12,6 +12,7 @@ export default function RequireAdminAuth({
   } else if (!authContext.user) {
     redirect("/");
   } else if (authContext.token?.claims?.role != "ADMIN") {
+    console.log("Admin" + authContext.token)
     redirect("/student-dashboard");
   }
 
