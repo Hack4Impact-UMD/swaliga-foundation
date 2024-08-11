@@ -1,10 +1,12 @@
 import { google } from "googleapis";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "./firebase/firebaseConfig";
+import { redirect } from "next/navigation";
 
 export const oauth2Client = new google.auth.OAuth2(
   process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-  process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET
+  process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
+  "http://localhost:3000/api/auth/handler"
 );
 
 // ensures the credentials in oauth2Client are up to date
@@ -30,4 +32,34 @@ export async function setCredentials() {
   }
   const response = await oauth2Client.refreshAccessToken();
   oauth2Client.setCredentials(response.credentials);
+}
+
+export function authorizeWithGoogle() {
+  const scopes = [
+    "https://www.googleapis.com/auth/forms.body",
+    "https://www.googleapis.com/auth/forms.responses.readonly",
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/gmail.send",
+  ];
+
+  const authorizationUrl = oauth2Client.generateAuthUrl({
+    access_type: "offline",
+    scope: scopes,
+    include_granted_scopes: true,
+  });
+
+  redirect(authorizationUrl);
+}
+
+export async function setCredentialsWithAuthCode(authCode: string): Promise<boolean> {
+  try {
+    const { tokens } = await oauth2Client.getToken(authCode);
+    console.log('tokens', tokens);
+    oauth2Client.setCredentials(tokens);
+    return true;
+  } catch (err) {
+    console.error("getting tokens failed");
+    console.log(err);
+    return false;
+  }
 }
