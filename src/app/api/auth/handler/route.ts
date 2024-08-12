@@ -8,13 +8,10 @@ export async function GET(req: NextRequest) {
     console.log(query.get("code"));
     const credsSet = await setCredentialsWithAuthCode(query.get("code") as string);
     if (credsSet) {
-        return NextResponse.json({ success: true }, { status: 200 });
-      //return NextResponse.redirect("http://localhost:3000");
+      return NextResponse.redirect("http://localhost:3000");
     }
-    //redirect("/");
+    redirect("/");
   }
   console.error(query.get("error"));
-  //redirect("/");
-          return NextResponse.json({ success: true }, { status: 200 });
-
+  redirect("/");
 }
