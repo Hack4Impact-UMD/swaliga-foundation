@@ -1,3 +1,4 @@
+import { updateRefreshToken } from '@/lib/googleAuthorization';
 import { auth } from '../firebaseConfig';
 import { FirebaseError } from 'firebase/app';
 import { signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
@@ -23,9 +24,8 @@ async function signInWithGoogle(): Promise<void> {
     provider.addScope("https://www.googleapis.com/auth/spreadsheets");
     provider.addScope("https://www.googleapis.com/auth/gmail.send")
     try {
+        console.log(auth.currentUser);
         const result = await signInWithPopup(auth, provider);
-        await fetch("/api/auth/user/claims", { method: "POST", body: JSON.stringify({ uid: result.user.uid }) });
-        await auth.currentUser?.getIdToken(true); // refresh ID token upon account creation to set role in user claims
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const accessToken = credential?.accessToken;
         const verified = await verifyGoogleToken(accessToken);   
@@ -34,6 +34,23 @@ async function signInWithGoogle(): Promise<void> {
             console.log("Current user verified:", auth.currentUser?.uid);
         } else {
             console.log("Please sign in again");
+        }
+
+        const idTokenResult = await auth.currentUser?.getIdTokenResult();
+        const role = idTokenResult?.claims.role;
+        switch (role) {
+          case undefined:
+            await fetch("/api/auth/claims", {
+              method: "POST",
+              body: JSON.stringify({ uid: result.user.uid }),
+            });
+            await auth.currentUser?.getIdTokenResult(true); // refresh ID token upon account creation to set role in user claims
+            break;
+          case "ADMIN":
+            await fetch("/api/auth/refreshToken", { method: "POST" });
+            break;
+          default:
+            break;
         }
     } catch (error: unknown) {
         if ((error as FirebaseError).code === 'auth/account-exists-with-different-credential') {

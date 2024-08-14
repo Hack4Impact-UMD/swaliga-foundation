@@ -23,14 +23,8 @@ export const signUpUser = async (
       password
     );
 
-
     const user = userCredential.user;
-    
-    //await updateProfile(user, { displayName: "STUDENT" });
-
-    //await updateAccount(user.uid, { isAdmin: false });
-
-    await fetch("/api/auth/user/claims", {
+    await fetch("/api/auth/claims", {
       method: "POST",
       headers: {
         'Content-Type': 'application/json'

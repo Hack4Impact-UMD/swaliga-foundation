@@ -1,5 +1,5 @@
 import { google } from "googleapis";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "./firebase/firebaseConfig";
 import { redirect } from "next/navigation";
 
@@ -14,7 +14,7 @@ export async function setCredentials() {
   if (!oauth2Client.credentials.refresh_token) {
     const response = await getDoc(doc(db, "metadata", "adminRefreshToken"));
     if (!response.exists()) {
-      throw new Error("no refresh token found");
+      throw new Error("invalid refresh token");
     }
     const { adminRefreshToken } = response.data();
     oauth2Client.setCredentials({ refresh_token: adminRefreshToken });
@@ -56,10 +56,31 @@ export async function setCredentialsWithAuthCode(authCode: string): Promise<bool
     const { tokens } = await oauth2Client.getToken(authCode);
     console.log('tokens', tokens);
     oauth2Client.setCredentials(tokens);
+    await setDoc(doc(db, "metadata", "adminRefreshToken"), { adminRefreshToken: tokens.refresh_token })
     return true;
   } catch (err) {
     console.error("getting tokens failed");
     console.log(err);
+    return false;
+  }
+}
+
+export async function updateRefreshToken() {
+  if (await isRefreshTokenValid()) {
+    return;
+  }
+  redirect("/api/auth/consent");
+}
+
+export async function isRefreshTokenValid(): Promise<boolean> {
+  const response = await getDoc(doc(db, "metadata", "adminRefreshToken"));
+  if (!response.exists()) {
+    return false;
+  }
+  try {
+    await setCredentials();
+    return true;
+  } catch (err) {
     return false;
   }
 }
