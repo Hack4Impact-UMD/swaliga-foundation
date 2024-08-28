@@ -2,8 +2,34 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write, delete: if true;
+    function isAdmin () {
+      return request.auth.token.role == "ADMIN"
+    }
+
+    match /users/{userId} {
+      allow read: if isAdmin() || request.auth.uid == userId
+      allow create: if true
+      allow update: if isAdmin() || request.auth.uid == userId
+      allow delete: if false
+    }
+    match /surveys/{surveyId} {
+      allow read: if isAdmin() || request.auth.uid in resource.data.assignedUsers
+      allow create: if isAdmin()
+      allow update: if isAdmin() || request.auth.uid in resource.data.assignedUsers
+      allow delete: if isAdmin()
+    }
+    match /responses/{responseId} {
+      allow read: if isAdmin() || request.auth.uid == resource.data.userId
+      allow create: if isAdmin() || request.auth.uid == resource.data.userId
+      allow update: if isAdmin() || request.auth.uid == resource.data.userId
+      allow delete: if false
+    }
+    match /metadata/adminRefreshToken {
+      allow read: if isAdmin()
+      allow write: if false
+    }
+    match /metadata/nextUserId {
+      allow read, write: if true
     }
   }
 }
