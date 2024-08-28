@@ -10,11 +10,15 @@ import addressIcon from "@/../public/icons/addressIcon.svg";
 
 import styles from "./StudentInfoPage.module.css";
 import { User } from "@/types/user-types";
-import { Survey } from "@/types/survey-types";
-import { Response } from "@/types/survey-types";
+import { Survey, Response } from "@/types/survey-types";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Loading from "@/components/Loading";
+import UpArrow from "@/../public/icons/up-arrow-icon.png";
+import DownArrow from "@/../public/icons/down-arrow-icon.png";
+import { getAccountById } from "@/lib/firebase/database/users";
+import { getSurveyByID } from "@/lib/firebase/database/surveys";
+import { getResponseByID } from "@/lib/firebase/database/response";
 
 // converts birthdate to grade, so grade does not need to be updated in database
 function getGrade(gradYr: number | undefined) {
@@ -55,41 +59,26 @@ export default function StudentInfoPage({
 }: {
   params: { userId: string };
 }) {
-  const [user, setUser] = useState<User>();
-  const [surveys, setSurveys] = useState<Survey[]>();
-  const [responses, setResponses] = useState<string[]>();
+  const [user, setUser] = useState<User | null>();
+  const [surveys, setSurveys] = useState<Survey[]>([]);
+  const [responses, setResponses] = useState<Response[]>([]);
+  const [openResponse, setOpenResponse] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const fetchData = async (userId: string) => {
     setLoading(true);
     try {
       // get user info
-      const res = await fetch(`/api/users/${userId}`);
-      const user: User = await res.json();
+      const user = await getAccountById(userId);
       setUser(user);
 
       // get response info
-      Promise.all(
-        user.completedResponses.map((responseId) =>
-          fetch(`/api/responses/${responseId}`)
-        )
-      ).then((responses) => {
-        Promise.all(responses.map((res) => res.json())).then(
-          (responses: Response[]) =>
-            setResponses(responses.map((response) => response.formTitle))
-        );
-      });
-
-      // get survey info
-      Promise.all(
-        user.assignedSurveys.map((surveyId) =>
-          fetch(`/api/surveys/${surveyId}`)
-        )
-      ).then((responses) => {
-        Promise.all(responses.map((res) => res.json())).then(
-          (surveys: Survey[]) => setSurveys(surveys)
-        );
-      });
+      Promise.all(user.completedResponses.map(responseId => getResponseByID(responseId))).then(responses => {
+        setResponses(responses.filter(response => response) as Response[]);
+      })
+      Promise.all(user.assignedSurveys.map(surveyId => getSurveyByID(surveyId))).then(surveys => {
+        setSurveys(surveys.filter(survey => survey) as Survey[]);
+      })
     } catch {
       console.log("Error retrieving student information using given userId");
     }

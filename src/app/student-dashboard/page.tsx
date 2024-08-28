@@ -13,6 +13,9 @@ import { auth } from '@/lib/firebase/firebaseConfig';
 import { signOut } from "firebase/auth";
 import RequireStudentAuth from "@/components/auth/RequireStudentAuth";
 import Loading from "@/components/Loading";
+import { getAccountById } from "@/lib/firebase/database/users";
+import { getSurveyByID } from "@/lib/firebase/database/surveys";
+import { getResponseByID } from "@/lib/firebase/database/response";
 
 export default function StudentDashboard() {
     const [user, setUser] = useState<User | null>(null);
@@ -24,20 +27,14 @@ export default function StudentDashboard() {
     const fetchCurrentUserData = async (userId: string) => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/users/${userId}`);
-        const user: User = await res.json();
+        const user = await getAccountById(userId);
         setUser(user);
 
-        Promise.all(user.assignedSurveys.map(surveyId => fetch(`/api/surveys/${surveyId}`))).then(responses => {
-          Promise.all(responses.map(res => res.json())).then((surveys: Survey[]) => {
-            setSurveys(surveys);
-          })
+        Promise.all(user.assignedSurveys.map(surveyId => getSurveyByID(surveyId))).then(surveys => {
+          setSurveys(surveys.filter(survey => survey) as Survey[]);
         })
-
-        Promise.all(user.completedResponses.map(responseId => fetch(`/api/responses/${responseId}`))).then(responses => {
-          Promise.all(responses.map(res => res.json())).then((responses: Response[]) => {
-            setResponses(responses.map(response => response.formTitle))
-          })
+        Promise.all(user.completedResponses.map(responseId => getResponseByID(responseId))).then(responses => {
+          setResponses(responses.filter(response => response).map(response => response!.formTitle));
         })
       } catch (error) {
         console.error(error);
@@ -79,7 +76,7 @@ export default function StudentDashboard() {
             <Link
               href="/"
               className={styles.logOut}
-              onClick={() => signOut(auth)}
+              onClick={() => signOut(auth)} 
             >
               Log Out
             </Link>

@@ -6,6 +6,7 @@ import styles from './assign.module.css';
 import Modal from './Modal';
 import Table, { Column } from './Table';
 import { FilterCondition } from './Filter';
+import { assignSurveys } from '@/lib/firebase/database/users';
 
 interface AssignProps {
     studentIds: string[];
@@ -18,35 +19,18 @@ export default function Assign({ studentIds, surveys, closeAssign }: AssignProps
     const [error, setError] = useState<string>("");
 
     // Function to handle assigning surveys
-    const assignSurveys = async () => {
-        if (selectedSurveyIds.length === 0) {
-            return;
-        }
+    const handleAssignSurveys = async () => {
+      if (selectedSurveyIds.length === 0) {
+        return;
+      }
 
-        try {
-            const response = await fetch("/api/surveys/assign", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                userIds: studentIds,
-                surveyIds: selectedSurveyIds,
-              }),
-            });
-
-            if (response.ok) {
-                const responseData = await response.json();
-                console.log(responseData.message);
-            } else {
-                const errorData = await response.json();
-                console.error(errorData.error);
-                setError("Error assigning surveys");
-            }
-            closeAssign();
-        } catch (error) {
-            console.error('Error occurred while assigning surveys:', error);
-        }
+      try {
+        await assignSurveys(studentIds, selectedSurveyIds);
+        closeAssign();
+      } catch (error) {
+        console.error("Error occurred while assigning surveys:", error);
+        setError("unable to assign surveys")
+      }
     };
 
     const surveyColumns: Column<Survey>[] = [
@@ -100,7 +84,7 @@ export default function Assign({ studentIds, surveys, closeAssign }: AssignProps
           </div>
           <div>
             <p className={styles.error}>{error}</p>
-            <button className={styles.button} onClick={assignSurveys}>
+            <button className={styles.button} onClick={handleAssignSurveys}>
               Assign
             </button>
           </div>

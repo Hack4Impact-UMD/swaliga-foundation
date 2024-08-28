@@ -1,5 +1,5 @@
 import { User } from "@/types/user-types";
-import { doc, getDoc, updateDoc, deleteDoc, getDocs, UpdateData, arrayUnion, arrayRemove, collection, addDoc, query as fsQuery, where } from "firebase/firestore";
+import { doc, getDoc, updateDoc, getDocs, UpdateData, arrayUnion, arrayRemove, collection, addDoc, query as fsQuery, where } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
 export async function getAccountById(id: string): Promise<User> {
@@ -19,19 +19,6 @@ export async function getAccountById(id: string): Promise<User> {
   }
 }
 
-/*export async function createAccount(user: User): Promise<void> {
-  try {
-    console.log("Attempting to create account: ", user);
-    console.log("User ID:", user.id);
-    const usersCollectionRef = doc(db, "users", user.id);
-    await setDoc(usersCollectionRef, user);
-    console.log("Account created successfully");
-  } catch (error) {
-    console.error("Error creating account:", error);
-    throw error;
-  }
-}
-*/
 export async function createAccount(user: User): Promise<void> {
   try {
     console.log("Attempting to create account: ", user);
@@ -51,28 +38,6 @@ export async function updateAccount(id: string, updatedUserData: UpdateData<User
     console.log("Account updated successfully");
   } catch (error) {
     console.error("Error updating account:", error);
-    throw error;
-  }
-}
-
-export async function deleteUserAccount(id: string): Promise<void> {
-    try {
-      const userRef = doc(db, "users", id);
-      await deleteDoc(userRef);
-      console.log("User account deleted successfully");
-    } catch (error) {
-      console.error("Error deleting user account:", error);
-      throw error;
-    }
-  }
-
-export async function updatePassword(id: string, newPassword: string): Promise<void> {
-  try {
-    const user = doc(db, "users", id);
-    await updateDoc(user, { password: newPassword });
-    console.log("Password updated successfully");
-  } catch (error) {
-    console.error("Error updating password:", error);
     throw error;
   }
 }

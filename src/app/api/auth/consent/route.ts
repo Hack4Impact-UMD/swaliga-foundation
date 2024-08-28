@@ -1,5 +1,7 @@
-import { authorizeWithGoogle } from "@/lib/googleAuthorization";
+import { getAuthUrl } from "@/lib/googleAuthorization";
+import { redirect } from "next/navigation";
 
-export function GET() {
-  authorizeWithGoogle();
+export async function GET() {
+  const authUrl = await getAuthUrl();
+  redirect(authUrl);
 }

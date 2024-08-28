@@ -10,6 +10,8 @@ import logoutIcon from "@/../public/icons/logout.svg";
 import Image from "next/image";
 import { auth } from "@/lib/firebase/firebaseConfig";
 import Loading from "@/components/Loading";
+import { getAllUsers } from "@/lib/firebase/database/users";
+import { getAllSurveys } from "@/lib/firebase/database/surveys";
 
 export default function AdminDashboard() {
   const [showUserList, setShowUserList] = useState<boolean>(true);
@@ -23,22 +25,20 @@ export default function AdminDashboard() {
     // forceUpdate is used to rerender page once a survey is deleted
     setIsLoading(true);
     const promises = [];
-    promises.push(fetch("/api/users"));
-    promises.push(fetch("/api/surveys"));
+    promises.push(getAllUsers());
+    promises.push(getAllSurveys());
 
     Promise.all(promises).then((responses) => {
-      Promise.all(responses.map((res) => res.json())).then((data) => {
-        setUsers(data[0]);
-        setSurveys(data[1]);
-        setIsLoading(false);
-      });
+      setUsers(responses[0] as User[]);
+      setSurveys(responses[1] as Survey[]);
+      setIsLoading(false);
     });
   }, [forceUpdate]);
 
   const handleDropdownChange = () => setShowUserList(!showUserList);
 
   return (
-    <RequireAdminAuth>
+    <>
       {isLoading ? (
         <Loading />
       ) : (
@@ -72,6 +72,6 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
-    </RequireAdminAuth>
+    </>
   );
 }

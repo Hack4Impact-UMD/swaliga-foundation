@@ -1,7 +1,7 @@
-import { updateRefreshToken } from '@/lib/googleAuthorization';
 import { auth } from '../firebaseConfig';
 import { FirebaseError } from 'firebase/app';
 import { signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
 async function verifyGoogleToken(googleAccessToken: string | undefined): Promise<boolean> {
     const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?access_token=${googleAccessToken}`);
@@ -16,7 +16,7 @@ async function verifyGoogleToken(googleAccessToken: string | undefined): Promise
     }
 }
 
-async function signInWithGoogle(): Promise<void> {
+async function signInWithGoogle(router: AppRouterInstance): Promise<void> {
     const provider = new GoogleAuthProvider();
     // add scopes for access to Google Forms and Gmail
     provider.addScope("https://www.googleapis.com/auth/forms.body");
@@ -38,6 +38,7 @@ async function signInWithGoogle(): Promise<void> {
 
         const idTokenResult = await auth.currentUser?.getIdTokenResult();
         const role = idTokenResult?.claims.role;
+        console.log('role', role);
         switch (role) {
           case undefined:
             await fetch("/api/auth/claims", {
@@ -47,8 +48,12 @@ async function signInWithGoogle(): Promise<void> {
             await auth.currentUser?.getIdTokenResult(true); // refresh ID token upon account creation to set role in user claims
             break;
           case "ADMIN":
-            await fetch("/api/auth/refreshToken", { method: "POST" });
-            break;
+            const res = await fetch(`/api/auth/refreshToken`);
+            const valid = await res.json();
+            console.log('valid', valid);
+            if (!valid) {
+                router.push("/api/auth/consent");
+            }
           default:
             break;
         }

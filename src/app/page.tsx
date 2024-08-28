@@ -13,6 +13,7 @@ import RequireSignedOut from "@/components/auth/RequireSignedOut";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import { getAccountById } from "@/lib/firebase/database/users";
 
 export default function LoginPage() {
   const [dims, setDims] = useState<Dims>({ width: 0, height: 0 });
@@ -40,11 +41,9 @@ export default function LoginPage() {
   // authenticates user and redirects to dashboard depending on role
   const signInWithEmail = async () => {
     const response = await loginUser(email, password);
-    if (response.success) {
+    if (response.success && response.userId) {
       // Fetch user details and check if the user is admin or student
-      const user = await fetch(`/api/users/${response.userId}`).then((res) =>
-        res.json()
-      );
+      const user = await getAccountById(response.userId)
       if (user.isAdmin) {
         router.push("/admin-dashboard");
       } else {
@@ -125,7 +124,7 @@ export default function LoginPage() {
               Click <a href="/create-account">here</a> to create an account
             </p>
             <div className={styles.google_button}>
-              <GoogleButton onClick={signInWithGoogle} />
+              <GoogleButton onClick={() => signInWithGoogle(router)} />
             </div>
             <Image
               className={styles.logo}

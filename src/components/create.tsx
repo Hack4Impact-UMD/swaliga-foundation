@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import styles from './create.module.css';
 import Modal from './Modal';
+import { createSurvey } from '@/lib/firebase/database/surveys';
 
 interface CreateProps {
   closeCreate: () => void;
@@ -12,28 +13,14 @@ export default function Create({ closeCreate }: CreateProps) {
     const [surveyTitle, setSurveyTitle] = useState("");
     const [error, setError] = useState<string>("");
 
-    const createSurvey = async () => {
-        try {
-            const response = await fetch('/api/surveys', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    documentTitle: surveyTitle,
-                    title: surveyTitle
-                })
-            });
-
-            if (response.ok) {
-            } else {
-                console.error('Failed to create survey:', response.statusText);
-            }
-            closeCreate();
-        } catch (error) {
-            console.error('Error occurred while creating survey:', error);
-            setError("Error creating survey");
-        }
+    const handleCreateSurvey = async () => {
+      try {
+        createSurvey(surveyTitle);
+        closeCreate();
+      } catch (error) {
+        console.error("Error occurred while creating survey:", error);
+        setError("Error creating survey");
+      }
     };
 
     return (
@@ -51,7 +38,7 @@ export default function Create({ closeCreate }: CreateProps) {
           </div>
           <div>
             <p className={styles.error}>{error}</p>
-            <button className={styles.button} onClick={createSurvey}>
+            <button className={styles.button} onClick={handleCreateSurvey}>
               Create
             </button>
           </div>

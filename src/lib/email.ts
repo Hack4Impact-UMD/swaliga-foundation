@@ -1,10 +1,4 @@
-import { oauth2Client, setCredentials } from "./googleAuthorization";
-import { google } from "googleapis";
-
-async function getGmailClient() {
-  await setCredentials();
-  return google.gmail({ version: "v1", auth: oauth2Client });
-}
+import { getGmailClient } from "./googleAuthorization";
 
 export async function sendEmail(body: {
   recipients: string[];

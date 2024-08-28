@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { redirect } from "next/navigation";
-import { setCredentialsWithAuthCode } from "@/lib/googleAuthorization";
+import { isRefreshTokenValid, setAdminRefreshToken } from "@/lib/googleAuthorization";
 
 export async function GET(req: NextRequest) {
   const query = req.nextUrl.searchParams;
   if (query.get("code")) {
     console.log(query.get("code"));
-    const credsSet = await setCredentialsWithAuthCode(query.get("code") as string);
-    if (credsSet) {
-      return NextResponse.redirect("http://localhost:3000");
+    const authCode = query.get("code") || "";
+    const updateNeeded = !(await isRefreshTokenValid());
+    if (updateNeeded) {
+      const credsSet = await setAdminRefreshToken(authCode);
+      if (credsSet) {
+        return NextResponse.redirect("http://localhost:3000");
+      }
     }
     redirect("/");
   }

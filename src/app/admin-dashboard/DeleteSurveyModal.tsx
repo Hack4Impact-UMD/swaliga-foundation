@@ -2,6 +2,7 @@ import Modal from "@/components/Modal";
 import styles from './DeleteSurveyModal.module.css';
 import { Survey } from "@/types/survey-types";
 import { useState } from "react";
+import { deleteSurveyByID } from "@/lib/firebase/database/surveys";
 
 interface DeleteSurveyModalProps {
   survey: Survey;
@@ -16,17 +17,12 @@ export default function DeleteSurveyModal(props: DeleteSurveyModalProps) {
   const confirmDelete = async () => {
     try {
       // delete survey from Firestore
-      const response = await fetch(`/api/surveys/${survey.formId}`, {
-        method: 'DELETE',
-      });
-      if (response.status !== 200) {
-        setError("Unable to delete survey");
-        return;
-      }
+      await deleteSurveyByID(survey.formId);
       handleDeleteSurvey(); // force admin dashboard to refresh to remove survey from list
       closeDelete(); // close modal
     } catch (err) {
       console.error('unable to delete survey', err);
+      setError('unable to delete survey');
     }
   }
 

@@ -1,5 +1,4 @@
-import { getFormsClient } from "@/lib/googleForms";
-import { updateSurvey } from "./surveys";
+import { getFormsClient } from "@/lib/googleAuthorization";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
