@@ -41,18 +41,14 @@ export default function Settings() {
   function handleCancel() {
     router.push("/student-dashboard");
   }
-
   // updates changes to the user in Firestore and redirect to the student dashboard
   async function handleSaveChanges() {
     try {
       await updateAccount(userData?.id as string, {
-        ...userData,
-        birthdate: Timestamp.fromDate(
-          new Date(userData?.birthdate as unknown as string)
-        ),
+        ...userData
       });
-      handleCancel();
       console.log("User data updated successfully");
+      router.push("/student-dashboard"); // Redirect to student dashboard
     } catch (error) {
       console.error("Error updating user data:", error);
     }
@@ -100,7 +96,7 @@ export default function Settings() {
                 height="35"
                 className={styles.image}
               />
-              <p className={styles.link}>Student ID: {userData?.id}</p>
+              <p className={styles.link}>Student ID: {userData?.swaligaID}</p>
               <Link href="/" className={styles.link} onClick={() => logOut()}>
                 Log Out
               </Link>
