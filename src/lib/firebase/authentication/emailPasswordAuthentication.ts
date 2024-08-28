@@ -5,13 +5,15 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../firebaseConfig";
-import { updateAccount } from "@/lib/firebase/database/users"; // Add this import
+import { setDoc, doc } from "firebase/firestore"; // Import Firestore functions
+import { db } from "../firebaseConfig";
 
 type UserAuthResponse = {
   success: boolean;
   userId: string | null;
 };
 
+// Function to sign up a user and create a Firestore document for the user
 export const signUpUser = async (
   email: string,
   password: string
@@ -24,6 +26,43 @@ export const signUpUser = async (
     );
 
     const user = userCredential.user;
+    const userUid = user?.uid;
+
+    if (!userUid) {
+      throw new Error("Failed to sign up user: UID is null or undefined.");
+    }
+
+    await updateProfile(user, { displayName: "STUDENT" });
+
+    // Create the user document in Firestore with default values
+    const userDoc = {
+      isAdmin: false,
+      firstName: "",  // Default values, update later
+      middleName: "", // Default values, update later
+      lastName: "",   // Default values, update later
+      email: user.email,
+      phone: 0,       // Default values, update later
+      gender: "",     // Default values, update later
+      birthdate: null, // Default values, update later
+      guardian: [],   // Default values, update later
+      id: userUid,
+      address: {
+        street: "",
+        city: "",
+        state: "",
+        zip: 0,
+        country: "",
+      },
+      school: "",
+      gradYear: 0,
+      yearsWithSwaliga: 0,
+      swaligaID: 0,
+      ethnicity: [], 
+      assignedSurveys: [],
+      completedResponses: [],
+    };
+
+    await setDoc(doc(db, 'users', userUid), userDoc);
     await fetch("/api/auth/claims", {
       method: "POST",
       headers: {
@@ -31,16 +70,15 @@ export const signUpUser = async (
       },
       body: JSON.stringify({ uid: user.uid })
     });
-
     await auth.currentUser?.getIdToken(true);
-
-    return { success: true, userId: user.uid };
+    return { success: true, userId: userUid };
   } catch (error) {
     console.log(error);
     return { success: false, userId: null };
   }
 };
 
+// Function to log in a user with email and password
 export const loginUser = async (
   email: string,
   password: string

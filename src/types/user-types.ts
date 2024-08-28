@@ -24,7 +24,7 @@ export interface User {
   school: string;
   gradYear: number;
   yearsWithSwaliga: number;
-  ethnicity: Set<Ethnicity | string>;
+  ethnicity: (Ethnicity | string)[]; // Updated to be an array instead of a Set
 
   assignedSurveys: string[];
   completedResponses: string[];
