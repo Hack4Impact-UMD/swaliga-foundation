@@ -4,18 +4,6 @@ import { GoogleForm, Survey } from "@/types/survey-types";
 import { Watch } from "@/types/watch-types";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
-  try {
-    const body = await req.json();
-    const { formId } = body;
-    const forms = await getFormsClient();
-    const form = await forms.forms.get({ formId });
-    return NextResponse.json(form, { status: 200 });
-  } catch (err) {
-    throw NextResponse.json({ error: "unable to get google form" }, { status: 500 });
-  }
-}
-
 export async function POST(req: NextRequest) {
   try {
     let form: Survey | null = null;
@@ -36,10 +24,7 @@ export async function POST(req: NextRequest) {
 
     // creates watches for the form for update & response handling
     const schemaWatch = await createWatch(googleForm.formId || "", "SCHEMA");
-    const responsesWatch = await createWatch(
-      googleForm.formId || "",
-      "RESPONSES"
-    );
+    const responsesWatch = await createWatch(googleForm.formId || "", "RESPONSES");
 
     // adds a question for Swaliga User ID to the form
     // important because watch event inputs do not contain the id of the user that submitted the form, which makes this id field necessary to identify the user later on

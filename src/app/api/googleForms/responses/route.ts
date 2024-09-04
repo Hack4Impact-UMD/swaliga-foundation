@@ -4,8 +4,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    const body: { formId: string } = await req.json();
-    const { formId } = body;
+    const queryParams = req.nextUrl.searchParams;
+    const formId = queryParams.get("formId");
+    console.log(formId);
+    if (!formId) {
+      return NextResponse.json({ error: "Bad Request" }, { status: 400 });
+    }
     const forms = await getFormsClient();
     const responses = await forms.forms.responses.list({ formId });
     return NextResponse.json(

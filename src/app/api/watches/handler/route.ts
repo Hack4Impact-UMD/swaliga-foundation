@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebase/firebaseAdminConfig";
+import { adminAuth, adminDb } from "@/lib/firebase/firebaseAdminConfig";
 import { GoogleFormResponse, Survey, Response } from "@/types/survey-types";
 import { arrayRemove, arrayUnion } from "firebase/firestore";
 
@@ -9,20 +9,18 @@ export async function POST(req: NextRequest) {
     const { eventType, formId } = body;
     if (eventType === "RESPONSES") {
       await createResponse(formId);
-      return NextResponse.json({ message: "watch event successfully handled" }, { status: 200 });
     } else {
       await updateSurvey(formId);
-      return NextResponse.json({ message: "watch event successfully handled" }, { status: 200 });
     }
+    return NextResponse.json({ message: "watch event successfully handled" }, { status: 200 });
   } catch (err) {
+    console.log(err);
     return NextResponse.json({ error: "unable to handle watch event" }, { status: 500 });
   }
 }
 
 async function createResponse(formId: string) {
-  let res = await fetch(`/api/googleForms/responses`, {
-    body: JSON.stringify({ formId }),
-  });
+  let res = await fetch(`http://localhost:3000/api/googleForms/responses?formId=${formId}`);
   const googleResponseData = await res.json();
 
   const response = await adminDb.doc(`/surveys/${formId}`).get();
@@ -33,8 +31,10 @@ async function createResponse(formId: string) {
     if (!existingResponseIds?.includes(response.responseId)) {
       const formTitle = form.info.title;
       const formId = form.formId;
-      const swaligaId: number = (response.answers[form.swaligaIdQuestionId] as any).textAnswers.answers[0].value;
-      const userId = await adminDb.collectionGroup("users").where("swaligaId", "==", swaligaId).limit(1).get().then((snapshot) => snapshot.docs[0].id);
+      const swaligaId: number = parseInt((response.answers[form.swaligaIdQuestionId] as any).textAnswers.answers[0].value);
+      const user = (await adminDb.collection("/users").where("swaligaID", "==", swaligaId).limit(1).get()).docs[0].data();
+      const userId = user.id;
+
       const updatedResponse: Response = {
         ...response,
         userId,
@@ -43,14 +43,14 @@ async function createResponse(formId: string) {
       };
 
       adminDb.runTransaction(async (transaction) => {
-        transaction.create(adminDb.doc(`/responses/${response.responseId}`), { ...response });
+        transaction.create(adminDb.doc(`/responses/${response.responseId}`), { ...updatedResponse });
         transaction.update(adminDb.doc(`/users/${userId}`), {
-          completedResponses: arrayUnion(response.responseId),
-          assignedSurveys: arrayRemove(formId),
+          completedResponses: [...user.completedResponses, response.responseId],
+          assignedSurveys: user.assignedSurveys.filter((surveyId: string) => surveyId !== formId),
         });
         transaction.update(adminDb.doc(`/surveys/${formId}`), {
-          responseIds: arrayUnion(response.responseId),
-          assignedUsers: arrayRemove(userId),
+          responseIds: [...form.responseIds, response.responseId],
+          assignedUsers: form.assignedUsers.filter((id: string) => id !== userId),
         });
       });
     }
@@ -58,7 +58,7 @@ async function createResponse(formId: string) {
 }
 
 async function updateSurvey(formId: string) {
-  const res = await fetch(`http://localhost:3000/api/googleForms/surveys`, {
+  const res = await fetch(`http://localhost:3000/api/googleForms/surveys/${formId}`, {
     body: JSON.stringify({ formId }),
   });
   if (res.status !== 200) {

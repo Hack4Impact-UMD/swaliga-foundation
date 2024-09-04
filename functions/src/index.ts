@@ -1,7 +1,7 @@
 import { onMessagePublished } from "firebase-functions/v2/pubsub";
 import { onSchedule } from "firebase-functions/v2/scheduler";
 
-const URL_PREFIX = 'http://localhost:3000'
+const URL_PREFIX = "http://localhost:3000";
 
 // handles form events
 exports.handleFormWatch = onMessagePublished("projects/swaliga-foundation/topics/forms", async (event) => {
@@ -9,6 +9,9 @@ exports.handleFormWatch = onMessagePublished("projects/swaliga-foundation/topics
   await fetch(`${URL_PREFIX}/api/watches/handler`, {
     method: "POST",
     body: JSON.stringify({ eventType, formId }),
+    headers: {
+      "Content-Type": "application/json",
+    }
   })
 });
 
