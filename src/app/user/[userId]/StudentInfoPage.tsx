@@ -41,7 +41,7 @@ function guardianInfo(guardianInfo: any[] | undefined) {
         <ol>
           {guardianInfo.map((guardian, index) => (
             <li key={index}>
-              {guardian.firstName} {guardian.lastName}
+              {guardian.name}
               <ul>
                 <li>Email: {guardian.email}</li>
                 <li>Phone: {guardian.phone}</li>
@@ -62,8 +62,7 @@ export default function StudentInfoPage({
   const [user, setUser] = useState<User | null>();
   const [surveys, setSurveys] = useState<Survey[]>([]);
   const [responses, setResponses] = useState<Response[]>([]);
-  const [openResponse, setOpenResponse] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchData = async (userId: string) => {
     setLoading(true);
@@ -79,7 +78,7 @@ export default function StudentInfoPage({
       Promise.all(user.assignedSurveys.map(surveyId => getSurveyByID(surveyId))).then(surveys => {
         setSurveys(surveys.filter(survey => survey) as Survey[]);
       })
-    } catch {
+    } catch (err) {
       console.log("Error retrieving student information using given userId");
     }
     setLoading(false);
@@ -187,13 +186,13 @@ export default function StudentInfoPage({
         <div className={styles.surveysStatus}>
           <p className={styles.surveyTitle}>Surveys</p>
           <div className={`${styles.surveysList} ${styles.regular}`} id="list">
-            {responses?.map((completedSurveyName: string, i: number) => (
-              <a className={styles.complete} key={i}>
-                {completedSurveyName}
+            {responses.length !== 0 && responses?.map((response: Response, i: number) => (
+              <a href={`https://docs.google.com/forms/d/${response.formId}/edit#response=${response.responseId}`} className={styles.complete} key={i}>
+                {response.formTitle}
               </a>
             ))}
-            {surveys?.map((survey: Survey, i: number) => (
-              <a className={styles.incomplete} key={i}>
+            {surveys.length !== 0 && surveys?.map((survey: Survey, i: number) => (
+              <a href={`https://docs.google.com/forms/d/${survey.formId}/edit`} className={styles.incomplete} key={i}>
                 {survey.info.title}
               </a>
             ))}
