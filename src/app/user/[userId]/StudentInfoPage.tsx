@@ -105,7 +105,7 @@ export default function StudentInfoPage({
             <p className={styles.header}>{`${user?.firstName ?? "first name"} ${
               user?.lastName ?? "last name"
             }`}</p>
-            <p className={styles.studentId}>{user?.id ?? "student id"}</p>
+            <p className={styles.studentId}>{`Student ID: ${user?.swaligaID}`}</p>
           </div>
           <div>
             <table className={styles.table}>
