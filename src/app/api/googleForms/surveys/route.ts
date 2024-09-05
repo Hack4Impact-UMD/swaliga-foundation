@@ -1,3 +1,4 @@
+import { isUserAdmin } from "@/lib/firebase/authentication/serverAuthentication";
 import { createWatch } from "@/lib/firebase/database/watches";
 import { getFormsClient } from "@/lib/googleAuthorization";
 import { GoogleForm, Survey } from "@/types/survey-types";
@@ -6,10 +7,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    let form: Survey | null = null;
     const body = await req.json();
-    const { title } = body;
-    console.log('title', title)
+    const { title, idToken }: { title: string, idToken: string } = body;
+
+    if (!(await isUserAdmin(idToken))) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    let form: Survey | null = null;
     const forms = await getFormsClient();
     let googleForm: GoogleForm = (
       await forms.forms.create({
@@ -75,6 +80,7 @@ export async function POST(req: NextRequest) {
     };
     return NextResponse.json(form, { status: 200 })
   } catch (err) {
+    console.log(err);
     return NextResponse.json(
       { error: "error creating survey" },
       { status: 500 }

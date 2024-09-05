@@ -1,5 +1,5 @@
 import { GoogleForm, Survey } from '@/types/survey-types';
-import { db } from "../firebaseConfig";
+import { auth, db } from "../firebaseConfig";
 import { collection, deleteDoc, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
 import { createWatch } from './watches';
 import { Watch } from '@/types/watch-types';
@@ -11,7 +11,7 @@ export async function createSurvey(title: string) {
   try {
     const res = await fetch(`http://localhost:3000/api/googleForms/surveys`, {
       method: "POST",
-      body: JSON.stringify({ title }),
+      body: JSON.stringify({ title, idToken: await auth.currentUser?.getIdToken() }),
     });
     if (res.status !== 200) {
       throw new Error('unable to create survey');

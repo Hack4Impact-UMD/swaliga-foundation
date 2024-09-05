@@ -5,8 +5,12 @@ import { adminAuth } from "@/lib/firebase/firebaseAdminConfig";
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const body = await req.json();
   try {
-    await adminAuth.setCustomUserClaims(body.uid, { role: "ADMIN" });
-    return NextResponse.json({ success: true }, { status: 200 });
+    const role = (await adminAuth.getUser(body.uid)).customClaims?.role;
+    if (!role) {
+      await adminAuth.setCustomUserClaims(body.uid, { role: "STUDENT" });
+      return NextResponse.json({ success: true }, { status: 200 });
+    }
+    return NextResponse.json({ error: "Role already set" }, { status: 400 });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: err }, { status: 500 });

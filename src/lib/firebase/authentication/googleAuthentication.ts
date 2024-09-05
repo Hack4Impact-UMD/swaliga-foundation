@@ -50,9 +50,8 @@ async function signInWithGoogle(router: AppRouterInstance): Promise<void> {
           case "ADMIN":
             const res = await fetch(`/api/auth/refreshToken`);
             const valid = await res.json();
-            console.log('valid', valid);
             if (!valid) {
-                router.push("/api/auth/consent");
+                router.push(`/api/auth/consent?idToken=${idTokenResult?.token}`);
             }
           default:
             break;

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Modal from "./Modal";
 import styles from './SendEmailModal.module.css'
+import { auth } from "@/lib/firebase/firebaseConfig";
 
 interface SendEmailModalProps {
   emails: string[];
@@ -22,7 +23,8 @@ export default function SendEmailModal(props: SendEmailModalProps) {
       body: JSON.stringify({
         recipients: emails,
         subject: subject,
-        text: content
+        text: content,
+        idToken: await auth.currentUser?.getIdToken()
       })
     });
     closeModal();

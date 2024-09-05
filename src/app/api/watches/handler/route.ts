@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminAuth, adminDb } from "@/lib/firebase/firebaseAdminConfig";
+import { adminDb } from "@/lib/firebase/firebaseAdminConfig";
 import { GoogleFormResponse, Survey, Response } from "@/types/survey-types";
-import { arrayRemove, arrayUnion } from "firebase/firestore";
+import { getFormsClient } from "@/lib/googleAuthorization";
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,8 +20,9 @@ export async function POST(req: NextRequest) {
 }
 
 async function createResponse(formId: string) {
-  let res = await fetch(`http://localhost:3000/api/googleForms/responses?formId=${formId}`);
-  const googleResponseData = await res.json();
+  const forms = await getFormsClient();
+  const responses = await forms.forms.responses.list({ formId });
+  const googleResponseData = responses.data.responses as GoogleFormResponse[] || [];
 
   const response = await adminDb.doc(`/surveys/${formId}`).get();
   const form = response.data() as Survey;
@@ -58,12 +59,7 @@ async function createResponse(formId: string) {
 }
 
 async function updateSurvey(formId: string) {
-  const res = await fetch(`http://localhost:3000/api/googleForms/surveys/${formId}`, {
-    body: JSON.stringify({ formId }),
-  });
-  if (res.status !== 200) {
-    throw new Error("unable to update survey");
-  }
-  const form = await res.json();
+  const forms = await getFormsClient();
+  const form = await forms.forms.get({ formId });
   adminDb.doc(`/surveys/${form.data.formId}`).set(form.data, { merge: true });
 }
