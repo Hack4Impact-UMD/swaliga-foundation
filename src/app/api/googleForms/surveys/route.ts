@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
                   itemId: "00000000",
                   title: "Swaliga User ID",
                   description:
-                    "Make sure to copy this ID directly from your student dashboard",
+                    "Make sure to copy your ID number directly from your student dashboard",
                   questionItem: {
                     question: {
                       required: true,
