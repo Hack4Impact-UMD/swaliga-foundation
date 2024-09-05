@@ -14,8 +14,6 @@ import { Survey, Response } from "@/types/survey-types";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Loading from "@/components/Loading";
-import UpArrow from "@/../public/icons/up-arrow-icon.png";
-import DownArrow from "@/../public/icons/down-arrow-icon.png";
 import { getAccountById } from "@/lib/firebase/database/users";
 import { getSurveyByID } from "@/lib/firebase/database/surveys";
 import { getResponseByID } from "@/lib/firebase/database/response";
@@ -143,7 +141,7 @@ export default function StudentInfoPage({
                   <p className={styles.regular}>Ethnicity</p>
                 </td>
                 <td className={`${styles.rightSideTable} ${styles.regular}`}>
-                  <p>{user?.ethnicity ?? "ethnicity"}</p>
+                  <p>{user?.ethnicity.join(", ") ?? "ethnicity"}</p>
                 </td>
               </tr>
               <tr>
