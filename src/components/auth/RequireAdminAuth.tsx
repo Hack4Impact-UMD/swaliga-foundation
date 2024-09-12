@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import AuthProvider, { useAuth } from "./AuthProvider";
+import { Role } from "@/types/user-types";
 
 export default function RequireAdminAuth({
   children,
@@ -11,7 +12,7 @@ export default function RequireAdminAuth({
     return <p>Loading</p>;
   } else if (!authContext.user) {
     redirect("/");
-  } else if (authContext.token?.claims?.role != "ADMIN") {
+  } else if (authContext.token?.claims?.role != Role.ADMIN) {
     console.log("Admin" + authContext.token)
     redirect("/student-dashboard");
   }

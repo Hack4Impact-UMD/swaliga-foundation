@@ -1,3 +1,4 @@
+import { Role } from '@/types/user-types';
 import { auth } from '../firebaseConfig';
 import { FirebaseError } from 'firebase/app';
 import { signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
@@ -38,16 +39,15 @@ async function signInWithGoogle(router: AppRouterInstance): Promise<void> {
 
         const idTokenResult = await auth.currentUser?.getIdTokenResult();
         const role = idTokenResult?.claims.role;
-        console.log('role', role);
         switch (role) {
           case undefined:
-            await fetch("/api/auth/claims", {
+            await fetch("/api/auth/claims/student", {
               method: "POST",
               body: JSON.stringify({ uid: result.user.uid }),
             });
             await auth.currentUser?.getIdTokenResult(true); // refresh ID token upon account creation to set role in user claims
             break;
-          case "ADMIN":
+          case Role.ADMIN:
             const res = await fetch(`/api/auth/refreshToken`);
             const valid = await res.json();
             if (!valid) {

@@ -61,7 +61,7 @@ export const signUpUser = async (
     };
 
     await setDoc(doc(db, 'users', userUid), userDoc);
-    await fetch("/api/auth/claims", {
+    await fetch("/api/auth/claims/student", {
       method: "POST",
       headers: {
         'Content-Type': 'application/json'

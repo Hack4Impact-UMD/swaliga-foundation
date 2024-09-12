@@ -53,3 +53,9 @@ export enum Gender {
     NonBinary = "Non-Binary",
     Other = "Other"
 }
+
+export enum Role {
+  ADMIN = "ADMIN",
+  STUDENT = "STUDENT",
+  REGISTERING = "REGISTERING"
+}
