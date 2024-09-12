@@ -32,8 +32,6 @@ export const signUpUser = async (
       throw new Error("Failed to sign up user: UID is null or undefined.");
     }
 
-    await updateProfile(user, { displayName: "STUDENT" });
-
     // Create the user document in Firestore with default values
     const userDoc = {
       isAdmin: false,
