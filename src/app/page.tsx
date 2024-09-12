@@ -13,7 +13,8 @@ import RequireSignedOut from "@/components/auth/RequireSignedOut";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { getAccountById } from "@/lib/firebase/database/users";
+import { Role } from "@/types/user-types";
+import {auth} from "@/lib/firebase/firebaseConfig";  
 
 export default function LoginPage() {
   const [dims, setDims] = useState<Dims>({ width: 0, height: 0 });
@@ -42,20 +43,23 @@ export default function LoginPage() {
   const signInWithEmail = async () => {
     const response = await loginUser(email, password);
     if (response.success && response.userId) {
-      // Fetch user details and check if the user is admin or student
-      const user = await getAccountById(response.userId)
-      if (user.isAdmin) {
-        router.push("/admin-dashboard");
-      } else {
-        router.push("/student-dashboard");
-      }
+        const idTokenResult = await auth.currentUser?.getIdTokenResult();
+        const role = idTokenResult?.claims.role as Role; // Cast to Role enum
+
+        if (role === undefined || role === Role.REGISTERING) {
+            // Route to create account if role is REGISTERING
+            router.push("/create-account");
+        } else if (role === Role.ADMIN) {
+            router.push("/admin-dashboard");
+        } else if (role === Role.STUDENT) {
+            router.push("/student-dashboard");
+        }
     } else {
-      console.log("Login failed");
-      setError("Invalid login credentials");
+        setError("Invalid login credentials");
     }
     setEmail("");
     setPassword("");
-  };
+};
 
   // renders the polygons in the background of the Login Page from ./polygons.ts
   const drawPolygon = useCallback(

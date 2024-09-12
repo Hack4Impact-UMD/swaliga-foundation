@@ -11,7 +11,8 @@ import { User, Gender, Ethnicity } from "@/types/user-types";
 import { signUpUser } from "@/lib/firebase/authentication/emailPasswordAuthentication";
 import { useRouter } from "next/navigation";
 import { getDoc, doc, setDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase/firebaseConfig";  
+import { db, auth} from "@/lib/firebase/firebaseConfig";  
+
 
 export default function CreateAccountPage() {
   const [dims, setDims] = useState<Dims>({ width: 0, height: 0 });
@@ -267,77 +268,103 @@ export default function CreateAccountPage() {
     event.preventDefault();
     console.log("Submitting:", accountInfo);
     try {
-      console.log("Entered the try block");
+        let userUid: string | undefined = auth.currentUser?.uid || undefined; // Ensure userUid is string | undefined
 
-      // Authenticate the user first and get their UID
-      const authResponse = await signUpUser(accountInfo.email, accountInfo.password);
-      const userUid = authResponse.userId;
+        // If the user is not logged in via Google, proceed with email/password signup
+        if (!userUid) {
+            console.log("Not signed in with Google, proceeding with email/password sign-up");
 
-      if (!userUid) {
-        throw new Error("Failed to sign up user: UID is null or undefined.");
-      }
+            // Authenticate the user with email and password
+            const authResponse = await signUpUser(accountInfo.email, accountInfo.password);
+            console.log(authResponse);
+            userUid = authResponse.userId ?? undefined; // Ensure userUid is string | undefined
+            console.log(userUid);
 
-      console.log("Authenticated user, UID:", userUid);
+            if (!userUid) {
+                throw new Error("Failed to sign up user: UID is null or undefined.");
+            }
 
-      // Gets current SwaligaID
-      const swaligaIDDoc = await getDoc(doc(db, 'metadata', 'nextUserId'));
-      let currentSwaligaID = swaligaIDDoc.exists() ? swaligaIDDoc.data().nextUserId : 0;
+            console.log("Authenticated user, UID:", userUid);
+        } else {
+            // User is already authenticated with Google, use their UID
+            console.log("Signed in with Google, UID:", userUid);
+        }
 
-      // Increments it
-      const newSwaligaID = currentSwaligaID + 1;
+        // Gets current SwaligaID from metadata
+        const swaligaIDDoc = await getDoc(doc(db, 'metadata', 'nextUserId'));
+        let currentSwaligaID = swaligaIDDoc.exists() ? swaligaIDDoc.data().nextUserId : 0;
 
-      const user: User = {
-        isAdmin: false,
-        firstName: accountInfo.firstName,
-        middleName: accountInfo.middleName,
-        lastName: accountInfo.lastName,
-        email: accountInfo.email,
-        phone: parseInt(accountInfo.phoneNumber),
-        gender: accountInfo.gender,
-        birthdate: Timestamp.fromDate(new Date(accountInfo.bday)),
-        guardian: accountInfo.emergencyContacts.map(contact => ({
-          name: contact.name,
-          email: contact.email,
-          phone: parseInt(contact.phone),
-          address: {
-            street: contact.street,
-            city: contact.city,
-            state: contact.state,
-            zip: parseInt(contact.zip),
-            country: contact.country,
-          }
-        })),
-        id: userUid, // Use the UID from Firebase Authentication
-        address: {
-          street: accountInfo.streetName,
-          city: accountInfo.city,
-          state: accountInfo.state,
-          zip: parseInt(accountInfo.zipCode),
-          country: accountInfo.country,
-        },
-        school: accountInfo.school,
-        gradYear: parseInt(accountInfo.grad),
-        yearsWithSwaliga: parseInt(accountInfo.yearsInSwaliga),
-        swaligaID: newSwaligaID, 
-        ethnicity: Object.keys(accountInfo.raceEthnicity).filter(key => accountInfo.raceEthnicity[key as keyof RaceEthnicity]), 
-        assignedSurveys: [],
-        completedResponses: [],
-      };
+        // Increment SwaligaID for the new user
+        const newSwaligaID = currentSwaligaID + 1;
 
-      // Update the user document in Firestore with the new data
-      await setDoc(doc(db, 'users', userUid), user);
+        // Create the user object to save in Firestore
+        const user: User = {
+            isAdmin: false,
+            firstName: accountInfo.firstName,
+            middleName: accountInfo.middleName,
+            lastName: accountInfo.lastName,
+            email: accountInfo.email,
+            phone: parseInt(accountInfo.phoneNumber),
+            gender: accountInfo.gender,
+            birthdate: Timestamp.fromDate(new Date(accountInfo.bday)),
+            guardian: accountInfo.emergencyContacts.map(contact => ({
+                name: contact.name,
+                email: contact.email,
+                phone: parseInt(contact.phone),
+                address: {
+                    street: contact.street,
+                    city: contact.city,
+                    state: contact.state,
+                    zip: parseInt(contact.zip),
+                    country: contact.country,
+                }
+            })),
+            id: userUid, // Use the UID from Firebase Authentication
+            address: {
+                street: accountInfo.streetName,
+                city: accountInfo.city,
+                state: accountInfo.state,
+                zip: parseInt(accountInfo.zipCode),
+                country: accountInfo.country,
+            },
+            school: accountInfo.school,
+            gradYear: parseInt(accountInfo.grad),
+            yearsWithSwaliga: parseInt(accountInfo.yearsInSwaliga),
+            swaligaID: newSwaligaID,
+            ethnicity: Object.keys(accountInfo.raceEthnicity).filter(key => accountInfo.raceEthnicity[key as keyof RaceEthnicity]),
+            assignedSurveys: [],
+            completedResponses: [],
+        };
 
-      // Update the metadata for the next user ID
-      await setDoc(doc(db, 'metadata', 'nextUserId'), { nextUserId: newSwaligaID });
+        // Save user document in Firestore
+        await setDoc(doc(db, 'users', userUid), user);
 
-      console.log("Account created successfully:", user);
-      router.push("/student-dashboard");
+        // Update metadata with new SwaligaID
+        await setDoc(doc(db, 'metadata', 'nextUserId'), { nextUserId: newSwaligaID });
+
+        console.log("Account created successfully:", user);
+
+        // Set role to STUDENT via API
+        await fetch("/api/auth/claims/student", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ uid: userUid }), // Send user UID to set STUDENT role
+        });
+
+        // Refresh token after role update
+        await auth.currentUser?.getIdToken(true);
+
+        // Redirect to student dashboard after successful account creation
+        router.push("/student-dashboard");
 
     } catch (error) {
-      console.error("Error during account creation:", error);
-      setFormError("Unexpected error");
+        console.error("Error during account creation:", error);
+        setFormError("Unexpected error occurred");
     }
 };
+
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);

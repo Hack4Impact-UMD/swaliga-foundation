@@ -19,49 +19,70 @@ async function verifyGoogleToken(googleAccessToken: string | undefined): Promise
 
 async function signInWithGoogle(router: AppRouterInstance): Promise<void> {
     const provider = new GoogleAuthProvider();
-    // add scopes for access to Google Forms and Gmail
+    
+    // Add scopes for access to Google Forms, Spreadsheets, Gmail
     provider.addScope("https://www.googleapis.com/auth/forms.body");
     provider.addScope("https://www.googleapis.com/auth/forms.responses.readonly");
     provider.addScope("https://www.googleapis.com/auth/spreadsheets");
-    provider.addScope("https://www.googleapis.com/auth/gmail.send")
+    provider.addScope("https://www.googleapis.com/auth/gmail.send");
+
     try {
-        console.log(auth.currentUser);
         const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+
+        // Verify Google token
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const accessToken = credential?.accessToken;
-        const verified = await verifyGoogleToken(accessToken);   
+        const verified = await verifyGoogleToken(accessToken);
 
-        if (verified) {
-            console.log("Current user verified:", auth.currentUser?.uid);
-        } else {
+        if (!verified) {
             console.log("Please sign in again");
+            return;
         }
 
+        // Get the current user's ID token result to check custom claims
         const idTokenResult = await auth.currentUser?.getIdTokenResult();
         const role = idTokenResult?.claims.role;
-        switch (role) {
-          case undefined:
-            await fetch("/api/auth/claims/student", {
-              method: "POST",
-              body: JSON.stringify({ uid: result.user.uid }),
+
+        if (!role) {
+            await fetch("/api/auth/claims/registering", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ uid: user.uid }),
             });
-            await auth.currentUser?.getIdTokenResult(true); // refresh ID token upon account creation to set role in user claims
-            break;
-          case Role.ADMIN:
-            const res = await fetch(`/api/auth/refreshToken`);
-            const valid = await res.json();
-            if (!valid) {
-                router.push(`/api/auth/consent?idToken=${idTokenResult?.token}`);
+
+            await auth.currentUser?.getIdToken(true);
+            
+            router.push("/create-account");
+        } else {
+            switch (role) {
+                case Role.ADMIN:
+                    const res = await fetch(`/api/auth/refreshToken`);
+                    const valid = await res.json();
+                    if (!valid) {
+                        router.push(`/api/auth/consent?idToken=${idTokenResult?.token}`);
+                    } else {
+                        router.push("/admin-dashboard");
+                    }
+                    break;
+                case Role.STUDENT:
+                    router.push("/student-dashboard");
+                    break;
+                default:
+                    break;
             }
-          default:
-            break;
         }
     } catch (error: unknown) {
         if ((error as FirebaseError).code === 'auth/account-exists-with-different-credential') {
-            console.log("Already existing email address");
+            console.log("Account exists with different credential.");
+        } else {
+            console.error("Error during Google sign-in:", error);
         }
-    };
-};
+    }
+}
+
 
 async function logOut(): Promise<void> {
     const user = auth.currentUser;
