@@ -7,14 +7,19 @@ import { Polygon, Dims } from "@/types/konva-types";
 import styles from "./LoginPage.module.css";
 import { getPolygonBackground, getPolygonOverlay } from "./polygons";
 import GoogleButton from "react-google-button";
-import { loginUser } from "@/lib/firebase/authentication/emailPasswordAuthentication";
+import { loginUser, signUpUser } from "@/lib/firebase/authentication/emailPasswordAuthentication";
 import { signInWithGoogle } from "@/lib/firebase/authentication/googleAuthentication";
 import RequireSignedOut from "@/components/auth/RequireSignedOut";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { Role } from "@/types/user-types";
-import {auth} from "@/lib/firebase/firebaseConfig";  
+
+enum LoginPageErrors {
+  ACCOUNT_CREATION_FAILED = "Failed to create account",
+  LOGIN_FAILED = "Failed to login",
+  PASSWORD_TOO_SHORT = "Password must be at least 6 characters",
+  PASSWORDS_DONT_MATCH = "Passwords do not match",
+}
 
 export default function LoginPage() {
   const [dims, setDims] = useState<Dims>({ width: 0, height: 0 });
@@ -23,7 +28,9 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisibility, setPasswordVisibility] = useState(false);
-  const [error, setError] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [error, setError] = useState<LoginPageErrors | null>(null);
+  const [isLogin, setIsLogin] = useState<boolean>(true);
   const router = useRouter();
 
   const setAllPolygons = (width: number, height: number) => {
@@ -38,28 +45,6 @@ export default function LoginPage() {
       setAllPolygons(window.innerWidth, window.innerHeight);
     });
   }, []);
-
-  // authenticates user and redirects to dashboard depending on role
-  const signInWithEmail = async () => {
-    const response = await loginUser(email, password);
-    if (response.success && response.userId) {
-        const idTokenResult = await auth.currentUser?.getIdTokenResult();
-        const role = idTokenResult?.claims.role as Role; // Cast to Role enum
-
-        if (role === undefined || role === Role.REGISTERING) {
-            // Route to create account if role is REGISTERING
-            router.push("/create-account");
-        } else if (role === Role.ADMIN) {
-            router.push("/admin-dashboard");
-        } else if (role === Role.STUDENT) {
-            router.push("/student-dashboard");
-        }
-    } else {
-        setError("Invalid login credentials");
-    }
-    setEmail("");
-    setPassword("");
-};
 
   // renders the polygons in the background of the Login Page from ./polygons.ts
   const drawPolygon = useCallback(
@@ -76,6 +61,47 @@ export default function LoginPage() {
     []
   );
 
+  // authenticates user
+  const signInWithEmail = async () => {
+    const response = await loginUser(email, password);
+    if (response.success) {
+      setEmail("");
+      setPassword("");
+    } else {
+      setError(LoginPageErrors.LOGIN_FAILED)
+    }
+  };
+  
+  // creates account
+  const createAccount = async () => {
+    const response = await signUpUser(email, password);
+    if (response.success) {
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+    } else {
+      setError(LoginPageErrors.ACCOUNT_CREATION_FAILED)
+    }
+  }
+
+  const toggleLogin = () => {
+    setIsLogin(!isLogin);
+    setError(null);
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+  }
+
+  const onPasswordChange = (newPassword: string) => {
+    setPassword(newPassword);
+    setError(newPassword.length < 6 ? LoginPageErrors.PASSWORD_TOO_SHORT : null);
+  }
+
+  const onConfirmPasswordChange = (newConfirmPassword: string) => {
+    setConfirmPassword(newConfirmPassword);
+    setError(newConfirmPassword === password ? null : LoginPageErrors.PASSWORDS_DONT_MATCH)
+  }
+
   return (
     <RequireSignedOut>
       <div className={styles.container}>
@@ -91,12 +117,14 @@ export default function LoginPage() {
             </Layer>
           </Stage>
           <div className={styles.login}>
-            <h1 className={styles.login_title}>Login</h1>
+            <h1 className={styles.login_title}>
+              {isLogin ? "Login" : "Sign Up"}
+            </h1>
             <div className={styles.login_field_container}>
               <input
                 type="email"
                 className={styles.login_field}
-                placeholder="enter email"
+                placeholder="email"
                 value={email}
                 onChange={(ev) => setEmail(ev.target.value)}
               />
@@ -107,7 +135,7 @@ export default function LoginPage() {
                 className={styles.login_field}
                 placeholder="password"
                 value={password}
-                onChange={(ev) => setPassword(ev.target.value)}
+                onChange={(ev) => onPasswordChange(ev.target.value)}
               />
               <i
                 className={
@@ -117,15 +145,32 @@ export default function LoginPage() {
                 onClick={() => setPasswordVisibility(!passwordVisibility)}
               />
             </div>
+            {!isLogin && (
+              <div className={styles.login_field_container}>
+                <input
+                  type="password"
+                  className={styles.login_field}
+                  placeholder="confirm password"
+                  value={confirmPassword}
+                  onChange={(ev) => onConfirmPasswordChange(ev.target.value)}
+                />
+              </div>
+            )}
             <div className={styles.forgot_password}>
               <a href="/reset-password">Forgot password?</a>
             </div>
             <p className={styles.error}>{error}</p>
-            <button className={styles.login_button} onClick={signInWithEmail}>
+            <button className={styles.login_button} onClick={isLogin ? signInWithEmail : createAccount}>
               Submit
             </button>
-            <p>
-              Click <a href="/create-account">here</a> to create an account
+            <p className={styles.toggle_text}>
+              {isLogin ? "Don't" : "Already"} have an account?
+              <br />
+              Click{" "}
+              <a href="#" onClick={toggleLogin}>
+                here
+              </a>{" "}
+              to {isLogin ? "sign up" : "login"}
             </p>
             <div className={styles.google_button}>
               <GoogleButton onClick={() => signInWithGoogle(router)} />

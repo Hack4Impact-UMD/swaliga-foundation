@@ -42,37 +42,32 @@ async function signInWithGoogle(router: AppRouterInstance): Promise<void> {
 
         // Get the current user's ID token result to check custom claims
         const idTokenResult = await auth.currentUser?.getIdTokenResult();
-        const role = idTokenResult?.claims.role;
-
-        if (!role) {
-            await fetch("/api/auth/claims/registering", {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ uid: user.uid }),
-            });
-
-            await auth.currentUser?.getIdToken(true);
-            
-            router.push("/create-account");
-        } else {
-            switch (role) {
-                case Role.ADMIN:
-                    const res = await fetch(`/api/auth/refreshToken`);
-                    const valid = await res.json();
-                    if (!valid) {
-                        router.push(`/api/auth/consent?idToken=${idTokenResult?.token}`);
-                    } else {
-                        router.push("/admin-dashboard");
-                    }
-                    break;
-                case Role.STUDENT:
-                    router.push("/student-dashboard");
-                    break;
-                default:
-                    break;
-            }
+        const role: Role | undefined = idTokenResult?.claims.role as (Role | undefined);
+        switch (role) {
+            case undefined:
+                await fetch("/api/auth/claims/registering", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ uid: user.uid }),
+                });
+                await auth.currentUser?.getIdToken(true);
+                router.push("/create-account");
+            case Role.ADMIN:
+                const res = await fetch(`/api/auth/refreshToken`);
+                const valid = await res.json();
+                if (!valid) {
+                    router.push(`/api/auth/consent?idToken=${idTokenResult?.token}`);
+                } else {
+                    router.push("/admin-dashboard");
+                }
+                break;
+            case Role.STUDENT:
+                router.push("/student-dashboard");
+                break;
+            default:
+                break;
         }
     } catch (error: unknown) {
         if ((error as FirebaseError).code === 'auth/account-exists-with-different-credential') {

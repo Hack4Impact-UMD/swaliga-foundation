@@ -88,7 +88,10 @@
     border: none;
     border-radius: 10px;
     cursor: pointer;
-        
+}
+
+.toggle_text {
+    text-align: center;
 }
 
 .forgot_password {
