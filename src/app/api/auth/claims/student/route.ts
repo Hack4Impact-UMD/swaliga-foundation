@@ -7,7 +7,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const body = await req.json();
   try {
     const role = (await adminAuth.getUser(body.uid)).customClaims?.role;
-    if (!role) {
+    if (role === Role.REGISTERING) {
       await adminAuth.setCustomUserClaims(body.uid, { role: Role.STUDENT });
       return NextResponse.json({ success: true }, { status: 200 });
     }

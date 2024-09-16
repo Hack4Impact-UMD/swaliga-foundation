@@ -8,16 +8,19 @@ export default function RequireSignedOut({
   children: JSX.Element;
 }): JSX.Element {
   const authContext = useAuth();
-  
   if (authContext.loading) {
     return <p>Loading</p>;
   } else if (authContext.user) {
     const role = authContext.token?.claims?.role;
-
-    if (role === Role.REGISTERING) {
-      redirect("/create-account");
-    } else {
-      redirect(role === Role.ADMIN ? '/admin-dashboard' : '/student-dashboard');
+    switch (role) {
+      case Role.REGISTERING:
+        redirect("/create-account");
+      case Role.ADMIN:
+        redirect("/admin-dashboard");
+      case Role.STUDENT:
+        redirect("/student-dashboard");
+      default:
+        break;
     }
   }
 

@@ -12,7 +12,9 @@ import { signUpUser } from "@/lib/firebase/authentication/emailPasswordAuthentic
 import { useRouter } from "next/navigation";
 import { getDoc, doc, setDoc } from "firebase/firestore";
 import { db, auth} from "@/lib/firebase/firebaseConfig";  
-
+import RequireRegisteredAuth from "@/components/auth/RequireRegisteredAuth";
+import Image from "next/image";
+import logoutIcon from "@/../public/icons/logout.svg";
 
 export default function CreateAccountPage() {
   const [dims, setDims] = useState<Dims>({ width: 0, height: 0 });
@@ -502,7 +504,7 @@ export default function CreateAccountPage() {
   };
 
   return (
-    <RequireSignedOut>
+    <RequireRegisteredAuth>
       <div className={styles.container}>
         <div className={styles.background}>
           <Stage className={styles.stage} width={dims.width} height={dims.height}>
@@ -1113,6 +1115,6 @@ export default function CreateAccountPage() {
           </button>
         </div>
       </div>
-    </RequireSignedOut>
+    </RequireRegisteredAuth>
   );
 }

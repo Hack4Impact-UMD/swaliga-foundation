@@ -10,9 +10,18 @@ export default function RequireStudentAuth({ children }: { children: JSX.Element
     return <p>Loading</p>
   } else if (!authContext.user) {
     redirect('/');
-  } else if (authContext.token?.claims?.role != Role.STUDENT) {
-    console.log("Student" + authContext.token)
-    redirect('/admin-dashboard');
+  }
+
+  const role = authContext.token?.claims?.role;
+  switch (role) {
+    case undefined:
+      redirect("/");
+    case Role.REGISTERING:
+      redirect("/create-account");
+    case Role.ADMIN:
+      redirect("/admin-dashboard");
+    default:
+      break;
   }
 
   return <AuthProvider>{children}</AuthProvider>;

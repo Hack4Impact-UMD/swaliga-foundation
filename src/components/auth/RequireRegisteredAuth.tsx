@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import AuthProvider, { useAuth } from "./AuthProvider";
 import { Role } from "@/types/user-types";
 
-export default function RequireAdminAuth({
+export default function RequireRegisteredAuth({
   children,
 }: {
   children: JSX.Element;
@@ -13,13 +13,13 @@ export default function RequireAdminAuth({
   } else if (!authContext.user) {
     redirect("/");
   }
-  
+
   const role = authContext.token?.claims?.role;
   switch (role) {
     case undefined:
       redirect("/");
-    case Role.REGISTERING:
-      redirect("/create-account");
+    case Role.ADMIN:
+      redirect("/admin-dashboard");
     case Role.STUDENT:
       redirect("/student-dashboard");
     default:
