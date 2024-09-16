@@ -219,7 +219,7 @@
     position: absolute;
     bottom: 10px;
     left: 15px;
-    background-color: black;
+    background-color: #295972;
     color: white;
     padding: 7px 15px;
     border: none;
@@ -231,4 +231,11 @@
 
 .backToLoginButton:hover {
     opacity: 0.8;
+}
+
+.logout {
+    width: 30px;
+    height: 30px;
+    align-self: flex-end;
+    cursor: pointer;
 }
