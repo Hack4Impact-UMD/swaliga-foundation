@@ -511,9 +511,6 @@ export default function CreateAccountPage() {
               {polygonOverlay.map(drawPolygon)}
             </Layer>
           </Stage>
-          <div className={styles.createAccountContainer}>
-            <h2 className={styles.createAccountTitle}>Create Account</h2>
-          </div>
           <form className={styles.accountForm} onSubmit={handleSubmit}>
             {/* Fields for Name on School Record */}
             <div className={styles.formGroupRow}>
@@ -1103,8 +1100,16 @@ export default function CreateAccountPage() {
             </button>
           </form>
           {formError && <p className={styles.errorText}>{formError}</p>}
-          <button className={styles.backToLoginButton} onClick={() => router.push("/")}>
-            Back to Login
+          <button
+            className={styles.backToLoginButton}
+            onClick={() => router.push("/")}
+          >
+            <Image
+              src={logoutIcon}
+              alt="Logout Icon"
+              className={styles.logout}
+              onClick={() => auth.signOut()}
+            />
           </button>
         </div>
       </div>
