@@ -7,7 +7,6 @@ import styles from "./CreateAccountPage.module.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { Timestamp } from "firebase/firestore";
 import { User, Gender, Ethnicity } from "@/types/user-types";
-import { signUpUser } from "@/lib/firebase/authentication/emailPasswordAuthentication";
 import { useRouter } from "next/navigation";
 import { getDoc, doc, setDoc } from "firebase/firestore";
 import { db, auth} from "@/lib/firebase/firebaseConfig";  
@@ -166,8 +165,6 @@ export default function CreateAccountPage() {
     bday: string;
     phoneNumber: string;
     gender: Gender;
-    password: string;
-    confirmPassword: string;
     streetName: string;
     city: string;
     state: string;
@@ -198,8 +195,6 @@ export default function CreateAccountPage() {
     bday: "",
     phoneNumber: "",
     gender: Gender.Other,
-    password: "",
-    confirmPassword: "",
     streetName: "",
     city: "",
     state: "",
@@ -270,26 +265,6 @@ export default function CreateAccountPage() {
     console.log("Submitting:", accountInfo);
     try {
         let userUid: string | undefined = auth.currentUser?.uid || undefined; // Ensure userUid is string | undefined
-
-        // If the user is not logged in via Google, proceed with email/password signup
-        if (!userUid) {
-            console.log("Not signed in with Google, proceeding with email/password sign-up");
-
-            // Authenticate the user with email and password
-            const authResponse = await signUpUser(accountInfo.email, accountInfo.password);
-            console.log(authResponse);
-            userUid = authResponse.userId ?? undefined; // Ensure userUid is string | undefined
-            console.log(userUid);
-
-            if (!userUid) {
-                throw new Error("Failed to sign up user: UID is null or undefined.");
-            }
-
-            console.log("Authenticated user, UID:", userUid);
-        } else {
-            // User is already authenticated with Google, use their UID
-            console.log("Signed in with Google, UID:", userUid);
-        }
 
         // Gets current SwaligaID from metadata
         const swaligaIDDoc = await getDoc(doc(db, 'metadata', 'nextUserId'));
@@ -366,10 +341,6 @@ export default function CreateAccountPage() {
     }
 };
 
-
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [passwordError, setPasswordError] = useState("");
   const [bdayError, setBdayError] = useState("");
   const [gradError, setGradError] = useState("");
   const [yearsInSwaligaError, setYearsInSwaligaError] = useState("");
@@ -460,16 +431,6 @@ export default function CreateAccountPage() {
       return;
     }
 
-    if (name === "password" || name === "confirmPassword") {
-      if (name === "password" && accountInfo.confirmPassword && value !== accountInfo.confirmPassword) {
-        setPasswordError("Passwords do not match");
-      } else if (name === "confirmPassword" && accountInfo.password && value !== accountInfo.password) {
-        setPasswordError("Passwords do not match");
-      } else {
-        setPasswordError(""); // Clear error if passwords match
-      }
-    }
-
     if (name === "bday") {
       const regex = /^\d{4}\/\d{2}\/\d{2}$/; // Matches YYYY/MM/DD format
       if (!regex.test(value)) {
@@ -492,14 +453,6 @@ export default function CreateAccountPage() {
       ...prevState,
       [name]: value,
     }));
-  };
-
-  const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
   };
 
   return (
@@ -784,68 +737,6 @@ export default function CreateAccountPage() {
                 >
                   Add Emergency Contact
                 </button>
-              </div>
-            </div>
-
-            {/* Fields for Password with Visibility Toggle */}
-            <div className={styles.formGroupRow}>
-              <div className={styles.formGroup}>
-                <label style={{ color: passwordError ? "red" : "inherit" }}>
-                  Create Password{" "}
-                  <span className={styles.requiredAsterisk}>*</span>
-                </label>
-                <div
-                  className={`${styles.inputIconGroup} ${
-                    passwordError ? styles.inputError : ""
-                  }`}
-                >
-                  <i
-                    className={`${styles.inputIconGroup} ${
-                      passwordError ? styles.inputError : ""
-                    }`}
-                  ></i>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    placeholder="Enter password"
-                    value={accountInfo.password}
-                    onChange={handleChange}
-                  />
-                  <i
-                    className={`fas ${
-                      showPassword ? "fa-eye-slash" : "fa-eye"
-                    }`}
-                    onClick={togglePasswordVisibility}
-                  ></i>
-                </div>
-                <div
-                  className={`${styles.inputIconGroup} ${
-                    passwordError ? styles.inputError : ""
-                  }`}
-                >
-                  <i
-                    className={`${styles.inputIconGroup} ${
-                      passwordError ? styles.inputError : ""
-                    }`}
-                  ></i>
-                  <input
-                    className={passwordError ? styles.inputError : ""}
-                    type={showConfirmPassword ? "text" : "password"}
-                    name="confirmPassword"
-                    placeholder="Confirm password"
-                    value={accountInfo.confirmPassword}
-                    onChange={handleChange}
-                  />
-                  <i
-                    className={`fas ${
-                      showConfirmPassword ? "fa-eye-slash" : "fa-eye"
-                    }`}
-                    onClick={toggleConfirmPasswordVisibility}
-                  ></i>
-                </div>
-                {passwordError && (
-                  <div className={styles.passwordError}>{passwordError}</div>
-                )}
               </div>
             </div>
 
