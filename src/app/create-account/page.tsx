@@ -264,7 +264,11 @@ export default function CreateAccountPage() {
     event.preventDefault();
     console.log("Submitting:", accountInfo);
     try {
-        let userUid: string | undefined = auth.currentUser?.uid || undefined; // Ensure userUid is string | undefined
+        if (auth.currentUser?.uid === undefined) {
+          throw Error("Failed to create account")
+        }
+
+        let userUid: string = auth.currentUser?.uid;
 
         // Gets current SwaligaID from metadata
         const swaligaIDDoc = await getDoc(doc(db, 'metadata', 'nextUserId'));
