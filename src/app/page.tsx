@@ -33,18 +33,18 @@ export default function LoginPage() {
   const [isLogin, setIsLogin] = useState<boolean>(true);
   const router = useRouter();
 
-  const setAllPolygons = (width: number, height: number) => {
-    setDims({ width, height });
-    setPolygonBackground(getPolygonBackground(width, height));
-    setPolygonOverlay(getPolygonOverlay(width, height));
-  };
-
   useEffect(() => {
     setAllPolygons(window.innerWidth, window.innerHeight);
     window.addEventListener("resize", () => {
       setAllPolygons(window.innerWidth, window.innerHeight);
     });
   }, []);
+
+  const setAllPolygons = (width: number, height: number) => {
+    setDims({ width, height });
+    setPolygonBackground(getPolygonBackground(width, height));
+    setPolygonOverlay(getPolygonOverlay(width, height));
+  };
 
   // renders the polygons in the background of the Login Page from ./polygons.ts
   const drawPolygon = useCallback(
@@ -94,7 +94,9 @@ export default function LoginPage() {
 
   const onPasswordChange = (newPassword: string) => {
     setPassword(newPassword);
-    setError(newPassword.length < 6 ? LoginPageErrors.PASSWORD_TOO_SHORT : null);
+    if (!isLogin) {
+      setError(newPassword.length < 6 ? LoginPageErrors.PASSWORD_TOO_SHORT : null);
+    }
   }
 
   const onConfirmPasswordChange = (newConfirmPassword: string) => {
