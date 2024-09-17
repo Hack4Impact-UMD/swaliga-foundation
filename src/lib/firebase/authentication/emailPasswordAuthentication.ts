@@ -5,8 +5,6 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../firebaseConfig";
-import { setDoc, doc } from "firebase/firestore"; // Import Firestore functions
-import { db } from "../firebaseConfig";
 
 type UserAuthResponse = {
   success: boolean;
