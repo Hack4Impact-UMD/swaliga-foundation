@@ -13,7 +13,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
     return NextResponse.json({ error: "Role already set" }, { status: 400 });
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: err }, { status: 500 });
+    console.error("unable to set role");
+    return NextResponse.json({ error: "unable to set role" }, { status: 500 });
   }
 }

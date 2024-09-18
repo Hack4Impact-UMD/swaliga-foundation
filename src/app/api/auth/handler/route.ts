@@ -5,7 +5,6 @@ import { isRefreshTokenValid, setAdminRefreshToken } from "@/lib/googleAuthoriza
 export async function GET(req: NextRequest) {
   const query = req.nextUrl.searchParams;
   if (query.get("code")) {
-    console.log(query.get("code"));
     const authCode = query.get("code") || "";
     const updateNeeded = !(await isRefreshTokenValid());
     if (updateNeeded) {

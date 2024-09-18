@@ -9,10 +9,10 @@ async function verifyGoogleToken(googleAccessToken: string | undefined): Promise
     const data = await response.json();
 
     if (data.error) { 
-        console.error("Invalid Token", data.error);
+        console.error("Invalid Token");
         return false;
     } else {
-        console.log("Token is valid", data);
+        console.log("Token is valid");
         return true;
     }
 }
@@ -34,11 +34,6 @@ async function signInWithGoogle(router: AppRouterInstance): Promise<void> {
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const accessToken = credential?.accessToken;
         const verified = await verifyGoogleToken(accessToken);
-
-        if (!verified) {
-            console.log("Please sign in again");
-            return;
-        }
 
         // Get the current user's ID token result to check custom claims
         const idTokenResult = await auth.currentUser?.getIdTokenResult();
@@ -70,11 +65,7 @@ async function signInWithGoogle(router: AppRouterInstance): Promise<void> {
                 break;
         }
     } catch (error: unknown) {
-        if ((error as FirebaseError).code === 'auth/account-exists-with-different-credential') {
-            console.log("Account exists with different credential.");
-        } else {
-            console.error("Error during Google sign-in:", error);
-        }
+        console.error("unable to sign in with Google")
     }
 }
 
@@ -82,9 +73,6 @@ async function logOut(): Promise<void> {
   const user = auth.currentUser;
   if (user) {
     await auth.signOut();
-    console.log("Sign-out successful");
-  } else {
-    console.log("No user is signed in");
   }
 };
 

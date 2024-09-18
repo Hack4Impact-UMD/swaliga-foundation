@@ -18,7 +18,7 @@ export async function createSurvey(title: string) {
     await setDoc(doc(db, "surveys", form!.formId || ""), form);
     return form;
   } catch (err) {
-    console.log(err);
+    console.error("unable to create survey");
     throw Error('unable to create survey');
   }
 }
@@ -33,7 +33,7 @@ export async function getAllSurveys() {
     const allSurveys: Survey[] = surveySnapshot.docs.map((doc) => doc.data() as Survey);
     return allSurveys;
   } catch (error) {
-    console.error('unable to get all surveys');
+    console.error('unable to get surveys');
     throw new Error('unable to get surveys');
   }
 }
@@ -58,7 +58,7 @@ export async function deleteSurveyByID(surveyId: string) {
       await deleteDoc(doc(db, "surveys", surveyId));
     });
   } catch (err) {
-    console.log(err);
+    console.log("unable to delete survey");
     throw Error('unable to delete survey');
   }
 }

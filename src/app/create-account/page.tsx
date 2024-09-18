@@ -263,7 +263,6 @@ export default function CreateAccountPage() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("Submitting:", accountInfo);
     try {
         if (auth.currentUser?.uid === undefined) {
           throw Error("Failed to create account")
@@ -323,8 +322,6 @@ export default function CreateAccountPage() {
         // Update metadata with new SwaligaID
         await setDoc(doc(db, 'metadata', 'nextUserId'), { nextUserId: newSwaligaID });
 
-        console.log("Account created successfully:", user);
-
         // Set role to STUDENT via API
         await fetch("/api/auth/claims/student", {
             method: "POST",
@@ -341,7 +338,7 @@ export default function CreateAccountPage() {
         router.push("/student-dashboard");
 
     } catch (error) {
-        console.error("Error during account creation:", error);
+        console.error("Error during account creation");
         setFormError("Unexpected error occurred");
     }
 };

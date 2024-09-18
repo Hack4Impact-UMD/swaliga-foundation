@@ -19,8 +19,8 @@ export async function getResponseByID(
       return null;
     }
   } catch (error) {
-    console.error("Error getting response by ID:", error);
-    throw new Error("unable to get response by id");
+    console.error("unable to get response");
+    throw new Error("unable to get response");
   }
 }
 

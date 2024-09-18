@@ -18,7 +18,7 @@ export default function Create({ closeCreate }: CreateProps) {
         createSurvey(surveyTitle);
         closeCreate();
       } catch (error) {
-        console.error("Error occurred while creating survey:", error);
+        console.error("Error creating survey");
         setError("Error creating survey");
       }
     };

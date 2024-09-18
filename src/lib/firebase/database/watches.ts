@@ -21,8 +21,8 @@ export async function createWatch(formId: string, eventType: string) {
 
     return response.data;
   } catch (error) {
-    console.log("Error with creating watch using given information", error);
-    throw error;
+    console.error("Error with creating watch");
+    throw new Error("Error with creating watch");
   }
 }
 
@@ -39,10 +39,7 @@ export async function renewWatch(formId: string, watchId: string) {
     }
     return watch;
   } catch (error) {
-    console.log(
-      "Error with renewing watch using given formId and watchId",
-      error
-    );
-    throw error;
+    console.error("Unable to renew watch");
+    throw new Error("Unable to renew watch");
   }
 }

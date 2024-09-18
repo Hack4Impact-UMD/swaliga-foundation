@@ -40,7 +40,7 @@ export const signUpUser = async (
     await auth.currentUser?.getIdToken(true);
     return { success: true, userId: userUid };
   } catch (error) {
-    console.log(error);
+    console.error("unable to sign up");
     return { success: false, userId: null };
   }
 };
@@ -60,7 +60,7 @@ export const loginUser = async (
     const user = userCredential.user;
     return { success: true, userId: user.uid };
   } catch (error) {
-    console.log(error);
+    console.error("unable to log in");
     return { success: false, userId: null };
   }
 };

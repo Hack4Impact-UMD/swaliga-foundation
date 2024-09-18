@@ -78,7 +78,7 @@ export default function StudentInfoPage({
         setSurveys(surveys.filter(survey => survey) as Survey[]);
       })
     } catch (err) {
-      console.log("Error retrieving student information using given userId");
+      console.error("Error retrieving student information");
     }
     setLoading(false);
   };

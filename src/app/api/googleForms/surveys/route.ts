@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
     };
     return NextResponse.json(form, { status: 200 })
   } catch (err) {
-    console.log(err);
+    console.log("error creating survey");
     return NextResponse.json(
       { error: "error creating survey" },
       { status: 500 }

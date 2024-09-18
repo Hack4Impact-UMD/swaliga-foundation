@@ -32,7 +32,7 @@ export default function Settings() {
       const userData = await getAccountById(id);
       setUserData(userData);
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      console.error("Error fetching user data");
     }
     setLoading(false);
   };
@@ -47,10 +47,9 @@ export default function Settings() {
       await updateAccount(userData?.id as string, {
         ...userData
       });
-      console.log("User data updated successfully");
       router.push("/student-dashboard"); // Redirect to student dashboard
     } catch (error) {
-      console.error("Error updating user data:", error);
+      console.error("Error updating user data");
     }
   }
 

@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json({ message: "all watches renewed"}, { status: 200 });
   } catch (err) {
-    console.error(err);
+    console.error("error renewing all watches");
     return NextResponse.json({ error: 'error renewing all watches' }, { status: 500 });
   }
 }

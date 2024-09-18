@@ -39,7 +39,6 @@ export async function setCredentials(oauth2Client: any) {
   ) {
     const { credentials } = await oauth2Client.refreshAccessToken();
     oauth2Client.setCredentials(credentials);
-    console.log(oauth2Client.credentials);
   }
   const response = await oauth2Client.refreshAccessToken();
   oauth2Client.setCredentials(response.credentials);

@@ -32,12 +32,10 @@ export default function StudentDashboard() {
     useEffect(() => {
       onAuthStateChanged(auth, async (currentUser) => {
         setLoading(true);
-        console.log(currentUser);
         if (currentUser) {
           await fetchCurrentUserData(currentUser.uid);
-          console.log(currentUser.uid);
         } else {
-          console.log("No signed-in user");
+          console.error("No signed-in user");
         }
         setLoading(false);
       });
@@ -55,9 +53,8 @@ export default function StudentDashboard() {
           setResponses(responses.filter(response => response).map(response => response!.formTitle));
         })
       } catch (error) {
-        console.error(error);
-        console.log('ERROR', auth.currentUser);
-        throw new Error('unable to fetch data for student dashboard');
+        console.error("unable to load student dashboard");
+        throw new Error("unable to load student dashboard");
       }
     }
 

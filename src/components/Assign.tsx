@@ -28,7 +28,7 @@ export default function Assign({ studentIds, surveys, closeAssign }: AssignProps
         await assignSurveys(studentIds, selectedSurveyIds);
         closeAssign();
       } catch (error) {
-        console.error("Error occurred while assigning surveys:", error);
+        console.error("unable to assign surveys");
         setError("unable to assign surveys")
       }
     };

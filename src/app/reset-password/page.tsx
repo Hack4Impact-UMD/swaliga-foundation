@@ -23,7 +23,7 @@ export default function ResetPasswordPage() {
       setMessage("Check your email to reset password");
     } catch (error) {
       setError("Email not found");
-      console.error("Error resetting password:", error);
+      console.error("Error resetting password");
     }
   };
 

@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json({ message: "watch event successfully handled" }, { status: 200 });
   } catch (err) {
-    console.log(err);
+    console.log("unable to handle watch event");
     return NextResponse.json({ error: "unable to handle watch event" }, { status: 500 });
   }
 }
