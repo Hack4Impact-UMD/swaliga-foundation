@@ -162,7 +162,10 @@ export default function LoginPage() {
               <a href="/reset-password">Forgot password?</a>
             </div>
             <p className={styles.error}>{error}</p>
-            <button className={styles.login_button} onClick={isLogin ? signInWithEmail : createAccount}>
+            <button
+              className={styles.login_button}
+              onClick={isLogin ? signInWithEmail : createAccount}
+            >
               Submit
             </button>
             <p className={styles.toggle_text}>
@@ -179,6 +182,7 @@ export default function LoginPage() {
             </div>
             <Image
               className={styles.logo}
+              onClick={() => router.push("https://swaligafoundation.org/")}
               src="/swaliga-website-logo.png"
               alt="swaliga-logo"
               width={200}
