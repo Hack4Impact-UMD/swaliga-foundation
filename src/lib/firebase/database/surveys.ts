@@ -1,8 +1,6 @@
 import { GoogleForm, Survey } from '@/types/survey-types';
 import { auth, db } from "../firebaseConfig";
 import { collection, deleteDoc, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
-import { createWatch } from './watches';
-import { Watch } from '@/types/watch-types';
 import { unassignSurveys } from './users';
 import { deleteResponseByID } from './response';
 
