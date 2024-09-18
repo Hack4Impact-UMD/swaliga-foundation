@@ -1,12 +1,15 @@
 import { User } from "@/types/user-types";
 import { Timestamp } from "firebase/firestore";
 import os from 'os';
+import { getSurveyByID } from "./firebase/database/surveys";
+import { Survey, Response } from "@/types/survey-types";
+import { getResponseByID } from "./firebase/database/response";
 
 type flattenDoc = {
   [key: string]: any;
 };
 
-export function exportUsersToCSV(users: User[]): void {
+export function exportUsersToCSV(users: User[], surveys: Survey[]): void {
   const fields: (keyof User)[] = [
     "firstName",
     "lastName",
@@ -21,7 +24,7 @@ export function exportUsersToCSV(users: User[]): void {
     "ethnicity",
     "gender",
     "guardian",
-    "id",
+    "swaligaID",
     "assignedSurveys",
     "completedResponses",
   ];
@@ -37,7 +40,7 @@ export function exportUsersToCSV(users: User[]): void {
             }
             //only mapping guardian's first name and last name for now because if map individual properties of guardian, it will overwrite the student's properties that share the same field spelling
             //can try to map g again like we did with users
-            return user.guardian?.map((g) => `${g.name} (${g.email}, ${g.phone})`).join("; ");
+            return user.guardian?.map((g) => `"${g.name} (${g.email}, ${g.phone})"`).join("; ");
           case "birthdate":
             const timestamp = (user[field] as Timestamp | undefined)?.seconds;
             if (timestamp) {
@@ -50,17 +53,15 @@ export function exportUsersToCSV(users: User[]): void {
               return "";
             }
           case "completedResponses":
+            return user[field].map((responseID: string) => surveys.filter((survey: Survey) => survey.responseIds.includes(responseID))[0].info.title).join("; ");
           case "assignedSurveys":
-            if (!user[field]) {
-              return 0;
-            }
-            return user[field].join("; ");
+            return user[field].map((surveyID: string) => surveys.filter((survey: Survey) => survey.formId === surveyID)[0].info.title).join("; ");
           case "address":
             if (!user[field]) {
               return "N/A";
             }
             const address = user[field];
-            return `${address.street} ${address.city}, ${address.state}, ${address.country} ${address.zip}`;
+            return `"${address.street} ${address.city}, ${address.state}, ${address.country} ${address.zip}"`;
           case "ethnicity":
             const ethnicities: string[] = [];
             user[field].forEach((val) => ethnicities.push(val));

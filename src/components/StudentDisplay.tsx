@@ -172,7 +172,8 @@ export default function StudentDisplay(props: { users: User[]; surveys: Survey[]
           className={styles.button}
           onClick={() =>
             exportUsersToCSV(
-              users.filter((user) => selectedStudentIds.includes(user.id))
+              users.filter((user) => selectedStudentIds.includes(user.id)),
+              surveys
             )
           }
         >
