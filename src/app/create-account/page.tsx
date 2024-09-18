@@ -13,6 +13,7 @@ import { db, auth} from "@/lib/firebase/firebaseConfig";
 import RequireRegisteredAuth from "@/components/auth/RequireRegisteredAuth";
 import Image from "next/image";
 import logoutIcon from "@/../public/icons/logout.svg";
+import { logOut } from "@/lib/firebase/authentication/googleAuthentication";
 
 export default function CreateAccountPage() {
   const [dims, setDims] = useState<Dims>({ width: 0, height: 0 });
@@ -1004,7 +1005,10 @@ export default function CreateAccountPage() {
               src={logoutIcon}
               alt="Logout Icon"
               className={styles.logout}
-              onClick={() => auth.signOut()}
+              onClick={async () => {
+                await logOut();
+                router.refresh();
+              }}
             />
           </button>
         </div>

@@ -78,15 +78,14 @@ async function signInWithGoogle(router: AppRouterInstance): Promise<void> {
     }
 }
 
-
 async function logOut(): Promise<void> {
-    const user = auth.currentUser;
-    if (user) {
-        await signOut(auth);
-        console.log("Sign-out successful");
-    } else {
-        console.log("No user is signed in");
-    }
+  const user = auth.currentUser;
+  if (user) {
+    await auth.signOut();
+    console.log("Sign-out successful");
+  } else {
+    console.log("No user is signed in");
+  }
 };
 
 export { signInWithGoogle, logOut };

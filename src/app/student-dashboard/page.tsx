@@ -10,13 +10,14 @@ import React, { useState, useEffect } from "react";
 import { User } from "@/types/user-types";
 import { Survey } from '@/types/survey-types';
 import { auth } from '@/lib/firebase/firebaseConfig';
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import Loading from "@/components/Loading";
 import { getAccountById } from "@/lib/firebase/database/users";
 import { getSurveyByID } from "@/lib/firebase/database/surveys";
 import { getResponseByID } from "@/lib/firebase/database/response";
 import { logOut } from "@/lib/firebase/authentication/googleAuthentication";
 import RequireStudentAuth from "@/components/auth/RequireStudentAuth";
+import { useRouter } from "next/navigation";
 
 export default function StudentDashboard() {
     const [user, setUser] = useState<User | null>(null);
@@ -25,6 +26,22 @@ export default function StudentDashboard() {
     const [openSurvey, setOpenSurvey] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+
+    const router = useRouter();
+
+    useEffect(() => {
+      onAuthStateChanged(auth, async (currentUser) => {
+        setLoading(true);
+        console.log(currentUser);
+        if (currentUser) {
+          await fetchCurrentUserData(currentUser.uid);
+          console.log(currentUser.uid);
+        } else {
+          console.log("No signed-in user");
+        }
+        setLoading(false);
+      });
+    }, []);
 
     const fetchCurrentUserData = async (userId: string) => {
       try {
@@ -39,24 +56,10 @@ export default function StudentDashboard() {
         })
       } catch (error) {
         console.error(error);
-        logOut();
+        console.log('ERROR', auth.currentUser);
         throw new Error('unable to fetch data for student dashboard');
       }
     }
-
-    useEffect(() => {
-        onAuthStateChanged(auth, async (currentUser) => {
-            setLoading(true);
-            console.log(currentUser);
-            if (currentUser) {
-              await fetchCurrentUserData(currentUser.uid);
-              console.log(currentUser.uid);
-            } else {
-              console.log("No signed-in user");
-            }
-            setLoading(false)
-        })
-    }, []);
 
     const handleSurveyButtonClick = (surveyId: string) => {
         setOpenSurvey(surveyId === openSurvey ? '' : surveyId);
@@ -84,7 +87,10 @@ export default function StudentDashboard() {
             <Link
               href="/"
               className={styles.logOut}
-              onClick={() => signOut(auth)}
+              onClick={async () => {
+                await logOut();
+                router.refresh();
+              }}
             >
               Log Out
             </Link>

@@ -8,7 +8,6 @@ import Link from "next/link";
 import { logOut } from "@/lib/firebase/authentication/googleAuthentication";
 import { getAccountById, updateAccount } from "@/lib/firebase/database/users";
 import { useRouter } from "next/navigation";
-import { Timestamp } from "firebase/firestore";
 import Loading from "@/components/Loading";
 import RequireStudentAuth from "@/components/auth/RequireStudentAuth";
 
@@ -99,7 +98,10 @@ export default function Settings() {
                   className={styles.image}
                 />
                 <p className={styles.link}>Student ID: {userData?.swaligaID}</p>
-                <Link href="/" className={styles.link} onClick={() => logOut()}>
+                <Link href="/" className={styles.link} onClick={async () => {
+                  await logOut();
+                  router.refresh();
+                }}>
                   Log Out
                 </Link>
               </div>

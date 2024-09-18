@@ -8,10 +8,11 @@ import SurveyDisplay from "@/components/SurveyDisplay";
 import RequireAdminAuth from "@/components/auth/RequireAdminAuth";
 import logoutIcon from "@/../public/icons/logout.svg";
 import Image from "next/image";
-import { auth } from "@/lib/firebase/firebaseConfig";
 import Loading from "@/components/Loading";
 import { getAllUsers } from "@/lib/firebase/database/users";
 import { getAllSurveys } from "@/lib/firebase/database/surveys";
+import { logOut } from "@/lib/firebase/authentication/googleAuthentication";
+import { useRouter } from "next/navigation";
 
 export default function AdminDashboard() {
   const [showUserList, setShowUserList] = useState<boolean>(true);
@@ -20,6 +21,8 @@ export default function AdminDashboard() {
   const [surveys, setSurveys] = useState<Survey[]>([]);
   const [forceUpdate, setForceUpdate] = useState<boolean>(false); // not the best way to rerender page once a survey is deleted, but it works
   
+  const router = useRouter();
+
   useEffect(() => {
     // get all users & surveys for use in child components
     // forceUpdate is used to rerender page once a survey is deleted
@@ -48,7 +51,10 @@ export default function AdminDashboard() {
               src={logoutIcon}
               alt="Logout Icon"
               className={styles.logout}
-              onClick={() => auth.signOut()}
+              onClick={async () => {
+                await logOut();
+                router.refresh();
+              }}
             />
             <div className={styles.header}>
               <div className={styles.headerContent}>
