@@ -9,7 +9,7 @@ export async function getOauth2Client() {
     const oauth2Client = new google.auth.OAuth2(
       process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
       process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
-      "http://localhost:3000/api/auth/handler"
+      "https://swaliga-foundation.web.app/api/auth/handler"
     );
     await setCredentials(oauth2Client);
     return oauth2Client;

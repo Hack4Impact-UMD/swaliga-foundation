@@ -9,7 +9,7 @@ import { deleteResponseByID } from './response';
 export async function createSurvey(title: string) {
   // creates a new form in Google Forms
   try {
-    const res = await fetch(`http://localhost:3000/api/googleForms/surveys`, {
+    const res = await fetch(`https://swaliga-foundation.web.app/api/googleForms/surveys`, {
       method: "POST",
       body: JSON.stringify({ title, idToken: await auth.currentUser?.getIdToken() }),
     });

@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     if (updateNeeded) {
       const credsSet = await setAdminRefreshToken(authCode);
       if (credsSet) {
-        return NextResponse.redirect("http://localhost:3000");
+        return NextResponse.redirect("https://swaliga-foundation.web.app");
       }
     }
     redirect("/");
