@@ -30,7 +30,7 @@ export default function Create({ closeCreate }: CreateProps) {
           <div className={styles.centeredOval}>
             <input
               name="surveyTitle"
-              placeholder="Survey Title"
+              placeholder="Survey Name"
               className={styles.inputField}
               value={surveyTitle}
               onChange={(ev) => setSurveyTitle(ev.target.value)}

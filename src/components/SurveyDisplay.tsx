@@ -75,13 +75,8 @@ export default function SurveyDisplay(props: SurveyDisplayProps): JSX.Element {
   // defines the conditions that will be used to filter the Survey table
   const surveyFilterConditions: FilterCondition<Survey>[] = [
     {
-      id: "id",
-      name: "ID",
-      inputType: "text",
-    },
-    {
-      id: "title",
-      name: "Title",
+      id: "name",
+      name: "Name",
       inputType: "text",
     },
   ];
@@ -91,9 +86,9 @@ export default function SurveyDisplay(props: SurveyDisplayProps): JSX.Element {
     survey: Survey,
     filterValues: { [key: string]: any }
   ): boolean => {
-    const { id, title } = filterValues;
+    const { id, name } = filterValues;
     if (id && survey.formId !== id) return false;
-    if (title && !survey.info.title.toLowerCase().includes(title.toLowerCase()))
+    if (name && !survey.info.title.toLowerCase().includes(name.toLowerCase()))
       return false;
     return true;
   };

@@ -33,15 +33,25 @@ export default function SendEmailModal(props: SendEmailModalProps) {
   return (
     <Modal closeModal={closeModal} width={750} height={750}>
       <div className={styles.container}>
+        <div className={styles.title}>Send Emails</div>
         <div className={styles.subjectContainer}>
           <h5 className={styles.text}>Subject</h5>
-          <input className={styles.subjectInput} type="text" value={subject} onChange={(e) => setSubject(e.target.value)}/>
+          <input
+            className={styles.subjectInput}
+            type="text"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+          />
         </div>
         <div className={styles.contentContainer}>
           <h5 className={styles.text}>Content</h5>
-          <textarea className={styles.contentInput} value={content} onChange={(e) => setContent(e.target.value)}/>
+          <textarea
+            className={styles.contentInput}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          />
         </div>
-        <button className={styles.button} onClick={sendEmails} >
+        <button className={styles.button} onClick={sendEmails}>
           Send Emails
         </button>
       </div>

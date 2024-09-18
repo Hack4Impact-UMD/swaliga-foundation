@@ -45,7 +45,7 @@ export default function StudentDisplay(props: { users: User[]; surveys: Survey[]
     {
       id: "id",
       name: "ID",
-      getValue: (user: User) => <p>{user.id}</p>,
+      getValue: (user: User) => <p>{user.swaligaID}</p>,
     },
     {
       id: "birthdate",
