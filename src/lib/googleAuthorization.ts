@@ -4,14 +4,16 @@ import { db } from "./firebase/firebaseConfig";
 import { adminDb } from "./firebase/firebaseAdminConfig";
 import { DocumentData } from "firebase-admin/firestore";
 
-export async function getOauth2Client() {
+export async function getOauth2Client(setCreds: boolean = true) {
   try {
     const oauth2Client = new google.auth.OAuth2(
       process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
       process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
       "https://swaliga-foundation.web.app/api/auth/handler"
     );
-    await setCredentials(oauth2Client);
+    if (setCreds) {
+      await setCredentials(oauth2Client);
+    }
     return oauth2Client;
   } catch (err) {
     throw new Error("failed to set credentials");
@@ -51,7 +53,7 @@ export async function getAuthUrl() {
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/gmail.send",
   ];
-  const oauth2Client = await getOauth2Client();
+  const oauth2Client = await getOauth2Client(false);
   return oauth2Client.generateAuthUrl({
     access_type: "offline",
     scope: scopes,
@@ -74,11 +76,11 @@ export async function isRefreshTokenValid(): Promise<boolean> {
 
 export async function setAdminRefreshToken(authCode: string) {
   try {
-    const oauth2Client = await getOauth2Client();
+    const oauth2Client = await getOauth2Client(false);
     const { tokens } = await oauth2Client.getToken(authCode);
     oauth2Client.setCredentials(tokens);
     await adminDb.runTransaction(async (transaction) => {
-      transaction.update(adminDb.doc("/metadata/adminRefreshToken"), {
+      transaction.set(adminDb.doc("/metadata/adminRefreshToken"), {
         adminRefreshToken: tokens.refresh_token,
       })
     })
