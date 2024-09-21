@@ -112,7 +112,7 @@ export default function StudentDisplay(props: { users: User[]; surveys: Survey[]
   const includeUser = (user: User, filterValues: { [key: string]: any }) => {
     const { id, firstName, lastName, gradYear, age, gender, ethnicity, city } =
       filterValues;
-    if (id && user.id !== id) return false;
+    if (id && user.swaligaID !== parseInt(id)) return false;
     if (
       firstName &&
       !user.firstName.toLowerCase().includes(firstName.toLowerCase())
