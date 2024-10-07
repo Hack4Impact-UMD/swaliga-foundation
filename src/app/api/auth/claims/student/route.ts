@@ -8,7 +8,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     const role = (await adminAuth.getUser(body.uid)).customClaims?.role;
     if (role === Role.REGISTERING) {
-      await adminAuth.setCustomUserClaims(body.uid, { role: Role.ADMIN });
+      await adminAuth.setCustomUserClaims(body.uid, { role: Role.STUDENT });
       return NextResponse.json({ success: true }, { status: 200 });
     }
     return NextResponse.json({ error: "Role already set" }, { status: 400 });
