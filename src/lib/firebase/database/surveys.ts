@@ -9,7 +9,10 @@ export async function createSurvey(title: string) {
   try {
     const res = await fetch(`https://swaliga-foundation.web.app/api/googleForms/surveys`, {
       method: "POST",
-      body: JSON.stringify({ title, idToken: await auth.currentUser?.getIdToken() }),
+      body: JSON.stringify({
+        title,
+        idToken: await auth.currentUser?.getIdToken(),
+      }),
     });
     if (res.status !== 200) {
       throw new Error('unable to create survey');

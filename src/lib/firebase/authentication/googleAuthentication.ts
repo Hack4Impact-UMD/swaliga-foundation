@@ -1,8 +1,9 @@
 import { Role } from '@/types/user-types';
-import { auth } from '../firebaseConfig';
+import { auth, functions } from '../firebaseConfig';
 import { FirebaseError } from 'firebase/app';
 import { signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { httpsCallable } from 'firebase/functions';
 
 async function verifyGoogleToken(googleAccessToken: string | undefined): Promise<boolean> {
     const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?access_token=${googleAccessToken}`);
@@ -53,7 +54,10 @@ async function signInWithGoogle(router: AppRouterInstance): Promise<void> {
                 const res = await fetch(`/api/auth/refreshToken`);
                 const valid = await res.json();
                 if (!valid) {
-                    router.push(`/api/auth/consent?idToken=${idTokenResult?.token}`);
+                    console.log(auth.currentUser)
+                    console.log('valid', valid)
+                    const validateToken = httpsCallable(functions, "checkRefreshToken")
+                    await validateToken();
                 } else {
                     router.push("/admin-dashboard");
                 }
