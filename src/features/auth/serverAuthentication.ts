@@ -1,5 +1,5 @@
 import { Role } from "@/types/user-types";
-import { adminAuth } from "../firebaseAdminConfig";
+import { adminAuth } from "../../config/firebaseAdminConfig";
 
 export async function isUserAdmin(idToken: string): Promise<boolean> {
   try {

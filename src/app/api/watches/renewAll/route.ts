@@ -1,5 +1,5 @@
-import { getAllSurveys } from "@/lib/firebase/database/surveys";
-import { renewWatch } from "@/lib/firebase/database/watches";
+import { getAllSurveys } from "@/data/surveys";
+import { renewWatch } from "@/data/watches";
 import { Survey } from "@/types/survey-types";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       renewWatch(survey.formId, survey.responsesWatch.id);
       renewWatch(survey.formId, survey.schemaWatch.id);
     });
-    return NextResponse.json({ message: "all watches renewed"}, { status: 200 });
+    return NextResponse.json({ message: "all watches renewed" }, { status: 200 });
   } catch (err) {
     console.error("error renewing all watches");
     return NextResponse.json({ error: 'error renewing all watches' }, { status: 500 });

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { redirect } from "next/navigation";
-import { isRefreshTokenValid, setAdminRefreshToken } from "@/lib/googleAuthorization";
+import { isRefreshTokenValid, setAdminRefreshToken } from "@/features/auth/googleAuthorization";
 
 export async function GET(req: NextRequest) {
   const query = req.nextUrl.searchParams;

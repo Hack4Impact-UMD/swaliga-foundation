@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useEffect, useState, useCallback } from "react";
 import "konva/lib/shapes/Line";
@@ -7,9 +7,12 @@ import { Polygon, Dims } from "@/types/konva-types";
 import styles from "./LoginPage.module.css";
 import { getPolygonBackground, getPolygonOverlay } from "./polygons";
 import GoogleButton from "react-google-button";
-import { loginUser, signUpUser } from "@/lib/firebase/authentication/emailPasswordAuthentication";
-import { signInWithGoogle } from "@/lib/firebase/authentication/googleAuthentication";
-import RequireSignedOut from "@/components/auth/RequireSignedOut";
+import {
+  loginUser,
+  signUpUser,
+} from "@/features/auth/emailPasswordAuthentication";
+import { signInWithGoogle } from "@/features/auth/googleAuthentication";
+import RequireSignedOut from "@/features/auth/RequireSignedOut";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -68,10 +71,10 @@ export default function LoginPage() {
       setEmail("");
       setPassword("");
     } else {
-      setError(LoginPageErrors.LOGIN_FAILED)
+      setError(LoginPageErrors.LOGIN_FAILED);
     }
   };
-  
+
   // creates account
   const createAccount = async () => {
     const response = await signUpUser(email, password);
@@ -80,9 +83,9 @@ export default function LoginPage() {
       setPassword("");
       setConfirmPassword("");
     } else {
-      setError(LoginPageErrors.ACCOUNT_CREATION_FAILED)
+      setError(LoginPageErrors.ACCOUNT_CREATION_FAILED);
     }
-  }
+  };
 
   const toggleLogin = () => {
     setIsLogin(!isLogin);
@@ -90,19 +93,25 @@ export default function LoginPage() {
     setEmail("");
     setPassword("");
     setConfirmPassword("");
-  }
+  };
 
   const onPasswordChange = (newPassword: string) => {
     setPassword(newPassword);
     if (!isLogin) {
-      setError(newPassword.length < 6 ? LoginPageErrors.PASSWORD_TOO_SHORT : null);
+      setError(
+        newPassword.length < 6 ? LoginPageErrors.PASSWORD_TOO_SHORT : null
+      );
     }
-  }
+  };
 
   const onConfirmPasswordChange = (newConfirmPassword: string) => {
     setConfirmPassword(newConfirmPassword);
-    setError(newConfirmPassword === password ? null : LoginPageErrors.PASSWORDS_DONT_MATCH)
-  }
+    setError(
+      newConfirmPassword === password
+        ? null
+        : LoginPageErrors.PASSWORDS_DONT_MATCH
+    );
+  };
 
   return (
     <RequireSignedOut>

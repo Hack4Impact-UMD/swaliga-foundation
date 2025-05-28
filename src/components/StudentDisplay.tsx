@@ -6,14 +6,17 @@ import styles from "./StudentDisplay.module.css";
 import { useState } from "react";
 import { FilterCondition } from "./Filter";
 import Assign from "./Assign";
-import { exportUsersToCSV } from "@/lib/exportCSV";
+import { exportUsersToCSV } from "@/features/dataExporting/exportCSV";
 import { Timestamp } from "firebase/firestore";
 import Table, { Column } from "./Table";
 import moment from "moment";
 import { useRouter } from "next/navigation";
 import SendEmailModal from "./SendEmailModal";
 
-export default function StudentDisplay(props: { users: User[]; surveys: Survey[] }) {
+export default function StudentDisplay(props: {
+  users: User[];
+  surveys: Survey[];
+}) {
   const { users, surveys } = props;
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
   const [isAssignOpen, setIsAssignOpen] = useState<boolean>(false);
@@ -35,7 +38,10 @@ export default function StudentDisplay(props: { users: User[]; surveys: Survey[]
       id: "name",
       name: "Name",
       getValue: (user: User) => (
-        <p className={styles.cursorPointer} onClick={() => router.push(`/user/${user.id}`)}>
+        <p
+          className={styles.cursorPointer}
+          onClick={() => router.push(`/user/${user.id}`)}
+        >
           {user.middleName
             ? `${user.firstName} ${user.middleName} ${user.lastName}`
             : `${user.firstName} ${user.lastName}`}

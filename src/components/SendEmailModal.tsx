@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Modal from "./Modal";
-import styles from './SendEmailModal.module.css'
-import { auth } from "@/lib/firebase/firebaseConfig";
+import styles from "./SendEmailModal.module.css";
+import { auth } from "@/config/firebaseConfig";
 
 interface SendEmailModalProps {
   emails: string[];
@@ -13,22 +13,21 @@ export default function SendEmailModal(props: SendEmailModalProps) {
   const [subject, setSubject] = useState<string>("");
   const [content, setContent] = useState<string>("");
 
-
   const sendEmails = async () => {
-    const response = await fetch('/api/email', {
-      method: 'POST',
+    const response = await fetch("/api/email", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         recipients: emails,
         subject: subject,
         text: content,
-        idToken: await auth.currentUser?.getIdToken()
-      })
+        idToken: await auth.currentUser?.getIdToken(),
+      }),
     });
     closeModal();
-  }
+  };
 
   return (
     <Modal closeModal={closeModal} width={750} height={750}>

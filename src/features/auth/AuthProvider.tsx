@@ -1,11 +1,7 @@
-'use client';
-import {
-  onIdTokenChanged,
-  User,
-  IdTokenResult,
-} from "@firebase/auth";
+"use client";
+import { onIdTokenChanged, User, IdTokenResult } from "@firebase/auth";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { auth } from "@/lib/firebase/firebaseConfig";
+import { auth } from "@/config/firebaseConfig";
 
 interface AuthContextType {
   user: User | null;
@@ -15,7 +11,11 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>(null!);
 
-export default function AuthProvider({children}: {children: JSX.Element}): JSX.Element {
+export default function AuthProvider({
+  children,
+}: {
+  children: JSX.Element;
+}): JSX.Element {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<IdTokenResult | null>(null);
   const [loading, setLoading] = useState<boolean>(true);

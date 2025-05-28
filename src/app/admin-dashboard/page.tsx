@@ -5,13 +5,13 @@ import { User } from "@/types/user-types";
 import { Survey } from "@/types/survey-types";
 import StudentDisplay from "@/components/StudentDisplay";
 import SurveyDisplay from "@/components/SurveyDisplay";
-import RequireAdminAuth from "@/components/auth/RequireAdminAuth";
+import RequireAdminAuth from "@/features/auth/RequireAdminAuth";
 import logoutIcon from "@/../public/icons/logout.svg";
 import Image from "next/image";
 import Loading from "@/components/Loading";
-import { getAllUsers } from "@/lib/firebase/database/users";
-import { getAllSurveys } from "@/lib/firebase/database/surveys";
-import { logOut } from "@/lib/firebase/authentication/googleAuthentication";
+import { getAllUsers } from "@/data/users";
+import { getAllSurveys } from "@/data/surveys";
+import { logOut } from "@/features/auth/googleAuthentication";
 import { useRouter } from "next/navigation";
 
 export default function AdminDashboard() {
@@ -20,7 +20,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [surveys, setSurveys] = useState<Survey[]>([]);
   const [forceUpdate, setForceUpdate] = useState<boolean>(false); // not the best way to rerender page once a survey is deleted, but it works
-  
+
   const router = useRouter();
 
   useEffect(() => {

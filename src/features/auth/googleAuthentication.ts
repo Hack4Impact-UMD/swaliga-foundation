@@ -1,5 +1,5 @@
 import { Role } from '@/types/user-types';
-import { auth, functions } from '../firebaseConfig';
+import { auth, functions } from '../../config/firebaseConfig';
 import { FirebaseError } from 'firebase/app';
 import { signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
@@ -9,7 +9,7 @@ async function verifyGoogleToken(googleAccessToken: string | undefined): Promise
     const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?access_token=${googleAccessToken}`);
     const data = await response.json();
 
-    if (data.error) { 
+    if (data.error) {
         console.error("Invalid Token");
         return false;
     } else {
@@ -20,7 +20,7 @@ async function verifyGoogleToken(googleAccessToken: string | undefined): Promise
 
 async function signInWithGoogle(router: AppRouterInstance): Promise<void> {
     const provider = new GoogleAuthProvider();
-    
+
     // Add scopes for access to Google Forms, Spreadsheets, Gmail
     provider.addScope("https://www.googleapis.com/auth/forms.body");
     provider.addScope("https://www.googleapis.com/auth/forms.responses.readonly");
@@ -74,10 +74,10 @@ async function signInWithGoogle(router: AppRouterInstance): Promise<void> {
 }
 
 async function logOut(): Promise<void> {
-  const user = auth.currentUser;
-  if (user) {
-    await auth.signOut();
-  }
+    const user = auth.currentUser;
+    if (user) {
+        await auth.signOut();
+    }
 };
 
 export { signInWithGoogle, logOut };

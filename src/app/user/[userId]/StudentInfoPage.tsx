@@ -14,10 +14,10 @@ import { Survey, Response } from "@/types/survey-types";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Loading from "@/components/Loading";
-import { getAccountById } from "@/lib/firebase/database/users";
-import { getSurveyByID } from "@/lib/firebase/database/surveys";
-import { getResponseByID } from "@/lib/firebase/database/response";
-import RequireAdminAuth from "@/components/auth/RequireAdminAuth";
+import { getAccountById } from "@/data/users";
+import { getSurveyByID } from "@/data/surveys";
+import { getResponseByID } from "@/data/response";
+import RequireAdminAuth from "@/features/auth/RequireAdminAuth";
 
 // converts birthdate to grade, so grade does not need to be updated in database
 function getGrade(gradYr: number | undefined) {
@@ -71,12 +71,16 @@ export default function StudentInfoPage({
       setUser(user);
 
       // get response info
-      Promise.all(user.completedResponses.map(responseId => getResponseByID(responseId))).then(responses => {
-        setResponses(responses.filter(response => response) as Response[]);
-      })
-      Promise.all(user.assignedSurveys.map(surveyId => getSurveyByID(surveyId))).then(surveys => {
-        setSurveys(surveys.filter(survey => survey) as Survey[]);
-      })
+      Promise.all(
+        user.completedResponses.map((responseId) => getResponseByID(responseId))
+      ).then((responses) => {
+        setResponses(responses.filter((response) => response) as Response[]);
+      });
+      Promise.all(
+        user.assignedSurveys.map((surveyId) => getSurveyByID(surveyId))
+      ).then((surveys) => {
+        setSurveys(surveys.filter((survey) => survey) as Survey[]);
+      });
     } catch (err) {
       console.error("Error retrieving student information");
     }
@@ -105,7 +109,9 @@ export default function StudentInfoPage({
             <p className={styles.header}>{`${user?.firstName ?? "first name"} ${
               user?.lastName ?? "last name"
             }`}</p>
-            <p className={styles.studentId}>{`Student ID: ${user?.swaligaID}`}</p>
+            <p
+              className={styles.studentId}
+            >{`Student ID: ${user?.swaligaID}`}</p>
           </div>
           <div>
             <table className={styles.table}>

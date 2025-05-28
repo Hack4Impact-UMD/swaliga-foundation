@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminAuth } from "@/lib/firebase/firebaseAdminConfig";
+import { adminAuth } from "@/config/firebaseAdminConfig";
 import { Role } from "@/types/user-types";
 
 // sets the role user claim to "REGISTERING" for new account with the given uid

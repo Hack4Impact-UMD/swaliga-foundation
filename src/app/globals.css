@@ -1,27 +1,30 @@
 @import-normalize;
 
-html, body, #app, #app>div {
-    height: 100%;
-    margin: 0; /* So that the login page takes up the full screen */
-    padding: 0; /* So that the login page takes up the full screen */
+html,
+body,
+#app,
+#app > div {
+  height: 100%;
+  margin: 0; /* So that the login page takes up the full screen */
+  padding: 0; /* So that the login page takes up the full screen */
 }
 
 @font-face {
-    font-family: 'Poppins-Medium';
-    src: url('../lib/fonts/Poppins/Poppins-Medium.ttf');
+  font-family: "Poppins-Medium";
+  src: url("../../public/fonts/Poppins/Poppins-Medium.ttf");
 }
 
 @font-face {
-    font-family: 'Poppins-Regular';
-    src: url('../lib/fonts/Poppins/Poppins-Regular.ttf');
+  font-family: "Poppins-Regular";
+  src: url("../../public/fonts/Poppins/Poppins-Regular.ttf");
 }
 
 @font-face {
-    font-family: 'Poppins-SemiBold';
-    src: url('../lib/fonts/Poppins/Poppins-SemiBold.ttf');
+  font-family: "Poppins-SemiBold";
+  src: url("../../public/fonts/Poppins/Poppins-SemiBold.ttf");
 }
 
 @font-face {
-    font-family: 'Poppins-Thin';
-    src: url('../lib/fonts/Poppins/Poppins-Thin.ttf');
+  font-family: "Poppins-Thin";
+  src: url("../../public/fonts/Poppins/Poppins-Thin.ttf");
 }

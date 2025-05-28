@@ -1,6 +1,6 @@
-import { isUserAdmin } from "@/lib/firebase/authentication/serverAuthentication";
-import { createWatch } from "@/lib/firebase/database/watches";
-import { getFormsClient } from "@/lib/googleAuthorization";
+import { isUserAdmin } from "@/features/auth/serverAuthentication";
+import { createWatch } from "@/data/watches";
+import { getFormsClient } from "@/features/auth/googleAuthorization";
 import { GoogleForm, Survey } from "@/types/survey-types";
 import { Watch } from "@/types/watch-types";
 import { NextRequest, NextResponse } from "next/server";

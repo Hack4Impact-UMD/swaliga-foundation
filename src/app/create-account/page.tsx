@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useState, useEffect, useCallback, ChangeEvent } from "react";
 import "konva/lib/shapes/Line";
 import { Stage, Layer, Line } from "react-konva/lib/ReactKonvaCore";
@@ -9,11 +9,11 @@ import { Timestamp } from "firebase/firestore";
 import { User, Gender, Ethnicity } from "@/types/user-types";
 import { useRouter } from "next/navigation";
 import { getDoc, doc, setDoc } from "firebase/firestore";
-import { db, auth} from "@/lib/firebase/firebaseConfig";  
-import RequireRegisteredAuth from "@/components/auth/RequireRegisteredAuth";
+import { db, auth } from "@/config/firebaseConfig";
+import RequireRegisteredAuth from "@/features/auth/RequireRegisteredAuth";
 import Image from "next/image";
 import logoutIcon from "@/../public/icons/logout.svg";
-import { logOut } from "@/lib/firebase/authentication/googleAuthentication";
+import { logOut } from "@/features/auth/googleAuthentication";
 
 export default function CreateAccountPage() {
   const [dims, setDims] = useState<Dims>({ width: 0, height: 0 });
@@ -36,25 +36,40 @@ export default function CreateAccountPage() {
     const coords: Polygon[] = [
       {
         points: [
-          0, 0, 0,
+          0,
+          0,
+          0,
           dims.height / 30,
           (50 / 100) * dims.width,
           dims.height,
-          dims.width, dims.height, dims.width,
+          dims.width,
+          dims.height,
+          dims.width,
           0.45 * dims.height,
-          dims.height / 60, 0,
+          dims.height / 60,
+          0,
         ],
         fill: "#D0D12A",
       },
       {
         points: [
-          0, dims.height / 60, 0, dims.height, (50 / 85) * dims.width, dims.height,
+          0,
+          dims.height / 60,
+          0,
+          dims.height,
+          (50 / 85) * dims.width,
+          dims.height,
         ],
         fill: "#295972",
       },
       {
         points: [
-          dims.height / 60, 0, dims.width, 0, dims.width, 0.45 * dims.height,
+          dims.height / 60,
+          0,
+          dims.width,
+          0,
+          dims.width,
+          0.45 * dims.height,
         ],
         fill: "#295972",
       },
@@ -66,56 +81,80 @@ export default function CreateAccountPage() {
     const coords: Polygon[] = [
       {
         points: [
-          dims.width / 2, 0.15 * dims.height,
-          0.875 * dims.width, 0.15 * dims.height,
-          0.875 * dims.width, 0.39375 * dims.height,
-          dims.width / 2, 0.225 * dims.height,
+          dims.width / 2,
+          0.15 * dims.height,
+          0.875 * dims.width,
+          0.15 * dims.height,
+          0.875 * dims.width,
+          0.39375 * dims.height,
+          dims.width / 2,
+          0.225 * dims.height,
         ],
         fill: "#D0D12A",
       },
       {
         points: [
-          dims.width / 2, 0.225 * dims.height,
-          0.875 * dims.width, 0.39375 * dims.height,
-          0.875 * dims.width, 0.85 * dims.height,
-          0.5 * dims.width, 0.85 * dims.height,
+          dims.width / 2,
+          0.225 * dims.height,
+          0.875 * dims.width,
+          0.39375 * dims.height,
+          0.875 * dims.width,
+          0.85 * dims.height,
+          0.5 * dims.width,
+          0.85 * dims.height,
         ],
         fill: "#295972",
       },
     ];
     const borderPolygon1 = {
       points: [
-        dims.width / 2 + 670, 0.15 * dims.height - 55, // top-left corner
-        dims.width / 2 + 678, 0.15 * dims.height - 54, // top-right corner
-        dims.width / 2 + 678, 0.15 * dims.height + 557, // bottom-right corner
-        dims.width / 2 + 670, 0.15 * dims.height + 556, // bottom-left corner
+        dims.width / 2 + 670,
+        0.15 * dims.height - 55, // top-left corner
+        dims.width / 2 + 678,
+        0.15 * dims.height - 54, // top-right corner
+        dims.width / 2 + 678,
+        0.15 * dims.height + 557, // bottom-right corner
+        dims.width / 2 + 670,
+        0.15 * dims.height + 556, // bottom-left corner
       ],
       fill: "white",
     };
     const borderPolygon2 = {
       points: [
-        dims.width / 2 - 591, 0.15 * dims.height - 55, // top-left corner
-        dims.width / 2 - 583, 0.15 * dims.height - 54, // top-right corner
-        dims.width / 2 - 583, 0.15 * dims.height + 557, // bottom-right corner
-        dims.width / 2 - 591, 0.15 * dims.height + 556, // bottom-left corner
+        dims.width / 2 - 591,
+        0.15 * dims.height - 55, // top-left corner
+        dims.width / 2 - 583,
+        0.15 * dims.height - 54, // top-right corner
+        dims.width / 2 - 583,
+        0.15 * dims.height + 557, // bottom-right corner
+        dims.width / 2 - 591,
+        0.15 * dims.height + 556, // bottom-left corner
       ],
       fill: "white",
     };
     const borderPolygon3 = {
       points: [
-        dims.width / 2 - 583, 0.15 * dims.height + 549, // bottom-right corner
-        dims.width / 2 - 591, 0.15 * dims.height + 557, // bottom-left corner
-        dims.width / 2 + 678, 0.15 * dims.height + 557, // bottom-right corner
-        dims.width / 2 + 670, 0.15 * dims.height + 549, // bottom-left corner
+        dims.width / 2 - 583,
+        0.15 * dims.height + 549, // bottom-right corner
+        dims.width / 2 - 591,
+        0.15 * dims.height + 557, // bottom-left corner
+        dims.width / 2 + 678,
+        0.15 * dims.height + 557, // bottom-right corner
+        dims.width / 2 + 670,
+        0.15 * dims.height + 549, // bottom-left corner
       ],
       fill: "white",
     };
     const borderPolygon4 = {
       points: [
-        dims.width / 2 - 591, 0.15 * dims.height - 57, // bottom-right corner
-        dims.width / 2 - 591, 0.15 * dims.height - 49, // bottom-left corner
-        dims.width / 2 + 678, 0.15 * dims.height - 49, // bottom-right corner
-        dims.width / 2 + 678, 0.15 * dims.height - 57, // bottom-left corner
+        dims.width / 2 - 591,
+        0.15 * dims.height - 57, // bottom-right corner
+        dims.width / 2 - 591,
+        0.15 * dims.height - 49, // bottom-left corner
+        dims.width / 2 + 678,
+        0.15 * dims.height - 49, // bottom-right corner
+        dims.width / 2 + 678,
+        0.15 * dims.height - 57, // bottom-left corner
       ],
       fill: "white",
     };
@@ -204,7 +243,7 @@ export default function CreateAccountPage() {
     school: "",
     grad: "",
     yearsInSwaliga: "",
-    swaligaID: 0, 
+    swaligaID: 0,
     raceEthnicity: {
       blackOrAfricanAmerican: false,
       indigenous: false,
@@ -264,84 +303,89 @@ export default function CreateAccountPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-        if (auth.currentUser?.uid === undefined) {
-          throw Error("Failed to create account")
-        }
+      if (auth.currentUser?.uid === undefined) {
+        throw Error("Failed to create account");
+      }
 
-        let userUid: string = auth.currentUser?.uid;
+      let userUid: string = auth.currentUser?.uid;
 
-        // Gets current SwaligaID from metadata
-        const swaligaIDDoc = await getDoc(doc(db, 'metadata', 'nextUserId'));
-        let currentSwaligaID = swaligaIDDoc.exists() ? swaligaIDDoc.data().nextUserId : 0;
+      // Gets current SwaligaID from metadata
+      const swaligaIDDoc = await getDoc(doc(db, "metadata", "nextUserId"));
+      let currentSwaligaID = swaligaIDDoc.exists()
+        ? swaligaIDDoc.data().nextUserId
+        : 0;
 
-        // Increment SwaligaID for the new user
-        const newSwaligaID = currentSwaligaID + 1;
+      // Increment SwaligaID for the new user
+      const newSwaligaID = currentSwaligaID + 1;
 
-        // Create the user object to save in Firestore
-        const user: User = {
-            isAdmin: false,
-            firstName: accountInfo.firstName,
-            middleName: accountInfo.middleName,
-            lastName: accountInfo.lastName,
-            email: accountInfo.email,
-            phone: parseInt(accountInfo.phoneNumber),
-            gender: accountInfo.gender,
-            birthdate: Timestamp.fromDate(new Date(accountInfo.bday)),
-            guardian: accountInfo.emergencyContacts.map(contact => ({
-                name: contact.name,
-                email: contact.email,
-                phone: parseInt(contact.phone),
-                address: {
-                    street: contact.street,
-                    city: contact.city,
-                    state: contact.state,
-                    zip: parseInt(contact.zip),
-                    country: contact.country,
-                }
-            })),
-            id: userUid, // Use the UID from Firebase Authentication
-            address: {
-                street: accountInfo.streetName,
-                city: accountInfo.city,
-                state: accountInfo.state,
-                zip: parseInt(accountInfo.zipCode),
-                country: accountInfo.country,
-            },
-            school: accountInfo.school,
-            gradYear: parseInt(accountInfo.grad),
-            yearsWithSwaliga: parseInt(accountInfo.yearsInSwaliga),
-            swaligaID: newSwaligaID,
-            ethnicity: Object.keys(accountInfo.raceEthnicity).filter(key => accountInfo.raceEthnicity[key as keyof RaceEthnicity]),
-            assignedSurveys: [],
-            completedResponses: [],
-        };
+      // Create the user object to save in Firestore
+      const user: User = {
+        isAdmin: false,
+        firstName: accountInfo.firstName,
+        middleName: accountInfo.middleName,
+        lastName: accountInfo.lastName,
+        email: accountInfo.email,
+        phone: parseInt(accountInfo.phoneNumber),
+        gender: accountInfo.gender,
+        birthdate: Timestamp.fromDate(new Date(accountInfo.bday)),
+        guardian: accountInfo.emergencyContacts.map((contact) => ({
+          name: contact.name,
+          email: contact.email,
+          phone: parseInt(contact.phone),
+          address: {
+            street: contact.street,
+            city: contact.city,
+            state: contact.state,
+            zip: parseInt(contact.zip),
+            country: contact.country,
+          },
+        })),
+        id: userUid, // Use the UID from Firebase Authentication
+        address: {
+          street: accountInfo.streetName,
+          city: accountInfo.city,
+          state: accountInfo.state,
+          zip: parseInt(accountInfo.zipCode),
+          country: accountInfo.country,
+        },
+        school: accountInfo.school,
+        gradYear: parseInt(accountInfo.grad),
+        yearsWithSwaliga: parseInt(accountInfo.yearsInSwaliga),
+        swaligaID: newSwaligaID,
+        ethnicity: Object.keys(accountInfo.raceEthnicity).filter(
+          (key) => accountInfo.raceEthnicity[key as keyof RaceEthnicity]
+        ),
+        assignedSurveys: [],
+        completedResponses: [],
+      };
 
-        // Save user document in Firestore
-        await setDoc(doc(db, 'users', userUid), user);
+      // Save user document in Firestore
+      await setDoc(doc(db, "users", userUid), user);
 
-        // Update metadata with new SwaligaID
-        await setDoc(doc(db, 'metadata', 'nextUserId'), { nextUserId: newSwaligaID });
+      // Update metadata with new SwaligaID
+      await setDoc(doc(db, "metadata", "nextUserId"), {
+        nextUserId: newSwaligaID,
+      });
 
-        // Set role to STUDENT via API
-        await fetch("/api/auth/claims/student", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ uid: userUid }), // Send user UID to set STUDENT role
-        });
+      // Set role to STUDENT via API
+      await fetch("/api/auth/claims/student", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ uid: userUid }), // Send user UID to set STUDENT role
+      });
 
-        // Refresh token after role update
-        await auth.currentUser?.getIdToken(true);
+      // Refresh token after role update
+      await auth.currentUser?.getIdToken(true);
 
-        // Redirect to student dashboard after successful account creation
-        router.push("/student-dashboard");
-
+      // Redirect to student dashboard after successful account creation
+      router.push("/student-dashboard");
     } catch (error) {
-        console.error("Error during account creation");
-        setFormError("Unexpected error occurred");
+      console.error("Error during account creation");
+      setFormError("Unexpected error occurred");
     }
-};
+  };
 
   const [bdayError, setBdayError] = useState("");
   const [gradError, setGradError] = useState("");
@@ -375,7 +419,7 @@ export default function CreateAccountPage() {
 
   const handleEmergencyContactChange = (
     index: number,
-    field: keyof AccountInfo['emergencyContacts'][0],
+    field: keyof AccountInfo["emergencyContacts"][0],
     value: string
   ) => {
     const updatedContacts = [...accountInfo.emergencyContacts];
@@ -425,7 +469,11 @@ export default function CreateAccountPage() {
     }
 
     if (
-      (name === "city" || name === "state" || name === "firstName" || name === "middleName" || name === "lastName") &&
+      (name === "city" ||
+        name === "state" ||
+        name === "firstName" ||
+        name === "middleName" ||
+        name === "lastName") &&
       value !== "" &&
       !/^[A-Za-z ]*$/.test(value)
     ) {
@@ -461,7 +509,11 @@ export default function CreateAccountPage() {
     <RequireRegisteredAuth>
       <div className={styles.container}>
         <div className={styles.background}>
-          <Stage className={styles.stage} width={dims.width} height={dims.height}>
+          <Stage
+            className={styles.stage}
+            width={dims.width}
+            height={dims.height}
+          >
             <Layer>
               {polygons.map(drawPolygon)}
               {polygonOverlay.map(drawPolygon)}
@@ -514,7 +566,8 @@ export default function CreateAccountPage() {
             <div className={styles.formGroupRow}>
               <div className={styles.formGroup}>
                 <label>
-                  Personal Info <span className={styles.requiredAsterisk}>*</span>
+                  Personal Info{" "}
+                  <span className={styles.requiredAsterisk}>*</span>
                 </label>
                 <div className={styles.inputRow}>
                   <div className={styles.inputIconGroup}>
@@ -746,7 +799,8 @@ export default function CreateAccountPage() {
             <div className={styles.formGroupRow}>
               <div className={styles.formGroup}>
                 <label>
-                  Home Address <span className={styles.requiredAsterisk}>*</span>
+                  Home Address{" "}
+                  <span className={styles.requiredAsterisk}>*</span>
                 </label>
                 <div className={styles.inputRow}>
                   <div className={styles.inputIconGroup}>
@@ -858,7 +912,9 @@ export default function CreateAccountPage() {
             {/* Years in Swaliga field */}
             <div className={styles.formGroupRow}>
               <div className={styles.formGroup}>
-                <label style={{ color: yearsInSwaligaError ? "red" : "inherit" }}>
+                <label
+                  style={{ color: yearsInSwaligaError ? "red" : "inherit" }}
+                >
                   How many years have you been in the Swaliga STEM club at HSRA{" "}
                   <span className={styles.requiredAsterisk}>*</span>
                 </label>
@@ -893,8 +949,8 @@ export default function CreateAccountPage() {
             <div className={styles.formGroupRow}>
               <div className={styles.formGroup}>
                 <label>
-                  What race/ethnicity do you identify as? (Select all that apply){" "}
-                  <span className={styles.requiredAsterisk}>*</span>
+                  What race/ethnicity do you identify as? (Select all that
+                  apply) <span className={styles.requiredAsterisk}>*</span>
                 </label>
                 <div className={styles.checkboxContainer}>
                   <div className={styles.checkboxGroup}>

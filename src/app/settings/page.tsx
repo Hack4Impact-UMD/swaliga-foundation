@@ -2,14 +2,14 @@
 import { useEffect, useState } from "react";
 import styles from "./Settings.module.css";
 import { User } from "@/types/user-types";
-import { auth } from "@/lib/firebase/firebaseConfig";
+import { auth } from "@/config/firebaseConfig";
 import Image from "next/image";
 import Link from "next/link";
-import { logOut } from "@/lib/firebase/authentication/googleAuthentication";
-import { getAccountById, updateAccount } from "@/lib/firebase/database/users";
+import { logOut } from "@/features/auth/googleAuthentication";
+import { getAccountById, updateAccount } from "@/data/users";
 import { useRouter } from "next/navigation";
 import Loading from "@/components/Loading";
-import RequireStudentAuth from "@/components/auth/RequireStudentAuth";
+import RequireStudentAuth from "@/features/auth/RequireStudentAuth";
 
 export default function Settings() {
   const [userData, setUserData] = useState<User | null>(null);
@@ -45,7 +45,7 @@ export default function Settings() {
   async function handleSaveChanges() {
     try {
       await updateAccount(userData?.id as string, {
-        ...userData
+        ...userData,
       });
       router.push("/student-dashboard"); // Redirect to student dashboard
     } catch (error) {
@@ -97,10 +97,14 @@ export default function Settings() {
                   className={styles.image}
                 />
                 <p className={styles.link}>Student ID: {userData?.swaligaID}</p>
-                <Link href="/" className={styles.link} onClick={async () => {
-                  await logOut();
-                  router.refresh();
-                }}>
+                <Link
+                  href="/"
+                  className={styles.link}
+                  onClick={async () => {
+                    await logOut();
+                    router.refresh();
+                  }}
+                >
                   Log Out
                 </Link>
               </div>

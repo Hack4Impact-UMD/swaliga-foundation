@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
 import styles from "./ResetPasswordPage.module.css";
 import CompanyLogo from "@/../public/images/logo.svg";
 import CompanyLogoWords from "@/../public/images/logo2.svg";
 import React, { useState } from "react";
-import { auth } from '@/lib/firebase/firebaseConfig'; // Path to firebaseConfig.ts
-import { sendPasswordResetEmail } from 'firebase/auth'
+import { auth } from "@/config/firebaseConfig"; // Path to firebaseConfig.ts
+import { sendPasswordResetEmail } from "firebase/auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import RequireSignedOut from "@/components/auth/RequireSignedOut";
+import RequireSignedOut from "@/features/auth/RequireSignedOut";
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState("");

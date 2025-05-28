@@ -1,4 +1,4 @@
-import { getGmailClient } from "./googleAuthorization";
+import { getGmailClient } from "../auth/googleAuthorization";
 
 export async function sendEmail(body: {
   recipients: string[];

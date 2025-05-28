@@ -1,9 +1,9 @@
 import { User } from "@/types/user-types";
 import { Timestamp } from "firebase/firestore";
 import os from 'os';
-import { getSurveyByID } from "./firebase/database/surveys";
+import { getSurveyByID } from "../../data/surveys";
 import { Survey, Response } from "@/types/survey-types";
-import { getResponseByID } from "./firebase/database/response";
+import { getResponseByID } from "../../data/response";
 
 type flattenDoc = {
   [key: string]: any;
@@ -45,9 +45,8 @@ export function exportUsersToCSV(users: User[], surveys: Survey[]): void {
             const timestamp = (user[field] as Timestamp | undefined)?.seconds;
             if (timestamp) {
               const date = new Date(timestamp * 1000);
-              const bday = `${
-                date.getMonth() + 1
-              }/${date.getDate()}/${date.getFullYear()}`;
+              const bday = `${date.getMonth() + 1
+                }/${date.getDate()}/${date.getFullYear()}`;
               return bday;
             } else {
               return "";

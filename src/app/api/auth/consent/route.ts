@@ -1,5 +1,5 @@
-import { isUserAdmin } from "@/lib/firebase/authentication/serverAuthentication";
-import { getAuthUrl } from "@/lib/googleAuthorization";
+import { isUserAdmin } from "@/features/auth/serverAuthentication";
+import { getAuthUrl } from "@/features/auth/googleAuthorization";
 import { redirect } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
 

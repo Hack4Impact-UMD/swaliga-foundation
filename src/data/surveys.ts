@@ -1,5 +1,5 @@
 import { GoogleForm, Survey } from '@/types/survey-types';
-import { auth, db } from "../firebaseConfig";
+import { auth, db } from "../config/firebaseConfig";
 import { collection, deleteDoc, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
 import { unassignSurveys } from './users';
 import { deleteResponseByID } from './response';

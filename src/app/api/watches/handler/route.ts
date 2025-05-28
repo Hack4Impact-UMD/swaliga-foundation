@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebase/firebaseAdminConfig";
+import { adminDb } from "@/config/firebaseAdminConfig";
 import { GoogleFormResponse, Survey, Response } from "@/types/survey-types";
-import { getFormsClient } from "@/lib/googleAuthorization";
+import { getFormsClient } from "@/features/auth/googleAuthorization";
 
 export async function POST(req: NextRequest) {
   try {

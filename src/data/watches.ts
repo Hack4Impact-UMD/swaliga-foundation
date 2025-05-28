@@ -1,6 +1,6 @@
-import { getFormsClient } from "@/lib/googleAuthorization";
+import { getFormsClient } from "@/features/auth/googleAuthorization";
 import { doc, setDoc } from "firebase/firestore";
-import { db } from "../firebaseConfig";
+import { db } from "../config/firebaseConfig";
 
 export async function createWatch(formId: string, eventType: string) {
   try {

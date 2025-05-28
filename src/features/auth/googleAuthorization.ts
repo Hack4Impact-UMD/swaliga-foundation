@@ -1,7 +1,7 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { google } from "googleapis";
-import { db } from "./firebase/firebaseConfig";
-import { adminDb } from "./firebase/firebaseAdminConfig";
+import { db } from "../../config/firebaseConfig";
+import { adminDb } from "../../config/firebaseAdminConfig";
 import { DocumentData } from "firebase-admin/firestore";
 
 export async function getOauth2Client(setCreds: boolean = true) {
