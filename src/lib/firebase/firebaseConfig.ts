@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getFunctions } from "firebase/functions";
+import { connectAuthEmulator, getAuth } from "firebase/auth";
+import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
+import { connectFunctionsEmulator, getFunctions } from "firebase/functions";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -14,8 +14,10 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const functions = getFunctions(app, "us-east4");
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const functions = getFunctions(app, "us-east4");
 
-export { auth, db, functions };
+connectAuthEmulator(auth, 'http://localhost:9099');
+connectFirestoreEmulator(db, 'localhost', 8080);
+connectFunctionsEmulator(functions, "localhost", 5001);
