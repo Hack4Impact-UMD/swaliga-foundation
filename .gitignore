@@ -4,6 +4,11 @@
 .firebase
 firebaseAdminCredentials.json
 
+firebase-debug.log
+firestore-debug.log
+
+.vscode
+
 # dependencies
 /node_modules
 /.pnp
