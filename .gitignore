@@ -2,7 +2,7 @@
 
 .env
 .firebase
-swaliga-foundation-firebase-adminsdk-9z7ld-58d895fd73.json
+firebaseAdminCredentials.json
 
 # dependencies
 /node_modules
