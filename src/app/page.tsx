@@ -10,8 +10,8 @@ import GoogleButton from "react-google-button";
 import {
   loginUser,
   signUpUser,
-} from "@/features/auth/emailPasswordAuthentication";
-import { signInWithGoogle } from "@/features/auth/googleAuthentication";
+} from "@/features/auth/authN/emailPasswordAuthN";
+import { signInWithGoogle } from "@/features/auth/authN/googleAuthN";
 import RequireSignedOut from "@/features/auth/RequireSignedOut";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -187,7 +187,7 @@ export default function LoginPage() {
               to {isLogin ? "sign up" : "login"}
             </p>
             <div className={styles.google_button}>
-              <GoogleButton onClick={() => signInWithGoogle(router)} />
+              <GoogleButton onClick={() => signInWithGoogle()} />
             </div>
             <Image
               className={styles.logo}

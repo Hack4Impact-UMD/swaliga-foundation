@@ -5,7 +5,7 @@ import { User } from "@/types/user-types";
 import { auth } from "@/config/firebaseConfig";
 import Image from "next/image";
 import Link from "next/link";
-import { logOut } from "@/features/auth/googleAuthentication";
+import { logOut } from "@/features/auth/authN/googleAuthN";
 import { getAccountById, updateAccount } from "@/data/users";
 import { useRouter } from "next/navigation";
 import Loading from "@/components/Loading";

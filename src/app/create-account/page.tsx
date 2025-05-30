@@ -13,7 +13,7 @@ import { db, auth } from "@/config/firebaseConfig";
 import RequireRegisteredAuth from "@/features/auth/RequireRegisteredAuth";
 import Image from "next/image";
 import logoutIcon from "@/../public/icons/logout.svg";
-import { logOut } from "@/features/auth/googleAuthentication";
+import { logOut } from "@/features/auth/authN/googleAuthN";
 
 export default function CreateAccountPage() {
   const [dims, setDims] = useState<Dims>({ width: 0, height: 0 });

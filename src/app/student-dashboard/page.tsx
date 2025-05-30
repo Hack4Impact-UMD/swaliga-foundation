@@ -15,7 +15,7 @@ import Loading from "@/components/Loading";
 import { getAccountById } from "@/data/users";
 import { getSurveyByID } from "@/data/surveys";
 import { getResponseByID } from "@/data/response";
-import { logOut } from "@/features/auth/googleAuthentication";
+import { logOut } from "@/features/auth/authN/googleAuthN";
 import RequireStudentAuth from "@/features/auth/RequireStudentAuth";
 import { useRouter } from "next/navigation";
 

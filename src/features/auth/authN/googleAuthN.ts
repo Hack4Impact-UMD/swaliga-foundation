@@ -1,5 +1,5 @@
 import { Role } from '@/types/user-types';
-import { auth, functions } from '../../config/firebaseConfig';
+import { auth, functions } from '../../../config/firebaseConfig';
 import { FirebaseError } from 'firebase/app';
 import { signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
