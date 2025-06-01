@@ -1,12 +1,19 @@
 "use client";
-import { onIdTokenChanged, User, IdTokenResult } from "@firebase/auth";
+import {
+  onIdTokenChanged,
+  User,
+  IdTokenResult,
+  getIdTokenResult,
+} from "@firebase/auth";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { auth } from "@/config/firebaseConfig";
+import { auth, functions } from "@/config/firebaseConfig";
+import { httpsCallable } from "firebase/functions";
 
 interface AuthContextType {
   user: User | null;
   token: IdTokenResult | null;
   loading: boolean;
+  error: string;
 }
 
 const AuthContext = createContext<AuthContextType>(null!);
@@ -19,14 +26,27 @@ export default function AuthProvider({
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<IdTokenResult | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     const unsubscribe = onIdTokenChanged(auth, async (newUser) => {
       setUser(newUser);
       if (newUser) {
-        const newToken = await newUser.getIdTokenResult(true); // Force refresh the token
+        let newToken = await newUser.getIdTokenResult();
+        if (!newToken.claims?.role) {
+          try {
+            await httpsCallable(functions, "setAdminRole")();
+            newToken = await getIdTokenResult(newUser, true);
+          } catch (err) {
+            setError(
+              "An error occurred during authentication. Please try again."
+            );
+          }
+        }
         setToken(newToken);
+        setError("");
       } else {
+        setUser(null);
         setToken(null);
       }
       setLoading(false);
@@ -35,7 +55,7 @@ export default function AuthProvider({
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, token, loading }}>
+    <AuthContext.Provider value={{ user, token, loading, error }}>
       {children}
     </AuthContext.Provider>
   );
