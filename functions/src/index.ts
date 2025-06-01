@@ -2,14 +2,15 @@ import { onCall } from "firebase-functions/v2/https";
 import { onMessagePublished } from "firebase-functions/v2/pubsub";
 import { onSchedule } from "firebase-functions/v2/scheduler";
 import { google } from "googleapis";
+import * as admin from "firebase-admin";
 import { DocumentData, getFirestore } from "firebase-admin/firestore";
-import { apps, app, initializeApp } from "firebase-admin";
+
+import * as authFunctions from "./auth";
 
 const URL_PREFIX = "https://swaliga-foundation.web.app";
 
-if (!apps.length) {
-  initializeApp();
-}
+exports.setAdminRole = authFunctions.setAdminRole;
+exports.setStudentRole = authFunctions.setStudentRole;
 
 // handles form events
 exports.handleFormWatch = onMessagePublished("projects/swaliga-foundation/topics/forms", async (event) => {
@@ -65,7 +66,7 @@ async function getOauth2Client(setCreds: boolean = true) {
 
 async function setCredentials(oauth2Client: any) {
   if (!oauth2Client.credentials.refresh_token) {
-    const adminApp = app();
+    const adminApp = admin.app();
     const adminDb = getFirestore(adminApp);
     const response = await adminDb.doc("/metadata/adminRefreshToken").get();
     //const response = await getDoc(doc(db, "metadata", "adminRefreshToken"));
