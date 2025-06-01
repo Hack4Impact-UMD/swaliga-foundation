@@ -5,9 +5,10 @@ import {
   IdTokenResult,
   getIdTokenResult,
 } from "@firebase/auth";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { auth, functions } from "@/config/firebaseConfig";
 import { httpsCallable } from "firebase/functions";
+import LoadingPage from "@/app/loading";
 
 interface AuthContextType {
   user: User | null;
@@ -53,6 +54,10 @@ export default function AuthProvider({
     });
     return () => unsubscribe();
   }, []);
+
+  if (loading) {
+    return <LoadingPage />;
+  }
 
   return (
     <AuthContext.Provider value={{ user, token, loading, error }}>
