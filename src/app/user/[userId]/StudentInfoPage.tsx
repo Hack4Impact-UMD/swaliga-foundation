@@ -9,7 +9,7 @@ import emailIcon from "@/../public/icons/emailIcon.svg";
 import addressIcon from "@/../public/icons/addressIcon.svg";
 
 import styles from "./StudentInfoPage.module.css";
-import { User } from "@/types/user-types";
+import { Role, User } from "@/types/user-types";
 import { Survey, Response } from "@/types/survey-types";
 import { useState, useEffect } from "react";
 import Image from "next/image";
@@ -17,7 +17,7 @@ import Loading from "@/components/Loading";
 import { getAccountById } from "@/data/users";
 import { getSurveyByID } from "@/data/surveys";
 import { getResponseByID } from "@/data/response";
-import RequireAdminAuth from "@/features/auth/RequireAdminAuth";
+import RequireAuth from "@/features/auth/RequireAuth";
 
 // converts birthdate to grade, so grade does not need to be updated in database
 function getGrade(gradYr: number | undefined) {
@@ -98,7 +98,7 @@ export default function StudentInfoPage({
   }
 
   return (
-    <RequireAdminAuth>
+    <RequireAuth allowedRoles={[Role.ADMIN]}>
       <div className={styles.page}>
         <div className={styles.leftSide}>
           <div className={styles.polygon}> </div>
@@ -219,6 +219,6 @@ export default function StudentInfoPage({
           </div>
         </div>
       </div>
-    </RequireAdminAuth>
+    </RequireAuth>
   );
 }

@@ -12,10 +12,10 @@ import {
   signUpUser,
 } from "@/features/auth/authN/emailPasswordAuthN";
 import { signInWithGoogle } from "@/features/auth/authN/googleAuthN";
-import RequireSignedOut from "@/features/auth/RequireSignedOut";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import RequireAuth from "@/features/auth/RequireAuth";
 
 enum LoginPageErrors {
   ACCOUNT_CREATION_FAILED = "Failed to create account",
@@ -114,7 +114,7 @@ export default function LoginPage() {
   };
 
   return (
-    <RequireSignedOut>
+    <RequireAuth allowedRoles={[]} allowUnauthenticated>
       <div className={styles.container}>
         <div className={styles.background}>
           <Stage
@@ -200,6 +200,6 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-    </RequireSignedOut>
+    </RequireAuth>
   );
 }

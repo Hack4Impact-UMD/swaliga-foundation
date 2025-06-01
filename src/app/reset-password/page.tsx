@@ -8,7 +8,7 @@ import { auth } from "@/config/firebaseConfig"; // Path to firebaseConfig.ts
 import { sendPasswordResetEmail } from "firebase/auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import RequireSignedOut from "@/features/auth/RequireSignedOut";
+import RequireAuth from "@/features/auth/RequireAuth";
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState("");
@@ -28,7 +28,7 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <RequireSignedOut>
+    <RequireAuth allowedRoles={[]} allowUnauthenticated>
       <div className={styles.page}>
         <div className={styles.logoSide}>
           <Image
@@ -72,6 +72,6 @@ export default function ResetPasswordPage() {
           </div>
         </div>
       </div>
-    </RequireSignedOut>
+    </RequireAuth>
   );
 }

@@ -10,7 +10,6 @@ import { User, Gender, Ethnicity } from "@/types/user-types";
 import { useRouter } from "next/navigation";
 import { getDoc, doc, setDoc } from "firebase/firestore";
 import { db, auth } from "@/config/firebaseConfig";
-import RequireRegisteredAuth from "@/features/auth/RequireRegisteredAuth";
 import Image from "next/image";
 import logoutIcon from "@/../public/icons/logout.svg";
 import { logOut } from "@/features/auth/authN/googleAuthN";
@@ -506,566 +505,556 @@ export default function CreateAccountPage() {
   };
 
   return (
-    <RequireRegisteredAuth>
-      <div className={styles.container}>
-        <div className={styles.background}>
-          <Stage
-            className={styles.stage}
-            width={dims.width}
-            height={dims.height}
-          >
-            <Layer>
-              {polygons.map(drawPolygon)}
-              {polygonOverlay.map(drawPolygon)}
-            </Layer>
-          </Stage>
-          <form className={styles.accountForm} onSubmit={handleSubmit}>
-            {/* Fields for Name on School Record */}
-            <div className={styles.formGroupRow}>
-              <div className={styles.formGroup}>
-                <label>
-                  Name on School Record{" "}
-                  <span className={styles.requiredAsterisk}>*</span>
-                </label>
-                <div className={styles.inputRow}>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-address-card"></i>
-                    <input
-                      type="text"
-                      name="firstName"
-                      placeholder="First"
-                      value={accountInfo.firstName}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-address-card"></i>
-                    <input
-                      type="text"
-                      name="middleName"
-                      placeholder="Middle"
-                      value={accountInfo.middleName}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-address-card"></i>
-                    <input
-                      type="text"
-                      name="lastName"
-                      placeholder="Last"
-                      value={accountInfo.lastName}
-                      onChange={handleChange}
-                    />
-                  </div>
+    <div className={styles.container}>
+      <div className={styles.background}>
+        <Stage className={styles.stage} width={dims.width} height={dims.height}>
+          <Layer>
+            {polygons.map(drawPolygon)}
+            {polygonOverlay.map(drawPolygon)}
+          </Layer>
+        </Stage>
+        <form className={styles.accountForm} onSubmit={handleSubmit}>
+          {/* Fields for Name on School Record */}
+          <div className={styles.formGroupRow}>
+            <div className={styles.formGroup}>
+              <label>
+                Name on School Record{" "}
+                <span className={styles.requiredAsterisk}>*</span>
+              </label>
+              <div className={styles.inputRow}>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-address-card"></i>
+                  <input
+                    type="text"
+                    name="firstName"
+                    placeholder="First"
+                    value={accountInfo.firstName}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-address-card"></i>
+                  <input
+                    type="text"
+                    name="middleName"
+                    placeholder="Middle"
+                    value={accountInfo.middleName}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-address-card"></i>
+                  <input
+                    type="text"
+                    name="lastName"
+                    placeholder="Last"
+                    value={accountInfo.lastName}
+                    onChange={handleChange}
+                  />
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Fields for Personal Info */}
-            <div className={styles.formGroupRow}>
-              <div className={styles.formGroup}>
-                <label>
-                  Personal Info{" "}
-                  <span className={styles.requiredAsterisk}>*</span>
-                </label>
-                <div className={styles.inputRow}>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-envelope"></i>
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="Enter email"
-                      value={accountInfo.email}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-phone"></i>
-                    <input
-                      type="tel"
-                      name="phoneNumber"
-                      placeholder="Enter phone number"
-                      value={accountInfo.phoneNumber}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-venus-mars"></i>
-                    <input
-                      type="text"
-                      name="gender"
-                      placeholder="Enter gender"
-                      value={accountInfo.gender}
-                      onChange={handleChange}
-                    />
-                  </div>
+          {/* Fields for Personal Info */}
+          <div className={styles.formGroupRow}>
+            <div className={styles.formGroup}>
+              <label>
+                Personal Info <span className={styles.requiredAsterisk}>*</span>
+              </label>
+              <div className={styles.inputRow}>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-envelope"></i>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter email"
+                    value={accountInfo.email}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-phone"></i>
+                  <input
+                    type="tel"
+                    name="phoneNumber"
+                    placeholder="Enter phone number"
+                    value={accountInfo.phoneNumber}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-venus-mars"></i>
+                  <input
+                    type="text"
+                    name="gender"
+                    placeholder="Enter gender"
+                    value={accountInfo.gender}
+                    onChange={handleChange}
+                  />
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Birthdate */}
-            <div className={styles.formGroupRow}>
-              <div className={styles.formGroup}>
-                <label style={{ color: bdayError ? "red" : "inherit" }}>
-                  Birthdate <span className={styles.requiredAsterisk}>*</span>
-                </label>
-                <div
+          {/* Birthdate */}
+          <div className={styles.formGroupRow}>
+            <div className={styles.formGroup}>
+              <label style={{ color: bdayError ? "red" : "inherit" }}>
+                Birthdate <span className={styles.requiredAsterisk}>*</span>
+              </label>
+              <div
+                className={`${styles.inputIconGroup} ${
+                  bdayError ? styles.inputError : ""
+                }`}
+              >
+                <i
                   className={`${styles.inputIconGroup} ${
                     bdayError ? styles.inputError : ""
                   }`}
-                >
-                  <i
-                    className={`${styles.inputIconGroup} ${
-                      bdayError ? styles.inputError : ""
-                    }`}
-                  ></i>
-                  <input
-                    type="text"
-                    name="bday"
-                    placeholder="YYYY/MM/DD"
-                    value={accountInfo.bday}
-                    onChange={handleChange}
-                  />
-                  <i className="fas fa-birthday-cake"></i>
-                </div>
-                {bdayError && (
-                  <div className={styles.passwordError}>{bdayError}</div>
-                )}
+                ></i>
+                <input
+                  type="text"
+                  name="bday"
+                  placeholder="YYYY/MM/DD"
+                  value={accountInfo.bday}
+                  onChange={handleChange}
+                />
+                <i className="fas fa-birthday-cake"></i>
               </div>
+              {bdayError && (
+                <div className={styles.passwordError}>{bdayError}</div>
+              )}
             </div>
+          </div>
 
-            {/* Fields for Emergency Contact Info */}
-            <div className={styles.formGroupRow}>
-              <div className={styles.formGroup}>
-                <label>
-                  Emergency Contact Info{" "}
-                  <span className={styles.requiredAsterisk}>*</span>
-                </label>
-                {accountInfo.emergencyContacts.map((contact, index) => (
-                  <div className={styles.contactContainer} key={index}>
-                    <div className={styles.inputRow}>
-                      <div className={styles.inputIconGroup}>
-                        <i className="fas fa-user"></i>
-                        <input
-                          type="name"
-                          name={`emergencyName${index}`}
-                          placeholder="Enter name"
-                          value={contact.name}
-                          onChange={(e) =>
-                            handleEmergencyContactChange(
-                              index,
-                              "name",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                      <div className={styles.inputIconGroup}>
-                        <i className="fas fa-envelope"></i>
-                        <input
-                          type="email"
-                          name={`emergencyEmail${index}`}
-                          placeholder="Enter email"
-                          value={contact.email}
-                          onChange={(e) =>
-                            handleEmergencyContactChange(
-                              index,
-                              "email",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                      <div className={styles.inputIconGroup}>
-                        <i className="fas fa-phone"></i>
-                        <input
-                          type="tel"
-                          name={`emergencyPhone${index}`}
-                          placeholder="Enter phone number"
-                          value={contact.phone}
-                          onChange={(e) =>
-                            handleEmergencyContactChange(
-                              index,
-                              "phone",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
+          {/* Fields for Emergency Contact Info */}
+          <div className={styles.formGroupRow}>
+            <div className={styles.formGroup}>
+              <label>
+                Emergency Contact Info{" "}
+                <span className={styles.requiredAsterisk}>*</span>
+              </label>
+              {accountInfo.emergencyContacts.map((contact, index) => (
+                <div className={styles.contactContainer} key={index}>
+                  <div className={styles.inputRow}>
+                    <div className={styles.inputIconGroup}>
+                      <i className="fas fa-user"></i>
+                      <input
+                        type="name"
+                        name={`emergencyName${index}`}
+                        placeholder="Enter name"
+                        value={contact.name}
+                        onChange={(e) =>
+                          handleEmergencyContactChange(
+                            index,
+                            "name",
+                            e.target.value
+                          )
+                        }
+                      />
                     </div>
-                    <div className={styles.inputRow}>
-                      <div className={styles.inputIconGroup}>
-                        <i className="fas fa-road"></i>
-                        <input
-                          type="text"
-                          name={`emergencyStreet${index}`}
-                          placeholder="Enter street name"
-                          value={contact.street}
-                          onChange={(e) =>
-                            handleEmergencyContactChange(
-                              index,
-                              "street",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                      <div className={styles.inputIconGroup}>
-                        <i className="fas fa-city"></i>
-                        <input
-                          type="text"
-                          name={`emergencyCity${index}`}
-                          placeholder="Enter city"
-                          value={contact.city}
-                          onChange={(e) =>
-                            handleEmergencyContactChange(
-                              index,
-                              "city",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                      <div className={styles.inputIconGroup}>
-                        <i className="fas fa-landmark"></i>
-                        <input
-                          type="text"
-                          name={`emergencyState${index}`}
-                          placeholder="Enter state"
-                          value={contact.state}
-                          onChange={(e) =>
-                            handleEmergencyContactChange(
-                              index,
-                              "state",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                      <div className={styles.inputIconGroup}>
-                        <i className="fas fa-flag"></i>{" "}
-                        <input
-                          type="text"
-                          name={`emergencyCountry${index}`}
-                          placeholder="Enter country"
-                          value={contact.country}
-                          onChange={(e) =>
-                            handleEmergencyContactChange(
-                              index,
-                              "country",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                      <div className={styles.inputIconGroup}>
-                        <i className="fas fa-map-pin"></i>
-                        <input
-                          type="text"
-                          name={`emergencyZip${index}`}
-                          placeholder="Enter zip code"
-                          value={contact.zip}
-                          onChange={(e) =>
-                            handleEmergencyContactChange(
-                              index,
-                              "zip",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
+                    <div className={styles.inputIconGroup}>
+                      <i className="fas fa-envelope"></i>
+                      <input
+                        type="email"
+                        name={`emergencyEmail${index}`}
+                        placeholder="Enter email"
+                        value={contact.email}
+                        onChange={(e) =>
+                          handleEmergencyContactChange(
+                            index,
+                            "email",
+                            e.target.value
+                          )
+                        }
+                      />
                     </div>
-                    <button
-                      className={styles.emergencyRemoveButton}
-                      type="button"
-                      onClick={() => deleteEmergencyContact(index)}
-                    >
-                      Remove Contact
-                    </button>
+                    <div className={styles.inputIconGroup}>
+                      <i className="fas fa-phone"></i>
+                      <input
+                        type="tel"
+                        name={`emergencyPhone${index}`}
+                        placeholder="Enter phone number"
+                        value={contact.phone}
+                        onChange={(e) =>
+                          handleEmergencyContactChange(
+                            index,
+                            "phone",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
                   </div>
-                ))}
-                <button
-                  className={styles.emergencyAddButton}
-                  type="button"
-                  onClick={addEmergencyContact}
-                >
-                  Add Emergency Contact
-                </button>
-              </div>
-            </div>
-
-            {/* Address Fields */}
-            <div className={styles.formGroupRow}>
-              <div className={styles.formGroup}>
-                <label>
-                  Home Address{" "}
-                  <span className={styles.requiredAsterisk}>*</span>
-                </label>
-                <div className={styles.inputRow}>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-road"></i>
-                    <input
-                      type="text"
-                      name="streetName"
-                      placeholder="Street Name"
-                      value={accountInfo.streetName}
-                      onChange={handleChange}
-                    />
+                  <div className={styles.inputRow}>
+                    <div className={styles.inputIconGroup}>
+                      <i className="fas fa-road"></i>
+                      <input
+                        type="text"
+                        name={`emergencyStreet${index}`}
+                        placeholder="Enter street name"
+                        value={contact.street}
+                        onChange={(e) =>
+                          handleEmergencyContactChange(
+                            index,
+                            "street",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                    <div className={styles.inputIconGroup}>
+                      <i className="fas fa-city"></i>
+                      <input
+                        type="text"
+                        name={`emergencyCity${index}`}
+                        placeholder="Enter city"
+                        value={contact.city}
+                        onChange={(e) =>
+                          handleEmergencyContactChange(
+                            index,
+                            "city",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                    <div className={styles.inputIconGroup}>
+                      <i className="fas fa-landmark"></i>
+                      <input
+                        type="text"
+                        name={`emergencyState${index}`}
+                        placeholder="Enter state"
+                        value={contact.state}
+                        onChange={(e) =>
+                          handleEmergencyContactChange(
+                            index,
+                            "state",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                    <div className={styles.inputIconGroup}>
+                      <i className="fas fa-flag"></i>{" "}
+                      <input
+                        type="text"
+                        name={`emergencyCountry${index}`}
+                        placeholder="Enter country"
+                        value={contact.country}
+                        onChange={(e) =>
+                          handleEmergencyContactChange(
+                            index,
+                            "country",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                    <div className={styles.inputIconGroup}>
+                      <i className="fas fa-map-pin"></i>
+                      <input
+                        type="text"
+                        name={`emergencyZip${index}`}
+                        placeholder="Enter zip code"
+                        value={contact.zip}
+                        onChange={(e) =>
+                          handleEmergencyContactChange(
+                            index,
+                            "zip",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
                   </div>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-city"></i>
-                    <input
-                      type="text"
-                      name="city"
-                      placeholder="City"
-                      value={accountInfo.city}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-landmark"></i>
-                    <input
-                      type="text"
-                      name="state"
-                      placeholder="State"
-                      value={accountInfo.state}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-flag"></i>
-                    <input
-                      type="text"
-                      name="country"
-                      placeholder="Country"
-                      value={accountInfo.country}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className={styles.inputIconGroup}>
-                    <i className="fas fa-map-pin"></i>
-                    <input
-                      type="text"
-                      name="zipCode"
-                      placeholder="Zip Code"
-                      value={accountInfo.zipCode}
-                      onChange={handleChange}
-                    />
-                  </div>
+                  <button
+                    className={styles.emergencyRemoveButton}
+                    type="button"
+                    onClick={() => deleteEmergencyContact(index)}
+                  >
+                    Remove Contact
+                  </button>
                 </div>
-              </div>
+              ))}
+              <button
+                className={styles.emergencyAddButton}
+                type="button"
+                onClick={addEmergencyContact}
+              >
+                Add Emergency Contact
+              </button>
             </div>
+          </div>
 
-            {/* School field */}
-            <div className={styles.formGroupRow}>
-              <div className={styles.formGroup}>
-                <label>
-                  What school do you go to?{" "}
-                  <span className={styles.requiredAsterisk}>*</span>
-                </label>
+          {/* Address Fields */}
+          <div className={styles.formGroupRow}>
+            <div className={styles.formGroup}>
+              <label>
+                Home Address <span className={styles.requiredAsterisk}>*</span>
+              </label>
+              <div className={styles.inputRow}>
                 <div className={styles.inputIconGroup}>
-                  <i className="fas fa-school"></i>
+                  <i className="fas fa-road"></i>
                   <input
                     type="text"
-                    name="school"
-                    placeholder="Enter your school"
-                    value={accountInfo.school}
+                    name="streetName"
+                    placeholder="Street Name"
+                    value={accountInfo.streetName}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-city"></i>
+                  <input
+                    type="text"
+                    name="city"
+                    placeholder="City"
+                    value={accountInfo.city}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-landmark"></i>
+                  <input
+                    type="text"
+                    name="state"
+                    placeholder="State"
+                    value={accountInfo.state}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-flag"></i>
+                  <input
+                    type="text"
+                    name="country"
+                    placeholder="Country"
+                    value={accountInfo.country}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className={styles.inputIconGroup}>
+                  <i className="fas fa-map-pin"></i>
+                  <input
+                    type="text"
+                    name="zipCode"
+                    placeholder="Zip Code"
+                    value={accountInfo.zipCode}
                     onChange={handleChange}
                   />
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Year you graduate field */}
-            <div className={styles.formGroupRow}>
-              <div className={styles.formGroup}>
-                <label style={{ color: gradError ? "red" : "inherit" }}>
-                  What year do you plan to graduate?{" "}
-                  <span className={styles.requiredAsterisk}>*</span>
-                </label>
-                <div
+          {/* School field */}
+          <div className={styles.formGroupRow}>
+            <div className={styles.formGroup}>
+              <label>
+                What school do you go to?{" "}
+                <span className={styles.requiredAsterisk}>*</span>
+              </label>
+              <div className={styles.inputIconGroup}>
+                <i className="fas fa-school"></i>
+                <input
+                  type="text"
+                  name="school"
+                  placeholder="Enter your school"
+                  value={accountInfo.school}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Year you graduate field */}
+          <div className={styles.formGroupRow}>
+            <div className={styles.formGroup}>
+              <label style={{ color: gradError ? "red" : "inherit" }}>
+                What year do you plan to graduate?{" "}
+                <span className={styles.requiredAsterisk}>*</span>
+              </label>
+              <div
+                className={`${styles.inputIconGroup} ${
+                  gradError ? styles.inputError : ""
+                }`}
+              >
+                <i
                   className={`${styles.inputIconGroup} ${
                     gradError ? styles.inputError : ""
                   }`}
-                >
-                  <i
-                    className={`${styles.inputIconGroup} ${
-                      gradError ? styles.inputError : ""
-                    }`}
-                  ></i>
-                  <input
-                    type="text"
-                    name="grad"
-                    placeholder="YYYY"
-                    value={accountInfo.grad}
-                    onChange={handleChange}
-                  />
-                  <i className="fas fa-graduation-cap"></i>
-                </div>
-                {gradError && (
-                  <div className={styles.passwordError}>{gradError}</div>
-                )}
+                ></i>
+                <input
+                  type="text"
+                  name="grad"
+                  placeholder="YYYY"
+                  value={accountInfo.grad}
+                  onChange={handleChange}
+                />
+                <i className="fas fa-graduation-cap"></i>
               </div>
+              {gradError && (
+                <div className={styles.passwordError}>{gradError}</div>
+              )}
             </div>
+          </div>
 
-            {/* Years in Swaliga field */}
-            <div className={styles.formGroupRow}>
-              <div className={styles.formGroup}>
-                <label
-                  style={{ color: yearsInSwaligaError ? "red" : "inherit" }}
-                >
-                  How many years have you been in the Swaliga STEM club at HSRA{" "}
-                  <span className={styles.requiredAsterisk}>*</span>
-                </label>
-                <div
+          {/* Years in Swaliga field */}
+          <div className={styles.formGroupRow}>
+            <div className={styles.formGroup}>
+              <label style={{ color: yearsInSwaligaError ? "red" : "inherit" }}>
+                How many years have you been in the Swaliga STEM club at HSRA{" "}
+                <span className={styles.requiredAsterisk}>*</span>
+              </label>
+              <div
+                className={`${styles.inputIconGroup} ${
+                  yearsInSwaligaError ? styles.inputError : ""
+                }`}
+              >
+                <i
                   className={`${styles.inputIconGroup} ${
                     yearsInSwaligaError ? styles.inputError : ""
                   }`}
-                >
-                  <i
-                    className={`${styles.inputIconGroup} ${
-                      yearsInSwaligaError ? styles.inputError : ""
-                    }`}
-                  ></i>
+                ></i>
+                <input
+                  type="text"
+                  name="yearsInSwaliga"
+                  placeholder="Number of years"
+                  value={accountInfo.yearsInSwaliga}
+                  onChange={handleChange}
+                />
+                <i className="fas fa-flask"></i>
+              </div>
+              {yearsInSwaligaError && (
+                <div className={styles.passwordError}>
+                  {yearsInSwaligaError}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Ethnicity field */}
+          <div className={styles.formGroupRow}>
+            <div className={styles.formGroup}>
+              <label>
+                What race/ethnicity do you identify as? (Select all that apply){" "}
+                <span className={styles.requiredAsterisk}>*</span>
+              </label>
+              <div className={styles.checkboxContainer}>
+                <div className={styles.checkboxGroup}>
+                  <input
+                    type="checkbox"
+                    id="blackOrAfricanAmerican"
+                    name="blackOrAfricanAmerican"
+                    checked={accountInfo.raceEthnicity.blackOrAfricanAmerican}
+                    onChange={handleRaceEthnicityChange}
+                  />
+                  <label htmlFor="blackOrAfricanAmerican">
+                    Black or African American
+                  </label>
+                </div>
+
+                <div className={styles.checkboxGroup}>
+                  <input
+                    type="checkbox"
+                    id="indigenous"
+                    name="indigenous"
+                    checked={accountInfo.raceEthnicity.indigenous}
+                    onChange={handleRaceEthnicityChange}
+                  />
+                  <label htmlFor="indigenous">Indigenous</label>
+                </div>
+
+                <div className={styles.checkboxGroup}>
+                  <input
+                    type="checkbox"
+                    id="asian"
+                    name="asian"
+                    checked={accountInfo.raceEthnicity.asian}
+                    onChange={handleRaceEthnicityChange}
+                  />
+                  <label htmlFor="asian">Asian</label>
+                </div>
+
+                <div className={styles.checkboxGroup}>
+                  <input
+                    type="checkbox"
+                    id="white"
+                    name="white"
+                    checked={accountInfo.raceEthnicity.white}
+                    onChange={handleRaceEthnicityChange}
+                  />
+                  <label htmlFor="white">White</label>
+                </div>
+
+                <div className={styles.checkboxGroup}>
+                  <input
+                    type="checkbox"
+                    id="multiracial"
+                    name="multiracial"
+                    checked={accountInfo.raceEthnicity.multiracial}
+                    onChange={handleRaceEthnicityChange}
+                  />
+                  <label htmlFor="multiracial">Multiracial</label>
+                </div>
+
+                <div className={styles.checkboxGroup}>
+                  <input
+                    type="checkbox"
+                    id="latin"
+                    name="latin"
+                    checked={accountInfo.raceEthnicity.latin}
+                    onChange={handleRaceEthnicityChange}
+                  />
+                  <label htmlFor="latin">LatinX/Latina/Latino</label>
+                </div>
+
+                <div className={styles.checkboxGroup}>
+                  <input
+                    type="checkbox"
+                    id="other"
+                    name="other"
+                    checked={accountInfo.raceEthnicity.other}
+                    onChange={handleRaceEthnicityChange}
+                  />
+                  <label htmlFor="other">Other</label>
                   <input
                     type="text"
-                    name="yearsInSwaliga"
-                    placeholder="Number of years"
-                    value={accountInfo.yearsInSwaliga}
-                    onChange={handleChange}
+                    id="otherText"
+                    name="otherText"
+                    placeholder="Please specify"
+                    value={accountInfo.raceEthnicity.otherText}
+                    disabled={!accountInfo.raceEthnicity.other}
+                    onChange={handleOtherTextChange}
+                    className={styles.otherTextInput}
                   />
-                  <i className="fas fa-flask"></i>
-                </div>
-                {yearsInSwaligaError && (
-                  <div className={styles.passwordError}>
-                    {yearsInSwaligaError}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Ethnicity field */}
-            <div className={styles.formGroupRow}>
-              <div className={styles.formGroup}>
-                <label>
-                  What race/ethnicity do you identify as? (Select all that
-                  apply) <span className={styles.requiredAsterisk}>*</span>
-                </label>
-                <div className={styles.checkboxContainer}>
-                  <div className={styles.checkboxGroup}>
-                    <input
-                      type="checkbox"
-                      id="blackOrAfricanAmerican"
-                      name="blackOrAfricanAmerican"
-                      checked={accountInfo.raceEthnicity.blackOrAfricanAmerican}
-                      onChange={handleRaceEthnicityChange}
-                    />
-                    <label htmlFor="blackOrAfricanAmerican">
-                      Black or African American
-                    </label>
-                  </div>
-
-                  <div className={styles.checkboxGroup}>
-                    <input
-                      type="checkbox"
-                      id="indigenous"
-                      name="indigenous"
-                      checked={accountInfo.raceEthnicity.indigenous}
-                      onChange={handleRaceEthnicityChange}
-                    />
-                    <label htmlFor="indigenous">Indigenous</label>
-                  </div>
-
-                  <div className={styles.checkboxGroup}>
-                    <input
-                      type="checkbox"
-                      id="asian"
-                      name="asian"
-                      checked={accountInfo.raceEthnicity.asian}
-                      onChange={handleRaceEthnicityChange}
-                    />
-                    <label htmlFor="asian">Asian</label>
-                  </div>
-
-                  <div className={styles.checkboxGroup}>
-                    <input
-                      type="checkbox"
-                      id="white"
-                      name="white"
-                      checked={accountInfo.raceEthnicity.white}
-                      onChange={handleRaceEthnicityChange}
-                    />
-                    <label htmlFor="white">White</label>
-                  </div>
-
-                  <div className={styles.checkboxGroup}>
-                    <input
-                      type="checkbox"
-                      id="multiracial"
-                      name="multiracial"
-                      checked={accountInfo.raceEthnicity.multiracial}
-                      onChange={handleRaceEthnicityChange}
-                    />
-                    <label htmlFor="multiracial">Multiracial</label>
-                  </div>
-
-                  <div className={styles.checkboxGroup}>
-                    <input
-                      type="checkbox"
-                      id="latin"
-                      name="latin"
-                      checked={accountInfo.raceEthnicity.latin}
-                      onChange={handleRaceEthnicityChange}
-                    />
-                    <label htmlFor="latin">LatinX/Latina/Latino</label>
-                  </div>
-
-                  <div className={styles.checkboxGroup}>
-                    <input
-                      type="checkbox"
-                      id="other"
-                      name="other"
-                      checked={accountInfo.raceEthnicity.other}
-                      onChange={handleRaceEthnicityChange}
-                    />
-                    <label htmlFor="other">Other</label>
-                    <input
-                      type="text"
-                      id="otherText"
-                      name="otherText"
-                      placeholder="Please specify"
-                      value={accountInfo.raceEthnicity.otherText}
-                      disabled={!accountInfo.raceEthnicity.other}
-                      onChange={handleOtherTextChange}
-                      className={styles.otherTextInput}
-                    />
-                  </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <button type="submit" className={styles.submitButton}>
-              Submit
-            </button>
-          </form>
-          {formError && <p className={styles.errorText}>{formError}</p>}
-          <button
-            className={styles.backToLoginButton}
-            onClick={() => router.push("/")}
-          >
-            <Image
-              src={logoutIcon}
-              alt="Logout Icon"
-              className={styles.logout}
-              onClick={async () => {
-                await logOut();
-                router.refresh();
-              }}
-            />
+          <button type="submit" className={styles.submitButton}>
+            Submit
           </button>
-        </div>
+        </form>
+        {formError && <p className={styles.errorText}>{formError}</p>}
+        <button
+          className={styles.backToLoginButton}
+          onClick={() => router.push("/")}
+        >
+          <Image
+            src={logoutIcon}
+            alt="Logout Icon"
+            className={styles.logout}
+            onClick={async () => {
+              await logOut();
+              router.refresh();
+            }}
+          />
+        </button>
       </div>
-    </RequireRegisteredAuth>
+    </div>
   );
 }

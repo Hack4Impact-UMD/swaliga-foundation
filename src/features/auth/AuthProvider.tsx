@@ -16,7 +16,7 @@ interface AuthContextType {
   error: string;
 }
 
-const AuthContext = createContext<AuthContextType>(null!);
+export const AuthContext = createContext<AuthContextType>(null!);
 
 export default function AuthProvider({
   children,
@@ -59,8 +59,4 @@ export default function AuthProvider({
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  return useContext(AuthContext);
 }

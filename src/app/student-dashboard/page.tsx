@@ -7,7 +7,7 @@ import DownArrow from "@/../public/icons/down-arrow-icon.png";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
-import { User } from "@/types/user-types";
+import { Role, User } from "@/types/user-types";
 import { Survey } from "@/types/survey-types";
 import { auth } from "@/config/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
@@ -16,8 +16,8 @@ import { getAccountById } from "@/data/users";
 import { getSurveyByID } from "@/data/surveys";
 import { getResponseByID } from "@/data/response";
 import { logOut } from "@/features/auth/authN/googleAuthN";
-import RequireStudentAuth from "@/features/auth/RequireStudentAuth";
 import { useRouter } from "next/navigation";
+import RequireAuth from "@/features/auth/RequireAuth";
 
 export default function StudentDashboard() {
   const [user, setUser] = useState<User | null>(null);
@@ -75,7 +75,7 @@ export default function StudentDashboard() {
   }
 
   return (
-    <RequireStudentAuth>
+    <RequireAuth allowedRoles={[Role.STUDENT]}>
       <div className={styles.container}>
         <div className={styles.sidebar}>
           <Image src={CompanyLogo} alt="Company Logo" className={styles.img} />
@@ -141,6 +141,6 @@ export default function StudentDashboard() {
           )}
         </div>
       </div>
-    </RequireStudentAuth>
+    </RequireAuth>
   );
 }

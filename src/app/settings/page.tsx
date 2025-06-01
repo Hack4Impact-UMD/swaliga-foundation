@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import styles from "./Settings.module.css";
-import { User } from "@/types/user-types";
+import { Role, User } from "@/types/user-types";
 import { auth } from "@/config/firebaseConfig";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,7 +9,7 @@ import { logOut } from "@/features/auth/authN/googleAuthN";
 import { getAccountById, updateAccount } from "@/data/users";
 import { useRouter } from "next/navigation";
 import Loading from "@/components/Loading";
-import RequireStudentAuth from "@/features/auth/RequireStudentAuth";
+import RequireAuth from "@/features/auth/RequireAuth";
 
 export default function Settings() {
   const [userData, setUserData] = useState<User | null>(null);
@@ -82,7 +82,7 @@ export default function Settings() {
   }
 
   return (
-    <RequireStudentAuth>
+    <RequireAuth allowedRoles={[Role.STUDENT]}>
       <div className={styles.container}>
         {userData && (
           <>
@@ -592,6 +592,6 @@ export default function Settings() {
           </>
         )}
       </div>
-    </RequireStudentAuth>
+    </RequireAuth>
   );
 }

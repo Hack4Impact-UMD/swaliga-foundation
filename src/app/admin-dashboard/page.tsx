@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import styles from "./AdminDashboard.module.css";
-import { User } from "@/types/user-types";
+import { Role, User } from "@/types/user-types";
 import { Survey } from "@/types/survey-types";
 import StudentDisplay from "@/components/StudentDisplay";
 import SurveyDisplay from "@/components/SurveyDisplay";
-import RequireAdminAuth from "@/features/auth/RequireAdminAuth";
+import RequireAuth from "@/features/auth/RequireAuth";
 import logoutIcon from "@/../public/icons/logout.svg";
 import Image from "next/image";
 import Loading from "@/components/Loading";
@@ -41,7 +41,7 @@ export default function AdminDashboard() {
   const handleDropdownChange = () => setShowUserList(!showUserList);
 
   return (
-    <RequireAdminAuth>
+    <RequireAuth allowedRoles={[Role.ADMIN]}>
       {isLoading ? (
         <Loading />
       ) : (
@@ -78,6 +78,6 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
-    </RequireAdminAuth>
+    </RequireAuth>
   );
 }
