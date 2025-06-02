@@ -66,24 +66,19 @@ export default function LoginPage() {
 
   // authenticates user
   const signInWithEmail = async () => {
-    const response = await loginUser(email, password);
-    if (response.success) {
-      setEmail("");
-      setPassword("");
-    } else {
-      setError(LoginPageErrors.LOGIN_FAILED);
+    try {
+      await loginUser(email, password);
+    } catch (error: any) {
+      setError(error)
     }
   };
 
   // creates account
   const createAccount = async () => {
-    const response = await signUpUser(email, password);
-    if (response.success) {
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
-    } else {
-      setError(LoginPageErrors.ACCOUNT_CREATION_FAILED);
+    try {
+      await signUpUser(email, password);
+    } catch (error: any) {
+      setError(error);
     }
   };
 

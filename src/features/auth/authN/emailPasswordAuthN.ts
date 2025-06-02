@@ -1,66 +1,40 @@
-import {
-  createUserWithEmailAndPassword,
-  UserCredential,
-  signInWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, AuthErrorCodes } from "firebase/auth";
 import { auth } from "../../../config/firebaseConfig";
 
-type UserAuthResponse = {
-  success: boolean;
-  userId: string | null;
-};
-
-// Function to sign up a user and create a Firestore document for the user
-export const signUpUser = async (
-  email: string,
-  password: string
-): Promise<UserAuthResponse> => {
+export async function signUpUser(email: string, password: string): Promise<void> {
   try {
-    const userCredential: UserCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
-    const user = userCredential.user;
-    const userUid = user?.uid;
-
-    if (!userUid) {
-      throw new Error("Failed to sign up user: UID is null or undefined.");
+    await createUserWithEmailAndPassword(auth, email, password);
+  } catch (error: any) {
+    const code = error.code;
+    switch (code) {
+      case AuthErrorCodes.EMAIL_EXISTS:
+        throw new Error("Email already exists. Please log in instead.");
+      case AuthErrorCodes.INVALID_EMAIL:
+        throw new Error("Invalid email address. Please enter a valid email.");
+      case AuthErrorCodes.WEAK_PASSWORD:
+        throw new Error("Weak password. Please enter a stronger password.");
+      default:
+        throw new Error("An unexpected error occurred. Please try again later.");
     }
-
-    await fetch("/api/auth/claims/registering", {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ uid: user.uid })
-    });
-    await auth.currentUser?.getIdToken(true);
-    return { success: true, userId: userUid };
-  } catch (error) {
-    console.error("unable to sign up");
-    return { success: false, userId: null };
   }
 };
 
-// Function to log in a user with email and password
-export const loginUser = async (
-  email: string,
-  password: string
-): Promise<UserAuthResponse> => {
+export async function loginUser(email: string, password: string): Promise<void> {
   try {
-    const userCredential: UserCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
-    const user = userCredential.user;
-    return { success: true, userId: user.uid };
-  } catch (error) {
-    console.error("unable to log in");
-    return { success: false, userId: null };
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (error: any) {
+    const code = error.code;
+    switch (code) {
+      case AuthErrorCodes.INVALID_EMAIL:
+        throw new Error("Invalid email address. Please enter a valid email.");
+      case AuthErrorCodes.USER_DELETED:
+        throw new Error("User not found. Please sign up first.");
+      case AuthErrorCodes.USER_DISABLED:
+        throw new Error("User account is disabled. If you think this is a mistake, please contact website administrators.");
+      case AuthErrorCodes.INVALID_PASSWORD:
+        throw new Error("Invalid password. Please try again.")
+      default:
+        throw new Error("An unexpected error occurred. Please try again later.");
+    }
   }
 };
