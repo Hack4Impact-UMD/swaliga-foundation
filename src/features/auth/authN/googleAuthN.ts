@@ -1,19 +1,21 @@
 import { auth } from '@/config/firebaseConfig';
-import { GoogleAuthProvider, signInWithPopup, UserCredential } from 'firebase/auth';
+import { AuthErrorCodes, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
-export async function signInWithGoogle(): Promise<UserCredential | void> {
+export async function signInWithGoogle(): Promise<void> {
   try {
-    return (await signInWithPopup(auth, new GoogleAuthProvider()));
+    await signInWithPopup(auth, new GoogleAuthProvider());
   } catch (error: any) {
-    if (!error.message.includes("auth/popup-closed-by-user") && !error.message.includes("auth/cancelled-popup-request")) {
-      throw new Error(error.message)
+    const code = error.code;
+    if (code !== AuthErrorCodes.POPUP_CLOSED_BY_USER && code !== AuthErrorCodes.EXPIRED_POPUP_REQUEST) {
+      throw new Error('An unexpected error occurred. Please try again later.');
     }
   }
 }
 
 export async function logOut(): Promise<void> {
-  const user = auth.currentUser;
-  if (user) {
-    await auth.signOut();
+  try {
+    auth.signOut();
+  } catch (error: any) {
+    throw new Error('An unexpected error occurred. Please try again later.')
   }
 };
