@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, AuthErrorCodes } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, AuthErrorCodes, sendEmailVerification, User, sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../../config/firebaseConfig";
 
 export async function signUpUser(email: string, password: string): Promise<void> {
@@ -38,3 +38,23 @@ export async function loginUser(email: string, password: string): Promise<void> 
     }
   }
 };
+
+export async function sendVerificationEmail(user: User): Promise<void> {
+  try {
+    await sendEmailVerification(user, {
+      url: `${window.location.origin}/auth/verify-email`,
+    });
+  } catch (error: any) {
+    throw new Error("Failed to send verification email. Please try again later.")
+  }
+}
+
+export async function sendResetPasswordEmail(email: string): Promise<void> {
+  try {
+    sendPasswordResetEmail(auth, email, {
+      url: `${window.location.origin}/auth/reset-password`
+    });
+  } catch (error: any) {
+    throw new Error("Failed to send password reset email. Please try again later.")
+  }
+}
