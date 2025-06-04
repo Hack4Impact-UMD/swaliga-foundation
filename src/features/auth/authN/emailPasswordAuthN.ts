@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, AuthErrorCodes, sendEmailVerification, User, sendPasswordResetEmail } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, AuthErrorCodes, sendEmailVerification, User, sendPasswordResetEmail, confirmPasswordReset } from "firebase/auth";
 import { auth } from "../../../config/firebaseConfig";
 
 export async function signUpUser(email: string, password: string): Promise<void> {
@@ -34,27 +34,44 @@ export async function loginUser(email: string, password: string): Promise<void> 
       case AuthErrorCodes.INVALID_PASSWORD:
         throw new Error("Invalid password. Please try again.")
       default:
-        throw new Error("An unexpected error occurred. Please try again later.");
+        throw new Error("An unexpected error occurred. Please try again.");
     }
   }
 };
 
 export async function sendVerificationEmail(user: User): Promise<void> {
   try {
-    await sendEmailVerification(user, {
-      url: `${window.location.origin}/auth/verify-email`,
-    });
+    await sendEmailVerification(user);
   } catch (error: any) {
-    throw new Error("Failed to send verification email. Please try again later.")
+    throw new Error("Failed to send verification email. Please try again.")
   }
 }
 
 export async function sendResetPasswordEmail(email: string): Promise<void> {
   try {
-    sendPasswordResetEmail(auth, email, {
-      url: `${window.location.origin}/auth/reset-password`
-    });
+    await sendPasswordResetEmail(auth, email);
   } catch (error: any) {
-    throw new Error("Failed to send password reset email. Please try again later.")
+    throw new Error("Failed to send password reset email. Please try again.")
+  }
+}
+
+export async function resetPassword(oobCode: string, newPassword: string): Promise<void> {
+  try {
+    confirmPasswordReset(auth, oobCode, newPassword);
+  } catch (error: any) {
+    const code = error.code;
+    switch (code) {
+      case AuthErrorCodes.INVALID_OOB_CODE:
+      case AuthErrorCodes.EXPIRED_OOB_CODE:
+        throw new Error("Reset password is invalid or expired. Please request a new password reset link.");
+      case AuthErrorCodes.USER_DELETED:
+        throw new Error("User not found. Please sign up first.");
+      case AuthErrorCodes.USER_DISABLED:
+        throw new Error("User account is disabled. If you think this is a mistake, please contact website administrators.");
+      case AuthErrorCodes.WEAK_PASSWORD:
+        throw new Error("Weak password. Please enter a stronger password.");
+      default:
+        throw new Error("An unexpected error occurred. Please try again.")
+    }
   }
 }
