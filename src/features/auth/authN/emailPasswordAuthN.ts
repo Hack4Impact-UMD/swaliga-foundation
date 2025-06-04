@@ -43,7 +43,7 @@ export async function sendVerificationEmail(user: User): Promise<void> {
   try {
     await sendEmailVerification(user);
   } catch (error: any) {
-    throw new Error("Failed to send verification email. Please try again.")
+    throw new Error("Failed to send verification email. Please try again later.")
   }
 }
 
@@ -51,7 +51,7 @@ export async function sendResetPasswordEmail(email: string): Promise<void> {
   try {
     await sendPasswordResetEmail(auth, email);
   } catch (error: any) {
-    throw new Error("Failed to send password reset email. Please try again.")
+    throw new Error("Failed to send password reset email. Please try again later.")
   }
 }
 
