@@ -1,61 +1,59 @@
-import { Timestamp } from "firebase/firestore";
+export interface Person {
+  name: {
+    firstName: string;
+    middleName?: string;
+    lastName: string;
+  };
+  gender: "Male" | "Female" | "Non-Binary" | "Other";
+  email: string;
+  phone?: number;
+}
 
 export interface User {
-  isAdmin: boolean;
-  firstName: string;
-  middleName?: string;
-  lastName: string;
-  email: string;
-  phone: number;
-  gender: Gender;
-  birthdate: Timestamp;
+  uid: string;
+  role: Role;
+}
 
-  guardian?: {
-    name: string;
-    email: string;
-    phone: number;
-    address: Address;
-  }[];
-
-  id: string;
-  swaligaID: number;
-
+export interface Student extends User {
+  swaligaId: string;
+  role: "STUDENT"
+  dateOfBirth: string; // ISO-8601
+  joinedSwaligaDate: string; // ISO-8601
+  ethnicity: Ethnicity[];
+  guardians: Guardian[];
   address: Address;
-  school: string;
-  gradYear: number;
-  yearsWithSwaliga: number;
-  ethnicity: (Ethnicity | string)[]; // Updated to be an array instead of a Set
+  school: {
+    name: string;
+    address: Address;
+    gradYear: number;
+    gpa: number;
+  }
+}
 
-  assignedSurveys: string[];
-  completedResponses: string[];
+export interface Admin extends User {
+  role: "ADMIN";
+}
+
+export interface Guardian extends Person {
+  relationship: "Father" | "Mother" | "Legal Guardian" | "Other";
 }
 
 export interface Address {
-    street: string;
-    city: string;
-    state: string;
-    zip: number;
-    country: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  country: string;
+  zipCode: number;
 }
 
 export enum Ethnicity {
-    BlackOrAfricanAmerican = "Black or African American",
-    Indigenous = "Indigenous",
-    Asian = "Asian",
-    White = "White",
-    Multiracial = "Multiracial",
-    Latin = "Latin",
+  BlackOrAfricanAmerican = "Black or African American",
+  Indigenous = "Indigenous",
+  Asian = "Asian",
+  White = "White",
+  Multiracial = "Multiracial",
+  Latin = "Latin",
 }
 
-export enum Gender {
-    Male = "Male",
-    Female = "Female",
-    NonBinary = "Non-Binary",
-    Other = "Other"
-}
-
-export enum Role {
-  ADMIN = "ADMIN",
-  STUDENT = "STUDENT",
-  REGISTERING = "REGISTERING"
-}
+export type Role = "ADMIN" | "STUDENT"; 
