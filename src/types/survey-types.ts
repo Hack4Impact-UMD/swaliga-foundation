@@ -7,13 +7,16 @@ export interface Survey {
 }
 export interface SurveyID extends Survey, ID { }
 
-export interface SurveyAssignment {
+export type Assignment = PendingAssignment | SurveyResponse;
+export type AssignmentID = PendingAssignmentID | SurveyResponseID;
+
+export interface PendingAssignment {
   surveyId: string;
   assignedAt: string; // ISO-8601
 }
-export interface SurveyAssignmentID extends SurveyAssignment, ID { studentId: string; }
+export interface PendingAssignmentID extends PendingAssignment, ID { studentId: string; }
 
-export interface SurveyResponse extends SurveyAssignment {
+export interface SurveyResponse extends PendingAssignment {
   responseId: string;
   submittedAt: string; // ISO-8601
 }

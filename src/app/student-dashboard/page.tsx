@@ -14,7 +14,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import Loading from "@/components/Loading";
 import { getAccountById } from "@/data/firestore/users";
 import { getSurveyByID } from "@/data/firestore/surveys";
-import { getResponseByID } from "@/data/firestore/responses";
+import { getResponseByID } from "@/data/firestore/assignments";
 import { logOut } from "@/features/auth/authN/googleAuthN";
 import { useRouter } from "next/navigation";
 import RequireAuth from "@/features/auth/RequireAuth";

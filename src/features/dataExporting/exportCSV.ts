@@ -3,7 +3,7 @@ import { Timestamp } from "firebase/firestore";
 import os from 'os';
 import { getSurveyByID } from "../../data/firestore/surveys";
 import { Survey, Response } from "@/types/survey-types";
-import { getResponseByID } from "../../data/firestore/responses";
+import { getResponseByID } from "../../data/firestore/assignments";
 
 type flattenDoc = {
   [key: string]: any;

@@ -1,67 +1,48 @@
-import { GoogleForm, Survey } from '@/types/survey-types';
-import { auth, db } from "../../config/firebaseConfig";
-import { collection, deleteDoc, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
-import { unassignSurveys } from './users';
-import { deleteResponseByID } from './responses';
+import { Survey } from '@/types/survey-types';
+import { db } from "../../config/firebaseConfig";
+import { deleteDoc, doc, getDoc, setDoc, Transaction, updateDoc, WriteBatch } from 'firebase/firestore';
+import { Collection } from './utils';
 
-export async function createSurvey(title: string) {
-  // creates a new form in Google Forms
+export async function getSurveyById(id: string, transaction?: Transaction): Promise<Survey> {
+  const surveyRef = doc(db, Collection.SURVEYS, id);
+  let surveyDoc;
   try {
-    const res = await fetch(`https://swaliga-foundation.web.app/api/googleForms/surveys`, {
-      method: "POST",
-      body: JSON.stringify({
-        title,
-        idToken: await auth.currentUser?.getIdToken(),
-      }),
-    });
-    if (res.status !== 200) {
-      throw new Error('unable to create survey');
-    }
-    const form = await res.json() as GoogleForm;
-    await setDoc(doc(db, "surveys", form!.formId || ""), form);
-    return form;
-  } catch (err) {
-    console.error("unable to create survey");
-    throw Error('unable to create survey');
-  }
-}
-
-/* Retrieve form data given form id and update it to firebase.
-* @params id - id of form
-*/
-
-export async function getAllSurveys() {
-  try {
-    const surveySnapshot = await getDocs(collection(db, 'surveys'));
-    const allSurveys: Survey[] = surveySnapshot.docs.map((doc) => doc.data() as Survey);
-    return allSurveys;
+    surveyDoc = await (transaction ? transaction.get(surveyRef) : getDoc(surveyRef));
   } catch (error) {
-    console.error('unable to get surveys');
-    throw new Error('unable to get surveys');
+    throw new Error("Failed to get survey");
+  }
+  if (!surveyDoc.exists()) {
+    throw new Error("Survey not found");
+  }
+  return surveyDoc.data() as Survey;
+}
+
+export async function createSurvey(surveyId: string, survey: Survey, instance?: Transaction | WriteBatch): Promise<void> {
+  try {
+    const surveyRef = doc(db, Collection.SURVEYS, surveyId);
+    // @ts-ignore
+    await (instance ? instance.set(surveyRef, survey) : setDoc(surveyRef, survey));
+  } catch (error) {
+    throw new Error("Failed to create survey");
   }
 }
 
-export async function getSurveyByID(id: string) {
+export async function updateSurvey(id: string, updates: Partial<Survey>, instance?: Transaction | WriteBatch): Promise<void> {
   try {
-    const snapshot = await getDoc(doc(db, 'surveys', id));
-    return snapshot.exists() ? snapshot.data() as Survey : null
-  } catch (err) {
-    throw Error('survey with given id not found')
+    const surveyRef = doc(db, Collection.SURVEYS, id);
+    // @ts-ignore
+    await (instance ? instance.update(surveyRef, updates) : updateDoc(surveyRef, updates));
+  } catch (error) {
+    throw new Error("Failed to update survey");
   }
 }
 
-export async function deleteSurveyByID(surveyId: string) {
+export async function deleteSurvey(id: string, instance?: Transaction | WriteBatch): Promise<void> {
   try {
-    const survey = await getSurveyByID(surveyId);
-    if (!survey) {
-      throw Error('survey with given id not found');
-    }
-    await unassignSurveys(survey.assignedUsers, [survey.formId]);
-    Promise.all(survey.responseIds.map((responseId: string) => deleteResponseByID(responseId))).then(async () => {
-      await deleteDoc(doc(db, "surveys", surveyId));
-    });
-  } catch (err) {
-    console.log("unable to delete survey");
-    throw Error('unable to delete survey');
+    const surveyRef = doc(db, Collection.SURVEYS, id);
+    // @ts-ignore
+    await (instance ? instance.delete(surveyRef) : deleteDoc(surveyRef));
+  } catch (error) {
+    throw new Error("Failed to delete survey");
   }
 }
