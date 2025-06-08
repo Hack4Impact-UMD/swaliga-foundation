@@ -9,14 +9,14 @@ export interface Person {
   phone?: number;
 }
 
-export interface User {
+export interface User extends Person {
   uid: string;
   role: Role;
 }
 
 export interface Student extends User {
   swaligaId: string;
-  role: "STUDENT"
+  role: "STUDENT";
   dateOfBirth: string; // ISO-8601
   joinedSwaligaDate: string; // ISO-8601
   ethnicity: Ethnicity[];
@@ -47,13 +47,13 @@ export interface Address {
   zipCode: number;
 }
 
-export enum Ethnicity {
-  BlackOrAfricanAmerican = "Black or African American",
-  Indigenous = "Indigenous",
-  Asian = "Asian",
-  White = "White",
-  Multiracial = "Multiracial",
-  Latin = "Latin",
-}
+export type Ethnicity =
+  | "Black or African American"
+  | "Indigenous"
+  | "Asian"
+  | "White"
+  | "Multiracial"
+  | "Latin"
+  | (string & {});
 
 export type Role = "ADMIN" | "STUDENT"; 
