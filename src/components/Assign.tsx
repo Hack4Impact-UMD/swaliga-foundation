@@ -6,7 +6,7 @@ import styles from "./assign.module.css";
 import Modal from "./Modal";
 import Table, { Column } from "./Table";
 import { FilterCondition } from "./Filter";
-import { assignSurveys } from "@/data/users";
+import { assignSurveys } from "@/data/firestore/users";
 
 interface AssignProps {
   studentIds: string[];

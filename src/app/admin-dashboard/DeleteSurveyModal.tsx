@@ -2,7 +2,7 @@ import Modal from "@/components/Modal";
 import styles from "./DeleteSurveyModal.module.css";
 import { Survey } from "@/types/survey-types";
 import { useState } from "react";
-import { deleteSurveyByID } from "@/data/surveys";
+import { deleteSurveyByID } from "@/data/firestore/surveys";
 
 interface DeleteSurveyModalProps {
   survey: Survey;

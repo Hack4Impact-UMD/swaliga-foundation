@@ -1,4 +1,4 @@
-import { getAllSurveys } from "@/data/surveys";
+import { getAllSurveys } from "@/data/firestore/surveys";
 import { renewWatch } from "@/data/watches";
 import { Survey } from "@/types/survey-types";
 import { NextRequest, NextResponse } from "next/server";

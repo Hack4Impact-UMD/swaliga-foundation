@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import styles from "./create.module.css";
 import Modal from "./Modal";
-import { createSurvey } from "@/data/surveys";
+import { createSurvey } from "@/data/firestore/surveys";
 
 interface CreateProps {
   closeCreate: () => void;

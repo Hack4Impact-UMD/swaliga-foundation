@@ -14,9 +14,9 @@ import { Survey, Response } from "@/types/survey-types";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Loading from "@/components/Loading";
-import { getAccountById } from "@/data/users";
-import { getSurveyByID } from "@/data/surveys";
-import { getResponseByID } from "@/data/response";
+import { getAccountById } from "@/data/firestore/users";
+import { getSurveyByID } from "@/data/firestore/surveys";
+import { getResponseByID } from "@/data/firestore/responses";
 import RequireAuth from "@/features/auth/RequireAuth";
 
 // converts birthdate to grade, so grade does not need to be updated in database

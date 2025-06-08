@@ -1,9 +1,9 @@
 import { User } from "@/types/user-types";
 import { Timestamp } from "firebase/firestore";
 import os from 'os';
-import { getSurveyByID } from "../../data/surveys";
+import { getSurveyByID } from "../../data/firestore/surveys";
 import { Survey, Response } from "@/types/survey-types";
-import { getResponseByID } from "../../data/response";
+import { getResponseByID } from "../../data/firestore/responses";
 
 type flattenDoc = {
   [key: string]: any;

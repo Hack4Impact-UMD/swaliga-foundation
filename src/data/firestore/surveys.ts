@@ -1,8 +1,8 @@
 import { GoogleForm, Survey } from '@/types/survey-types';
-import { auth, db } from "../config/firebaseConfig";
+import { auth, db } from "../../config/firebaseConfig";
 import { collection, deleteDoc, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
 import { unassignSurveys } from './users';
-import { deleteResponseByID } from './response';
+import { deleteResponseByID } from './responses';
 
 export async function createSurvey(title: string) {
   // creates a new form in Google Forms

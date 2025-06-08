@@ -6,7 +6,7 @@ import { auth } from "@/config/firebaseConfig";
 import Image from "next/image";
 import Link from "next/link";
 import { logOut } from "@/features/auth/authN/googleAuthN";
-import { getAccountById, updateAccount } from "@/data/users";
+import { getAccountById, updateAccount } from "@/data/firestore/users";
 import { useRouter } from "next/navigation";
 import Loading from "@/components/Loading";
 import RequireAuth from "@/features/auth/RequireAuth";

@@ -1,12 +1,13 @@
-import { db } from "../config/firebaseConfig";
+import { db } from "../../config/firebaseConfig";
 import {
   getDoc,
   doc,
   updateDoc,
   deleteDoc,
   arrayRemove,
+  Transaction,
 } from "firebase/firestore";
-import { Response } from "@/types/survey-types";
+
 
 export async function getResponseByID(
   responseId: string

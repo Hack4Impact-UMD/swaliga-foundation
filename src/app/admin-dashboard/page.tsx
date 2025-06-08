@@ -9,8 +9,8 @@ import RequireAuth from "@/features/auth/RequireAuth";
 import logoutIcon from "@/../public/icons/logout.svg";
 import Image from "next/image";
 import Loading from "@/components/Loading";
-import { getAllUsers } from "@/data/users";
-import { getAllSurveys } from "@/data/surveys";
+import { getAllUsers } from "@/data/firestore/users";
+import { getAllSurveys } from "@/data/firestore/surveys";
 import { logOut } from "@/features/auth/authN/googleAuthN";
 import { useRouter } from "next/navigation";
 

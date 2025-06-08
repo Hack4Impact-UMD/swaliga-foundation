@@ -1,6 +1,6 @@
 import { User } from "@/types/user-types";
 import { doc, getDoc, updateDoc, getDocs, UpdateData, arrayUnion, arrayRemove, collection, addDoc, query as fsQuery, where } from "firebase/firestore";
-import { db } from "../config/firebaseConfig";
+import { db } from "../../config/firebaseConfig";
 
 export async function getAccountById(id: string): Promise<User> {
   try {
