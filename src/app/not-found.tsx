@@ -9,7 +9,7 @@ const NotFound: React.FC = () => {
       <p className={styles.text}>Page Not Found</p>
       <div className={styles.buttonContainer}>
         <Link href="/">
-          <button className={styles.button}>Go to Homepage</button>
+          <button className={styles.button}>Go to Home Page</button>
         </Link>
       </div>
     </div>

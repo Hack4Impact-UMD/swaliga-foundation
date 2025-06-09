@@ -1,0 +1,9 @@
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: "#000000";
+  font-size: 50px;
+  font-family: "Poppins", sans-serif;
+}
