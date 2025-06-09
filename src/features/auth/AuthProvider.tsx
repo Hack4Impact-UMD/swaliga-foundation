@@ -33,19 +33,17 @@ export default function AuthProvider({
     const unsubscribe = onIdTokenChanged(auth, async (newUser) => {
       setUser(newUser);
       if (newUser) {
-        let newToken = await newUser.getIdTokenResult();
-        if (!newToken.claims?.role) {
-          try {
+        try {
+          let newToken = await newUser.getIdTokenResult();
+          if (!newToken.claims?.role) {
             await httpsCallable(functions, "setAdminRole")();
             newToken = await getIdTokenResult(newUser, true);
-          } catch (err) {
-            setError(
-              "An error occurred during authentication. Please try again."
-            );
           }
+          setToken(newToken);
+          setError("");
+        } catch (error) {
+          setError("An unexpected error occurred. Please try again.");
         }
-        setToken(newToken);
-        setError("");
       } else {
         setUser(null);
         setToken(null);
