@@ -1,0 +1,44 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 50px;
+  max-height: 50px;
+  gap: 5rem;
+  background-color: #152d39;
+}
+
+.logo {
+  cursor: pointer;
+  padding-left: 2rem;
+}
+
+.navElementContainer {
+  display: flex;
+  gap: 5rem;
+  font-weight: 700;
+  flex-shrink: 1;
+}
+
+.navLink {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.navElement {
+  color: #dddddd;
+  font-size: 20px;
+  font-weight: 700;
+  text-decoration: none;
+  flex-shrink: 1;
+  font-family: "Poppins", sans-serif;
+}
+
+.navElement:hover {
+  color: #cccccc;
+}
+
+.profile {
+  padding-right: 2rem;
+}
