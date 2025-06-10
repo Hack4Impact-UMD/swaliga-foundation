@@ -106,6 +106,7 @@
 }
 
 .error {
+  min-height: 15px;
   margin: 10px;
   color: red;
   font-size: small;

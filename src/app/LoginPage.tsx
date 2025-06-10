@@ -10,6 +10,7 @@ import {
 import { signInWithGoogle } from "@/features/auth/authN/googleAuthN";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { validatePassword } from "firebase/auth";
+import { auth } from "@/config/firebaseConfig";
 
 export default function LoginPage() {
   const [isLoginMode, setIsLoginMode] = useState<boolean>(true);
@@ -19,8 +20,7 @@ export default function LoginPage() {
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
 
-  // authenticates user
-  const signInWithEmail = async () => {
+  const handleEmailPasswordLogin = async () => {
     try {
       await loginUser(email, password);
     } catch (error: any) {
@@ -28,21 +28,65 @@ export default function LoginPage() {
     }
   };
 
-  // creates account
-  const createAccount = async () => {
-    try {
-      await signUpUser(email, password);
-    } catch (error: any) {
-      setError(error);
+  const handlePasswordValidation = async () => {
+    const validation = await validatePassword(auth, password);
+    if (validation.isValid) {
+      return;
+    }
+    if (!validation.meetsMinPasswordLength) {
+      throw new Error(
+        "Password is too short. It must be at least 6 characters."
+      );
+    } else if (!validation.meetsMaxPasswordLength) {
+      throw new Error(
+        "Password is too long. It must be no more than 4096 characters."
+      );
     }
   };
 
-  const toggleLogin = () => {
-    setIsLoginMode(!isLoginMode);
+  const handleSignUp = async () => {
+    if (password !== confirmPassword) {
+      setError("Passwords do not match. Please try again.");
+      return;
+    }
+    try {
+      await handlePasswordValidation();
+      await signUpUser(email, password);
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await signInWithGoogle();
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
+
+  const handleEmailChange = (email: string) => {
+    setEmail(email);
+    setError("");
+  };
+
+  const handlePasswordChange = (password: string) => {
+    setPassword(password);
+    setError("");
+  };
+
+  const handleConfirmPasswordChange = (confirmPassword: string) => {
+    setConfirmPassword(confirmPassword);
+    setError("");
+  };
+
+  const toggleMode = () => {
+    setIsLoginMode((prev) => !prev);
     setError("");
     setEmail("");
     setPassword("");
     setConfirmPassword("");
+    setIsPasswordVisible(false);
   };
 
   const togglePasswordVisibility = () => setIsPasswordVisible((prev) => !prev);
@@ -61,7 +105,7 @@ export default function LoginPage() {
                 className={styles.login_field}
                 placeholder="Email"
                 value={email}
-                onChange={(ev) => setEmail(ev.target.value)}
+                onChange={(ev) => handleEmailChange(ev.target.value)}
               />
             </div>
             <div className={styles.login_field_container}>
@@ -70,7 +114,7 @@ export default function LoginPage() {
                 className={styles.login_field}
                 placeholder="Password"
                 value={password}
-                onChange={(ev) => setPassword(ev.target.value)}
+                onChange={(ev) => handlePasswordChange(ev.target.value)}
               />
               {isPasswordVisible ? (
                 <MdVisibility onClick={togglePasswordVisibility} />
@@ -85,25 +129,27 @@ export default function LoginPage() {
                   className={styles.login_field}
                   placeholder="Confirm Password"
                   value={confirmPassword}
-                  onChange={(ev) => setConfirmPassword(ev.target.value)}
+                  onChange={(ev) =>
+                    handleConfirmPasswordChange(ev.target.value)
+                  }
                 />
               </div>
             )}
             <div className={styles.forgot_password}>
               <a href="/reset-password">Forgot password?</a>
             </div>
-            {error && <p className={styles.error}>{error}</p>}
+            <p className={styles.error}>{error}</p>
             <button
               className={styles.login_button}
-              onClick={isLoginMode ? signInWithEmail : createAccount}
+              onClick={isLoginMode ? handleEmailPasswordLogin : handleSignUp}
             >
-              Submit
+              {isLoginMode ? "Login" : "Sign Up"}
             </button>
             <p className={styles.toggle_text}>
               {isLoginMode ? "Don't" : "Already"} have an account?
               <br />
               Click{" "}
-              <a href="#" onClick={toggleLogin}>
+              <a href="#" onClick={toggleMode}>
                 here
               </a>{" "}
               to {isLoginMode ? "sign up" : "login"}
@@ -117,7 +163,7 @@ export default function LoginPage() {
           <div className={styles.google_container}>
             <GoogleButton
               className={styles.google_container}
-              onClick={() => signInWithGoogle()}
+              onClick={handleGoogleLogin}
             />
           </div>
         </div>

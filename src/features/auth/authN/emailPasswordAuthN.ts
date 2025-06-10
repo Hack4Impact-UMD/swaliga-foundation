@@ -8,7 +8,7 @@ export async function signUpUser(email: string, password: string): Promise<void>
     const code = error.code;
     switch (code) {
       case AuthErrorCodes.EMAIL_EXISTS:
-        throw new Error("Email already exists. Please log in instead.");
+        throw new Error("Email already exists. Please log in or reset your password instead.");
       case AuthErrorCodes.INVALID_EMAIL:
         throw new Error("Invalid email address. Please enter a valid email.");
       case AuthErrorCodes.WEAK_PASSWORD:
@@ -32,6 +32,7 @@ export async function loginUser(email: string, password: string): Promise<void> 
       case AuthErrorCodes.USER_DISABLED:
         throw new Error("User account is disabled. If you think this is a mistake, please contact website administrators.");
       case AuthErrorCodes.INVALID_PASSWORD:
+      case "auth/missing-password":
         throw new Error("Invalid password. Please try again.")
       default:
         throw new Error("An unexpected error occurred. Please try again.");
