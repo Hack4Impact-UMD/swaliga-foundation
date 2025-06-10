@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import styles from "./layout.module.css";
 import AuthProvider from "@/features/auth/AuthProvider";
 import Navbar from "@/components/Navbar";
 
@@ -18,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} ${styles.body}`}>
         <AuthProvider>
           <Navbar />
           {children as JSX.Element}
