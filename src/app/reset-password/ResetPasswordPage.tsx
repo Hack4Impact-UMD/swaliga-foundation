@@ -34,13 +34,14 @@ export default function ResetPasswordPage() {
             placeholder="Email"
             value={email}
             onChange={(e) => handleEmailChange(e.target.value)}
-          ></input>
+          />
           <button
             className={`${styles.button} ${styles.submitButton}`}
             onClick={handleResetButtonClick}
           >
             Send Reset Email
           </button>
+          <p className={styles.error}>{error}</p>
         </div>
         <div className={styles.returnButtonContainer}>
           <button

@@ -106,10 +106,12 @@
 }
 
 .error {
+  width: 80%;
   min-height: 15px;
   margin: 10px;
   color: red;
   font-size: small;
+  text-align: center;
 }
 
 .divider {
