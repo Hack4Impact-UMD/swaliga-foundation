@@ -1,12 +1,12 @@
 "use client";
 
 import RequireAuth from "@/features/auth/RequireAuth";
-import ResetPasswordPage from "./ResetPasswordPage";
+import SendResetPasswordEmailPage from "./SendResetPasswordEmailPage";
 
 export default function ResetPasswordPageWrapper() {
   return (
     <RequireAuth allowedRoles={[]} allowUnauthenticated>
-      <ResetPasswordPage />
+      <SendResetPasswordEmailPage />
     </RequireAuth>
   );
 }

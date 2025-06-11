@@ -1,11 +1,12 @@
 "use client";
 
-import styles from "./ResetPasswordPage.module.css";
+import styles from "./SendResetPasswordEmailPage.module.css";
 import { FaArrowLeft } from "react-icons/fa";
 import { sendResetPasswordEmail } from "@/features/auth/authN/emailPasswordAuthN";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-export default function ResetPasswordPage() {
+
+export default function SendResetPasswordEmailPage() {
   const [email, setEmail] = useState<string>("");
   const [error, setError] = useState<string>("");
 
