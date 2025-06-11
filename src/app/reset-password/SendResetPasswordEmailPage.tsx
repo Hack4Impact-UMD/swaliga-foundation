@@ -59,7 +59,7 @@ export default function SendResetPasswordEmailPage() {
             className={`${styles.button} ${styles.returnHomeButton}`}
             onClick={() => router.push("/")}
           >
-            <FaArrowLeft /> Return to Login
+            <FaArrowLeft /> Return to Home
           </button>
         </div>
       </div>
