@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 
 export default function SendResetPasswordEmailPage() {
   const [email, setEmail] = useState<string>("");
+  const [success, setSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function SendResetPasswordEmailPage() {
   const handleResetButtonClick = async () => {
     try {
       await sendResetPasswordEmail(email);
+      setSuccess(true);
     } catch (error: any) {
       setError(error.message);
     }
@@ -42,7 +44,15 @@ export default function SendResetPasswordEmailPage() {
           >
             Send Reset Email
           </button>
-          <p className={styles.error}>{error}</p>
+          <p
+            className={`${styles.message} ${
+              success ? styles.success : styles.error
+            }`}
+          >
+            {success
+              ? "A password reset email was successfully sent! Please check your email."
+              : error}
+          </p>
         </div>
         <div className={styles.returnButtonContainer}>
           <button
