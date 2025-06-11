@@ -28,7 +28,7 @@ export async function loginUser(email: string, password: string): Promise<void> 
       case AuthErrorCodes.INVALID_EMAIL:
         throw new Error("Invalid email address. Please enter a valid email.");
       case AuthErrorCodes.USER_DELETED:
-        throw new Error("User not found. Please sign up first.");
+        throw new Error("User not found. Please sign up.");
       case AuthErrorCodes.USER_DISABLED:
         throw new Error("User account is disabled. If you think this is a mistake, please contact website administrators.");
       case AuthErrorCodes.INVALID_PASSWORD:
@@ -52,7 +52,13 @@ export async function sendResetPasswordEmail(email: string): Promise<void> {
   try {
     await sendPasswordResetEmail(auth, email);
   } catch (error: any) {
-    throw new Error("Failed to send password reset email. Please try again later.")
+    const code = error.code;
+    switch (code) {
+      case AuthErrorCodes.USER_DELETED:
+        throw new Error("User not found. Please sign up.");
+      default:
+        throw new Error("An unexpected error occurred. Please try again later.");
+    }
   }
 }
 
@@ -66,7 +72,7 @@ export async function resetPassword(oobCode: string, newPassword: string): Promi
       case AuthErrorCodes.EXPIRED_OOB_CODE:
         throw new Error("Reset password is invalid or expired. Please request a new password reset link.");
       case AuthErrorCodes.USER_DELETED:
-        throw new Error("User not found. Please sign up first.");
+        throw new Error("User not found. Please sign up.");
       case AuthErrorCodes.USER_DISABLED:
         throw new Error("User account is disabled. If you think this is a mistake, please contact website administrators.");
       case AuthErrorCodes.WEAK_PASSWORD:
