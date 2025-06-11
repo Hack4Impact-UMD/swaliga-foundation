@@ -28,29 +28,12 @@ export default function LoginPage() {
     }
   };
 
-  const handlePasswordValidation = async () => {
-    const validation = await validatePassword(auth, password);
-    if (validation.isValid) {
-      return;
-    }
-    if (!validation.meetsMinPasswordLength) {
-      throw new Error(
-        "Password is too short. It must be at least 6 characters."
-      );
-    } else if (!validation.meetsMaxPasswordLength) {
-      throw new Error(
-        "Password is too long. It must be no more than 4096 characters."
-      );
-    }
-  };
-
   const handleSignUp = async () => {
     if (password !== confirmPassword) {
       setError("Passwords do not match. Please try again.");
       return;
     }
     try {
-      await handlePasswordValidation();
       await signUpUser(email, password);
     } catch (error: any) {
       setError(error.message);

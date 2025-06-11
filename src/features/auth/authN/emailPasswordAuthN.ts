@@ -1,7 +1,8 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, AuthErrorCodes, sendEmailVerification, User, sendPasswordResetEmail, confirmPasswordReset } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, AuthErrorCodes, sendEmailVerification, User, sendPasswordResetEmail, confirmPasswordReset, validatePassword } from "firebase/auth";
 import { auth } from "../../../config/firebaseConfig";
 
 export async function signUpUser(email: string, password: string): Promise<void> {
+  await isPasswordValid(password);
   try {
     await createUserWithEmailAndPassword(auth, email, password);
   } catch (error: any) {
@@ -63,6 +64,7 @@ export async function sendResetPasswordEmail(email: string): Promise<void> {
 }
 
 export async function resetPassword(oobCode: string, newPassword: string): Promise<void> {
+  await isPasswordValid(newPassword);
   try {
     confirmPasswordReset(auth, oobCode, newPassword);
   } catch (error: any) {
@@ -80,5 +82,27 @@ export async function resetPassword(oobCode: string, newPassword: string): Promi
       default:
         throw new Error("An unexpected error occurred. Please try again.")
     }
+  }
+}
+
+async function isPasswordValid(password: string): Promise<void> {
+  // Skip validation when not in prod environment since Firebase Auth Emulator does not support password validation
+  if (process.env.NODE_ENV !== "production") { return; }
+  let validation;
+  try {
+    validation = await validatePassword(auth, password);
+  } catch (error: any) {
+    throw new Error("An unexpected error occurred. Please try again later.")
+  }
+  if (validation.isValid) {
+    return;
+  } else if (!validation.meetsMinPasswordLength) {
+    throw new Error(
+      "Password is too short. It must be at least 6 characters."
+    );
+  } else if (!validation.meetsMaxPasswordLength) {
+    throw new Error(
+      "Password is too long. It must be no more than 4096 characters."
+    );
   }
 }
