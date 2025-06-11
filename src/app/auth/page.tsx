@@ -1,22 +1,16 @@
 "use client";
 
-import { resetPassword } from "@/features/auth/authN/emailPasswordAuthN";
 import { useSearchParams } from "next/navigation";
+import EmailVerifiedPage from "./EmailVerifiedPage";
 
-export default function AuthPage() {
+export default function AuthHandlerPage() {
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode");
-  const oobCode = searchParams.get("oobCode");
+
   switch (mode) {
     case "verifyEmail":
-      return <div>Email Verified</div>;
-    case "resetPassword":
-      return (
-        <div onClick={() => resetPassword(oobCode as string, "newPassword")}>
-          Reset Password
-        </div>
-      );
+      return <EmailVerifiedPage />;
     default:
-      return <div>Invalid Mode</div>;
+      throw new Error("We're unable to find the page you're looking for.");
   }
 }
