@@ -66,7 +66,7 @@ export async function sendResetPasswordEmail(email: string): Promise<void> {
 export async function resetPassword(oobCode: string, newPassword: string): Promise<void> {
   await isPasswordValid(newPassword);
   try {
-    confirmPasswordReset(auth, oobCode, newPassword);
+    await confirmPasswordReset(auth, oobCode, newPassword);
   } catch (error: any) {
     const code = error.code;
     switch (code) {
