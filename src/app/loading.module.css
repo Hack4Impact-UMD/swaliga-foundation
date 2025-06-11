@@ -1,9 +1,25 @@
-.loading {
+.page {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  height: 100%;
-  color: "#000000";
-  font-size: 50px;
+  align-items: center;
+  min-height: calc(100vh);
+  background-color: #295972;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  width: 50%;
+  height: 60%;
+  background-color: #d0d12a;
+}
+
+.header {
   font-family: "Poppins", sans-serif;
+  color: #295972;
+  font-weight: 700;
 }

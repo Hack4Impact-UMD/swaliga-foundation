@@ -2,21 +2,21 @@
 
 import Link from "next/link";
 import styles from "./error.module.css";
+import { logOut } from "@/features/auth/authN/googleAuthN";
 
 export default function ErrorPage({
   error,
-  reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
   return (
-    <div className={styles.container}>
-      <h1 className={styles.header}>Error</h1>
-      <p className={styles.text}>{error.message}</p>
-      <div className={styles.buttonContainer}>
+    <div className={styles.page}>
+      <div className={styles.container}>
+        <h1 className={styles.header}>Error</h1>
+        <p className={styles.message}>{error.message}</p>
         <Link href="/">
-          <button className={styles.button}>Go to Home Page</button>
+          <button className={styles.button}>Back to Home</button>
         </Link>
       </div>
     </div>
