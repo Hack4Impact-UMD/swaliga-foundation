@@ -1,11 +1,8 @@
 "use client";
 
 import styles from "./ResetPasswordPage.module.css";
-import CompanyLogo from "@/../public/images/logo.svg";
-import CompanyLogoWords from "@/../public/images/logo2.svg";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import RequireAuth from "@/features/auth/RequireAuth";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { resetPassword } from "@/features/auth/authN/emailPasswordAuthN";
 import Link from "next/link";
