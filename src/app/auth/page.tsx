@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import EmailVerifiedPage from "./EmailVerifiedPage";
+import VerifyEmailPage from "./VerifyEmailPage";
 import ResetPasswordPage from "./ResetPasswordPage";
 import RequireAuth from "@/features/auth/RequireAuth";
 import { checkCodeValidity } from "@/features/auth/authN/emailPasswordAuthN";
@@ -43,7 +43,7 @@ export default function AuthHandlerPage() {
     case "verifyEmail":
       return (
         <RequireAuth allowedRoles={["ADMIN", "STUDENT"]}>
-          <EmailVerifiedPage oobCode={oobCode} />
+          <VerifyEmailPage oobCode={oobCode} />
         </RequireAuth>
       );
     case "resetPassword":

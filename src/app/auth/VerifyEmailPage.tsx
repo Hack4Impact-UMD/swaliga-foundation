@@ -1,15 +1,15 @@
 import { useRouter } from "next/navigation";
-import styles from "./EmailVerifiedPage.module.css";
+import styles from "./VerifyEmailPage.module.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { verifyEmail } from "@/features/auth/authN/emailPasswordAuthN";
 import useAuth from "@/features/auth/useAuth";
 
-interface EmailVerifiedPageProps {
+interface VerifyEmailPageProps {
   oobCode: string;
 }
 
-export default function EmailVerifiedPage(props: EmailVerifiedPageProps) {
+export default function VerifyEmailPage(props: VerifyEmailPageProps) {
   const { oobCode } = props;
   const [verified, setVerified] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
