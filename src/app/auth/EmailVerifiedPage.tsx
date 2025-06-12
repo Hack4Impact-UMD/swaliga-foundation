@@ -42,11 +42,11 @@ export default function EmailVerifiedPage(props: EmailVerifiedPageProps) {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <h1>
+        <h1 className={styles.header}>
           {verified ? "Your email has been verified!" : "Verifying email..."}
         </h1>
         {verified && (
-          <p>
+          <p className={styles.message}>
             You will be redirected to the home page shortly. To go there now,
             click <Link href="/">here</Link>.
           </p>

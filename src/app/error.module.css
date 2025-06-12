@@ -17,6 +17,7 @@
   height: 60%;
   background-color: #d0d12a;
 }
+
 .header {
   font-family: "Poppins", sans-serif;
   color: #295972;
@@ -24,10 +25,11 @@
 }
 
 .message {
+  width: 90%;
   font-family: "Poppins", sans-serif;
   color: black;
   font-weight: 400;
-  margin: 0;
+  text-align: center;
 }
 
 .button {
