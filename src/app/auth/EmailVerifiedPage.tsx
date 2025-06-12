@@ -1,18 +1,56 @@
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import styles from "./EmailVerifiedPage.module.css";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { verifyEmail } from "@/features/auth/authN/emailPasswordAuthN";
+import useAuth from "@/features/auth/useAuth";
 
-export default function EmailVerifiedPage() {
+interface EmailVerifiedPageProps {
+  oobCode: string;
+}
+
+export default function EmailVerifiedPage(props: EmailVerifiedPageProps) {
+  const { oobCode } = props;
+  const [verified, setVerified] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+
+  const auth = useAuth();
   const router = useRouter();
-  setTimeout(() => router.push("/"), 2000);
+
+  useEffect(() => {
+    const handleVerifyEmail = async () => {
+      await verifyEmail(oobCode);
+      await auth.user!.getIdToken(true);
+    };
+
+    handleVerifyEmail()
+      .then(() => {
+        setVerified(true);
+        setTimeout(() => {
+          router.push("/");
+        }, 2000);
+      })
+      .catch((error: any) => {
+        setError(error.message);
+      });
+  }, []);
+
+  if (error) {
+    throw new Error(error);
+  }
+
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <h1>Your email has been verified! </h1>
-        <p>
-          You will be redirected to the home page shortly. To go there now,
-          click <Link href="/">here</Link>.
-        </p>
+        <h1>
+          {verified ? "Your email has been verified!" : "Verifying email..."}
+        </h1>
+        {verified && (
+          <p>
+            You will be redirected to the home page shortly. To go there now,
+            click <Link href="/">here</Link>.
+          </p>
+        )}
       </div>
     </div>
   );
