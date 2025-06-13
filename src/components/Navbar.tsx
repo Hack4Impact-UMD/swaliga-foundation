@@ -7,6 +7,7 @@ import { Role } from "@/types/user-types";
 import styles from "./Navbar.module.css";
 import logo from "@/../public/logo.png";
 import { CgProfile } from "react-icons/cg";
+import { logOut } from "@/features/auth/authN/googleAuthN";
 
 const navbarLinks: { name: string; href: string; roles: Role[] }[] = [
   { name: "Students", href: "/students", roles: ["ADMIN"] },
@@ -27,7 +28,7 @@ export default function Navbar() {
   const role: Role = auth.token?.claims.role as Role;
 
   return (
-    <nav className={styles.navbar}>
+    <nav className={styles.navbar} onClick={() => logOut()}>
       {/* Logo on the left */}
       <div>
         <Link href="/">
@@ -42,7 +43,7 @@ export default function Navbar() {
       </div>
 
       {/* Centered Text Container */}
-      {auth.token && (
+      {(auth.token?.claims.email_verified as boolean) && (
         <div className={styles.navElementContainer}>
           {navbarLinks
             .filter((item) => item.roles.includes(role))
