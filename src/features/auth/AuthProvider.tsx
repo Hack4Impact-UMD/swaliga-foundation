@@ -31,6 +31,7 @@ export default function AuthProvider({
 
   useEffect(() => {
     const unsubscribe = onIdTokenChanged(auth, async (newUser) => {
+      setLoading(true);
       setUser(newUser);
       if (newUser) {
         try {
