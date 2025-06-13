@@ -3,8 +3,9 @@ import { auth } from "@/config/firebaseConfig";
 
 export async function signUpUser(email: string, password: string): Promise<void> {
   await checkPasswordValidity(password);
+  let userCredential;
   try {
-    await createUserWithEmailAndPassword(auth, email, password);
+    userCredential = await createUserWithEmailAndPassword(auth, email, password);
   } catch (error: any) {
     const code = error.code;
     switch (code) {
@@ -18,6 +19,7 @@ export async function signUpUser(email: string, password: string): Promise<void>
         throw new Error("An unexpected error occurred. Please try again later.");
     }
   }
+  await sendVerificationEmail(userCredential.user);
 };
 
 export async function loginUser(email: string, password: string): Promise<void> {
