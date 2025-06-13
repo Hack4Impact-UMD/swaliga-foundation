@@ -4,6 +4,7 @@ import { useState } from "react";
 import useAuth from "@/features/auth/useAuth";
 
 export default function SendVerificationEmailPage() {
+  const [success, setSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
   const auth = useAuth();
@@ -11,6 +12,7 @@ export default function SendVerificationEmailPage() {
   const handleSendVerificationEmail = async () => {
     try {
       await sendVerificationEmail(auth.user!);
+      setSuccess(true);
     } catch (error: any) {
       setError(error.message);
     }
@@ -27,7 +29,11 @@ export default function SendVerificationEmailPage() {
         <button className={styles.button} onClick={handleSendVerificationEmail}>
           Resend Verification Email
         </button>
-        <p className={`${styles.message} ${styles.error}`}>{error}</p>
+        <p className={`${styles.message} ${success ? styles.success : styles.error}`}>
+          {success
+            ? "Verification email sent successfully! Please check your email."
+            : error}
+        </p>
       </div>
     </div>
   );
