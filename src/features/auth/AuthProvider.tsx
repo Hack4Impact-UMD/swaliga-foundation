@@ -36,7 +36,7 @@ export default function AuthProvider({
       if (newUser) {
         try {
           let newToken = await newUser.getIdTokenResult();
-          if (!newToken.claims?.role) {
+          if (newToken.claims.email_verified && !newToken.claims?.role) {
             await httpsCallable(functions, "setAdminRole")();
             newToken = await getIdTokenResult(newUser, true);
           }
