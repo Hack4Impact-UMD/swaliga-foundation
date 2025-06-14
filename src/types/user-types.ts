@@ -4,9 +4,9 @@ export interface Person {
     middleName?: string;
     lastName: string;
   };
-  gender: "Male" | "Female" | "Non-Binary" | "Other";
+  gender: Gender;
   email: string;
-  phone?: number;
+  phone?: string;
 }
 
 export interface User extends Person {
@@ -46,6 +46,8 @@ export interface Address {
   country: string;
   zipCode: number;
 }
+
+export type Gender = "Male" | "Female" | "Non-Binary" | "Other";
 
 export type Ethnicity =
   | "Black or African American"
