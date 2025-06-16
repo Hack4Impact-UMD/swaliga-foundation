@@ -2,158 +2,94 @@ import { useState } from "react";
 import styles from "./Table.module.css";
 import Filter, { FilterCondition } from "../Filter";
 import { FaFilter } from "react-icons/fa";
+import { ID } from "@/types/utils";
 
-export interface Column<T> {
-  id: string;
+export interface Column<T extends ID> {
   name: string;
-  getValue: (item: T) => JSX.Element;
+  getValue: (item: T) => React.ReactNode;
 }
 
-export interface Item<T> {
-  id: string;
-  data: T;
+interface SelectOptions {
+  selectedItemIds: string[];
+  setSelectedItemIds: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-interface TableProps<T> {
+interface TableProps<T extends ID> {
   columns: Column<T>[];
-  items: Item<T>[];
-  selectedItemIds?: string[];
-  filterConditions: FilterCondition<T>[];
-  filterFunction: (
+  items: T[];
+  selectOptions?: SelectOptions;
+  filterConditions?: FilterCondition<T>[];
+  filterFunction?: (
     item: T,
     filterConditions: { [key: string]: any }
   ) => boolean;
-  setSelectedItemIds?: (ids: string[]) => void;
 }
 
-export default function Table<T>(props: TableProps<T>) {
-  const {
-    columns,
-    items,
-    selectedItemIds,
-    filterConditions,
-    filterFunction,
-    setSelectedItemIds,
-  } = props;
-  const [filteredItems, setFilteredItems] = useState<Item<T>[]>(items);
-  const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
+export default function Table<T extends ID>(props: TableProps<T>) {
+  const { columns, items, selectOptions } = props;
+  // @ts-ignore
+  const { selectedItemIds, setSelectedItemIds } = selectOptions;
+
   const [currentPage, setCurrentPage] = useState<number>(0);
   const itemsPerPage = 50;
   const totalPages = Math.ceil(items.length / itemsPerPage);
 
-  const toggleSelectAll = () => {
-    if (!selectedItemIds || !setSelectedItemIds) {
-      return;
-    } else if (selectedItemIds.length === 0) {
-      setSelectedItemIds(items.map((item) => item.id));
+  const handleSelect = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedItemIds((prev: string[]) => [...new Set([...prev, id])]);
     } else {
-      setSelectedItemIds([]);
+      setSelectedItemIds((prev: string[]) =>
+        prev.filter((itemId: string) => itemId !== id)
+      );
     }
   };
 
-  // adds and removes the item ID from the selectedItemIds array for use by parent component
-  const handleStudentCheck = (id: string) => {
-    if (!selectedItemIds || !setSelectedItemIds) {
-      return;
-    } else if (selectedItemIds.includes(id)) {
-      setSelectedItemIds(
-        selectedItemIds.filter((studentId) => studentId !== id)
-      );
-    } else {
-      setSelectedItemIds([...selectedItemIds, id]);
-    }
+  const handleSelectAll = (checked: boolean) => {
+    items.forEach((item: T) => handleSelect(item.id, checked));
   };
 
   return (
-    <>
-      <div className={styles.content}>
-        <div className={styles.tableContainer}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                {selectedItemIds && (
-                  <th>
-                    <input
-                      type="checkbox"
-                      checked={selectedItemIds.length !== 0}
-                      onChange={toggleSelectAll}
-                    />
-                  </th>
-                )}
-                {columns.map((column) => (
-                  <th key={column.id}>{column.name}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filteredItems
-                .slice(
-                  currentPage * itemsPerPage,
-                  (currentPage + 1) * itemsPerPage
-                )
-                .map((item) => (
-                  <tr
-                    key={item.id}
-                    className={
-                      selectedItemIds && selectedItemIds.includes(item.id)
-                        ? styles.checkedRow
-                        : ""
-                    }
-                  >
-                    {selectedItemIds && (
-                      <td>
-                        <input
-                          type="checkbox"
-                          checked={selectedItemIds.includes(item.id)}
-                          onChange={() => handleStudentCheck(item.id)}
-                        />
-                      </td>
-                    )}
-                    {columns.map((column) => (
-                      <td key={column.id}>{column.getValue(item.data)}</td>
-                    ))}
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
-        <div className={styles.filterContainer}>
-          {isFilterOpen ? (
-            <Filter
-              filterConditions={filterConditions}
-              items={items}
-              closeFilter={() => setIsFilterOpen(false)}
-              setFilteredItems={setFilteredItems}
-              filterFunction={filterFunction}
-            />
-          ) : (
-            <div
-              className={styles.filterBox}
-              onClick={() => setIsFilterOpen(true)}
-            >
-              <FaFilter className={styles.filterIcon} />
-            </div>
+    <table className={styles.table}>
+      <thead>
+        <tr className={styles.headerRow}>
+          {selectOptions && (
+            <th className={styles.rowItem}>
+              <input
+                type="checkbox"
+                checked={selectedItemIds.length === items.length}
+                onChange={(e) => handleSelectAll(e.target.checked)}
+              />
+            </th>
           )}
-        </div>
-      </div>
-      <div className={styles.pagination}>
-        <button
-          className={styles.paginationButton}
-          onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
-          disabled={currentPage === 0}
-        >
-          Previous 50
-        </button>
-        <button
-          className={styles.paginationButton}
-          onClick={() =>
-            setCurrentPage(Math.min(totalPages - 1, currentPage + 1))
-          }
-          disabled={currentPage >= totalPages - 1}
-        >
-          Next 50
-        </button>
-      </div>
-    </>
+          {columns.map((column: Column<T>) => (
+            <th className={styles.rowItem}>{column.name}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {items.map((item: T) => {
+          const checked = selectOptions && selectedItemIds?.includes(item.id);
+          return (
+            <tr className={checked ? styles.selectedTableRow : styles.tableRow}>
+              {selectOptions && (
+                <td className={styles.rowItem}>
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={(e) => handleSelect(item.id, e.target.checked)}
+                  />
+                </td>
+              )}
+              {columns.map((column: Column<T>) => (
+                <td className={styles.rowItem}>{column.getValue(item)}</td>
+              ))}
+            </tr>
+          );
+        })}
+      </tbody>
+      <tfoot>
+        
+      </tfoot>
+    </table>
   );
 }
