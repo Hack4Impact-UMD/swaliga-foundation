@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Modal from "./Modal";
+import Modal from "../../components/ui/Modal";
 import styles from "./SendEmailModal.module.css";
 import { auth } from "@/config/firebaseConfig";
 

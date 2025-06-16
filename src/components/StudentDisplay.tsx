@@ -5,13 +5,13 @@ import { User } from "@/types/user-types";
 import styles from "./StudentDisplay.module.css";
 import { useState } from "react";
 import { FilterCondition } from "./Filter";
-import Assign from "./Assign";
+import AssignSurveysModal from "../features/surveyManagement/AssignSurveysModal";
 import { exportUsersToCSV } from "@/features/dataExporting/exportCSV";
 import { Timestamp } from "firebase/firestore";
-import Table, { Column } from "./Table";
+import Table, { Column } from "./ui/Table";
 import moment from "moment";
 import { useRouter } from "next/navigation";
-import SendEmailModal from "./SendEmailModal";
+import SendEmailModal from "../features/notifications/SendEmailModal";
 
 export default function StudentDisplay(props: {
   users: User[];
@@ -187,7 +187,7 @@ export default function StudentDisplay(props: {
         </button>
       </div>
       {isAssignOpen && (
-        <Assign
+        <AssignSurveysModal
           studentIds={selectedStudentIds}
           surveys={surveys}
           closeAssign={() => setIsAssignOpen(false)}

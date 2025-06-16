@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { Survey } from "@/types/survey-types";
-import styles from "./assign.module.css";
-import Modal from "./Modal";
-import Table, { Column } from "./Table";
-import { FilterCondition } from "./Filter";
+import styles from "./AssignSurveysModal.module.css";
+import Modal from "../../components/ui/Modal";
+import Table, { Column } from "../../components/ui/Table";
+import { FilterCondition } from "../../components/Filter";
 import { assignSurveys } from "@/data/firestore/users";
 
 interface AssignProps {
@@ -14,7 +14,7 @@ interface AssignProps {
   closeAssign: () => void;
 }
 
-export default function Assign({
+export default function AssignSurveysModal({
   studentIds,
   surveys,
   closeAssign,

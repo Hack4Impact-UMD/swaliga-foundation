@@ -1,4 +1,4 @@
-import Modal from "@/components/Modal";
+import Modal from "@/components/ui/Modal";
 import styles from "./DeleteSurveyModal.module.css";
 import { Survey } from "@/types/survey-types";
 import { useState } from "react";

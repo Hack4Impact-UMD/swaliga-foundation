@@ -3,13 +3,13 @@ import Link from "next/link";
 import styles from "./SurveyDisplay.module.css";
 import { useState } from "react";
 import { Survey } from "@/types/survey-types";
-import Create from "./create";
-import Table, { Column } from "./Table";
+import CreateSurveyModal from "../features/surveyManagement/CreateSurveyModal";
+import Table, { Column } from "./ui/Table";
 import { FilterCondition } from "./Filter";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import trashIcon from "@/../public/icons/trashIcon.svg";
 import Image from "next/image";
-import DeleteSurveyModal from "@/app/admin-dashboard/DeleteSurveyModal";
+import DeleteSurveyModal from "@/features/surveyManagement/DeleteSurveyModal";
 
 interface SurveyDisplayProps {
   surveys: Survey[];
@@ -112,7 +112,9 @@ export default function SurveyDisplay(props: SurveyDisplayProps): JSX.Element {
           Create Survey +
         </button>
       </div>
-      {isCreateOpen && <Create closeCreate={() => setIsCreateOpen(false)} />}
+      {isCreateOpen && (
+        <CreateSurveyModal closeCreate={() => setIsCreateOpen(false)} />
+      )}
       {deleteSurvey && (
         <DeleteSurveyModal
           survey={deleteSurvey}

@@ -1,15 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import styles from "./create.module.css";
-import Modal from "./Modal";
+import styles from "./CreateSurveyModal.module.css";
+import Modal from "../../components/ui/Modal";
 import { createSurvey } from "@/data/firestore/surveys";
 
-interface CreateProps {
+interface CreateSurveyModalProps {
   closeCreate: () => void;
 }
 
-export default function Create({ closeCreate }: CreateProps) {
+export default function CreateSurveyModal({
+  closeCreate,
+}: CreateSurveyModalProps): JSX.Element {
   const [surveyTitle, setSurveyTitle] = useState("");
   const [error, setError] = useState<string>("");
 
