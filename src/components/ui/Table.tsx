@@ -49,47 +49,48 @@ export default function Table<T extends ID>(props: TableProps<T>) {
   };
 
   return (
-    <table className={styles.table}>
-      <thead>
-        <tr className={styles.headerRow}>
-          {selectOptions && (
-            <th className={styles.rowItem}>
-              <input
-                type="checkbox"
-                checked={selectedItemIds.length === items.length}
-                onChange={(e) => handleSelectAll(e.target.checked)}
-              />
-            </th>
-          )}
-          {columns.map((column: Column<T>) => (
-            <th className={styles.rowItem}>{column.name}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {items.map((item: T) => {
-          const checked = selectOptions && selectedItemIds?.includes(item.id);
-          return (
-            <tr className={checked ? styles.selectedTableRow : styles.tableRow}>
-              {selectOptions && (
-                <td className={styles.rowItem}>
-                  <input
-                    type="checkbox"
-                    checked={checked}
-                    onChange={(e) => handleSelect(item.id, e.target.checked)}
-                  />
-                </td>
-              )}
-              {columns.map((column: Column<T>) => (
-                <td className={styles.rowItem}>{column.getValue(item)}</td>
-              ))}
-            </tr>
-          );
-        })}
-      </tbody>
-      <tfoot>
-        
-      </tfoot>
-    </table>
+    <div className={styles.tableContainer}>
+      <table className={styles.table}>
+        <thead className={styles.tableHead}>
+          <tr className={`${styles.headerRow} ${styles.stickyCol}`}>
+            {selectOptions && (
+              <th className={`${styles.rowItem} ${styles.stickyCol}`}>
+                <input
+                  type="checkbox"
+                  checked={selectedItemIds.length === items.length}
+                  onChange={(e) => handleSelectAll(e.target.checked)}
+                />
+              </th>
+            )}
+            {columns.map((column: Column<T>) => (
+              <th className={styles.rowItem}>{column.name}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((item: T) => {
+            const checked = selectOptions && selectedItemIds?.includes(item.id);
+            return (
+              <tr
+                className={checked ? styles.selectedTableRow : styles.tableRow}
+              >
+                {selectOptions && (
+                  <td className={`${styles.rowItem} ${styles.stickyCol}`}>
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={(e) => handleSelect(item.id, e.target.checked)}
+                    />
+                  </td>
+                )}
+                {columns.map((column: Column<T>) => (
+                  <td className={styles.rowItem}>{column.getValue(item)}</td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }

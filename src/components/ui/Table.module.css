@@ -1,24 +1,32 @@
+.tableContainer {
+  overflow: auto;
+}
+
 .table {
   border-collapse: separate;
   border-spacing: 0px 10px;
 }
 
+.tableHead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
 .rowItem {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding: 10px;
   text-align: center;
+  background: inherit;
 }
 
 .rowItem:first-child {
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
-  padding-left: 5px;
 }
 
 .rowItem:last-child {
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
-  padding-right: 5px;
 }
 
 .headerRow {
@@ -39,4 +47,9 @@
 
 .selectedTableRow:hover {
   background-color: #bebebe;
+}
+
+.stickyCol {
+  position: sticky;
+  left: 0;
 }
