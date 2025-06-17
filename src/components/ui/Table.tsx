@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styles from "./Table.module.css";
 import Filter, { FilterCondition } from "../Filter";
-import { FaFilter } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaFilter } from "react-icons/fa";
 import { ID } from "@/types/utils";
 
 export interface Column<T extends ID> {
@@ -14,10 +14,16 @@ interface SelectOptions {
   setSelectedItemIds: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
+interface PaginationOptions {
+  itemsPerPageOptions: number[];
+  includeAllOption?: boolean;
+}
+
 interface TableProps<T extends ID> {
   columns: Column<T>[];
   items: T[];
   selectOptions?: SelectOptions;
+  paginationOptions?: PaginationOptions;
   filterConditions?: FilterCondition<T>[];
   filterFunction?: (
     item: T,
@@ -26,13 +32,22 @@ interface TableProps<T extends ID> {
 }
 
 export default function Table<T extends ID>(props: TableProps<T>) {
-  const { columns, items, selectOptions } = props;
-  // @ts-ignore
-  const { selectedItemIds, setSelectedItemIds } = selectOptions;
+  const { columns, items, selectOptions, paginationOptions } = props;
+  const { selectedItemIds, setSelectedItemIds } = selectOptions || {
+    selectedItemIds: [],
+    setSelectedItemIds: () => {},
+  };
+  const { itemsPerPageOptions, includeAllOption } = paginationOptions || {
+    itemsPerPageOptions: [],
+    includeAllOption: false,
+  };
 
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const itemsPerPage = 50;
-  const totalPages = Math.ceil(items.length / itemsPerPage);
+  const [numItemsPerPage, setNumItemsPerPage] = useState<number>(
+    itemsPerPageOptions ? itemsPerPageOptions[0] : items.length
+  );
+
+  const numPages = Math.ceil(items.length / numItemsPerPage);
 
   const handleSelect = (id: string, checked: boolean) => {
     if (checked) {
@@ -58,48 +73,103 @@ export default function Table<T extends ID>(props: TableProps<T>) {
   };
 
   return (
-    <div className={styles.tableContainer}>
-      <table className={styles.table}>
-        <thead className={styles.tableHead}>
-          <tr className={`${styles.headerRow} ${styles.stickyCol}`}>
-            {selectOptions && (
-              <th className={`${styles.rowItem} ${styles.stickyCol}`}>
-                <input
-                  type="checkbox"
-                  checked={selectedItemIds.length === items.length}
-                  onChange={(e) => handleSelectAll(e.target.checked)}
-                />
-              </th>
-            )}
-            {columns.map((column: Column<T>) => (
-              <th className={styles.rowItem}>{column.name}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((item: T) => {
-            const checked = selectOptions && selectedItemIds?.includes(item.id);
-            return (
-              <tr
-                className={checked ? styles.selectedTableRow : styles.tableRow}
-              >
-                {selectOptions && (
-                  <td className={`${styles.rowItem} ${styles.stickyCol}`}>
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={(e) => handleSelect(item.id, e.target.checked)}
-                    />
-                  </td>
-                )}
-                {columns.map((column: Column<T>) => (
-                  <td className={styles.rowItem}>{column.getValue(item)}</td>
-                ))}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+    <div>
+      <div className={styles.tableContainer}>
+        <table className={styles.table}>
+          <thead className={styles.tableHead}>
+            <tr className={styles.headerRow}>
+              {selectOptions && (
+                <th className={`${styles.rowItem} ${styles.stickyCol}`}>
+                  <input
+                    type="checkbox"
+                    checked={selectedItemIds.length === items.length}
+                    onChange={(e) => handleSelectAll(e.target.checked)}
+                  />
+                </th>
+              )}
+              {columns.map((column: Column<T>) => (
+                <th className={styles.rowItem}>{column.name}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {items
+              .slice(
+                currentPage * numItemsPerPage,
+                Math.min(items.length, (currentPage + 1) * numItemsPerPage)
+              )
+              .map((item: T) => {
+                const checked =
+                  selectOptions && selectedItemIds?.includes(item.id);
+                return (
+                  <tr
+                    className={
+                      checked ? styles.selectedTableRow : styles.tableRow
+                    }
+                  >
+                    {selectOptions && (
+                      <td className={`${styles.rowItem} ${styles.stickyCol}`}>
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={(e) =>
+                            handleSelect(item.id, e.target.checked)
+                          }
+                        />
+                      </td>
+                    )}
+                    {columns.map((column: Column<T>) => (
+                      <td className={styles.rowItem}>
+                        {column.getValue(item)}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+          </tbody>
+        </table>
+      </div>
+      {paginationOptions && (
+        <div className={styles.pagination}>
+          <div className={styles.paginationElement}>
+            <label>Items per page: </label>
+            <select
+              value={numItemsPerPage}
+              onChange={(e) =>
+                handleNumItemsPerPageChange(Number(e.target.value))
+              }
+            >
+              {itemsPerPageOptions.map((option: number) => (
+                <option value={option}>{option}</option>
+              ))}
+              {includeAllOption && <option value={items.length}>All</option>}
+            </select>
+          </div>
+          <span className={styles.paginationElement}>
+            {currentPage * numItemsPerPage + 1}-
+            {Math.min(items.length, (currentPage + 1) * numItemsPerPage)} of{" "}
+            {items.length}
+          </span>
+          <div className={styles.paginationElement}>
+            <button
+              className={styles.pageButton}
+              disabled={currentPage === 0}
+              onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
+            >
+              <FaChevronLeft size={15} />
+            </button>
+            <button
+              className={styles.pageButton}
+              disabled={currentPage === numPages - 1}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(numPages - 1, prev + 1))
+              }
+            >
+              <FaChevronRight size={15} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

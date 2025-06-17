@@ -53,3 +53,34 @@
   position: sticky;
   left: 0;
 }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.paginationElement {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.pageButton {
+  border-radius: 100%;
+  aspect-ratio: 1 / 1;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.pageButton:hover {
+  background-color: #dedede;
+}
+
+.pageButton:disabled {
+  cursor: not-allowed;
+}
+
+.pageButton:disabled:hover {
+  background-color: transparent;
+}
