@@ -45,7 +45,16 @@ export default function Table<T extends ID>(props: TableProps<T>) {
   };
 
   const handleSelectAll = (checked: boolean) => {
-    items.forEach((item: T) => handleSelect(item.id, checked));
+    if (checked) {
+      setSelectedItemIds(items.map((item: T) => item.id));
+    } else {
+      setSelectedItemIds([]);
+    }
+  };
+
+  const handleNumItemsPerPageChange = (value: number) => {
+    setNumItemsPerPage(value);
+    setCurrentPage(0);
   };
 
   return (
