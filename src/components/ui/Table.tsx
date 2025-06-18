@@ -90,7 +90,7 @@ export default function Table<T extends ID>(props: TableProps<T>) {
                   <th className={`${styles.rowItem} ${styles.stickyCol}`}>
                     <input
                       type="checkbox"
-                      checked={selectedItemIds.length === items.length}
+                      checked={selectedItemIds.length === filteredItems.length}
                       onChange={(e) => handleSelectAll(e.target.checked)}
                     />
                   </th>
