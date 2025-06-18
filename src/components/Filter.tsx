@@ -5,7 +5,7 @@ import styles from "./Filter.module.css";
 
 interface FilterProps<T> {
   items: T[];
-  setFilteredItems: React.Dispatch<React.SetStateAction<T[]>>;
+  onFilter: (filteredItems: T[]) => void;
   onClose: () => void;
   filterConditions: FilterCondition<T>[];
 }
@@ -16,8 +16,7 @@ export interface FilterCondition<T> {
 }
 
 export default function Filter<T>(props: FilterProps<T>) {
-  const { filterConditions, items, onClose, setFilteredItems } =
-    props;
+  const { filterConditions, items, onClose, onFilter } = props;
   const [filterValues, setFilterValues] = useState<{ [key: string]: any }>({});
 
   const compFunc = useCallback((itemVal: string, filterVal: string) => {
@@ -46,7 +45,7 @@ export default function Filter<T>(props: FilterProps<T>) {
       <button
         className={styles.button}
         onClick={() =>
-          setFilteredItems(
+          onFilter(
             items.filter((item: T) =>
               filterConditions.every((condition: FilterCondition<T>) =>
                 compFunc(
