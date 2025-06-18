@@ -17,7 +17,12 @@ interface AuthContextType {
   error: string;
 }
 
-export const AuthContext = createContext<AuthContextType>(null!);
+export const AuthContext = createContext<AuthContextType>({
+  user: null,
+  token: null,
+  loading: true,
+  error: "",
+});
 
 export default function AuthProvider({
   children,
