@@ -1,48 +1,44 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import styles from "./Filter.module.css";
-import { Item } from "./ui/Table";
 
 interface FilterProps<T> {
+  items: T[];
+  setFilteredItems: React.Dispatch<React.SetStateAction<T[]>>;
+  onClose: () => void;
   filterConditions: FilterCondition<T>[];
-  items: Item<T>[];
-  closeFilter: () => void;
-  setFilteredItems: (items: Item<T>[]) => void;
-  filterFunction: (item: T, filterValues: { [key: string]: any }) => boolean;
 }
 
 export interface FilterCondition<T> {
-  id: string;
   name: string;
-  inputType: string;
+  getItemValue: (item: T) => string;
 }
 
 export default function Filter<T>(props: FilterProps<T>) {
-  const {
-    filterConditions,
-    items,
-    closeFilter,
-    setFilteredItems,
-    filterFunction,
-  } = props;
+  const { filterConditions, items, onClose, setFilteredItems } =
+    props;
   const [filterValues, setFilterValues] = useState<{ [key: string]: any }>({});
+
+  const compFunc = useCallback((itemVal: string, filterVal: string) => {
+    return itemVal.toLowerCase().includes(filterVal.toLowerCase());
+  }, []);
 
   return (
     <div className={styles.container}>
-      <div className={styles.closeIcon} onClick={closeFilter} />
+      <div className={styles.closeIcon} onClick={onClose} />
       {filterConditions.map((condition) => (
         <input
-          key={condition.id}
-          name={condition.id}
+          key={condition.name}
+          name={condition.name}
           className={styles.inputField}
-          type={condition.inputType}
+          type="text"
           placeholder={condition.name}
-          value={filterValues[condition.id]}
+          value={filterValues[condition.name] || ""}
           onChange={(ev) =>
             setFilterValues({
               ...filterValues,
-              [condition.id]: ev.target.value,
+              [condition.name]: ev.target.value,
             })
           }
         />
@@ -51,14 +47,18 @@ export default function Filter<T>(props: FilterProps<T>) {
         className={styles.button}
         onClick={() =>
           setFilteredItems(
-            items.filter((item: Item<T>) =>
-              filterFunction(item.data, filterValues)
+            items.filter((item: T) =>
+              filterConditions.every((condition: FilterCondition<T>) =>
+                compFunc(
+                  condition.getItemValue(item),
+                  filterValues[condition.name] || ""
+                )
+              )
             )
           )
         }
       >
-        {" "}
-        APPLY{" "}
+        APPLY
       </button>
     </div>
   );
