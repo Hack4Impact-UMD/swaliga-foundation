@@ -157,7 +157,7 @@ export default function Table<T extends ID>(props: TableProps<T>) {
               </select>
             </div>
             <span className={styles.paginationElement}>
-              {currentPage * numItemsPerPage + 1}-
+              {filteredItems.length === 0 ? 0 : currentPage * numItemsPerPage + 1}-
               {Math.min(
                 filteredItems.length,
                 (currentPage + 1) * numItemsPerPage
