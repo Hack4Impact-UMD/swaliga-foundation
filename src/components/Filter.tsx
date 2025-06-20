@@ -12,7 +12,7 @@ interface FilterProps<T> {
 
 export interface FilterCondition<T> {
   name: string;
-  getItemValue: (item: T) => string;
+  getValue: (item: T) => string;
 }
 
 export default function Filter<T>(props: FilterProps<T>) {
@@ -49,7 +49,7 @@ export default function Filter<T>(props: FilterProps<T>) {
             items.filter((item: T) =>
               filterConditions.every((condition: FilterCondition<T>) =>
                 compFunc(
-                  condition.getItemValue(item),
+                  condition.getValue(item),
                   filterValues[condition.name] || ""
                 )
               )
