@@ -30,18 +30,10 @@ interface TableProps<T extends ID> {
 export default function Table<T extends ID>(props: TableProps<T>) {
   const { columns, items, selectOptions, paginationOptions, filterConditions } =
     props;
-  const { selectedItemIds, setSelectedItemIds } = selectOptions || {
-    selectedItemIds: [],
-    setSelectedItemIds: () => {},
-  };
-  const { itemsPerPageOptions, includeAllOption } = paginationOptions || {
-    itemsPerPageOptions: [],
-    includeAllOption: false,
-  };
 
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [numItemsPerPage, setNumItemsPerPage] = useState<number>(
-    itemsPerPageOptions ? itemsPerPageOptions[0] : items.length
+    paginationOptions?.itemsPerPageOptions ? paginationOptions.itemsPerPageOptions[0] : items.length
   );
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
   const [filteredItems, setFilteredItems] = useState<T[]>(items);
@@ -49,20 +41,26 @@ export default function Table<T extends ID>(props: TableProps<T>) {
   const numPages = Math.ceil(filteredItems.length / numItemsPerPage);
 
   const handleSelect = (id: string, checked: boolean) => {
+    if (!selectOptions) {
+      return;
+    }
     if (checked) {
-      setSelectedItemIds((prev: string[]) => [...new Set([...prev, id])]);
+      selectOptions.setSelectedItemIds((prev: string[]) => [...new Set([...prev, id])]);
     } else {
-      setSelectedItemIds((prev: string[]) =>
+      selectOptions.setSelectedItemIds((prev: string[]) =>
         prev.filter((itemId: string) => itemId !== id)
       );
     }
   };
 
   const handleSelectAll = (checked: boolean) => {
+    if (!selectOptions) {
+      return;
+    }
     if (checked) {
-      setSelectedItemIds(items.map((item: T) => item.id));
+      selectOptions.setSelectedItemIds(items.map((item: T) => item.id));
     } else {
-      setSelectedItemIds([]);
+      selectOptions.setSelectedItemIds([]);
     }
   };
 
@@ -75,7 +73,9 @@ export default function Table<T extends ID>(props: TableProps<T>) {
 
   const onFilter = (filteredItems: T[]) => {
     setFilteredItems(filteredItems);
-    setSelectedItemIds([]);
+    if (selectOptions) {
+      selectOptions.setSelectedItemIds([]);
+    }
     setCurrentPage(0);
   };
 
@@ -90,7 +90,7 @@ export default function Table<T extends ID>(props: TableProps<T>) {
                   <th className={`${styles.rowItem} ${styles.stickyCol}`}>
                     <input
                       type="checkbox"
-                      checked={selectedItemIds.length === filteredItems.length}
+                      checked={selectOptions.selectedItemIds.length === filteredItems.length}
                       onChange={(e) => handleSelectAll(e.target.checked)}
                     />
                   </th>
@@ -111,7 +111,7 @@ export default function Table<T extends ID>(props: TableProps<T>) {
                 )
                 .map((item: T) => {
                   const checked =
-                    selectOptions && selectedItemIds?.includes(item.id);
+                    selectOptions?.selectedItemIds?.includes(item.id);
                   return (
                     <tr
                       className={
@@ -150,14 +150,17 @@ export default function Table<T extends ID>(props: TableProps<T>) {
                   handleNumItemsPerPageChange(Number(e.target.value))
                 }
               >
-                {itemsPerPageOptions.map((option: number) => (
+                {paginationOptions.itemsPerPageOptions.map((option: number) => (
                   <option value={option}>{option}</option>
                 ))}
-                {includeAllOption && <option value={items.length}>All</option>}
+                {paginationOptions.includeAllOption && <option value={items.length}>All</option>}
               </select>
             </div>
             <span className={styles.paginationElement}>
-              {filteredItems.length === 0 ? 0 : currentPage * numItemsPerPage + 1}-
+              {filteredItems.length === 0
+                ? 0
+                : currentPage * numItemsPerPage + 1}
+              -
               {Math.min(
                 filteredItems.length,
                 (currentPage + 1) * numItemsPerPage
