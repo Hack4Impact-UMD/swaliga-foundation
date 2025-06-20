@@ -58,7 +58,7 @@ export default function Table<T extends ID>(props: TableProps<T>) {
       return;
     }
     if (checked) {
-      selectOptions.setSelectedItemIds(items.map((item: T) => item.id));
+      selectOptions.setSelectedItemIds(filteredItems.map((item: T) => item.id));
     } else {
       selectOptions.setSelectedItemIds([]);
     }
