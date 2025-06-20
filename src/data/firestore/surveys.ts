@@ -1,6 +1,6 @@
-import { Survey } from '@/types/survey-types';
+import { Survey, SurveyID } from '@/types/survey-types';
 import { db } from "../../config/firebaseConfig";
-import { deleteDoc, doc, getDoc, setDoc, Transaction, updateDoc, WriteBatch } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, setDoc, Transaction, updateDoc, WriteBatch } from 'firebase/firestore';
 import { Collection } from './utils';
 
 export async function getSurveyById(id: string, transaction?: Transaction): Promise<Survey> {
@@ -15,6 +15,22 @@ export async function getSurveyById(id: string, transaction?: Transaction): Prom
     throw new Error("Survey not found");
   }
   return surveyDoc.data() as Survey;
+}
+
+export async function getAllSurveys(): Promise<SurveyID[]> {
+  try {
+    const surveysRef = collection(db, Collection.SURVEYS);
+    const surveyDocs = await getDocs(surveysRef);
+    return surveyDocs.docs.map((doc) => {
+      const survey: Survey = doc.data() as Survey;
+      return {
+        id: doc.id,
+        ...survey
+      } as SurveyID;
+    })
+  } catch (error) {
+    throw new Error("Failed to get surveys");
+  }
 }
 
 export async function createSurvey(surveyId: string, survey: Survey, instance?: Transaction | WriteBatch): Promise<void> {

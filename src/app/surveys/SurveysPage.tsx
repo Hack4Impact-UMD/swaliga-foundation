@@ -7,18 +7,27 @@ import Table, { Column } from "@/components/ui/Table";
 import { FaEdit, FaEye } from "react-icons/fa";
 import Link from "next/link";
 import { FilterCondition } from "@/components/Filter";
+import { getAllSurveys } from "@/data/firestore/surveys";
+import LoadingPage from "../loading";
 
 export default function SurveysPage() {
-  const [surveys, setSurveys] = useState<SurveyID[]>([
-    {
-      id: "1",
-      name: "Test Survey",
-      responderUri: "https://docs.google.com/forms/d/1/edit",
-    },
-  ]);
+  const [surveys, setSurveys] = useState<SurveyID[]>([]);
   const [selectedSurveyIds, setSelectedSurveyIds] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    getAllSurveys()
+      .then((data) => {
+        setSurveys(data);
+      })
+      .catch((error) => {
+        setError(error.message);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []);
 
   const columns: Column<SurveyID>[] = [
     {
@@ -28,7 +37,10 @@ export default function SurveysPage() {
     {
       name: "Edit Survey",
       getValue: (survey: SurveyID) => (
-        <Link href={`https://docs.google.com/forms/d/${survey.id}/edit`}>
+        <Link
+          href={`https://docs.google.com/forms/d/${survey.id}/edit`}
+          target="_blank"
+        >
           <FaEdit className={styles.linkIcon} size={20} />
         </Link>
       ),
@@ -36,7 +48,7 @@ export default function SurveysPage() {
     {
       name: "View Survey",
       getValue: (survey: SurveyID) => (
-        <Link href={survey.responderUri}>
+        <Link href={survey.responderUri} target="_blank">
           <FaEye className={styles.linkIcon} size={20} />
         </Link>
       ),
@@ -50,9 +62,18 @@ export default function SurveysPage() {
     },
   ];
 
+  if (isLoading) {
+    return <LoadingPage />;
+  }
+
+  if (error) {
+    throw new Error(error);
+  }
+
   return (
     <div className={styles.page}>
       <div className={styles.container}>
+        <h1 className={styles.header}>Surveys</h1>
         <Table
           items={surveys}
           columns={columns}

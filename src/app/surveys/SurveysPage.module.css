@@ -12,10 +12,20 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  width: 95%;
-  min-height: 90vh;
+  width: 90%;
+  min-height: 85vh;
   background-color: #1e4154;
   border-radius: 20px;
+  padding: 2.5%;
+}
+
+.header {
+  font-family: "Poppins", sans-serif;
+  color: #d0d12a;
+  font-size: 40px;
+  font-weight: 700;
+  margin: 20px;
+  align-self: flex-start;
 }
 
 .linkIcon {
@@ -24,5 +34,5 @@
 }
 
 .linkIcon:hover {
-  color: rgba(0, 0, 0, 0.5);
+  color: #00000080;
 }
