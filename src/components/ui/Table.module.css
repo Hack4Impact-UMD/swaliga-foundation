@@ -82,6 +82,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  background-color: #dedede;
+  border-radius: 10px;
+  padding: 5px 0px;
 }
 
 .paginationElement {
