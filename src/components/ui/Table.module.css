@@ -2,13 +2,15 @@
   display: flex;
   flex-direction: row;
   align-items: flex-start;
+  width: 100%;
 }
 
 .tablePaginationContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 0;
+  min-width: 70%;
+  flex-grow: 1;
 }
 
 .filterContainer {
@@ -26,6 +28,7 @@
 .table {
   border-collapse: separate;
   border-spacing: 0px 10px;
+  width: 100%;
 }
 
 .tableHead {
