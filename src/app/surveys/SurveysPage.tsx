@@ -73,7 +73,10 @@ export default function SurveysPage() {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <h1 className={styles.header}>Surveys</h1>
+        <div className={styles.header}>
+          <h1 className={styles.headerText}>Surveys</h1>
+          <div className={styles.optionMenu}></div>
+        </div>
         <Table
           items={surveys}
           columns={columns}
