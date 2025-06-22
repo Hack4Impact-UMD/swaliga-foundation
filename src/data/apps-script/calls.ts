@@ -1,6 +1,6 @@
-export async function callAppsScript(accessToken: string, functionName: string, parameters?: any[]): Promise<any> {
+async function callAppsScript(accessToken: string, functionName: string, parameters?: any[]): Promise<any> {
   const response = await fetch(
-    `https://script.googleapis.com/v1/scripts/${process.env.GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID}:run`,
+    `https://script.googleapis.com/v1/scripts/${process.env.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID}:run`,
     {
       method: "POST",
       body: JSON.stringify({
