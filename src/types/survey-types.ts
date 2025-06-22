@@ -2,6 +2,7 @@ import { ID } from "./utils";
 
 export interface Survey {
   name: string;
+  description?: string;
   responderUri: string;
   linkedSheetId?: string;
 }
