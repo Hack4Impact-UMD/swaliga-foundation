@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
       code: code || "",
       client_id: process.env.GOOGLE_CLIENT_ID || "",
       client_secret: process.env.GOOGLE_CLIENT_SECRET || "",
-      redirect_uri: 'http://localhost:3000/api/auth/handler',
+      redirect_uri: `${process.env.NEXT_PUBLIC_DOMAIN}/api/auth/handler`,
       grant_type: 'authorization_code',
     }),
   });
@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json('Error fetching token', { status: response.status });
   }
   const tokenData = await response.json();
-  
+
   await adminAuth.setCustomUserClaims(decodedToken.uid, {
     role: decodedToken.role,
     googleTokens: {
@@ -39,5 +39,5 @@ export async function GET(req: NextRequest) {
       accessToken: tokenData.access_token,
     }
   })
-  return NextResponse.redirect('http://localhost:3000');
+  return NextResponse.redirect(process.env.NEXT_PUBLIC_DOMAIN!);
 }

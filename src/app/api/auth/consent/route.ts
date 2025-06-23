@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const redirectUri = encodeURIComponent('http://localhost:3000/api/auth/handler');
+  const redirectUri = encodeURIComponent(`${process.env.NEXT_PUBLIC_DOMAIN}/api/auth/handler`);
   const scopes: string[] = [
     'https://www.googleapis.com/auth/forms',
     'https://www.googleapis.com/auth/script.scriptapp'
