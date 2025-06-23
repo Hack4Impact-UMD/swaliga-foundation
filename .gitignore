@@ -3,6 +3,8 @@
 .env*
 .firebase
 
+firebaseAdminCredentials.json
+
 firebase-debug.log
 firestore-debug.log
 
