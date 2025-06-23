@@ -3,7 +3,6 @@ import {
   onIdTokenChanged,
   User,
   IdTokenResult,
-  getIdTokenResult,
 } from "firebase/auth";
 import React, { createContext, useEffect, useState } from "react";
 import { auth, functions } from "@/config/firebaseConfig";
@@ -43,7 +42,7 @@ export default function AuthProvider({
           let newToken = await newUser.getIdTokenResult();
           if (newToken.claims.email_verified && !newToken.claims?.role) {
             await httpsCallable(functions, "setAdminRole")();
-            newToken = await getIdTokenResult(newUser, true);
+            newToken = await newUser.getIdTokenResult(true);
           }
           setToken(newToken);
           setError("");
