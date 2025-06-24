@@ -37,6 +37,7 @@ export async function GET(req: NextRequest) {
     googleTokens: {
       refreshToken: tokenData.refresh_token,
       accessToken: tokenData.access_token,
+      expirationTime: moment().add(tokenData.expires_in, 'seconds').toISOString();
     }
   })
   return NextResponse.redirect(process.env.NEXT_PUBLIC_DOMAIN!);
