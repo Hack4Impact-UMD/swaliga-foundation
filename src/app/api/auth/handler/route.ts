@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminAuth } from "@/config/firebaseAdminConfig";
 import { DecodedIdToken } from "firebase-admin/auth";
+import moment from "moment";
 
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get("code");
@@ -37,6 +38,7 @@ export async function GET(req: NextRequest) {
     googleTokens: {
       refreshToken: tokenData.refresh_token,
       accessToken: tokenData.access_token,
+      expirationTime: moment().add(tokenData.expires_in, 'seconds').toISOString(),
     }
   })
   return NextResponse.redirect(process.env.NEXT_PUBLIC_DOMAIN!);

@@ -58,4 +58,4 @@ export type Ethnicity =
   | "Latin"
   | (string & {});
 
-export type Role = "ADMIN" | "STUDENT"; 
+export type Role = "ADMIN" | "STUDENT";
