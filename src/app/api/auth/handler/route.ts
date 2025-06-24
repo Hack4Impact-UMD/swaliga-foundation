@@ -7,14 +7,14 @@ export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get("code");
   const idToken = req.nextUrl.searchParams.get("state");
   if (!code || !idToken) {
-    return NextResponse.json('Invalid parameters', { status: 400 });
+    return NextResponse.json('Invalid parameters', { status: 400, statusText: 'Bad Request' });
   }
 
   let decodedToken: DecodedIdToken;
   try {
     decodedToken = await adminAuth.verifyIdToken(idToken);
   } catch (error) {
-    return NextResponse.json('Invalid ID token', { status: 401 });
+    return NextResponse.json('Unauthorized', { status: 401, statusText: 'Unauthorized' });
   }
 
   const response = await fetch('https://oauth2.googleapis.com/token', {
@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
     }),
   });
   if (!response.ok) {
-    return NextResponse.json('Error fetching token', { status: response.status });
+    return NextResponse.json('Error fetching token', { status: response.status, statusText: response.statusText });
   }
   const tokenData = await response.json();
 
