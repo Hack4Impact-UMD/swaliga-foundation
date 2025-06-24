@@ -3,7 +3,7 @@ import { DecodedIdTokenWithCustomClaims } from "@/types/auth-types";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const idToken = req.headers.get("Authorization")?.replace("Bearer ", "");
+  const idToken = req.nextUrl.searchParams.get('idToken');
   let decodedToken: DecodedIdTokenWithCustomClaims | false;
   if (!(decodedToken = await isTokenAuthorized(idToken))) {
     return NextResponse.json('Unauthorized', { status: 401, statusText: 'Unauthorized' });

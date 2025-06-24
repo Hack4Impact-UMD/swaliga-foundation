@@ -5,7 +5,7 @@ import { isTokenAuthorized } from "@/features/auth/serverAuthZ";
 import { AuthCustomClaims, DecodedIdTokenWithCustomClaims } from "@/types/auth-types";
 
 export async function GET(req: NextRequest) {
-  const idToken = req.headers.get("Authorization")?.replace("Bearer ", "");
+  const idToken = req.nextUrl.searchParams.get('state');
   let decodedToken: DecodedIdTokenWithCustomClaims | false;
   if (!(decodedToken = await isTokenAuthorized(idToken))) {
     return NextResponse.json('Unauthorized', { status: 401, statusText: 'Unauthorized' });
