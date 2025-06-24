@@ -2,19 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { adminAuth } from "@/config/firebaseAdminConfig";
 import { DecodedIdToken } from "firebase-admin/auth";
 import moment from "moment";
+import { isTokenAuthorized } from "@/features/auth/serverAuthZ";
 
 export async function GET(req: NextRequest) {
-  const code = req.nextUrl.searchParams.get("code");
-  const idToken = req.nextUrl.searchParams.get("state");
-  if (!code || !idToken) {
-    return NextResponse.json('Invalid parameters', { status: 400, statusText: 'Bad Request' });
+  const idToken = req.headers.get("Authorization")?.replace("Bearer ", "");
+  let decodedToken: DecodedIdToken | false;
+  if (!(decodedToken = await isTokenAuthorized(idToken))) {
+    return NextResponse.json('Unauthorized', { status: 401, statusText: 'Unauthorized' });
   }
 
-  let decodedToken: DecodedIdToken;
-  try {
-    decodedToken = await adminAuth.verifyIdToken(idToken);
-  } catch (error) {
-    return NextResponse.json('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+  const code = req.nextUrl.searchParams.get("code");
+  if (!code) {
+    return NextResponse.json('Invalid code', { status: 400, statusText: 'Bad Request' });
   }
 
   const response = await fetch('https://oauth2.googleapis.com/token', {
