@@ -1,11 +1,10 @@
-import { adminAuth } from "@/config/firebaseAdminConfig";
 import { isTokenAuthorized } from "@/features/auth/serverAuthZ";
-import { DecodedIdToken } from "firebase-admin/auth";
+import { DecodedIdTokenWithCustomClaims } from "@/types/auth-types";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const idToken = req.headers.get("Authorization")?.replace("Bearer ", "");
-  let decodedToken: DecodedIdToken | false;
+  let decodedToken: DecodedIdTokenWithCustomClaims | false;
   if (!(decodedToken = await isTokenAuthorized(idToken))) {
     return NextResponse.json('Unauthorized', { status: 401, statusText: 'Unauthorized' });
   }

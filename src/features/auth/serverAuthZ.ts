@@ -1,11 +1,11 @@
 import { adminAuth } from "@/config/firebaseAdminConfig";
-import { DecodedIdToken } from "firebase-admin/auth";
+import { DecodedIdTokenWithCustomClaims } from "@/types/auth-types";
 
-export async function isTokenAuthorized(idToken: string | undefined): Promise<DecodedIdToken | false> {
+export async function isTokenAuthorized(idToken: string | undefined): Promise<DecodedIdTokenWithCustomClaims | false> {
   if (!idToken) {
     return false;
   }
-  let decodedToken: DecodedIdToken;
+  let decodedToken: DecodedIdTokenWithCustomClaims;
   try {
     decodedToken = await adminAuth.verifyIdToken(idToken);
   } catch (error) {

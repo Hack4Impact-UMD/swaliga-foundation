@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminAuth } from "@/config/firebaseAdminConfig";
-import { DecodedIdToken } from "firebase-admin/auth";
 import moment from "moment";
 import { isTokenAuthorized } from "@/features/auth/serverAuthZ";
+import { AuthCustomClaims, DecodedIdTokenWithCustomClaims } from "@/types/auth-types";
 
 export async function GET(req: NextRequest) {
   const idToken = req.headers.get("Authorization")?.replace("Bearer ", "");
-  let decodedToken: DecodedIdToken | false;
+  let decodedToken: DecodedIdTokenWithCustomClaims | false;
   if (!(decodedToken = await isTokenAuthorized(idToken))) {
     return NextResponse.json('Unauthorized', { status: 401, statusText: 'Unauthorized' });
   }
@@ -30,15 +30,16 @@ export async function GET(req: NextRequest) {
   if (!response.ok) {
     return NextResponse.json('Error fetching token', { status: response.status, statusText: response.statusText });
   }
-  const tokenData = await response.json();
+  const tokens = await response.json();
 
-  await adminAuth.setCustomUserClaims(decodedToken.uid, {
+  const customClaims: AuthCustomClaims = {
     role: decodedToken.role,
     googleTokens: {
-      refreshToken: tokenData.refresh_token,
-      accessToken: tokenData.access_token,
-      expirationTime: moment().add(tokenData.expires_in, 'seconds').toISOString(),
+      refreshToken: tokens.refresh_token,
+      accessToken: tokens.access_token,
+      expirationTime: moment().add(tokens.expires_in, 'seconds').toISOString(),
     }
-  })
+  }
+  await adminAuth.setCustomUserClaims(decodedToken.uid, customClaims)
   return NextResponse.redirect(process.env.NEXT_PUBLIC_DOMAIN!);
 }
