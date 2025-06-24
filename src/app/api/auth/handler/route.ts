@@ -41,5 +41,5 @@ export async function GET(req: NextRequest) {
     }
   }
   await adminAuth.setCustomUserClaims(decodedToken.uid, customClaims)
-  return NextResponse.redirect(process.env.NEXT_PUBLIC_DOMAIN!);
+  return NextResponse.redirect(`${process.env.NEXT_PUBLIC_DOMAIN!}?refreshIdToken=true`);
 }

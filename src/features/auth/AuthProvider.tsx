@@ -1,13 +1,10 @@
 "use client";
-import {
-  onIdTokenChanged,
-  User,
-  IdTokenResult,
-} from "firebase/auth";
+import { onIdTokenChanged, User, IdTokenResult } from "firebase/auth";
 import React, { createContext, useEffect, useState } from "react";
 import { auth, functions } from "@/config/firebaseConfig";
 import { httpsCallable } from "firebase/functions";
 import LoadingPage from "@/app/loading";
+import { useSearchParams } from "next/navigation";
 
 interface AuthContextType {
   user: User | null;
@@ -33,6 +30,9 @@ export default function AuthProvider({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
+  const searchParams = useSearchParams();
+  const refreshIdToken = searchParams.get("refreshIdToken") === "true";
+
   useEffect(() => {
     const unsubscribe = onIdTokenChanged(auth, async (newUser) => {
       setLoading(true);
@@ -40,7 +40,9 @@ export default function AuthProvider({
       if (newUser) {
         try {
           let newToken = await newUser.getIdTokenResult();
-          if (newToken.claims.email_verified && !newToken.claims?.role) {
+          if (refreshIdToken) {
+            newToken = await newUser.getIdTokenResult(true);
+          } else if (newToken.claims.email_verified && !newToken.claims?.role) {
             await httpsCallable(functions, "setAdminRole")();
             newToken = await newUser.getIdTokenResult(true);
           }
