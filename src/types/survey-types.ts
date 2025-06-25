@@ -13,7 +13,7 @@ export type AssignmentID = PendingAssignmentID | SurveyResponseID;
 
 export interface PendingAssignment {
   surveyId: string;
-  assignedAt: string; // ISO-8601
+  assignedAt?: string; // ISO-8601, missing value indicates a response from a form before the form was added to Firestore
 }
 export interface PendingAssignmentID extends PendingAssignment, ID { studentId: string; }
 
