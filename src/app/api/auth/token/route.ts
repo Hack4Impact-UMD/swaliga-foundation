@@ -1,5 +1,5 @@
 import { adminAuth } from "@/config/firebaseAdminConfig";
-import { isTokenAuthorized } from "@/features/auth/serverAuthZ";
+import { isIdTokenValid } from "@/features/auth/serverAuthZ";
 import { AuthCustomClaims, DecodedIdTokenWithCustomClaims } from "@/types/auth-types";
 import moment from "moment";
 import { NextRequest, NextResponse } from "next/server";
@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   const idToken = req.headers.get("Authorization")?.replace("Bearer ", "");
   let decodedToken: DecodedIdTokenWithCustomClaims | false;
-  if (!(decodedToken = await isTokenAuthorized(idToken))) {
+  if (!(decodedToken = await isIdTokenValid(idToken))) {
     return NextResponse.json("Unauthorized", { status: 401, statusText: "Unauthorized" });
   }
 
