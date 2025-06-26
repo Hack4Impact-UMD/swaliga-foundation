@@ -20,3 +20,8 @@ async function callAppsScript(accessToken: string, functionName: string, paramet
   }
   return data.response.result;
 }
+
+export async function createNewForm(accessToken: string, title: string, description: string): Promise<string> { return await callAppsScript(accessToken, 'createNewForm', [title, description]); }
+export async function addExistingForm(accessToken: string, formId: string): Promise<void> { return await callAppsScript(accessToken, 'addExistingForm', [formId]); }
+export async function deleteForm(accessToken: string, formId: string): Promise<void> { return await callAppsScript(accessToken, 'deleteForm', [formId]); }
+export async function deleteForms(accessToken: string, formIds: string[]): Promise<void> { return await callAppsScript(accessToken, 'deleteForms', [formIds]); }
