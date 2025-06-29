@@ -12,7 +12,8 @@ export async function GET(req: NextRequest) {
   const redirectUri = encodeURIComponent(`${process.env.NEXT_PUBLIC_DOMAIN}/api/auth/handler`);
   const scopes: string = encodeURIComponent([
     'https://www.googleapis.com/auth/forms',
-    'https://www.googleapis.com/auth/script.scriptapp'
+    'https://www.googleapis.com/auth/drive',
+    'https://www.googleapis.com/auth/spreadsheets'
   ].join(' '));
 
   const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=${scopes}&login_hint=${decodedToken.email}&access_type=offline&prompt=consent&state=${idToken}`;

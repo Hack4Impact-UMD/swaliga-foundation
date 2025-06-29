@@ -5,8 +5,8 @@ function createNewSurvey(title, description) {
       FormApp.DestinationType.SPREADSHEET,
       SpreadsheetApp.create(`${title} - Responses`).getId()
     );
-  setDefaultSurveySettings(survey);
-  addIdQuestion(survey);
+  setDefaultSurveySettings_(survey);
+  addIdQuestion_(survey);
   return {
     id: survey.getId(),
     title,
@@ -26,11 +26,11 @@ function addExistingSurvey(surveyId) {
       SpreadsheetApp.create(`${survey.getTitle()} - Responses`).getId()
     );
   }
-  setDefaultSurveySettings(survey);
+  setDefaultSurveySettings_(survey);
 
   const items = survey.getItems();
   if (items.length === 0 || items[0].getTitle() !== "Swaliga ID") {
-    addIdQuestion(survey);
+    addIdQuestion_(survey);
   }
 
   const responses = survey.getResponses().map((response) => {
@@ -44,7 +44,7 @@ function addExistingSurvey(surveyId) {
   return {
     survey: {
       id: surveyId,
-      title: survey.getTitle(),
+      name: survey.getTitle(),
       description: survey.getDescription(),
       responderUri: survey.getPublishedUrl(),
       linkedSheetId: survey.getDestinationId(),
@@ -53,7 +53,7 @@ function addExistingSurvey(surveyId) {
   };
 }
 
-function addIdQuestion(survey) {
+function addIdQuestion_(survey) {
   const idQuestion = survey
     .addTextItem()
     .setTitle("Swaliga ID")
@@ -72,8 +72,28 @@ function addIdQuestion(survey) {
   survey.moveItem(pageBreak, 1);
 }
 
-function setDefaultSurveySettings(survey) {
+function setDefaultSurveySettings_(survey) {
   survey.setCollectEmail(true).setProgressBar(false);
+}
+
+function getUpdatedSurveyTitlesAndDescriptions_(surveyIds, timeAfter) {
+  const surveys = [];
+  surveyIds.forEach((surveyId) => {
+    const file = DriveApp.getFileById(surveyId);
+    if (timeAfter <= file.getLastUpdated().toISOString()) {
+      const survey = FormApp.openById(surveyId);
+      surveys.push({
+        id: surveyId,
+        name: survey.getTitle(),
+        description: survey.getDescription(),
+      });
+    }
+  });
+  return surveys;
+}
+
+function getIdQuestionItem_(survey) {
+  return survey.getItems().filter(item => item.getTitle() === "Swaliga ID")[0];
 }
 
 function deleteSurvey(surveyId) {
