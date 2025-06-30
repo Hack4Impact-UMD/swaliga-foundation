@@ -1,7 +1,6 @@
 import { adminAuth } from "@/config/firebaseAdminConfig";
-import { isIdTokenValid } from "@/features/auth/serverAuthZ";
-import { AuthCustomClaims, DecodedIdTokenWithCustomClaims } from "@/types/auth-types";
-import moment from "moment";
+import { fetchAccessToken, isIdTokenValid } from "@/features/auth/serverAuthZ";
+import { AuthCustomClaims, DecodedIdTokenWithCustomClaims, GoogleTokens } from "@/types/auth-types";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -15,32 +14,18 @@ export async function POST(req: NextRequest) {
   if (!refreshToken) {
     return NextResponse.json("No refresh token found", { status: 400, statusText: "Bad Request" });
   }
-  const response = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Cache-Control': 'no-cache',
-    },
-    body: new URLSearchParams({
-      refresh_token: refreshToken,
-      client_id: process.env.GOOGLE_CLIENT_ID || "",
-      client_secret: process.env.GOOGLE_CLIENT_SECRET || "",
-      grant_type: 'refresh_token',
-    }),
-  });
-  if (!response.ok) {
-    return NextResponse.json('Failed to refresh access token', { status: response.status, statusText: response.statusText });
+
+  let tokenData: GoogleTokens;
+  try {
+    tokenData = await fetchAccessToken(refreshToken);
+  } catch (error) {
+    return NextResponse.json("Failed to refresh access token", { status: 500, statusText: "Internal Server Error" });
   }
-  const token = await response.json();
 
   const customClaims: AuthCustomClaims = {
     role: decodedToken.role,
-    googleTokens: {
-      refreshToken,
-      accessToken: token.access_token,
-      expirationTime: moment().add(token.expires_in, 'seconds').toISOString(),
-    }
+    googleTokens: tokenData
   }
   await adminAuth.setCustomUserClaims(decodedToken.uid, customClaims)
-  return NextResponse.json(token.access_token, { status: 200, statusText: "OK" });
+  return NextResponse.json(tokenData.accessToken, { status: 200, statusText: "OK" });
 }
