@@ -22,3 +22,6 @@ export interface SurveyResponse extends PendingAssignment {
   submittedAt: string; // ISO-8601
 }
 export interface SurveyResponseID extends SurveyResponse, ID { surveyId: string; }
+
+export function isPendingAssignmentID(assignment: AssignmentID): assignment is PendingAssignmentID { return !('responseId' in assignment); }
+export function isSurveyResponseID(assignment: AssignmentID): assignment is SurveyResponseID { return 'responseId' in assignment; }
