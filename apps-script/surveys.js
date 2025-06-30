@@ -9,7 +9,7 @@ function createNewSurvey(title, description) {
   addIdQuestion_(survey);
   return {
     id: survey.getId(),
-    title,
+    name: title,
     description,
     responderUri: survey.getPublishedUrl(),
     linkedSheetId: survey.getDestinationId(),
