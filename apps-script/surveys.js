@@ -58,7 +58,7 @@ function addIdQuestion_(survey) {
     .addTextItem()
     .setTitle("Swaliga ID")
     .setHelpText(
-      "This is the ID number displayed on your profile page on the Swaliga Foundation survey portal."
+      "This is the ID number displayed on your profile page on the Swaliga Foundation survey portal. If you don't have an account, please create one at http://localhost:3000."
     )
     .setRequired(true)
     .setValidation(
