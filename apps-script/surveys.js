@@ -29,7 +29,7 @@ function addExistingSurvey(surveyId) {
   setDefaultSurveySettings_(survey);
 
   const items = survey.getItems();
-  if (items.length === 0 || items[0].getTitle() !== "Swaliga ID") {
+  if (items.length === 0 || !getIdQuestionItem_(items)) {
     addIdQuestion_(survey);
   }
 
@@ -68,8 +68,8 @@ function addIdQuestion_(survey) {
         .build()
     );
   const pageBreak = survey.addPageBreakItem();
-  survey.moveItem(idQuestion, 0);
-  survey.moveItem(pageBreak, 1);
+  survey.moveItem(idQuestion.getIndex(), 0);
+  survey.moveItem(pageBreak.getIndex(), 1);
 }
 
 function setDefaultSurveySettings_(survey) {
@@ -92,8 +92,8 @@ function getUpdatedSurveyTitlesAndDescriptions_(surveyIds, timeAfter) {
   return surveys;
 }
 
-function getIdQuestionItem_(survey) {
-  return survey.getItems().filter(item => item.getTitle() === "Swaliga ID")[0];
+function getIdQuestionItem_(items) {
+  return items.find((item) => item.getTitle() === "Swaliga ID");
 }
 
 function deleteSurvey(surveyId) {
