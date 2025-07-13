@@ -1,10 +1,9 @@
 function getRecentResponses_(surveyIds, timeAfter) {
   const recentResponses = [];
   surveyIds.forEach((surveyId) => {
-    const idQuestionItem = getIdQuestionItem_(FormApp.openById(surveyId));
-    const responses = FormApp.openById(surveyId).getResponses(
-      new Date(timeAfter)
-    );
+    const survey = FormApp.openById(surveyId);
+    const idQuestionItem = getIdQuestionItem_(survey.getItems());
+    const responses = survey.getResponses(new Date(timeAfter));
     recentResponses.push(
       ...responses.map((response) => {
         return idQuestionItem
