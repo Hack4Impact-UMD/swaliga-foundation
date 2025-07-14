@@ -1,4 +1,6 @@
-function createNewSurvey(title, description) {
+import { SurveyID } from "@/types/survey-types";
+
+function createNewSurvey(title: string, description: string): SurveyID {
   const survey = FormApp.create(title)
     .setDescription(description)
     .setDestination(
@@ -15,8 +17,9 @@ function createNewSurvey(title, description) {
     linkedSheetId: survey.getDestinationId(),
   };
 }
+globalThis.createNewSurvey = createNewSurvey;
 
-function addExistingSurvey(surveyId) {
+function addExistingSurvey(surveyId: string) {
   const survey = FormApp.openById(surveyId);
   try {
     survey.getDestinationId();
@@ -52,8 +55,9 @@ function addExistingSurvey(surveyId) {
     responses,
   };
 }
+globalThis.addExistingSurvey = addExistingSurvey;
 
-function addIdQuestion_(survey) {
+function addIdQuestion_(survey: GoogleAppsScript.Forms.Form) {
   const idQuestion = survey
     .addTextItem()
     .setTitle("Swaliga ID")
@@ -71,13 +75,15 @@ function addIdQuestion_(survey) {
   survey.moveItem(idQuestion.getIndex(), 0);
   survey.moveItem(pageBreak.getIndex(), 1);
 }
+globalThis.addIdQuestion_ = addIdQuestion_;
 
-function setDefaultSurveySettings_(survey) {
+function setDefaultSurveySettings_(survey: GoogleAppsScript.Forms.Form) {
   survey.setCollectEmail(true).setProgressBar(false);
 }
+globalThis.setDefaultSurveySettings_ = setDefaultSurveySettings_;
 
-function getUpdatedSurveyTitlesAndDescriptions_(surveyIds, timeAfter) {
-  const surveys = [];
+function getUpdatedSurveyTitlesAndDescriptions_(surveyIds: string[], timeAfter: string) {
+  const surveys: Pick<SurveyID, 'id' | 'name' | 'description'>[] = [];
   surveyIds.forEach((surveyId) => {
     const file = DriveApp.getFileById(surveyId);
     if (timeAfter <= file.getLastUpdated().toISOString()) {
@@ -91,15 +97,19 @@ function getUpdatedSurveyTitlesAndDescriptions_(surveyIds, timeAfter) {
   });
   return surveys;
 }
+globalThis.getUpdatedSurveyTitlesAndDescriptions_ = getUpdatedSurveyTitlesAndDescriptions_;
 
-function getIdQuestionItem_(items) {
+function getIdQuestionItem_(items: GoogleAppsScript.Forms.Item[]) {
   return items.find((item) => item.getTitle() === "Swaliga ID");
 }
+globalThis.getIdQuestionItem_ = getIdQuestionItem_;
 
-function deleteSurvey(surveyId) {
-  FormApp.openById(surveyId).deleteForm();
-}
+// function deleteSurvey(surveyId: string) {
+// FormApp.openById(surveyId);
+// }
+//
+// function deleteSurveys(surveyIds) {
+// surveyIds.forEach((surveyId) => deleteSurvey(surveyId));
+// }
 
-function deleteSurveys(surveyIds) {
-  surveyIds.forEach((surveyId) => deleteSurvey(surveyId));
-}
+export { };
