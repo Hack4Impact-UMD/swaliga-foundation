@@ -1,4 +1,5 @@
 import { SurveyID } from "@/types/survey-types";
+import { GoogleFormResponse, GoogleFormResponseEmail, GoogleFormResponseID } from "@/types/apps-script-types";
 
 function createNewSurvey(title: string, description: string): SurveyID {
   const survey = FormApp.create(title)
@@ -32,17 +33,23 @@ function addExistingSurvey(surveyId: string) {
   setDefaultSurveySettings_(survey);
 
   const items = survey.getItems();
-  if (items.length === 0 || !getIdQuestionItem_(items)) {
+  let idQuestionItem = undefined;
+  if (items.length === 0 || !(idQuestionItem = getIdQuestionItem_(items))) {
     addIdQuestion_(survey);
   }
 
-  const responses = survey.getResponses().map((response) => {
-    return {
+  const responses: GoogleFormResponse[] = survey.getResponses().map((response) => {
+    return idQuestionItem ? {
+      surveyId,
+      responseId: response.getId(),
+      submittedAt: response.getTimestamp().toISOString(),
+      studentId: response.getResponseForItem(idQuestionItem).getResponse() as string,
+    } as GoogleFormResponseID : {
       surveyId,
       responseId: response.getId(),
       submittedAt: response.getTimestamp().toISOString(),
       studentEmail: response.getRespondentEmail(),
-    };
+    } as GoogleFormResponseEmail
   });
   return {
     survey: {

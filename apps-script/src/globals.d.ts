@@ -15,7 +15,7 @@ declare global {
   var createNewSurvey: (title: string, description: string) => SurveyID;
   var addExistingSurvey: (surveyId: string) => {
     survey: SurveyID;
-    responses: GoogleFormResponseEmail[];
+    responses: GoogleFormResponse[];
   }
   var addIdQuestion_: (survey: GoogleAppsScript.Forms.Form) => void;
   var setDefaultSurveySettings_: (survey: GoogleAppsScript.Forms.Form) => void;

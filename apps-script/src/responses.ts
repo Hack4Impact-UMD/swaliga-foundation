@@ -1,4 +1,4 @@
-import { GoogleFormResponse, GoogleFormResponseID } from "@/types/apps-script-types";
+import { GoogleFormResponse, GoogleFormResponseEmail, GoogleFormResponseID } from "@/types/apps-script-types";
 
 function getRecentResponses_(surveyIds: string[], timeAfter: string) {
   const recentResponses: GoogleFormResponse[] = [];
@@ -14,15 +14,13 @@ function getRecentResponses_(surveyIds: string[], timeAfter: string) {
             responseId: response.getId(),
             submittedAt: response.getTimestamp().toISOString(),
             studentId: response.getResponseForItem(idQuestionItem).getResponse() as string,
-            bruh: "<bruh>"
           } as GoogleFormResponseID
           : {
             surveyId,
             responseId: response.getId(),
             submittedAt: response.getTimestamp().toISOString(),
             studentEmail: response.getRespondentEmail(),
-
-          };
+          } as GoogleFormResponseEmail;
       })
     );
   });
