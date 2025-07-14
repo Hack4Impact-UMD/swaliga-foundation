@@ -58,7 +58,7 @@ function addExistingSurvey(surveyId: string) {
       description: survey.getDescription(),
       responderUri: survey.getPublishedUrl(),
       linkedSheetId: survey.getDestinationId(),
-    },
+    } as SurveyID,
     responses,
   };
 }
