@@ -1,5 +1,5 @@
 import { SurveyID } from "@/types/survey-types";
-import { GoogleFormResponse, GoogleFormResponseEmail, GoogleFormResponseID } from "@/types/apps-script-types";
+import { GoogleFormResponse, GoogleFormResponseStudentEmail, GoogleFormResponseStudentId } from "@/types/apps-script-types";
 
 function createNewSurvey(title: string, description: string): SurveyID {
   const survey = FormApp.create(title)
@@ -38,19 +38,6 @@ function addExistingSurvey(surveyId: string) {
     addIdQuestion_(survey);
   }
 
-  const responses: GoogleFormResponse[] = survey.getResponses().map((response) => {
-    return idQuestionItem ? {
-      surveyId,
-      responseId: response.getId(),
-      submittedAt: response.getTimestamp().toISOString(),
-      studentId: response.getResponseForItem(idQuestionItem).getResponse() as string,
-    } as GoogleFormResponseID : {
-      surveyId,
-      responseId: response.getId(),
-      submittedAt: response.getTimestamp().toISOString(),
-      studentEmail: response.getRespondentEmail(),
-    } as GoogleFormResponseEmail
-  });
   return {
     survey: {
       id: surveyId,
@@ -59,7 +46,7 @@ function addExistingSurvey(surveyId: string) {
       responderUri: survey.getPublishedUrl(),
       linkedSheetId: survey.getDestinationId(),
     } as SurveyID,
-    responses,
+    responses: survey.getResponses().map((response) => mapResponseToGoogleFormResponse(response, surveyId, idQuestionItem)),
   };
 }
 globalThis.addExistingSurvey = addExistingSurvey;

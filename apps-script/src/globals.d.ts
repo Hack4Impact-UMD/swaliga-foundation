@@ -1,5 +1,5 @@
 import { SurveyID } from '@/types/survey-types';
-import { GoogleFormResponse, GoogleFormResponseEmail } from '@/types/apps-script-types';
+import { GoogleFormResponse } from '@/types/apps-script-types';
 
 declare global {
   // cronJob.js
@@ -10,6 +10,7 @@ declare global {
 
   // responses.ts
   var getRecentResponses_: (surveyIds: string[], timeAfter: string) => GoogleFormResponse[];
+  var mapResponseToGoogleFormResponse: (response: GoogleAppsScript.Forms.FormResponse, surveyId: string, idQuestionItem?: GoogleAppsScript.Forms.Item) => GoogleFormResponse;
 
   //surveys.ts
   var createNewSurvey: (title: string, description: string) => SurveyID;

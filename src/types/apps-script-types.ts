@@ -1,7 +1,9 @@
-import { SurveyResponseID } from "./survey-types";
+import { SurveyResponseStudentIdID, SurveyResponseStudentEmailID, SurveyResponseUnidentifiedID } from "./survey-types";
 
-export type GoogleFormResponse = GoogleFormResponseID | GoogleFormResponseEmail;
-export type GoogleFormResponseID = Omit<SurveyResponseID, 'id' | 'assignedAt'>;
-export type GoogleFormResponseEmail = Omit<SurveyResponseID, 'id' | 'assignedAt' | 'studentId'> & { studentEmail: string };
-export function isGoogleFormResponseID(response: GoogleFormResponse): response is GoogleFormResponseID { return 'studentId' in response; }
-export function isGoogleFormResponseEmail(response: GoogleFormResponse): response is GoogleFormResponseEmail { return 'studentEmail' in response; }
+export type GoogleFormResponse = GoogleFormResponseUnidentified | GoogleFormResponseStudentId | GoogleFormResponseStudentEmail;
+export type GoogleFormResponseUnidentified = Omit<SurveyResponseUnidentifiedID, 'id'>;
+export type GoogleFormResponseStudentId = Omit<SurveyResponseStudentIdID, 'id' | 'assignedAt'>;
+export type GoogleFormResponseStudentEmail = Omit<SurveyResponseStudentEmailID, 'id'>;
+export function isGoogleFormResponseUnidentified(response: GoogleFormResponse): response is GoogleFormResponseUnidentified { return !('studentId' in response) && !('studentEmail' in response); }
+export function isGoogleFormResponseStudentId(response: GoogleFormResponse): response is GoogleFormResponseStudentId { return 'studentId' in response; }
+export function isGoogleFormResponseStudentEmail(response: GoogleFormResponse): response is GoogleFormResponseStudentEmail { return 'studentEmail' in response; }

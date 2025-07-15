@@ -8,20 +8,26 @@ export interface Survey {
 }
 export interface SurveyID extends Survey, ID { }
 
-export type Assignment = PendingAssignment | SurveyResponse;
-export type AssignmentID = PendingAssignmentID | SurveyResponseID;
+export type Assignment = PendingAssignment | SurveyResponseUnidentified | SurveyResponseStudentId | SurveyResponseStudentEmail;
+export type AssignmentID = PendingAssignmentID | SurveyResponseUnidentifiedID | SurveyResponseStudentIdID | SurveyResponseStudentEmailID;
 
 export interface PendingAssignment {
-  studentId?: string; // missing value indicates a response from a form before the form was added to Firestore & either no way to identify the student or the student is not registered
-  assignedAt?: string; // ISO-8601, missing value indicates a response from a form before the form was added to Firestore
+  studentId: string;
+  assignedAt: string; // ISO-8601
 }
 export interface PendingAssignmentID extends PendingAssignment, ID { surveyId: string; }
 
-export interface SurveyResponse extends PendingAssignment {
+export interface SurveyResponseUnidentified {
   responseId: string;
   submittedAt: string; // ISO-8601
 }
-export interface SurveyResponseID extends SurveyResponse, ID { surveyId: string; }
+export interface SurveyResponseUnidentifiedID extends SurveyResponseUnidentified, ID { surveyId: string; }
+export interface SurveyResponseStudentId extends SurveyResponseUnidentified { studentId: string; assignedAt?: string; /* ISO-8601 */ }
+export interface SurveyResponseStudentIdID extends SurveyResponseStudentId, ID { surveyId: string; }
+export interface SurveyResponseStudentEmail extends SurveyResponseUnidentified { studentEmail: string; }
+export interface SurveyResponseStudentEmailID extends SurveyResponseStudentEmail, ID { surveyId: string; }
 
 export function isPendingAssignmentID(assignment: AssignmentID): assignment is PendingAssignmentID { return !('responseId' in assignment); }
-export function isSurveyResponseID(assignment: AssignmentID): assignment is SurveyResponseID { return 'responseId' in assignment; }
+export function isSurveyResponseUnidentifiedID(assignment: AssignmentID): assignment is SurveyResponseUnidentifiedID { return !('studentId' in assignment) && !('studentEmail' in assignment); }
+export function isSurveyResponseStudentIdID(assignment: AssignmentID): assignment is SurveyResponseStudentIdID { return 'studentId' in assignment && 'responseId' in assignment; }
+export function isSurveyResponseStudentEmailID(assignment: AssignmentID): assignment is SurveyResponseStudentEmailID { return 'studentEmail' in assignment; }
