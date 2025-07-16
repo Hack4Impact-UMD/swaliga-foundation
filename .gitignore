@@ -5,8 +5,7 @@
 
 firebaseAdminCredentials.json
 
-firebase-debug.log
-firestore-debug.log
+*-debug.log
 
 .vscode
 
