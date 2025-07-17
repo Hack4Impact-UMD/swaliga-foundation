@@ -13,5 +13,9 @@
     "node": "18"
   },
   "main": "lib/functions/src/index.js",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "firebase-admin": "^13.4.0",
+    "firebase-functions": "^6.4.0"
+  }
 }

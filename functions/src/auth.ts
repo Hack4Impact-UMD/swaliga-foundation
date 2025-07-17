@@ -1,4 +1,4 @@
-import { adminAuth } from './adminConfig';
+import { adminAuth } from '@/config/firebaseAdminConfig';
 import { onCall } from "firebase-functions/v2/https";
 
 export const setAdminRole = onCall(async (req) => {
