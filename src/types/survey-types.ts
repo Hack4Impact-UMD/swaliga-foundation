@@ -14,6 +14,7 @@ export type AssignmentID = PendingAssignmentID | SurveyResponseUnidentifiedID | 
 export interface PendingAssignment {
   studentId: string;
   assignedAt: string; // ISO-8601
+  responseId: null;
 }
 export interface PendingAssignmentID extends PendingAssignment, ID { surveyId: string; }
 
