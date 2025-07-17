@@ -2,12 +2,13 @@ import { onSchedule, ScheduledEvent } from "firebase-functions/scheduler";
 import { addExistingSurvey, getRecentUpdates } from "@/data/apps-script/calls"
 import { fetchAccessToken } from '@/features/auth/serverAuthZ';
 import { adminAuth, adminDb } from "@/config/firebaseAdminConfig";
-import { Transaction } from "firebase-admin/firestore";
+import { FieldValue, Transaction } from "firebase-admin/firestore";
 import { GoogleFormResponse, isGoogleFormResponseStudentEmail, isGoogleFormResponseStudentId, isGoogleFormResponseUnidentified } from "@/types/apps-script-types";
 import { Collection } from "@/data/firestore/utils";
 import { SurveyResponseStudentEmail, SurveyResponseStudentId, SurveyResponseUnidentified } from "@/types/survey-types";
 import { v4 as uuid } from "uuid";
 import { onCall, onRequest } from "firebase-functions/https";
+import { onDocumentCreated, onDocumentDeleted } from "firebase-functions/firestore";
 
 const addResponsesToFirestore = async (responses: GoogleFormResponse[], transaction: Transaction) => {
   const surveysCollection = adminDb.collection(Collection.SURVEYS);
@@ -86,16 +87,13 @@ export const addExistingSurveyAndResponses = onCall(async (data) => {
   })
 });
 
+export const onSurveyDocCreated = onDocumentCreated('/surveys/{surveyId}', (event) => {
+  const surveyId = event.params.surveyId;
+  adminDb.collection(Collection.METADATA).doc('surveyIds').update({ surveyIds: FieldValue.arrayUnion(surveyId) })
+});
 
-
-/*
-for an assignment to exist, user must exist & survey must be included in the app's database
-
-cases:
-1. GoogleFormResponseUnidentified --> SurveyResponseUnidentified
-1. GoogleFormResponseEmail + user with email exists --> create assignment doc with id, no assignedAt --> SurveyResponseStudentId
-2. GoogleFormResponseEmail + user with email doesn't exist --> create assignment doc with email, but no id or assignedAt --> SurveyResponseStudentEmail
-3. GoogleFormResponseID + assignment exists with given studentId & surveyId --> update assignment doc from PendingAssignment to SurveyResponse --> update PendingAssignment to SurveyResponseStudentId
-4. GoogleFormResponseID + assignment doesn't exist with given studentId & surveyId --> create assignment doc with id, no assignedAt --> SurveyResponseStudentId
-
-*/
+export const onSurveyDocDeleted = onDocumentDeleted('/surveys/{surveyId}', (event) => {
+  const surveyId = event.params.surveyId;
+  adminDb.collection(Collection.METADATA).doc('surveyIds').update({ surveyIds: FieldValue.arrayRemove(surveyId) });
+  adminDb.recursiveDelete(adminDb.collection(Collection.SURVEYS).doc(surveyId));
+});

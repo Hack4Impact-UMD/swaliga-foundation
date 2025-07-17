@@ -90,12 +90,14 @@ function getIdQuestionItem_(items: GoogleAppsScript.Forms.Item[]) {
 }
 globalThis.getIdQuestionItem_ = getIdQuestionItem_;
 
-// function deleteSurvey(surveyId: string) {
-// FormApp.openById(surveyId);
-// }
-//
-// function deleteSurveys(surveyIds) {
-// surveyIds.forEach((surveyId) => deleteSurvey(surveyId));
-// }
+function deleteSurvey(surveyId: string) {
+  DriveApp.getFileById(surveyId).setTrashed(true);
+}
+globalThis.deleteSurvey = deleteSurvey;
+
+function deleteSurveys(surveyIds: string[]) {
+  surveyIds.forEach((surveyId) => deleteSurvey(surveyId));
+}
+globalThis.deleteSurveys = deleteSurveys;
 
 export { };
