@@ -25,7 +25,7 @@ async function callAppsScript(accessToken: string, functionName: string, paramet
 }
 
 export async function createNewForm(accessToken: string, title: string, description: string): Promise<SurveyID> { return await callAppsScript(accessToken, 'createNewForm', [title, description]); }
-export async function addExistingSurvey(accessToken: string, formId: string, endTime?: string): Promise<{ survey: SurveyID; responses: GoogleFormResponse[]; }> { return await callAppsScript(accessToken, 'addExistingSurvey', [formId, endTime]); }
-export async function deleteForm(accessToken: string, formId: string): Promise<void> { return await callAppsScript(accessToken, 'deleteForm', [formId]); }
-export async function deleteForms(accessToken: string, formIds: string[]): Promise<void> { return await callAppsScript(accessToken, 'deleteForms', [formIds]); }
+export async function addExistingSurvey(accessToken: string, surveyId: string, endTime?: string): Promise<{ survey: SurveyID; responses: GoogleFormResponse[]; }> { return await callAppsScript(accessToken, 'addExistingSurvey', [surveyId, endTime]); }
+export async function deleteForm(accessToken: string, surveyId: string): Promise<void> { return await callAppsScript(accessToken, 'deleteForm', [surveyId]); }
+export async function deleteForms(accessToken: string, surveyIds: string[]): Promise<void> { return await callAppsScript(accessToken, 'deleteForms', [surveyIds]); }
 export async function getRecentUpdates(accessToken: string, surveyIds: string[], endTime: string, startTime?: string): Promise<{ surveys: Pick<SurveyID, 'id' | 'name' | 'description'>[], responses: GoogleFormResponse[] }> { return await callAppsScript(accessToken, 'getRecentUpdates', [surveyIds, endTime, startTime]); }
