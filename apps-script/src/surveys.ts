@@ -1,5 +1,4 @@
 import { SurveyID } from "@/types/survey-types";
-import { GoogleFormResponse, GoogleFormResponseStudentEmail, GoogleFormResponseStudentId } from "@/types/apps-script-types";
 
 function createNewSurvey(title: string, description: string): SurveyID {
   const survey = FormApp.create(title)
@@ -19,7 +18,7 @@ function createNewSurvey(title: string, description: string): SurveyID {
 }
 globalThis.createNewSurvey = createNewSurvey;
 
-function addExistingSurvey(surveyId: string) {
+function addExistingSurvey(surveyId: string, endTime?: string) {
   const survey = FormApp.openById(surveyId);
   try {
     survey.getDestinationId();
@@ -44,7 +43,7 @@ function addExistingSurvey(surveyId: string) {
       responderUri: survey.getPublishedUrl(),
       linkedSheetId: survey.getDestinationId(),
     } as SurveyID,
-    responses: survey.getResponses().map((response) => mapResponseToGoogleFormResponse(response, surveyId, idQuestionItem)),
+    responses: (endTime ? survey.getResponses().filter(response => response.getTimestamp().toISOString() < endTime) : survey.getResponses()).map((response) => mapResponseToGoogleFormResponse(response, surveyId, idQuestionItem)),
   };
 }
 globalThis.addExistingSurvey = addExistingSurvey;
@@ -69,11 +68,11 @@ function addIdQuestion_(survey: GoogleAppsScript.Forms.Form) {
 }
 globalThis.addIdQuestion_ = addIdQuestion_;
 
-function getUpdatedSurveyTitlesAndDescriptions_(surveyIds: string[], timeAfter: string) {
+function getUpdatedSurveyTitlesAndDescriptions_(surveyIds: string[], startTime?: string) {
   const surveys: Pick<SurveyID, 'id' | 'name' | 'description'>[] = [];
   surveyIds.forEach((surveyId) => {
     const file = DriveApp.getFileById(surveyId);
-    if (timeAfter <= file.getLastUpdated().toISOString()) {
+    if (!startTime || startTime <= file.getLastUpdated().toISOString()) {
       const survey = FormApp.openById(surveyId);
       surveys.push({
         id: surveyId,
