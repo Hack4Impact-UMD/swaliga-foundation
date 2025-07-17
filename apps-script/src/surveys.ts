@@ -8,7 +8,6 @@ function createNewSurvey(title: string, description: string): SurveyID {
       FormApp.DestinationType.SPREADSHEET,
       SpreadsheetApp.create(`${title} - Responses`).getId()
     );
-  setDefaultSurveySettings_(survey);
   addIdQuestion_(survey);
   return {
     id: survey.getId(),
@@ -30,7 +29,6 @@ function addExistingSurvey(surveyId: string) {
       SpreadsheetApp.create(`${survey.getTitle()} - Responses`).getId()
     );
   }
-  setDefaultSurveySettings_(survey);
 
   const items = survey.getItems();
   let idQuestionItem = undefined;
@@ -70,11 +68,6 @@ function addIdQuestion_(survey: GoogleAppsScript.Forms.Form) {
   survey.moveItem(pageBreak.getIndex(), 1);
 }
 globalThis.addIdQuestion_ = addIdQuestion_;
-
-function setDefaultSurveySettings_(survey: GoogleAppsScript.Forms.Form) {
-  survey.setCollectEmail(true).setProgressBar(false);
-}
-globalThis.setDefaultSurveySettings_ = setDefaultSurveySettings_;
 
 function getUpdatedSurveyTitlesAndDescriptions_(surveyIds: string[], timeAfter: string) {
   const surveys: Pick<SurveyID, 'id' | 'name' | 'description'>[] = [];

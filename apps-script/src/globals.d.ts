@@ -19,7 +19,6 @@ declare global {
     responses: GoogleFormResponse[];
   }
   var addIdQuestion_: (survey: GoogleAppsScript.Forms.Form) => void;
-  var setDefaultSurveySettings_: (survey: GoogleAppsScript.Forms.Form) => void;
   var getUpdatedSurveyTitlesAndDescriptions_: (surveyIds: string[], timeAfter: string) => Pick<SurveyID, 'id' | 'name' | 'description'>[];
   var getIdQuestionItem_: (items: GoogleAppsScript.Forms.Item[]) => GoogleAppsScript.Forms.Item | undefined;
 }
