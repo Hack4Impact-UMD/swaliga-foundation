@@ -6,7 +6,7 @@ import { httpsCallable } from "firebase/functions";
 
 export async function createNewSurvey(accessToken: string, name: string, description: string): Promise<string> {
   try {
-    var survey: SurveyID = await AppsScript.createNewForm(accessToken, name, description);
+    var survey: SurveyID = await AppsScript.createNewSurvey(accessToken, name, description);
   } catch (error) {
     throw new Error('Failed to create new survey');
   }
@@ -15,7 +15,7 @@ export async function createNewSurvey(accessToken: string, name: string, descrip
   try {
     await FirestoreSurveys.createSurvey(id, surveyData);
   } catch (error) {
-    await AppsScript.deleteForm(accessToken, id);
+    await AppsScript.deleteSurvey(accessToken, id);
     throw new Error('Failed to create new survey');
   }
   return id;
