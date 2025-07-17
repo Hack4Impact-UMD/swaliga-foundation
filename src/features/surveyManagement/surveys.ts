@@ -23,6 +23,17 @@ export async function createNewSurvey(accessToken: string, name: string, descrip
 
 export async function addExistingSurvey(surveyId: string) {
   try {
+    FirestoreSurveys.getSurveyById(surveyId);
+    var exists = true;
+  } catch (error) {
+    var exists = false;
+  }
+
+  if (exists) {
+    throw new Error('Survey already exists');
+  }
+
+  try {
     await httpsCallable(functions, 'addExistingSurveyAndResponses')(surveyId);
   } catch (error) {
     throw new Error('Failed to add existing survey');
