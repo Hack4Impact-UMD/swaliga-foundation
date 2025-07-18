@@ -9,6 +9,7 @@ import Link from "next/link";
 import { FilterCondition } from "@/components/Filter";
 import { getAllSurveys } from "@/data/firestore/surveys";
 import LoadingPage from "../loading";
+import CreateSurveyModal from "@/features/surveyManagement/CreateSurveyModal";
 
 export default function SurveysPage() {
   const [surveys, setSurveys] = useState<SurveyID[]>([]);
@@ -75,7 +76,13 @@ export default function SurveysPage() {
       <div className={styles.container}>
         <div className={styles.header}>
           <h1 className={styles.headerText}>Surveys</h1>
-          <div className={styles.optionMenu}></div>
+          <div className={styles.optionMenu}>
+            <CreateSurveyModal
+              onSurveyCreate={(survey) =>
+                setSurveys((prev) => [...prev, survey])
+              }
+            />
+          </div>
         </div>
         <Table
           items={surveys}
