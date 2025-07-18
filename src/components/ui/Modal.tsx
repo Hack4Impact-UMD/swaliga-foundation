@@ -7,15 +7,19 @@ import { cloneElement, useState } from "react";
 
 interface ModalProps {
   children: [JSX.Element, React.ReactNode];
+  onClose?: () => void;
 }
 
 export default function Modal(props: ModalProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const { children } = props;
+  const { children, onClose } = props;
   const [trigger, content] = children;
 
-  const toggleModal = () => setIsOpen((prev) => !prev);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleModal = () => {
+    setIsOpen((prev) => !prev);
+    if (onClose) { onClose(); }
+  };
 
   return (
     <>
