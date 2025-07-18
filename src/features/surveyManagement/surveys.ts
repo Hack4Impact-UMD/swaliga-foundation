@@ -5,7 +5,7 @@ import { db, functions } from "@/config/firebaseConfig";
 import { httpsCallable } from "firebase/functions";
 import { runTransaction } from "firebase/firestore";
 
-export async function createNewSurvey(accessToken: string, name: string, description: string): Promise<string> {
+export async function createNewSurvey(accessToken: string, name: string, description: string): Promise<SurveyID> {
   try {
     var survey: SurveyID = await AppsScript.createNewSurvey(accessToken, name, description);
   } catch (error) {
@@ -19,12 +19,12 @@ export async function createNewSurvey(accessToken: string, name: string, descrip
     await AppsScript.deleteSurvey(accessToken, id);
     throw new Error('Failed to create new survey');
   }
-  return id;
+  return survey;
 }
 
-export async function addExistingSurvey(surveyId: string) {
+export async function addExistingSurvey(surveyId: string): Promise<SurveyID> {
   try {
-    FirestoreSurveys.getSurveyById(surveyId);
+    await FirestoreSurveys.getSurveyById(surveyId);
     var exists = true;
   } catch (error) {
     var exists = false;
@@ -35,7 +35,7 @@ export async function addExistingSurvey(surveyId: string) {
   }
 
   try {
-    await httpsCallable(functions, 'addExistingSurveyAndResponses')(surveyId);
+    return (await httpsCallable(functions, 'addExistingSurveyAndResponses')(surveyId)).data as SurveyID;
   } catch (error) {
     throw new Error('Failed to add existing survey');
   }

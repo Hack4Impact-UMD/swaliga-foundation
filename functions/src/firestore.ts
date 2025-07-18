@@ -78,12 +78,13 @@ export const testHandleRecentUpdates = onRequest(async (req, res) => {
 export const addExistingSurveyAndResponses = onCall(async (data) => {
   const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
   const tokenData = await fetchAccessToken(adminUser.customClaims?.googleTokens?.refreshToken || '');
-  await adminDb.runTransaction(async (transaction: Transaction) => {
+  return await adminDb.runTransaction(async (transaction: Transaction) => {
     const { timestamp } = (await transaction.get(adminDb.collection(Collection.METADATA).doc('surveyIds'))).data() || {};
     const { survey, responses } = await addExistingSurvey(tokenData.accessToken, data.data, timestamp);
     const { id, ...surveyData } = survey;
     transaction.set(adminDb.collection(Collection.SURVEYS).doc(id), surveyData);
     addResponsesToFirestore(responses, transaction);
+    return survey;
   })
 });
 
