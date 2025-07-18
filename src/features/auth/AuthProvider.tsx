@@ -6,7 +6,7 @@ import { httpsCallable } from "firebase/functions";
 import LoadingPage from "@/app/loading";
 import { useSearchParams } from "next/navigation";
 
-interface AuthContextType {
+export interface AuthContextType {
   user: User | null;
   token: IdTokenResult | null;
   loading: boolean;

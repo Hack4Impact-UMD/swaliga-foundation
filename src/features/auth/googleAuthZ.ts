@@ -1,6 +1,7 @@
 import { GoogleTokens } from "@/types/auth-types";
 import { User } from "firebase/auth";
 import moment from "moment";
+import { AuthContextType } from "./AuthProvider";
 
 export async function getAccessToken(tokens: GoogleTokens, user: User, idToken: string): Promise<string> {
   const { accessToken, expirationTime } = tokens;
@@ -21,4 +22,12 @@ export async function getAccessToken(tokens: GoogleTokens, user: User, idToken: 
   await user.getIdTokenResult(true);
   const newAccessToken = await response.json();
   return newAccessToken;
+}
+
+export async function getAccessTokenFromAuth(auth: AuthContextType) {
+  return getAccessToken(
+    auth.token?.claims.googleTokens as GoogleTokens,
+    auth.user!,
+    auth.token!.token
+  );
 }
