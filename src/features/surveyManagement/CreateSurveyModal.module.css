@@ -14,19 +14,6 @@
   height: 100%;
 }
 
-
-
-.inputContainer {
-  display: flex;
-  flex-direction: row;
-  width: 80%;
-}
-
-.textField {
-  background-color: #ffffff;
-
-}
-
 .divider {
   display: flex;
   flex-direction: row;
@@ -45,13 +32,6 @@
   height: 0%;
   border: 1px solid black;
   margin: 0px 2px;
-}
-
-
-.inputGroup {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
 }
 
 .button {
