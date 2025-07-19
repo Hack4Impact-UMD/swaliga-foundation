@@ -9,11 +9,11 @@ import useAuth from "../auth/useAuth";
 
 interface DeleteSurveyModalProps {
   surveys: Pick<SurveyID, "id" | "name">[];
-  onSurveyDelete: (surveyIds: string[]) => void;
+  onSurveysDelete: (surveyIds: string[]) => void;
 }
 
 export default function DeleteSurveyModal(props: DeleteSurveyModalProps) {
-  const { surveys, onSurveyDelete } = props;
+  const { surveys, onSurveysDelete } = props;
 
   const [message, setMessage] = useState<string>("");
   const [error, setError] = useState<string>("");
@@ -33,7 +33,7 @@ export default function DeleteSurveyModal(props: DeleteSurveyModalProps) {
       surveys.length === 1
         ? await deleteSurvey(await getAccessTokenFromAuth(auth), surveyIds[0])
         : await deleteSurveys(await getAccessTokenFromAuth(auth), surveyIds);
-      onSurveyDelete(surveyIds);
+      onSurveysDelete(surveyIds);
       setMessage(
         `${surveys.length} survey${
           surveys.length > 1 ? "s" : ""

@@ -10,6 +10,7 @@ import { FilterCondition } from "@/components/Filter";
 import { getAllSurveys } from "@/data/firestore/surveys";
 import LoadingPage from "../loading";
 import CreateSurveyModal from "@/features/surveyManagement/CreateSurveyModal";
+import DeleteSurveyModal from "@/features/surveyManagement/DeleteSurveyModal";
 
 export default function SurveysPage() {
   const [surveys, setSurveys] = useState<SurveyID[]>([]);
@@ -77,6 +78,21 @@ export default function SurveysPage() {
         <div className={styles.header}>
           <h1 className={styles.headerText}>Surveys</h1>
           <div className={styles.optionMenu}>
+            {selectedSurveyIds.length > 0 && (
+              <DeleteSurveyModal
+                surveys={surveys
+                  .filter((survey) => selectedSurveyIds.includes(survey.id))
+                  .map((survey) => ({
+                    id: survey.id,
+                    name: survey.name,
+                  }))}
+                onSurveysDelete={(surveyIds: string[]) =>
+                  setSurveys((prev) =>
+                    prev.filter((survey) => !surveyIds.includes(survey.id))
+                  )
+                }
+              />
+            )}
             <CreateSurveyModal
               onSurveyCreate={(survey) =>
                 setSurveys((prev) => [...prev, survey])
