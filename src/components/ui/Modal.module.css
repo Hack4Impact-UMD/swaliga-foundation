@@ -13,16 +13,15 @@
 }
 
 .modal {
-  position: relative;
   display: flex;
   flex-direction: column;
-  width: 50%;
-  display: flex;
-  justify-content: center;
   align-items: center;
+  width: 50%;
+  max-height: 80%;
   border: none;
   border-radius: 50px;
   background-color: #d9d9d9;
+  overflow-y: auto;
 }
 
 .headerRow {
