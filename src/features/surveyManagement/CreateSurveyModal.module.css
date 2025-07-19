@@ -1,12 +1,12 @@
 .icon {
-  color: white;
-  background-color: black;
+  color: #35627a;
+  background-color: #dedeb2;
   border-radius: 10%;
   padding: 10px;
 }
 
 .icon:hover {
-  color: #9d9d9d;
+  color: #5d8195;
 }
 
 .modalContent {
