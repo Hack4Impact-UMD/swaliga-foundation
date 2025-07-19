@@ -45,7 +45,7 @@ export default function CreateSurveyModal(
       if (!name) {
         throw new Error(CreateSurveyModalErrorMessages.SURVEY_NAME_REQUIRED);
       }
-      setMessage("This will take a few seconds...");
+      setMessage("This may take a minute...");
       const survey = await createNewSurvey(
         await getAccessTokenFromAuth(auth),
         name,
@@ -69,7 +69,7 @@ export default function CreateSurveyModal(
       if (!id) {
         throw new Error(CreateSurveyModalErrorMessages.SURVEY_ID_REQUIRED);
       }
-      setMessage("This will take a few seconds...");
+      setMessage("This may take a minute...");
       const survey = await addExistingSurvey(id);
       onSurveyCreate(survey);
       setMessage(`Survey "${survey.name}" added successfully!`);
