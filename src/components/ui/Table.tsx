@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Table.module.css";
 import Filter, { FilterCondition } from "../Filter";
 import { FaChevronLeft, FaChevronRight, FaFilter } from "react-icons/fa";
@@ -33,10 +33,17 @@ export default function Table<T extends ID>(props: TableProps<T>) {
 
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [numItemsPerPage, setNumItemsPerPage] = useState<number>(
-    paginationOptions?.itemsPerPageOptions ? paginationOptions.itemsPerPageOptions[0] : items.length
+    paginationOptions?.itemsPerPageOptions
+      ? paginationOptions.itemsPerPageOptions[0]
+      : items.length
   );
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
   const [filteredItems, setFilteredItems] = useState<T[]>(items);
+
+  useEffect(() => {
+    setFilteredItems(items);
+    setCurrentPage(0);
+  }, [items]);
 
   const numPages = Math.ceil(filteredItems.length / numItemsPerPage);
 
@@ -45,7 +52,9 @@ export default function Table<T extends ID>(props: TableProps<T>) {
       return;
     }
     if (checked) {
-      selectOptions.setSelectedItemIds((prev: string[]) => [...new Set([...prev, id])]);
+      selectOptions.setSelectedItemIds((prev: string[]) => [
+        ...new Set([...prev, id]),
+      ]);
     } else {
       selectOptions.setSelectedItemIds((prev: string[]) =>
         prev.filter((itemId: string) => itemId !== id)
@@ -90,7 +99,10 @@ export default function Table<T extends ID>(props: TableProps<T>) {
                   <th className={`${styles.rowItem} ${styles.stickyCol}`}>
                     <input
                       type="checkbox"
-                      checked={selectOptions.selectedItemIds.length === filteredItems.length}
+                      checked={
+                        selectOptions.selectedItemIds.length ===
+                        filteredItems.length
+                      }
                       onChange={(e) => handleSelectAll(e.target.checked)}
                     />
                   </th>
@@ -110,8 +122,9 @@ export default function Table<T extends ID>(props: TableProps<T>) {
                   )
                 )
                 .map((item: T) => {
-                  const checked =
-                    selectOptions?.selectedItemIds?.includes(item.id);
+                  const checked = selectOptions?.selectedItemIds?.includes(
+                    item.id
+                  );
                   return (
                     <tr
                       className={
@@ -153,7 +166,9 @@ export default function Table<T extends ID>(props: TableProps<T>) {
                 {paginationOptions.itemsPerPageOptions.map((option: number) => (
                   <option value={option}>{option}</option>
                 ))}
-                {paginationOptions.includeAllOption && <option value={items.length}>All</option>}
+                {paginationOptions.includeAllOption && (
+                  <option value={items.length}>All</option>
+                )}
               </select>
             </div>
             <span className={styles.paginationElement}>
