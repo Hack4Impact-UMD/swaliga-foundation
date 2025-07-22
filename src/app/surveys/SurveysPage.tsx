@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import styles from "./SurveysPage.module.css";
 import { SurveyID } from "@/types/survey-types";
 import Table, { Column } from "@/components/ui/Table";
-import { FaEdit, FaEye } from "react-icons/fa";
+import { FaEdit, FaEye, FaFileExcel } from "react-icons/fa";
 import Link from "next/link";
 import { FilterCondition } from "@/components/Filter";
 import { getAllSurveys } from "@/data/firestore/surveys";
@@ -34,7 +34,11 @@ export default function SurveysPage() {
   const columns: Column<SurveyID>[] = [
     {
       name: "Name",
-      getValue: (survey: SurveyID) => survey.name,
+      getValue: (survey: SurveyID) => (
+        <Link href={`/surveys/${survey.id}`}>
+          <p className={styles.linkText}>{survey.name}</p>
+        </Link>
+      ),
     },
     {
       name: "Edit Survey",
@@ -52,6 +56,17 @@ export default function SurveysPage() {
       getValue: (survey: SurveyID) => (
         <Link href={survey.responderUri} target="_blank">
           <FaEye className={styles.linkIcon} size={20} />
+        </Link>
+      ),
+    },
+    {
+      name: "Responses Spreadsheet",
+      getValue: (survey: SurveyID) => (
+        <Link
+          href={`https://docs.google.com/spreadsheets/d/${survey.linkedSheetId}/edit`}
+          target="_blank"
+        >
+          <FaFileExcel className={styles.linkIcon} size={20} />
         </Link>
       ),
     },

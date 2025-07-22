@@ -43,6 +43,12 @@
   margin: 20px;
 }
 
+.linkText {
+  color: #0000aa;
+  font-weight: 500;
+  margin: 0;
+}
+
 .linkIcon {
   color: black;
   padding: 0px;
