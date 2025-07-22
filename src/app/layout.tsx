@@ -4,6 +4,7 @@ import "./globals.css";
 import styles from "./layout.module.css";
 import AuthProvider from "@/features/auth/AuthProvider";
 import Navbar from "@/components/ui/Navbar";
+import DataProvider from "@/data/hooks/DataProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,8 +22,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} ${styles.body}`}>
         <AuthProvider>
-          <Navbar />
-          {children as JSX.Element}
+          <DataProvider>
+            <Navbar />
+            {children as JSX.Element}
+          </DataProvider>
         </AuthProvider>
       </body>
     </html>
