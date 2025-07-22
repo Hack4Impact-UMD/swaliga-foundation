@@ -1,0 +1,53 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 50px);
+  background-color: #d9d9d9;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 90%;
+  min-height: 85vh;
+  background-color: #1e4154;
+  border-radius: 20px;
+  padding: 2.5%;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.headerText {
+  font-family: "Poppins", sans-serif;
+  color: #d0d12a;
+  font-size: 40px;
+  font-weight: 700;
+  margin: 20px;
+  align-self: flex-start;
+}
+
+.optionMenu {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin: 20px;
+}
+
+.linkIcon {
+  color: black;
+  padding: 0px;
+}
+
+.linkIcon:hover {
+  color: #00000080;
+}

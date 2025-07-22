@@ -9,13 +9,18 @@ export interface Person {
   phone?: string;
 }
 
+export function getFullName(person: Person): string {
+  const { firstName, middleName, lastName } = person.name;
+  return `${firstName} ${middleName ? `${middleName} ` : ""}${lastName}`
+}
+
 export interface User extends Person {
   uid: string;
   role: Role;
 }
 
 export interface Student extends User {
-  swaligaId: string;
+  id: string;
   role: "STUDENT";
   dateOfBirth: string; // ISO-8601
   joinedSwaligaDate: string; // ISO-8601
@@ -45,6 +50,10 @@ export interface Address {
   state: string;
   country: string;
   zipCode: number;
+}
+export function getFullAddress(address: Address): string {
+  const { addressLine1, addressLine2, city, state, country, zipCode } = address;
+  return `${addressLine1}${addressLine2 ? `, ${addressLine2}` : ""}, ${city}, ${state}, ${country} ${zipCode}`;
 }
 
 export type Gender = "Male" | "Female" | "Non-Binary" | "Other";
