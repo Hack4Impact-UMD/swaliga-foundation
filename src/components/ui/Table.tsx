@@ -113,43 +113,56 @@ export default function Table<T extends ID>(props: TableProps<T>) {
               </tr>
             </thead>
             <tbody>
-              {filteredItems
-                .slice(
-                  currentPage * numItemsPerPage,
-                  Math.min(
-                    filteredItems.length,
-                    (currentPage + 1) * numItemsPerPage
+              {filteredItems.length === 0 ? (
+                <tr className={styles.tableRow}>
+                  <td
+                    className={styles.rowItem}
+                    colSpan={columns.length + (selectOptions ? 1 : 0)}
+                  >
+                    No items to display
+                  </td>
+                </tr>
+              ) : (
+                filteredItems
+                  .slice(
+                    currentPage * numItemsPerPage,
+                    Math.min(
+                      filteredItems.length,
+                      (currentPage + 1) * numItemsPerPage
+                    )
                   )
-                )
-                .map((item: T) => {
-                  const checked = selectOptions?.selectedItemIds?.includes(
-                    item.id
-                  );
-                  return (
-                    <tr
-                      className={
-                        checked ? styles.selectedTableRow : styles.tableRow
-                      }
-                    >
-                      {selectOptions && (
-                        <td className={`${styles.rowItem} ${styles.stickyCol}`}>
-                          <input
-                            type="checkbox"
-                            checked={checked}
-                            onChange={(e) =>
-                              handleSelect(item.id, e.target.checked)
-                            }
-                          />
-                        </td>
-                      )}
-                      {columns.map((column: Column<T>) => (
-                        <td className={styles.rowItem}>
-                          {column.getValue(item)}
-                        </td>
-                      ))}
-                    </tr>
-                  );
-                })}
+                  .map((item: T) => {
+                    const checked = selectOptions?.selectedItemIds?.includes(
+                      item.id
+                    );
+                    return (
+                      <tr
+                        className={
+                          checked ? styles.selectedTableRow : styles.tableRow
+                        }
+                      >
+                        {selectOptions && (
+                          <td
+                            className={`${styles.rowItem} ${styles.stickyCol}`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={(e) =>
+                                handleSelect(item.id, e.target.checked)
+                              }
+                            />
+                          </td>
+                        )}
+                        {columns.map((column: Column<T>) => (
+                          <td className={styles.rowItem}>
+                            {column.getValue(item)}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })
+              )}
             </tbody>
           </table>
         </div>
