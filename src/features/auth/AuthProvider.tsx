@@ -1,4 +1,5 @@
 "use client";
+
 import { onIdTokenChanged, User, IdTokenResult } from "firebase/auth";
 import React, { createContext, useEffect, useState } from "react";
 import { auth, functions } from "@/config/firebaseConfig";
@@ -9,14 +10,12 @@ import { useSearchParams } from "next/navigation";
 export interface AuthContextType {
   user: User | null;
   token: IdTokenResult | null;
-  loading: boolean;
   error: string;
 }
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   token: null,
-  loading: true,
   error: "",
 });
 
@@ -65,7 +64,7 @@ export default function AuthProvider({
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, error }}>
+    <AuthContext.Provider value={{ user, token, error }}>
       {children}
     </AuthContext.Provider>
   );
