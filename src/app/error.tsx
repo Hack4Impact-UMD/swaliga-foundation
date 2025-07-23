@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import styles from "./error.module.css";
-import { logOut } from "@/features/auth/authN/googleAuthN";
 
 export default function ErrorPage({
   error,
