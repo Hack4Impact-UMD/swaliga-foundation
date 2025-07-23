@@ -20,7 +20,7 @@ export default function Filter<T>(props: FilterProps<T>) {
   const [filterValues, setFilterValues] = useState<{ [key: string]: any }>({});
 
   const compFunc = useCallback((itemVal: string, filterVal: string) => {
-    return itemVal.toLowerCase().includes(filterVal.toLowerCase());
+    return itemVal.toLowerCase().includes(filterVal.toLowerCase().trim());
   }, []);
 
   return (
