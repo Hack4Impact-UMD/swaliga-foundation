@@ -1,25 +1,16 @@
-import { getGmailClient } from "../auth/googleAuthorization";
+import { functions } from "@/config/firebaseConfig";
+import { httpsCallable } from "firebase/functions";
 
-export async function sendEmail(body: {
+export interface Email {
   recipients: string[];
   subject: string;
-  text: string;
-}) {
-  const { recipients, subject, text } = body;
-  const gmailClient = await getGmailClient();
-  for (const recipient of recipients) {
-    try {
-      await gmailClient.users.messages.send({
-        userId: "me",
-        requestBody: {
-          raw: Buffer.from(
-            `Subject: ${subject}\r\nTo: ${recipient}\r\n
-              ${text}`
-          ).toString("base64"),
-        },
-      });
-    } catch (err) {
-      throw Error("unable to send email");
-    }
+  html: string;
+}
+
+export async function sendEmail(email: Email): Promise<void> {
+  try {
+    await httpsCallable(functions, "sendEmail")(email);
+  } catch (error) {
+    throw new Error("Failed to send email");
   }
 }
