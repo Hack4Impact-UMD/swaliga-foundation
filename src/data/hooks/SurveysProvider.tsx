@@ -28,7 +28,7 @@ export default function SurveysProvider({
     const unsubscribe = onSnapshot(
       collection(db, Collection.SURVEYS),
       (snapshot) => {
-        setSurveys(snapshot.docs.map((doc) => doc.data()) as SurveyID[]);
+        setSurveys(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as SurveyID[]);
         setIsLoading(false);
       }
     );
