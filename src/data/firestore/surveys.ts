@@ -3,7 +3,7 @@ import { db } from "../../config/firebaseConfig";
 import { collection, deleteDoc, doc, getDoc, getDocs, setDoc, Transaction, updateDoc, WriteBatch } from 'firebase/firestore';
 import { Collection } from './utils';
 
-export async function getSurveyById(id: string, transaction?: Transaction): Promise<Survey> {
+export async function getSurveyById(id: string, transaction?: Transaction): Promise<SurveyID> {
   const surveyRef = doc(db, Collection.SURVEYS, id);
   let surveyDoc;
   try {
@@ -14,7 +14,7 @@ export async function getSurveyById(id: string, transaction?: Transaction): Prom
   if (!surveyDoc.exists()) {
     throw new Error("Survey not found");
   }
-  return surveyDoc.data() as Survey;
+  return { id: surveyDoc.id, ...surveyDoc.data() } as SurveyID;
 }
 
 export async function getAllSurveys(): Promise<SurveyID[]> {
