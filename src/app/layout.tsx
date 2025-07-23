@@ -22,10 +22,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} ${styles.body}`}>
         <AuthProvider>
-          <DataProvider>
-            <Navbar />
-            {children as JSX.Element}
-          </DataProvider>
+          <Navbar />
+          <DataProvider>{children as JSX.Element}</DataProvider>
         </AuthProvider>
       </body>
     </html>

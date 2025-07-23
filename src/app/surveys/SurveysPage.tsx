@@ -1,35 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "./SurveysPage.module.css";
 import { SurveyID } from "@/types/survey-types";
 import Table, { Column } from "@/components/ui/Table";
 import { FaEdit, FaEye, FaFileExcel } from "react-icons/fa";
 import Link from "next/link";
 import { FilterCondition } from "@/components/Filter";
-import { getAllSurveys } from "@/data/firestore/surveys";
-import LoadingPage from "../loading";
 import CreateSurveyModal from "@/features/surveyManagement/CreateSurveyModal";
 import DeleteSurveyModal from "@/features/surveyManagement/DeleteSurveyModal";
+import useSurveys from "@/data/hooks/useSurveys";
 
 export default function SurveysPage() {
-  const [surveys, setSurveys] = useState<SurveyID[]>([]);
+  const surveys = useSurveys();
   const [selectedSurveyIds, setSelectedSurveyIds] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
-
-  useEffect(() => {
-    getAllSurveys()
-      .then((data) => {
-        setSurveys(data);
-      })
-      .catch((error) => {
-        setError(error.message);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
 
   const columns: Column<SurveyID>[] = [
     {
@@ -79,14 +63,6 @@ export default function SurveysPage() {
     },
   ];
 
-  if (isLoading) {
-    return <LoadingPage />;
-  }
-
-  if (error) {
-    throw new Error(error);
-  }
-
   return (
     <div className={styles.page}>
       <div className={styles.container}>
@@ -101,18 +77,9 @@ export default function SurveysPage() {
                     id: survey.id,
                     name: survey.name,
                   }))}
-                onSurveysDelete={(surveyIds: string[]) =>
-                  setSurveys((prev) =>
-                    prev.filter((survey) => !surveyIds.includes(survey.id))
-                  )
-                }
               />
             )}
-            <CreateSurveyModal
-              onSurveyCreate={(survey) =>
-                setSurveys((prev) => [...prev, survey])
-              }
-            />
+            <CreateSurveyModal />
           </div>
         </div>
         <Table

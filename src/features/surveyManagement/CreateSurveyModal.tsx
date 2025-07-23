@@ -9,10 +9,6 @@ import useAuth from "../auth/useAuth";
 import { getAccessTokenFromAuth } from "../auth/googleAuthZ";
 import { FaCirclePlus } from "react-icons/fa6";
 
-interface CreateSurveyModalProps {
-  onSurveyCreate: (survey: SurveyID) => void;
-}
-
 enum CreateSurveyModalErrorMessages {
   SURVEY_NAME_REQUIRED = "Survey name is required.",
   SURVEY_ID_REQUIRED = "Survey ID is required.",
@@ -20,11 +16,7 @@ enum CreateSurveyModalErrorMessages {
   ADD_SURVEY_FAILED = "Failed to add existing survey. Please try again later.",
 }
 
-export default function CreateSurveyModal(
-  props: CreateSurveyModalProps
-): JSX.Element {
-  const { onSurveyCreate } = props;
-
+export default function CreateSurveyModal(): JSX.Element {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [createError, setCreateError] = useState<string>("");
@@ -51,7 +43,6 @@ export default function CreateSurveyModal(
         name,
         description
       );
-      onSurveyCreate(survey);
       setMessage(`Survey "${survey.name}" created successfully!`);
     } catch (error: any) {
       setMessage("");
@@ -71,7 +62,6 @@ export default function CreateSurveyModal(
       }
       setMessage("This may take a minute...");
       const survey = await addExistingSurvey(id);
-      onSurveyCreate(survey);
       setMessage(`Survey "${survey.name}" added successfully!`);
     } catch (error: any) {
       setMessage("");

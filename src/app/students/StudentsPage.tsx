@@ -1,32 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "./StudentsPage.module.css";
 import Table, { Column } from "@/components/ui/Table";
 import { FilterCondition } from "@/components/Filter";
-import { getAllStudents } from "@/data/firestore/students";
-import LoadingPage from "../loading";
 import { getFullAddress, getFullName, Student } from "@/types/user-types";
 import moment from "moment";
+import useStudents from "@/data/hooks/useStudents";
 
 export default function StudentsPage() {
-  const [students, setStudents] = useState<Student[]>([]);
+  const students = useStudents();
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-
-  useEffect(() => {
-    getAllStudents()
-      .then((data) => {
-        setStudents(data);
-      })
-      .catch((error) => {
-        setError(error.message);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
 
   const columns: Column<Student>[] = [
     {
@@ -83,14 +67,6 @@ export default function StudentsPage() {
       getValue: (student: Student) => student.school.name,
     },
   ];
-
-  if (isLoading) {
-    return <LoadingPage />;
-  }
-
-  if (error) {
-    throw new Error(error);
-  }
 
   return (
     <div className={styles.page}>
