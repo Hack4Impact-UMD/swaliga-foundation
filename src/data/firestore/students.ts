@@ -19,7 +19,7 @@ export async function getStudentById(id: string, transaction?: Transaction): Pro
 
 export async function createStudent(student: Student, instance?: Transaction | WriteBatch): Promise<void> {
   try {
-    const studentRef = doc(db, Collection.STUDENTS, student.swaligaId);
+    const studentRef = doc(db, Collection.STUDENTS, student.id);
     // @ts-ignore
     await (instance ? instance.set(studentRef, student) : setDoc(studentRef, student))
   } catch (error) {
