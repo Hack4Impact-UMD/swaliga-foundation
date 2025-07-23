@@ -20,8 +20,8 @@ interface PaginationOptions {
 }
 
 interface TableProps<T extends ID> {
-  columns: Column<T>[];
   items: T[];
+  columns: Column<T>[];
   selectOptions?: SelectOptions;
   paginationOptions?: PaginationOptions;
   filterConditions?: FilterCondition<T>[];
@@ -218,20 +218,21 @@ export default function Table<T extends ID>(props: TableProps<T>) {
       </div>
       {filterConditions && (
         <div className={styles.filterContainer}>
-          {isFilterOpen ? (
+          <div hidden={!isFilterOpen}>
             <Filter
               items={items}
               onFilter={onFilter}
               onClose={toggleFilter}
               filterConditions={filterConditions}
             />
-          ) : (
+          </div>
+          <div hidden={isFilterOpen}>
             <FaFilter
               className={styles.filterIcon}
               size={20}
               onClick={toggleFilter}
             />
-          )}
+          </div>
         </div>
       )}
     </div>
