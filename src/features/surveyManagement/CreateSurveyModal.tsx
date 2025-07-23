@@ -83,7 +83,7 @@ export default function CreateSurveyModal(): JSX.Element {
 
   return (
     <Modal onClose={onClose}>
-      <FaCirclePlus className={styles.icon} size={40} />
+      <FaCirclePlus className={styles.icon} size={40} title="Create Survey" />
       {message ? (
         <p>{message}</p>
       ) : (
