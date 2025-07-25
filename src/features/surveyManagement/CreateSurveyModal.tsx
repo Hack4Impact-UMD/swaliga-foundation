@@ -68,7 +68,7 @@ export default function CreateSurveyModal(): JSX.Element {
       setAddError(
         error.message === CreateSurveyModalErrorMessages.SURVEY_ID_REQUIRED
           ? CreateSurveyModalErrorMessages.SURVEY_ID_REQUIRED
-          : CreateSurveyModalErrorMessages.CREATE_SURVEY_FAILED
+          : CreateSurveyModalErrorMessages.ADD_SURVEY_FAILED
       );
     }
   };
