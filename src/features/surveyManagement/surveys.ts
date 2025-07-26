@@ -3,7 +3,7 @@ import * as AppsScript from "@/data/apps-script/calls";
 import { SurveyID } from "@/types/survey-types";
 import { db, functions } from "@/config/firebaseConfig";
 import { httpsCallable } from "firebase/functions";
-import { runTransaction } from "firebase/firestore";
+import { WriteBatch, writeBatch } from "firebase/firestore";
 
 export async function createNewSurvey(accessToken: string, name: string, description: string): Promise<SurveyID> {
   try {
@@ -52,8 +52,10 @@ export async function deleteSurvey(accessToken: string, surveyId: string) {
 
 export async function deleteSurveys(accessToken: string, surveyIds: string[]) {
   try {
-    await runTransaction(db, async (transaction) => surveyIds.forEach((surveyId: string) => FirestoreSurveys.deleteSurvey(surveyId, transaction)));
+    const batch: WriteBatch = writeBatch(db);
+    surveyIds.forEach((surveyId: string) => FirestoreSurveys.deleteSurvey(surveyId, batch));
     await AppsScript.deleteSurveys(accessToken, surveyIds);
+    await batch.commit();
   } catch (error) {
     throw new Error('Failed to delete surveys');
   }
