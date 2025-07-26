@@ -12,6 +12,19 @@ import { onDocumentCreated, onDocumentDeleted } from "firebase-functions/firesto
 
 const addResponsesToFirestore = async (responses: GoogleFormResponse[], transaction: Transaction) => {
   const surveysCollection = adminDb.collection(Collection.SURVEYS);
+
+  const idResponses = responses.filter(isGoogleFormResponseStudentId);
+  const existingDocs = await Promise.all(
+    idResponses.map(response => transaction.get(adminDb.collection(Collection.SURVEYS).doc(response.surveyId).collection(Collection.ASSIGNMENTS).where('studentId', '==', response.studentId).where('surveyId', '==', response.surveyId).where('responseId', '==', null).limit(1)))
+  );
+  idResponses.forEach((response, index) => {
+    existingDocs[index].empty ? transaction.set(surveysCollection.doc(response.surveyId).collection(Collection.ASSIGNMENTS).doc(uuid()), {
+      studentId: response.studentId,
+      responseId: response.responseId,
+      submittedAt: response.submittedAt
+    } as SurveyResponseStudentId) : transaction.update(existingDocs[index].docs[0].ref, { responseId: response.responseId, submittedAt: response.submittedAt });
+  });
+
   const unidentifiedResponses = responses.filter(isGoogleFormResponseUnidentified);
   unidentifiedResponses.forEach(response => transaction.set(surveysCollection.doc(response.surveyId).collection(Collection.ASSIGNMENTS).doc(uuid()), {
     responseId: response.responseId,
@@ -34,18 +47,6 @@ const addResponsesToFirestore = async (responses: GoogleFormResponse[], transact
       submittedAt: response.submittedAt,
     } as SurveyResponseStudentEmail);
   })
-
-  const idResponses = responses.filter(isGoogleFormResponseStudentId);
-  const existingDocs = (await Promise.all(
-    idResponses.map(response => transaction.get(adminDb.collection(Collection.SURVEYS).doc(response.surveyId).collection(Collection.ASSIGNMENTS).where('studentId', '==', response.studentId).where('surveyId', '==', response.surveyId).where('responseId', '==', null).limit(1)))
-  ));
-  idResponses.forEach((response, index) => {
-    existingDocs[index].empty ? transaction.set(surveysCollection.doc(response.surveyId).collection(Collection.ASSIGNMENTS).doc(uuid()), {
-      studentId: response.studentId,
-      responseId: response.responseId,
-      submittedAt: response.submittedAt
-    } as SurveyResponseStudentId) : transaction.update(existingDocs[index].docs[0].ref, { responseId: response.responseId, submittedAt: response.submittedAt });
-  });
 }
 
 const handleRecentUpdatesCallback = async (e: ScheduledEvent) => {
@@ -57,11 +58,11 @@ const handleRecentUpdatesCallback = async (e: ScheduledEvent) => {
     const { surveyIds, timestamp } = (await transaction.get(adminDb.collection(Collection.METADATA).doc('surveyIds'))).data() || {};
     const { surveys, responses } = await getRecentUpdates(tokenData.accessToken, surveyIds, endTime, timestamp);
     const surveysCollection = adminDb.collection(Collection.SURVEYS);
+    await addResponsesToFirestore(responses, transaction);
     surveys.forEach(survey => transaction.update(surveysCollection.doc(survey.id), {
       name: survey.name,
       description: survey.description,
     }));
-    addResponsesToFirestore(responses, transaction);
     transaction.update(adminDb.collection(Collection.METADATA).doc('surveyIds'), { timestamp: endTime })
   })
 }
@@ -82,8 +83,8 @@ export const addExistingSurveyAndResponses = onCall(async (data) => {
     const { timestamp } = (await transaction.get(adminDb.collection(Collection.METADATA).doc('surveyIds'))).data() || {};
     const { survey, responses } = await addExistingSurvey(tokenData.accessToken, data.data, timestamp);
     const { id, ...surveyData } = survey;
+    await addResponsesToFirestore(responses, transaction);
     transaction.set(adminDb.collection(Collection.SURVEYS).doc(id), surveyData);
-    addResponsesToFirestore(responses, transaction);
     return survey;
   })
 });
