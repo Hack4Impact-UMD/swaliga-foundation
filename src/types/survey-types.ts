@@ -8,8 +8,11 @@ export interface Survey {
 }
 export interface SurveyID extends Survey, ID { }
 
-export type Assignment = PendingAssignment | SurveyResponseUnidentified | SurveyResponseStudentId | SurveyResponseStudentEmail;
-export type AssignmentID = PendingAssignmentID | SurveyResponseUnidentifiedID | SurveyResponseStudentIdID | SurveyResponseStudentEmailID;
+export type Assignment = PendingAssignment | SurveyResponse;
+export type AssignmentID = PendingAssignmentID | SurveyResponseID;
+
+export type SurveyResponse = SurveyResponseUnidentified | SurveyResponseStudentId | SurveyResponseStudentEmail;
+export type SurveyResponseID = SurveyResponseUnidentifiedID | SurveyResponseStudentIdID | SurveyResponseStudentEmailID;
 
 export interface PendingAssignment {
   studentId: string;
@@ -29,6 +32,8 @@ export interface SurveyResponseStudentEmail extends SurveyResponseUnidentified {
 export interface SurveyResponseStudentEmailID extends SurveyResponseStudentEmail, ID { surveyId: string; }
 
 export function isPendingAssignmentID(assignment: AssignmentID): assignment is PendingAssignmentID { return !('responseId' in assignment); }
-export function isSurveyResponseUnidentifiedID(assignment: AssignmentID): assignment is SurveyResponseUnidentifiedID { return !('studentId' in assignment) && !('studentEmail' in assignment); }
-export function isSurveyResponseStudentIdID(assignment: AssignmentID): assignment is SurveyResponseStudentIdID { return 'studentId' in assignment && 'responseId' in assignment; }
-export function isSurveyResponseStudentEmailID(assignment: AssignmentID): assignment is SurveyResponseStudentEmailID { return 'studentEmail' in assignment; }
+export function isSurveyResponseID(assignment: AssignmentID): assignment is SurveyResponseID { return 'responseId' in assignment; }
+
+export function isSurveyResponseUnidentifiedID(assignment: AssignmentID | SurveyResponseID): assignment is SurveyResponseUnidentifiedID { return !('studentId' in assignment) && !('studentEmail' in assignment); }
+export function isSurveyResponseStudentIdID(assignment: AssignmentID | SurveyResponseID): assignment is SurveyResponseStudentIdID { return 'studentId' in assignment && 'responseId' in assignment; }
+export function isSurveyResponseStudentEmailID(assignment: AssignmentID | SurveyResponseID): assignment is SurveyResponseStudentEmailID { return 'studentEmail' in assignment; }
