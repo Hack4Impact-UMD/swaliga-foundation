@@ -1,6 +1,6 @@
-import { Assignment, AssignmentID } from "@/types/survey-types";
+import { Assignment, AssignmentID, PendingAssignment } from "@/types/survey-types";
 import { db } from "../../config/firebaseConfig";
-import { getDoc, doc, updateDoc, deleteDoc, Transaction, WriteBatch } from "firebase/firestore";
+import { getDoc, doc, updateDoc, deleteDoc, Transaction, WriteBatch, collection, getDocs } from "firebase/firestore";
 import { Collection } from "./utils";
 import { v4 as uuid } from "uuid";
 
@@ -22,7 +22,21 @@ export async function getAssignmentById(surveyId: string, assignmentId: string, 
   } as AssignmentID;
 }
 
-export async function createAssignment(surveyId: string, assignment: Assignment, instance?: Transaction | WriteBatch): Promise<void> {
+export async function getAssignmentsBySurveyId(surveyId: string): Promise<AssignmentID[]> {
+  try {
+    const assignmentsRef = collection(db, Collection.SURVEYS, surveyId, Collection.ASSIGNMENTS);
+    const docs = await getDocs(assignmentsRef);
+    return docs.docs.map(doc => ({
+      id: doc.id,
+      surveyId,
+      ...doc.data(),
+    } as AssignmentID))
+  } catch (error) {
+    throw new Error(`Failed to get assignments for survey with id ${surveyId}`);
+  }
+}
+
+export async function createAssignment(surveyId: string, assignment: PendingAssignment, instance?: Transaction | WriteBatch): Promise<void> {
   try {
     const assignmentId = uuid();
     const assignmentRef = doc(db, Collection.SURVEYS, surveyId, Collection.ASSIGNMENTS, assignmentId);
