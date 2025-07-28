@@ -30,16 +30,7 @@ export default function StudentPage(props: StudentPageProps) {
   const { surveyId } = props;
 
   const survey = useSurveys().find((survey) => survey.id === surveyId)!;
-  const [assignments, setAssignments] = useState<AssignmentID[]>([
-    {
-      id: "1",
-      studentId: "1",
-      assignedAt: moment().subtract(2, "days").toISOString(),
-      surveyId,
-      responseId: "1",
-      submittedAt: moment().subtract(1, "days").toISOString(),
-    },
-  ]);
+  const [assignments, setAssignments] = useState<AssignmentID[]>([]);
   const [selectedAssignmentIds, setSelectedAssignmentIds] = useState<string[]>(
     []
   );
