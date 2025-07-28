@@ -10,11 +10,10 @@ import {
 } from "@/types/survey-types";
 import { useEffect, useState } from "react";
 import styles from "./SurveyPage.module.css";
-import { getSurveyById } from "@/data/firestore/surveys";
 import { getAssignmentsBySurveyId } from "@/data/firestore/assignments";
 import LoadingPage from "@/app/loading";
 import Link from "next/link";
-import { FaEdit, FaEnvelope, FaExpand, FaExpandAlt, FaExpandArrowsAlt, FaEye, FaFileExcel, FaPlus } from "react-icons/fa";
+import { FaEdit, FaEnvelope, FaEye, FaFileExcel, FaPlus } from "react-icons/fa";
 import useSurveys from "@/data/hooks/useSurveys";
 import Table, { Column } from "@/components/ui/Table";
 import useStudents from "@/data/hooks/useStudents";
@@ -62,11 +61,18 @@ export default function StudentPage(props: StudentPageProps) {
     },
     {
       name: "Student ID",
-      getValue: (assignment: AssignmentID) => isPendingAssignmentID(assignment) || isSurveyResponseStudentIdID(assignment) ? assignment.studentId : "N/A",
+      getValue: (assignment: AssignmentID) =>
+        isPendingAssignmentID(assignment) ||
+        isSurveyResponseStudentIdID(assignment)
+          ? assignment.studentId
+          : "N/A",
     },
     {
       name: "Student Email",
-      getValue: (assignment: AssignmentID) => isSurveyResponseStudentEmailID(assignment) ? assignment.studentEmail : "N/A",
+      getValue: (assignment: AssignmentID) =>
+        isSurveyResponseStudentEmailID(assignment)
+          ? assignment.studentEmail
+          : "N/A",
     },
     {
       name: "Status",
@@ -81,11 +87,11 @@ export default function StudentPage(props: StudentPageProps) {
           : "N/A",
     },
     {
-      name: "Submission Date",
+      name: "Submission Timestamp",
       getValue: (assignment: AssignmentID) =>
         isPendingAssignmentID(assignment)
           ? "N/A"
-          : moment(assignment.submittedAt).format("MMM D, YYYY"),
+          : moment(assignment.submittedAt).format("M/D/YYYY HH:mm:ss"),
     },
   ];
 
@@ -101,11 +107,18 @@ export default function StudentPage(props: StudentPageProps) {
     },
     {
       name: "Student ID",
-      getValue: (assignment: AssignmentID) => isPendingAssignmentID(assignment) || isSurveyResponseStudentIdID(assignment) ? assignment.studentId : "N/A",
+      getValue: (assignment: AssignmentID) =>
+        isPendingAssignmentID(assignment) ||
+        isSurveyResponseStudentIdID(assignment)
+          ? assignment.studentId
+          : "N/A",
     },
     {
       name: "Student Email",
-      getValue: (assignment: AssignmentID) => isSurveyResponseStudentEmailID(assignment) ? assignment.studentEmail : "N/A",
+      getValue: (assignment: AssignmentID) =>
+        isSurveyResponseStudentEmailID(assignment)
+          ? assignment.studentEmail
+          : "N/A",
     },
     {
       name: "Status",
