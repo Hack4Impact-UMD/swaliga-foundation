@@ -5,10 +5,11 @@ import { adminAuth, adminDb } from "@/config/firebaseAdminConfig";
 import { FieldValue, Transaction } from "firebase-admin/firestore";
 import { GoogleFormResponse, isGoogleFormResponseStudentEmail, isGoogleFormResponseStudentId, isGoogleFormResponseUnidentified } from "@/types/apps-script-types";
 import { Collection } from "@/data/firestore/utils";
-import { SurveyResponseStudentEmail, SurveyResponseStudentId, SurveyResponseUnidentified } from "@/types/survey-types";
+import { PendingAssignmentID, SurveyResponseStudentEmail, SurveyResponseStudentId, SurveyResponseUnidentified } from "@/types/survey-types";
 import { v4 as uuid } from "uuid";
 import { onCall, onRequest } from "firebase-functions/https";
 import { onDocumentCreated, onDocumentDeleted } from "firebase-functions/firestore";
+import moment from "moment";
 
 const addResponsesToFirestore = async (responses: GoogleFormResponse[], transaction: Transaction) => {
   const surveysCollection = adminDb.collection(Collection.SURVEYS);
@@ -88,6 +89,45 @@ export const addExistingSurveyAndResponses = onCall(async (data) => {
     return survey;
   })
 });
+
+export const assignSurveys = onCall(async (data) => {
+  const { studentIds, surveyIds }: { studentIds: string[]; surveyIds: string[]; } = data.data;
+  await adminDb.runTransaction(async (transaction: Transaction) => {
+    const timestamp = moment();
+    const surveysCollection = adminDb.collection(Collection.SURVEYS);
+
+    const promises: Promise<FirebaseFirestore.QuerySnapshot>[] = [];
+    surveyIds.forEach(surveyId =>
+      studentIds.forEach(studentId =>
+        promises.push(transaction.get(surveysCollection.doc(surveyId).collection(Collection.ASSIGNMENTS).where('studentId', '==', studentId).where('responseId', '==', null).limit(1)))
+      )
+    );
+    const existingDocs = (await Promise.all(promises)).filter(snapshot => !snapshot.empty).map(snapshot => ({
+      id: snapshot.docs[0].id,
+      surveyId: snapshot.docs[0].ref.parent.parent!.id,
+      ...snapshot.docs[0].data()
+    } as PendingAssignmentID));
+
+    const assignmentsToCreate: PendingAssignmentID[] = [];
+    surveyIds.forEach(surveyId => {
+      studentIds.forEach(studentId => {
+        if (!existingDocs.some(doc => doc.studentId === studentId && doc.surveyId === surveyId)) {
+          assignmentsToCreate.push({
+            id: uuid(),
+            surveyId,
+            studentId,
+            assignedAt: timestamp.toISOString(),
+            responseId: null
+          } as PendingAssignmentID);
+        }
+      })
+    });
+    assignmentsToCreate.forEach(assignment => {
+      const { id, surveyId, ...data } = assignment;
+      transaction.set(surveysCollection.doc(surveyId).collection(Collection.ASSIGNMENTS).doc(id), data);
+    })
+  });
+})
 
 export const onSurveyDocCreated = onDocumentCreated('/surveys/{surveyId}', (event) => {
   const surveyId = event.params.surveyId;
