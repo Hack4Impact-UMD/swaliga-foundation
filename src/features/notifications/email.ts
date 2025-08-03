@@ -1,13 +1,8 @@
 import { functions } from "@/config/firebaseConfig";
 import { httpsCallable } from "firebase/functions";
+import Mail from "nodemailer/lib/mailer";
 
-export interface Email {
-  recipients: string[];
-  subject: string;
-  html: string;
-}
-
-export async function sendEmail(email: Email): Promise<void> {
+export async function sendEmail(email: Mail.Options): Promise<void> {
   try {
     await httpsCallable(functions, "sendEmail")(email);
   } catch (error) {

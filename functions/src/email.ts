@@ -2,6 +2,7 @@ import { adminAuth } from "@/config/firebaseAdminConfig";
 import { fetchAccessToken } from "@/features/auth/serverAuthZ";
 import { onCall } from "firebase-functions/https";
 import { createTransport, Transporter } from "nodemailer";
+import Mail from "nodemailer/lib/mailer";
 
 let transporter: Promise<Transporter>;
 
@@ -36,12 +37,8 @@ async function getTransporter() {
 export const sendEmail = onCall(async (data) => {
   try {
     const transporter = await getTransporter();
-    const { recipients, subject, html } = data.data;
-    await transporter.sendMail({
-      to: recipients.join(', '),
-      subject,
-      html,
-    })
+    const email: Mail.Options = data.data;
+    await transporter.sendMail(email)
   } catch (error) {
     throw new Error("Failed to send email");
   }
