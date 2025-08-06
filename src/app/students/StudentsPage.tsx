@@ -15,7 +15,7 @@ export default function StudentsPage() {
   const columns: Column<Student>[] = [
     {
       name: "Name",
-      getValue: (student: Student) => getFullName(student),
+      getValue: (student: Student) => getFullName(student.name),
     },
     {
       name: "ID",
@@ -43,7 +43,7 @@ export default function StudentsPage() {
   const filterConditions: FilterCondition<Student>[] = [
     {
       name: "Name",
-      getValue: (student: Student) => getFullName(student),
+      getValue: (student: Student) => getFullName(student.name),
     },
     {
       name: "ID",

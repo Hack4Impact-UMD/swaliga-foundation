@@ -57,6 +57,7 @@ export default function StudentPage(props: StudentPageProps) {
           ? "N/A"
           : getFullName(
               students.find((student) => student.id === assignment.studentId)!
+                .name
             ),
     },
     {
@@ -103,6 +104,7 @@ export default function StudentPage(props: StudentPageProps) {
           ? "N/A"
           : getFullName(
               students.find((student) => student.id === assignment.studentId)!
+                .name
             ),
     },
     {

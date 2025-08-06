@@ -1,16 +1,18 @@
 export interface Person {
-  name: {
-    firstName: string;
-    middleName?: string;
-    lastName: string;
-  };
+  name: Name;
   gender: Gender;
   email: string;
   phone?: string;
 }
 
-export function getFullName(person: Person): string {
-  const { firstName, middleName, lastName } = person.name;
+export interface Name {
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+}
+
+export function getFullName(name: Name): string {
+  const { firstName, middleName, lastName } = name;
   return `${firstName} ${middleName ? `${middleName} ` : ""}${lastName}`
 }
 
