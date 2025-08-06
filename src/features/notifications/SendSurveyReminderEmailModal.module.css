@@ -1,0 +1,53 @@
+.icon {
+  color: #35627a;
+  background-color: #dedeb2;
+  border-radius: 10%;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.icon:hover {
+  color: #5d8195;
+}
+
+.text {
+  font-size: x-large;
+  text-align: center;
+}
+
+.emailList {
+  align-self: flex-start;
+}
+
+.disclaimer {
+  font-size: large;
+  text-align: center;
+}
+
+.button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: green;
+  width: 200px;
+  height: 50px;
+  font-size: 25px;
+}
+
+.errorGroup {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.error {
+  margin: 5px 0px 0px 0px;
+  color: red;
+  font-size: medium;
+  font-weight: 700;
+  align-self: flex-start;
+}

@@ -6,20 +6,20 @@ import {
   isSurveyResponseStudentEmailID,
   isSurveyResponseStudentIdID,
   isSurveyResponseUnidentifiedID,
-  SurveyID,
 } from "@/types/survey-types";
 import { useEffect, useState } from "react";
 import styles from "./SurveyPage.module.css";
 import { getAssignmentsBySurveyId } from "@/data/firestore/assignments";
 import LoadingPage from "@/app/loading";
 import Link from "next/link";
-import { FaEdit, FaEnvelope, FaEye, FaFileExcel, FaPlus } from "react-icons/fa";
+import { FaEdit, FaEye, FaFileExcel, FaPlus } from "react-icons/fa";
 import useSurveys from "@/data/hooks/useSurveys";
 import Table, { Column } from "@/components/ui/Table";
 import useStudents from "@/data/hooks/useStudents";
 import { getFullName } from "@/types/user-types";
 import moment from "moment";
 import { FilterCondition } from "@/components/Filter";
+import SendSurveyReminderEmailModal from "@/features/notifications/SendSurveyReminderEmailModal";
 
 interface StudentPageProps {
   surveyId: string;
@@ -129,6 +129,10 @@ export default function StudentPage(props: StudentPageProps) {
     },
   ];
 
+  const selectedPendingAssignments = assignments
+    .filter((assignment) => selectedAssignmentIds.includes(assignment.id))
+    .filter(isPendingAssignmentID);
+
   return (
     <div className={styles.page}>
       <div className={styles.container}>
@@ -155,12 +159,12 @@ export default function StudentPage(props: StudentPageProps) {
                 title="View Responses Spreadsheet"
               />
             </Link>
-            <FaEnvelope
-              className={styles.icon}
-              onClick={() => console.log("Email Survey")}
-              size={30}
-              title="Email Survey"
-            />
+            {selectedPendingAssignments.length > 0 && (
+              <SendSurveyReminderEmailModal
+                survey={survey}
+                assignments={selectedPendingAssignments}
+              />
+            )}
             <FaPlus
               className={styles.icon}
               onClick={() => console.log("Assign Survey")}
