@@ -19,11 +19,6 @@
   align-self: flex-start;
 }
 
-.disclaimer {
-  font-size: large;
-  text-align: center;
-}
-
 .button {
   display: flex;
   flex-direction: row;
