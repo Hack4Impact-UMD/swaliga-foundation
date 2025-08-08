@@ -19,6 +19,7 @@ declare global {
     responses: GoogleFormResponse[];
   }
   var addIdQuestion_: (survey: GoogleAppsScript.Forms.Form) => void;
+  var getIdQuestionEntryNumber_: (survey: GoogleAppsScript.Forms.Form) => string;
   var getUpdatedSurveyTitlesAndDescriptions_: (surveyIds: string[], startTime?: string) => Pick<SurveyID, 'id' | 'name' | 'description'>[];
   var getIdQuestionItem_: (items: GoogleAppsScript.Forms.Item[]) => GoogleAppsScript.Forms.Item | undefined;
   var deleteSurvey: (surveyId: string) => void;

@@ -5,6 +5,7 @@ export interface Survey {
   description: string;
   responderUri: string;
   linkedSheetId: string;
+  idQuestionEntryNumber: string;
 }
 export interface SurveyID extends Survey, ID { }
 

@@ -8,12 +8,14 @@ function createNewSurvey(title: string, description: string): SurveyID {
       SpreadsheetApp.create(`${title} - Responses`).getId()
     );
   addIdQuestion_(survey);
+
   return {
     id: survey.getId(),
     name: title,
     description,
     responderUri: survey.getPublishedUrl(),
     linkedSheetId: survey.getDestinationId(),
+    idQuestionEntryNumber: getIdQuestionEntryNumber_(survey),
   };
 }
 globalThis.createNewSurvey = createNewSurvey;
@@ -42,6 +44,7 @@ function addExistingSurvey(surveyId: string, endTime?: string) {
       description: survey.getDescription(),
       responderUri: survey.getPublishedUrl(),
       linkedSheetId: survey.getDestinationId(),
+      idQuestionEntryNumber: getIdQuestionEntryNumber_(survey),
     } as SurveyID,
     responses: (endTime ? survey.getResponses().filter(response => response.getTimestamp().toISOString() < endTime) : survey.getResponses()).map((response) => mapResponseToGoogleFormResponse(response, surveyId, idQuestionItem)),
   };
@@ -67,6 +70,16 @@ function addIdQuestion_(survey: GoogleAppsScript.Forms.Form) {
   survey.moveItem(pageBreak.getIndex(), 1);
 }
 globalThis.addIdQuestion_ = addIdQuestion_;
+
+function getIdQuestionEntryNumber_(survey: GoogleAppsScript.Forms.Form): string {
+  const idQuestionItem = getIdQuestionItem_(survey.getItems());
+  const response = survey.createResponse();
+  response.withItemResponse(idQuestionItem!.asTextItem().createResponse("0000000"));
+  const link = response.toPrefilledUrl();
+  const entryNumber = link.split('?')[1].split('&').find(param => param.startsWith('entry.'))!.split('=')[0].split('.')[1];
+  return entryNumber;
+}
+globalThis.getIdQuestionEntryNumber_ = getIdQuestionEntryNumber_;
 
 function getUpdatedSurveyTitlesAndDescriptions_(surveyIds: string[], startTime?: string) {
   const surveys: Pick<SurveyID, 'id' | 'name' | 'description'>[] = [];
