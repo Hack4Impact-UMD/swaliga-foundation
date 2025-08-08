@@ -6,7 +6,6 @@ import { httpsCallable } from "firebase/functions";
 
 export async function assignSurveys(studentIds: string[], surveyIds: string[]) {
   try {
-    console.log('assigning');
     await httpsCallable(functions, 'assignSurveys')({ studentIds, surveyIds });
   } catch (error) {
     throw new Error("Failed to assign surveys")
