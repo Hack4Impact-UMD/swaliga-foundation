@@ -31,8 +31,8 @@ export interface SurveyResponseStudentIdID extends SurveyResponseStudentId, ID {
 export interface SurveyResponseStudentEmail extends SurveyResponseUnidentified { studentEmail: string; }
 export interface SurveyResponseStudentEmailID extends SurveyResponseStudentEmail, ID { surveyId: string; }
 
-export function isPendingAssignmentID(assignment: AssignmentID): assignment is PendingAssignmentID { return !('responseId' in assignment); }
-export function isSurveyResponseID(assignment: AssignmentID): assignment is SurveyResponseID { return 'responseId' in assignment; }
+export function isPendingAssignmentID(assignment: AssignmentID): assignment is PendingAssignmentID { return assignment.responseId === null; }
+export function isSurveyResponseID(assignment: AssignmentID): assignment is SurveyResponseID { return assignment.responseId !== null; }
 
 export function isSurveyResponseUnidentifiedID(assignment: AssignmentID | SurveyResponseID): assignment is SurveyResponseUnidentifiedID { return !('studentId' in assignment) && !('studentEmail' in assignment); }
 export function isSurveyResponseStudentIdID(assignment: AssignmentID | SurveyResponseID): assignment is SurveyResponseStudentIdID { return 'studentId' in assignment && 'responseId' in assignment; }
