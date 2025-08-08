@@ -1,0 +1,85 @@
+.icon {
+  color: #35627a;
+  background-color: #dedeb2;
+  border-radius: 10%;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.icon:hover {
+  color: #5d8195;
+}
+
+.text {
+  font-size: x-large;
+  text-align: center;
+}
+
+.button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: green;
+  width: 200px;
+  height: 50px;
+  font-size: 25px;
+}
+
+.errorGroup {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.error {
+  margin: 5px 0px 0px 0px;
+  color: red;
+  font-size: medium;
+  font-weight: 700;
+  align-self: flex-start;
+}
+
+.select {
+  width: 75%;
+}
+
+.assignedStudentsList {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 75%;
+  gap: 5px;
+}
+
+.assignedStudent {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 5px;
+  border: 2px solid black;
+  border-radius: 5px;
+}
+
+.removedAssignment {
+  text-decoration: line-through;
+}
+
+.assignmentButton {
+  padding: 5px;
+  border-radius: 2px;
+}
+
+.assignmentButton:hover {
+  background: #888888;
+}
+
+.assignmentButton:active {
+  background: #444444;
+}

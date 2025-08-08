@@ -20,6 +20,7 @@ import { getFullName } from "@/types/user-types";
 import moment from "moment";
 import { FilterCondition } from "@/components/Filter";
 import SendSurveyReminderEmailModal from "@/features/notifications/SendSurveyReminderEmailModal";
+import AssignStudentsModal from "@/features/surveyManagement/AssignStudentsModal";
 
 interface StudentPageProps {
   surveyId: string;
@@ -165,11 +166,9 @@ export default function StudentPage(props: StudentPageProps) {
                 assignments={selectedPendingAssignments}
               />
             )}
-            <FaPlus
-              className={styles.icon}
-              onClick={() => console.log("Assign Survey")}
-              size={30}
-              title="Assign Survey"
+            <AssignStudentsModal
+              survey={survey}
+              assignments={assignments.filter(isPendingAssignmentID)}
             />
           </div>
         </div>
