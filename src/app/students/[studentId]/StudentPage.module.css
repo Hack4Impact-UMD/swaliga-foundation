@@ -1,0 +1,98 @@
+.page {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 100%;
+  height: calc(100vh - 50px);
+  background-image: url("../../../../public/background.png");
+  background-size: 100% 100%;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 5px;
+  background-color: #ffffff;
+  width: 50%;
+  text-align: center;
+  overflow-y: scroll;
+}
+
+.infoFieldsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 75%;
+}
+
+.infoRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.infoRowBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #91a5af;
+  border-radius: 10px;
+  padding: 5px 10px;
+  font-weight: 400;
+}
+
+.infoRowField {
+  width: 25%;
+}
+
+.infoRowValue {
+  width: 60%;
+}
+
+.surveysSectionHeader {
+  width: 75%;
+  text-align: left;
+}
+
+.accordion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 75%;
+}
+
+.pendingRow {
+  background-color: #d92929;
+  border-radius: 10px;
+  padding: 2px;
+  width: 100%;
+}
+
+.responseRow {
+  background-color: #4caf50;
+  border-radius: 10px;
+  padding: 2px;
+  width: 100%;
+}
+
+.rowHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 3px;
+}
+
+.rowTrigger {
+  background-color: rgba(0, 0, 0, 0);
+  border: none;
+  margin: 2px;
+}
+
+.embeddedForm {
+  width: 95%;
+  height: 500px;
+}

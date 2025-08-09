@@ -1,6 +1,6 @@
 import { Assignment, AssignmentID, PendingAssignment } from "@/types/survey-types";
 import { db } from "../../config/firebaseConfig";
-import { getDoc, doc, updateDoc, deleteDoc, Transaction, WriteBatch, collection, getDocs } from "firebase/firestore";
+import { getDoc, doc, updateDoc, deleteDoc, Transaction, WriteBatch, collection, getDocs, collectionGroup, query, where } from "firebase/firestore";
 import { Collection } from "./utils";
 import { v4 as uuid } from "uuid";
 
@@ -33,6 +33,20 @@ export async function getAssignmentsBySurveyId(surveyId: string): Promise<Assign
     } as AssignmentID))
   } catch (error) {
     throw new Error(`Failed to get assignments for survey with id ${surveyId}`);
+  }
+}
+
+export async function getAssignmentsByStudentId(studentId: string): Promise<AssignmentID[]> {
+  try {
+    const q = query(collectionGroup(db, Collection.ASSIGNMENTS), where("studentId", "==", studentId));
+    const docs = await getDocs(q);
+    return docs.docs.map(doc => ({
+      id: doc.id,
+      surveyId: doc.ref.parent.parent!.id,
+      ...doc.data(),
+    } as AssignmentID));
+  } catch (error) {
+    throw new Error(`Failed to get assignments for student with id ${studentId}`);
   }
 }
 
