@@ -42,8 +42,14 @@ export interface Admin extends User {
 }
 
 export interface Guardian extends Person {
-  relationship: "Father" | "Mother" | "Legal Guardian" | "Other";
+  relationship: GuardianRelationship;
 }
+export type GuardianRelationship =
+  | "Father"
+  | "Mother"
+  | "Legal Guardian"
+  | (string & {});
+export const guardianRelationships = ["Father", "Mother", "Legal Guardian", "Other"];
 
 export interface Address {
   addressLine1: string;
@@ -58,7 +64,12 @@ export function getFullAddress(address: Address): string {
   return `${addressLine1}${addressLine2 ? `, ${addressLine2}` : ""}, ${city}, ${state}, ${country} ${zipCode}`;
 }
 
-export type Gender = "Male" | "Female" | "Non-Binary" | "Other";
+export type Gender =
+  | "Male"
+  | "Female"
+  | "Non-Binary"
+  | (string & {});
+export const genders = ["Male", "Female", "Non-Binary", "Other"];
 
 export type Ethnicity =
   | "Black or African American"
@@ -68,5 +79,14 @@ export type Ethnicity =
   | "Multiracial"
   | "Latin"
   | (string & {});
+export const ethnicities = [
+  "Black or African American",
+  "Indigenous",
+  "Asian",
+  "White",
+  "Multiracial",
+  "Latin",
+  "Other"
+]
 
 export type Role = "ADMIN" | "STUDENT";
