@@ -14,6 +14,22 @@ import Image from "next/image";
 import logoutIcon from "@/../public/icons/logout.svg";
 import { logOut } from "@/features/auth/authN/googleAuthN";
 import useAuth from "@/features/auth/useAuth";
+import {
+  FaAddressCard,
+  FaBirthdayCake,
+  FaCity,
+  FaEnvelope,
+  FaFlag,
+  FaFlask,
+  FaGraduationCap,
+  FaLandmark,
+  FaMapPin,
+  FaPhone,
+  FaSchool,
+  FaVenusMars,
+} from "react-icons/fa";
+import { RiParentFill } from "react-icons/ri";
+import { FaHouse } from "react-icons/fa6";
 
 export default function CreateAccountPage() {
   const [formError, setFormError] = useState("");
@@ -111,7 +127,7 @@ export default function CreateAccountPage() {
               </label>
               <div className={styles.inputRow}>
                 <div className={styles.inputIconGroup}>
-                  <i className="fas fa-address-card"></i>
+                  <FaAddressCard className={styles.inputIcon} />
                   <input
                     type="text"
                     name="firstName"
@@ -121,7 +137,7 @@ export default function CreateAccountPage() {
                   />
                 </div>
                 <div className={styles.inputIconGroup}>
-                  <i className="fas fa-address-card"></i>
+                  <FaAddressCard className={styles.inputIcon} />
                   <input
                     type="text"
                     name="middleName"
@@ -131,7 +147,7 @@ export default function CreateAccountPage() {
                   />
                 </div>
                 <div className={styles.inputIconGroup}>
-                  <i className="fas fa-address-card"></i>
+                  <FaAddressCard className={styles.inputIcon} />
                   <input
                     type="text"
                     name="lastName"
@@ -152,7 +168,7 @@ export default function CreateAccountPage() {
               </label>
               <div className={styles.inputRow}>
                 <div className={styles.inputIconGroup}>
-                  <i className="fas fa-envelope"></i>
+                  <FaEnvelope className={styles.inputIcon} />
                   <input
                     type="email"
                     name="email"
@@ -161,7 +177,7 @@ export default function CreateAccountPage() {
                   />
                 </div>
                 <div className={styles.inputIconGroup}>
-                  <i className="fas fa-phone"></i>
+                  <FaPhone className={styles.inputIcon} />
                   <input
                     type="tel"
                     name="phoneNumber"
@@ -171,7 +187,7 @@ export default function CreateAccountPage() {
                   />
                 </div>
                 <div className={styles.inputIconGroup}>
-                  <i className="fas fa-venus-mars"></i>
+                  <FaVenusMars className={styles.inputIcon} />
                   <select
                     value={gender}
                     onChange={(e) => setGender(e.target.value as Gender)}
@@ -206,7 +222,7 @@ export default function CreateAccountPage() {
                 Birthdate <span className={styles.requiredAsterisk}>*</span>
               </label>
               <div className={styles.inputIconGroup}>
-                <i className={styles.inputIconGroup}></i>
+                <FaBirthdayCake className={styles.inputIcon} />
                 <input
                   type="text"
                   name="bday"
@@ -214,12 +230,11 @@ export default function CreateAccountPage() {
                   value={dateOfBirth}
                   onChange={(e) => setDateOfBirth(e.target.value)}
                 />
-                <i className="fas fa-birthday-cake"></i>
               </div>
             </div>
           </div>
 
-          {/* Fields for Emergency Contact Info */}
+          {/* Fields for Parent/Guardian Info */}
           <div className={styles.formGroupRow}>
             <div className={styles.formGroup}>
               <label>
@@ -230,7 +245,7 @@ export default function CreateAccountPage() {
                 <div className={styles.contactContainer} key={index}>
                   <div className={styles.inputRow}>
                     <div className={styles.inputIconGroup}>
-                      <i className="fas fa-user"></i>
+                      <FaAddressCard className={styles.inputIcon} />
                       <input
                         type="name"
                         name={`guardianFirstName${index}`}
@@ -246,7 +261,7 @@ export default function CreateAccountPage() {
                       />
                     </div>
                     <div className={styles.inputIconGroup}>
-                      <i className="fas fa-user"></i>
+                      <FaAddressCard className={styles.inputIcon} />
                       <input
                         type="name"
                         name={`guardianMiddleName${index}`}
@@ -262,7 +277,7 @@ export default function CreateAccountPage() {
                       />
                     </div>
                     <div className={styles.inputIconGroup}>
-                      <i className="fas fa-user"></i>
+                      <FaAddressCard className={styles.inputIcon} />
                       <input
                         type="name"
                         name={`guardianLastName${index}`}
@@ -278,7 +293,7 @@ export default function CreateAccountPage() {
                       />
                     </div>
                     <div className={styles.inputIconGroup}>
-                      <i className="fas fa-envelope"></i>
+                      <FaEnvelope className={styles.inputIcon} />
                       <input
                         type="email"
                         name={`guardianEmail${index}`}
@@ -294,7 +309,7 @@ export default function CreateAccountPage() {
                       />
                     </div>
                     <div className={styles.inputIconGroup}>
-                      <i className="fas fa-phone"></i>
+                      <FaPhone className={styles.inputIcon} />
                       <input
                         type="tel"
                         name={`guardianPhone${index}`}
@@ -312,7 +327,7 @@ export default function CreateAccountPage() {
                   </div>
                   <div className={styles.inputRow}>
                     <div className={styles.inputIconGroup}>
-                      <i className="fas fa-road"></i>
+                      <FaVenusMars className={styles.inputIcon} />
                       <select
                         value={guardianGenders[index]}
                         onChange={(e) =>
@@ -349,7 +364,7 @@ export default function CreateAccountPage() {
                       )}
                     </div>
                     <div className={styles.inputIconGroup}>
-                      <i className="fas fa-city"></i>
+                      <RiParentFill className={styles.inputIcon} />
                       <select
                         value={guardianRelationships[index]}
                         onChange={(e) =>
@@ -415,7 +430,7 @@ export default function CreateAccountPage() {
               </label>
               <div className={styles.inputRow}>
                 <div className={styles.inputIconGroup}>
-                  <i className="fas fa-road"></i>
+                  <FaHouse className={styles.inputIcon} />
                   <input
                     type="text"
                     name="addressLine1"
@@ -425,7 +440,7 @@ export default function CreateAccountPage() {
                   />
                 </div>
                 <div className={styles.inputIconGroup}>
-                  <i className="fas fa-road"></i>
+                  <FaHouse className={styles.inputIcon} />
                   <input
                     type="text"
                     name="addressLine2"
@@ -435,7 +450,7 @@ export default function CreateAccountPage() {
                   />
                 </div>
                 <div className={styles.inputIconGroup}>
-                  <i className="fas fa-city"></i>
+                  <FaCity className={styles.inputIcon} />
                   <input
                     type="text"
                     name="city"
@@ -445,7 +460,7 @@ export default function CreateAccountPage() {
                   />
                 </div>
                 <div className={styles.inputIconGroup}>
-                  <i className="fas fa-landmark"></i>
+                  <FaLandmark className={styles.inputIcon} />
                   <input
                     type="text"
                     name="state"
@@ -455,7 +470,7 @@ export default function CreateAccountPage() {
                   />
                 </div>
                 <div className={styles.inputIconGroup}>
-                  <i className="fas fa-flag"></i>
+                  <FaFlag className={styles.inputIcon} />
                   <input
                     type="text"
                     name="country"
@@ -465,7 +480,7 @@ export default function CreateAccountPage() {
                   />
                 </div>
                 <div className={styles.inputIconGroup}>
-                  <i className="fas fa-map-pin"></i>
+                  <FaMapPin className={styles.inputIcon} />
                   <input
                     type="text"
                     name="zipCode"
@@ -486,7 +501,7 @@ export default function CreateAccountPage() {
                 <span className={styles.requiredAsterisk}>*</span>
               </label>
               <div className={styles.inputIconGroup}>
-                <i className="fas fa-school"></i>
+                <FaSchool className={styles.inputIcon} />
                 <input
                   type="text"
                   name="school"
@@ -506,7 +521,7 @@ export default function CreateAccountPage() {
                 <span className={styles.requiredAsterisk}>*</span>
               </label>
               <div className={styles.inputIconGroup}>
-                <i className={styles.inputIconGroup}></i>
+                <FaGraduationCap className={styles.inputIcon} />
                 <input
                   type="text"
                   name="gradYear"
@@ -514,7 +529,6 @@ export default function CreateAccountPage() {
                   value={gradYear}
                   onChange={(e) => setGradYear(e.target.value)}
                 />
-                <i className="fas fa-graduation-cap"></i>
               </div>
             </div>
           </div>
@@ -527,7 +541,7 @@ export default function CreateAccountPage() {
                 <span className={styles.requiredAsterisk}>*</span>
               </label>
               <div className={styles.inputIconGroup}>
-                <i className={styles.inputIconGroup}></i>
+                <FaFlask className={styles.inputIcon} />
                 <input
                   type="text"
                   name="joinedSwaligaDate"
@@ -535,7 +549,6 @@ export default function CreateAccountPage() {
                   value={joinedSwaligaDate}
                   onChange={(e) => setJoinedSwaligaDate(e.target.value)}
                 />
-                <i className="fas fa-flask"></i>
               </div>
             </div>
           </div>
