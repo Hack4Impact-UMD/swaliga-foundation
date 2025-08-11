@@ -114,27 +114,37 @@
 }
 
 .inputField {
-  position: relative;
   display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
   align-items: center;
   margin-bottom: 10px;
+  padding: 2px 5px;
   flex-grow: 1;
+  background-color: #d9d9d9;
+  border-radius: 10px;
 }
 
-.inputField input {
+.inputText {
   width: calc(100% - 50px);
   padding: 10px 40px;
   display: flex;
-  background-color: #d9d9d9;
+  background-color: transparent;
   color: black;
   border: none;
-  border-radius: 10px;
   outline: none;
 }
 
+.inputSelect {
+  background-color: transparent;
+  outline: none;
+  border: 2px solid black;
+  border-radius: 5px;
+  margin: 5px;
+}
+
 .inputIcon {
-  position: absolute;
-  left: 10px;
+  display: flex;
   color: black;
 }
 

@@ -46,7 +46,7 @@ export default function CreateAccountPage() {
   const [firstName, setFirstName] = useState<string>("");
   const [middleName, setMiddleName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
-  const [gender, setGender] = useState<Gender | undefined>(undefined);
+  const [gender, setGender] = useState<Gender>(genderValues[0]);
   const [genderOtherText, setGenderOtherText] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [dateOfBirth, setDateOfBirth] = useState<string>("");
@@ -66,16 +66,14 @@ export default function CreateAccountPage() {
   const [guardianFirstNames, setGuardianFirstNames] = useState<string[]>([]);
   const [guardianMiddleNames, setGuardianMiddleNames] = useState<string[]>([]);
   const [guardianLastNames, setGuardianLastNames] = useState<string[]>([]);
-  const [guardianGenders, setGuardianGenders] = useState<
-    (Gender | undefined)[]
-  >([]);
+  const [guardianGenders, setGuardianGenders] = useState<Gender[]>([]);
   const [guardianGenderOtherTexts, setGuardianGenderOtherTexts] = useState<
     string[]
   >([]);
   const [guardianEmails, setGuardianEmails] = useState<string[]>([]);
   const [guardianPhones, setGuardianPhones] = useState<string[]>([]);
   const [guardianRelationships, setGuardianRelationships] = useState<
-    (GuardianRelationship | undefined)[]
+    GuardianRelationship[]
   >([]);
   const [guardianRelationshipOtherTexts, setGuardianRelationshipOtherTexts] =
     useState<string[]>([]);
@@ -97,11 +95,14 @@ export default function CreateAccountPage() {
     setGuardianFirstNames((prev) => [...prev, ""]);
     setGuardianMiddleNames((prev) => [...prev, ""]);
     setGuardianLastNames((prev) => [...prev, ""]);
-    setGuardianGenders((prev) => [...prev, undefined]);
+    setGuardianGenders((prev) => [...prev, genderValues[0]]);
     setGuardianGenderOtherTexts((prev) => [...prev, ""]);
     setGuardianEmails((prev) => [...prev, ""]);
     setGuardianPhones((prev) => [...prev, ""]);
-    setGuardianRelationships((prev) => [...prev, undefined]);
+    setGuardianRelationships((prev) => [
+      ...prev,
+      guardianRelationshipValues[0],
+    ]);
     setGuardianRelationshipOtherTexts((prev) => [...prev, ""]);
   };
 
@@ -182,36 +183,15 @@ export default function CreateAccountPage() {
             />
           </div>
           <div className={styles.row}>
-            <div className={styles.inputGroup}>
-              <label>
-                Gender <span className={styles.requiredAsterisk}>*</span>
-              </label>
-              <div className={styles.inputField}>
-                <FaVenusMars className={styles.inputIcon} />
-                <select
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value as Gender)}
-                >
-                  {genderValues.map((gender) => (
-                    <option key={gender} value={gender}>
-                      {gender}
-                    </option>
-                  ))}
-                </select>
-                {gender === "Other" && (
-                  <input
-                    type="text"
-                    id="genderOtherText"
-                    name="genderOtherText"
-                    placeholder="Please specify"
-                    value={genderOtherText}
-                    disabled={gender !== "Other"}
-                    onChange={(e) => setGenderOtherText(e.target.value)}
-                    className={styles.otherTextInput}
-                  />
-                )}
-              </div>
-            </div>
+            <CreateAccountSelect
+              label="Gender"
+              values={genderValues}
+              selectedValue={gender}
+              onChange={(e) => setGender(e.target.value)}
+              otherText={genderOtherText}
+              onOtherTextChange={(e) => setGenderOtherText(e.target.value)}
+              icon={<FaVenusMars />}
+            />
           </div>
           <label>{`What race/ethnicity do you identify as? (Select all that apply)`}</label>
           <div className={styles.row}>
@@ -337,7 +317,7 @@ export default function CreateAccountPage() {
             <CreateAccountTextField
               label="School Address Line 2"
               value={schoolAddressLine2}
-              onChange={(e) => setSchoolAddressLine1(e.target.value)}
+              onChange={(e) => setSchoolAddressLine2(e.target.value)}
               icon={<FaHouse />}
             />{" "}
           </div>
@@ -455,83 +435,51 @@ export default function CreateAccountPage() {
                   icon={<FaPhone />}
                 />
               </div>
-              <div className={styles.inputRow}>
-                <div className={styles.inputGroup}>
-                  <FaVenusMars className={styles.inputIcon} />
-                  <select
-                    value={guardianGenders[index]}
-                    onChange={(e) =>
-                      setGuardianGenders((prev) =>
-                        prev.map((gender, i) =>
-                          i === index ? (e.target.value as Gender) : gender
-                        )
+              <div className={styles.row}>
+                <CreateAccountSelect
+                  label="Gender"
+                  values={genderValues}
+                  selectedValue={guardianGenders[index]}
+                  onChange={(e) =>
+                    setGuardianGenders((prev) =>
+                      prev.map((gender, i) =>
+                        i === index ? (e.target.value as Gender) : gender
                       )
-                    }
-                  >
-                    {genderValues.map((gender) => (
-                      <option key={gender} value={gender}>
-                        {gender}
-                      </option>
-                    ))}
-                  </select>
-                  {guardianGenders[index] === "Other" && (
-                    <input
-                      type="text"
-                      id={`guardianGenderOtherText${index}`}
-                      name={`guardianGenderOtherText${index}`}
-                      placeholder="Please specify"
-                      value={guardianGenderOtherTexts[index]}
-                      disabled={guardianGenders[index] !== "Other"}
-                      onChange={(e) =>
-                        setGuardianGenderOtherTexts((prev) =>
-                          prev.map((text, i) =>
-                            i === index ? e.target.value : text
-                          )
-                        )
-                      }
-                      className={styles.otherTextInput}
-                    />
-                  )}
-                </div>
-                <div className={styles.inputGroup}>
-                  <RiParentFill className={styles.inputIcon} />
-                  <select
-                    value={guardianRelationships[index]}
-                    onChange={(e) =>
-                      setGuardianRelationships((prev) =>
-                        prev.map((relationship, i) =>
-                          i === index
-                            ? (e.target.value as GuardianRelationship)
-                            : relationship
-                        )
+                    )
+                  }
+                  otherText={guardianGenderOtherTexts[index]}
+                  onOtherTextChange={(e) =>
+                    setGuardianGenderOtherTexts((prev) =>
+                      prev.map((text, i) =>
+                        i === index ? e.target.value : text
                       )
-                    }
-                  >
-                    {guardianRelationshipValues.map((relationship) => (
-                      <option key={relationship} value={relationship}>
-                        {relationship}
-                      </option>
-                    ))}
-                  </select>
-                  {guardianRelationships[index] === "Other" && (
-                    <input
-                      type="text"
-                      id={`guardianRelationshipOtherText${index}`}
-                      name={`guardianRelationshipOtherText${index}`}
-                      placeholder="Please specify"
-                      value={guardianRelationshipOtherTexts[index]}
-                      disabled={guardianRelationships[index] !== "Other"}
-                      onChange={(e) =>
-                        setGuardianRelationshipOtherTexts((prev) =>
-                          prev.map((text, i) =>
-                            i === index ? e.target.value : text
-                          )
-                        )
-                      }
-                      className={styles.otherTextInput}
-                    />
-                  )}
-                </div>
+                    )
+                  }
+                  icon={<FaVenusMars />}
+                />
+                <CreateAccountSelect
+                  label="Guardian Relationship"
+                  values={guardianRelationshipValues}
+                  selectedValue={guardianRelationships[index]}
+                  onChange={(e) =>
+                    setGuardianRelationships((prev) =>
+                      prev.map((relationship, i) =>
+                        i === index
+                          ? (e.target.value as GuardianRelationship)
+                          : relationship
+                      )
+                    )
+                  }
+                  otherText={guardianRelationshipOtherTexts[index]}
+                  onOtherTextChange={(e) =>
+                    setGuardianRelationshipOtherTexts((prev) =>
+                      prev.map((text, i) =>
+                        i === index ? e.target.value : text
+                      )
+                    )
+                  }
+                  icon={<RiParentFill />}
+                />
               </div>
             </>
           ))}
@@ -575,18 +523,11 @@ function CreateAccountTextField(props: CreateAccountTextFieldProps) {
   const placeholder = props.placeholder || label;
   return (
     <div className={styles.inputGroup}>
-      <label>
-        {label}
-        {required && (
-          <>
-            {" "}
-            <span className={styles.requiredAsterisk}>*</span>
-          </>
-        )}
-      </label>
+      <CreateAccountLabel label={label} required={required} />
       <div className={styles.inputField}>
         {cloneElement(icon, { className: styles.inputIcon })}
         <input
+          className={styles.inputText}
           placeholder={placeholder}
           value={value}
           onChange={onChange}
@@ -597,11 +538,73 @@ function CreateAccountTextField(props: CreateAccountTextFieldProps) {
   );
 }
 
-interface CreateAccountCheckboxProps {
+interface CreateAccountSelectProps {
   label: string;
   values: string[];
-  checkedValues: string[];
-  includeOther?: boolean;
+  selectedValue: string;
+  onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
+  otherText: string;
+  onOtherTextChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  icon: JSX.Element;
 }
 
-function CreateAccountCheckbox(props: CreateAccountCheckboxProps) {}
+function CreateAccountSelect(props: CreateAccountSelectProps) {
+  const {
+    label,
+    values,
+    selectedValue,
+    onChange,
+    otherText,
+    onOtherTextChange,
+    icon,
+  } = props;
+  return (
+    <div className={styles.inputGroup}>
+      <CreateAccountLabel label={label} required />
+      <div className={styles.inputField}>
+        {cloneElement(icon, { className: styles.inputIcon })}
+        <select
+          className={styles.inputSelect}
+          value={selectedValue}
+          onChange={onChange}
+        >
+          {values.map((value) => (
+            <option key={value} value={value}>
+              {value}
+            </option>
+          ))}
+        </select>
+        {selectedValue === "Other" && (
+          <input
+            className={styles.inputText}
+            type="text"
+            placeholder="Please specify"
+            value={otherText}
+            onChange={onOtherTextChange}
+            hidden={true}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+interface CreateAccountLabelProps {
+  label: string;
+  required?: boolean;
+}
+
+function CreateAccountLabel(props: CreateAccountLabelProps) {
+  const { label, required = false } = props;
+  return (
+    <label>
+      {label}
+      {required && (
+        <>
+          {" "}
+          <span className={styles.requiredAsterisk}>*</span>
+        </>
+      )}
+    </label>
+  );
+}
