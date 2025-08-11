@@ -193,7 +193,10 @@ export default function CreateAccountPage() {
               icon={<FaVenusMars />}
             />
           </div>
-          <label>{`What race/ethnicity do you identify as? (Select all that apply)`}</label>
+          <label>
+            {`What race/ethnicity do you identify as? (Select all that apply) `}
+            <span className={styles.requiredAsterisk}>*</span>
+          </label>
           <div className={styles.row}>
             <div className={styles.checkboxContainer}>
               {ethnicityValues.map((eth) => (
