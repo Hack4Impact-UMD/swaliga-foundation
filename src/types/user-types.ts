@@ -49,7 +49,7 @@ export type GuardianRelationship =
   | "Mother"
   | "Legal Guardian"
   | (string & {});
-export const guardianRelationships = ["Father", "Mother", "Legal Guardian", "Other"];
+export const guardianRelationshipValues = ["Father", "Mother", "Legal Guardian", "Other"];
 
 export interface Address {
   addressLine1: string;
@@ -69,7 +69,7 @@ export type Gender =
   | "Female"
   | "Non-Binary"
   | (string & {});
-export const genders = ["Male", "Female", "Non-Binary", "Other"];
+export const genderValues = ["Male", "Female", "Non-Binary", "Other"];
 
 export type Ethnicity =
   | "Black or African American"
@@ -79,7 +79,7 @@ export type Ethnicity =
   | "Multiracial"
   | "Latin"
   | (string & {});
-export const ethnicities = [
+export const ethnicityValues = [
   "Black or African American",
   "Indigenous",
   "Asian",
