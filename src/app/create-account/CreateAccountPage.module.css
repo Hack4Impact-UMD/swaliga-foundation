@@ -107,47 +107,6 @@
   opacity: 0.8;
 }
 
-.inputGroup {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
-.inputField {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  margin-bottom: 10px;
-  padding: 2px 5px;
-  flex-grow: 1;
-  background-color: #d9d9d9;
-  border-radius: 10px;
-}
-
-.inputText {
-  width: calc(100% - 50px);
-  padding: 10px 40px;
-  display: flex;
-  background-color: transparent;
-  color: black;
-  border: none;
-  outline: none;
-}
-
-.inputSelect {
-  background-color: transparent;
-  outline: none;
-  border: 2px solid black;
-  border-radius: 5px;
-  margin: 5px;
-}
-
-.inputIcon {
-  display: flex;
-  color: black;
-}
-
 .passwordError {
   color: red;
 }

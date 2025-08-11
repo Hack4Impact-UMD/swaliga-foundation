@@ -1,10 +1,5 @@
 "use client";
-import React, {
-  useState,
-  ChangeEvent,
-  cloneElement,
-  HTMLAttributes,
-} from "react";
+import React, { useState } from "react";
 import styles from "./CreateAccountPage.module.css";
 import {
   ethnicityValues,
@@ -13,12 +8,8 @@ import {
   genderValues,
   GuardianRelationship,
   guardianRelationshipValues,
-  Student,
 } from "@/types/user-types";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import logoutIcon from "@/../public/icons/logout.svg";
-import { logOut } from "@/features/auth/authN/googleAuthN";
 import useAuth from "@/features/auth/useAuth";
 import {
   FaAddressCard,
@@ -37,6 +28,8 @@ import {
 } from "react-icons/fa";
 import { RiParentFill } from "react-icons/ri";
 import { FaHouse } from "react-icons/fa6";
+import TextField from "./TextField";
+import Select from './Select';
 
 export default function CreateAccountPage() {
   const [formError, setFormError] = useState("");
@@ -128,20 +121,20 @@ export default function CreateAccountPage() {
         <form className={styles.accountForm} onSubmit={handleSubmit}>
           <label className={styles.sectionHeader}>Student Information</label>
           <div className={styles.row}>
-            <CreateAccountTextField
+            <TextField
               label="First Name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
               icon={<FaAddressCard />}
             />
-            <CreateAccountTextField
+            <TextField
               label="Middle Name"
               value={middleName}
               onChange={(e) => setMiddleName(e.target.value)}
               icon={<FaAddressCard />}
             />
-            <CreateAccountTextField
+            <TextField
               label="Last Name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
@@ -150,14 +143,14 @@ export default function CreateAccountPage() {
             />
           </div>
           <div className={styles.row}>
-            <CreateAccountTextField
+            <TextField
               label="Email"
               value={auth.user!.email || ""}
               required
               disabled
               icon={<FaEnvelope />}
             />
-            <CreateAccountTextField
+            <TextField
               label="Phone Number"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
@@ -165,7 +158,7 @@ export default function CreateAccountPage() {
             />
           </div>
           <div className={styles.row}>
-            <CreateAccountTextField
+            <TextField
               label="Date of Birth"
               placeholder="YYYY/MM/DD"
               value={dateOfBirth}
@@ -173,7 +166,7 @@ export default function CreateAccountPage() {
               required
               icon={<FaBirthdayCake />}
             />
-            <CreateAccountTextField
+            <TextField
               label="Approximately when did you join the Swaliga Foundation?"
               placeholder="YYYY/MM/DD"
               value={joinedSwaligaDate}
@@ -183,7 +176,7 @@ export default function CreateAccountPage() {
             />
           </div>
           <div className={styles.row}>
-            <CreateAccountSelect
+            <Select
               label="Gender"
               values={genderValues}
               selectedValue={gender}
@@ -236,7 +229,7 @@ export default function CreateAccountPage() {
 
           <label className={styles.sectionHeader}>Home Address</label>
           <div className={styles.row}>
-            <CreateAccountTextField
+            <TextField
               label="Address Line 1"
               value={addressLine1}
               onChange={(e) => setAddressLine1(e.target.value)}
@@ -245,7 +238,7 @@ export default function CreateAccountPage() {
             />
           </div>
           <div className={styles.row}>
-            <CreateAccountTextField
+            <TextField
               label="Address Line 2"
               value={addressLine2}
               onChange={(e) => setAddressLine2(e.target.value)}
@@ -253,28 +246,28 @@ export default function CreateAccountPage() {
             />
           </div>
           <div className={styles.row}>
-            <CreateAccountTextField
+            <TextField
               label="City"
               value={city}
               onChange={(e) => setCity(e.target.value)}
               required
               icon={<FaCity />}
             />
-            <CreateAccountTextField
+            <TextField
               label="State"
               value={state}
               onChange={(e) => setState(e.target.value)}
               required
               icon={<FaLandmark />}
             />
-            <CreateAccountTextField
+            <TextField
               label="Country"
               value={country}
               onChange={(e) => setCountry(e.target.value)}
               required
               icon={<FaFlag />}
             />
-            <CreateAccountTextField
+            <TextField
               label="Zip Code"
               value={zipCode}
               onChange={(e) => setZipCode(e.target.value)}
@@ -285,21 +278,21 @@ export default function CreateAccountPage() {
 
           <label className={styles.sectionHeader}>School Information</label>
           <div className={styles.row}>
-            <CreateAccountTextField
+            <TextField
               label="School Name"
               value={schoolName}
               onChange={(e) => setSchoolName(e.target.value)}
               required
               icon={<FaSchool />}
             />
-            <CreateAccountTextField
+            <TextField
               label="Graduation Year"
               value={gradYear}
               onChange={(e) => setGradYear(e.target.value)}
               required
               icon={<FaGraduationCap />}
             />
-            <CreateAccountTextField
+            <TextField
               label="GPA"
               value={gpa}
               onChange={(e) => setGPA(e.target.value)}
@@ -308,7 +301,7 @@ export default function CreateAccountPage() {
             />
           </div>
           <div className={styles.row}>
-            <CreateAccountTextField
+            <TextField
               label="School Address Line 1"
               value={schoolAddressLine1}
               onChange={(e) => setSchoolAddressLine1(e.target.value)}
@@ -317,7 +310,7 @@ export default function CreateAccountPage() {
             />{" "}
           </div>
           <div className={styles.row}>
-            <CreateAccountTextField
+            <TextField
               label="School Address Line 2"
               value={schoolAddressLine2}
               onChange={(e) => setSchoolAddressLine2(e.target.value)}
@@ -325,28 +318,28 @@ export default function CreateAccountPage() {
             />{" "}
           </div>
           <div className={styles.row}>
-            <CreateAccountTextField
+            <TextField
               label="School City"
               value={schoolCity}
               onChange={(e) => setSchoolCity(e.target.value)}
               required
               icon={<FaCity />}
             />
-            <CreateAccountTextField
+            <TextField
               label="School State"
               value={schoolState}
               onChange={(e) => setSchoolState(e.target.value)}
               required
               icon={<FaLandmark />}
             />
-            <CreateAccountTextField
+            <TextField
               label="School Country"
               value={schoolCountry}
               onChange={(e) => setSchoolCountry(e.target.value)}
               required
               icon={<FaFlag />}
             />
-            <CreateAccountTextField
+            <TextField
               label="School Zip Code"
               value={schoolZipCode}
               onChange={(e) => setSchoolZipCode(e.target.value)}
@@ -372,7 +365,7 @@ export default function CreateAccountPage() {
               </div>
 
               <div className={styles.row}>
-                <CreateAccountTextField
+                <TextField
                   label="First Name"
                   value={guardianFirstNames[index]}
                   onChange={(e) =>
@@ -385,7 +378,7 @@ export default function CreateAccountPage() {
                   required
                   icon={<FaAddressCard />}
                 />
-                <CreateAccountTextField
+                <TextField
                   label="Middle Name"
                   value={guardianMiddleNames[index]}
                   onChange={(e) =>
@@ -397,7 +390,7 @@ export default function CreateAccountPage() {
                   }
                   icon={<FaAddressCard />}
                 />
-                <CreateAccountTextField
+                <TextField
                   label="Last Name"
                   value={guardianLastNames[index]}
                   onChange={(e) =>
@@ -412,7 +405,7 @@ export default function CreateAccountPage() {
                 />
               </div>
               <div className={styles.row}>
-                <CreateAccountTextField
+                <TextField
                   label="Email"
                   value={guardianEmails[index]}
                   onChange={(e) =>
@@ -425,7 +418,7 @@ export default function CreateAccountPage() {
                   required
                   icon={<FaEnvelope />}
                 />
-                <CreateAccountTextField
+                <TextField
                   label="Phone Number"
                   value={guardianPhones[index]}
                   onChange={(e) =>
@@ -439,7 +432,7 @@ export default function CreateAccountPage() {
                 />
               </div>
               <div className={styles.row}>
-                <CreateAccountSelect
+                <Select
                   label="Gender"
                   values={genderValues}
                   selectedValue={guardianGenders[index]}
@@ -460,7 +453,7 @@ export default function CreateAccountPage() {
                   }
                   icon={<FaVenusMars />}
                 />
-                <CreateAccountSelect
+                <Select
                   label="Guardian Relationship"
                   values={guardianRelationshipValues}
                   selectedValue={guardianRelationships[index]}
@@ -501,113 +494,5 @@ export default function CreateAccountPage() {
         {formError && <p className={styles.errorText}>{formError}</p>}
       </div>
     </div>
-  );
-}
-
-interface CreateAccountTextFieldProps {
-  label: string;
-  placeholder?: string;
-  value: string;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  required?: boolean;
-  disabled?: boolean;
-  icon: JSX.Element;
-}
-
-function CreateAccountTextField(props: CreateAccountTextFieldProps) {
-  const {
-    label,
-    value,
-    onChange,
-    required = false,
-    disabled = false,
-    icon,
-  } = props;
-  const placeholder = props.placeholder || label;
-  return (
-    <div className={styles.inputGroup}>
-      <CreateAccountLabel label={label} required={required} />
-      <div className={styles.inputField}>
-        {cloneElement(icon, { className: styles.inputIcon })}
-        <input
-          className={styles.inputText}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-          disabled={disabled}
-        />
-      </div>
-    </div>
-  );
-}
-
-interface CreateAccountSelectProps {
-  label: string;
-  values: string[];
-  selectedValue: string;
-  onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
-  otherText: string;
-  onOtherTextChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  icon: JSX.Element;
-}
-
-function CreateAccountSelect(props: CreateAccountSelectProps) {
-  const {
-    label,
-    values,
-    selectedValue,
-    onChange,
-    otherText,
-    onOtherTextChange,
-    icon,
-  } = props;
-  return (
-    <div className={styles.inputGroup}>
-      <CreateAccountLabel label={label} required />
-      <div className={styles.inputField}>
-        {cloneElement(icon, { className: styles.inputIcon })}
-        <select
-          className={styles.inputSelect}
-          value={selectedValue}
-          onChange={onChange}
-        >
-          {values.map((value) => (
-            <option key={value} value={value}>
-              {value}
-            </option>
-          ))}
-        </select>
-        {selectedValue === "Other" && (
-          <input
-            className={styles.inputText}
-            type="text"
-            placeholder="Please specify"
-            value={otherText}
-            onChange={onOtherTextChange}
-            hidden={true}
-          />
-        )}
-      </div>
-    </div>
-  );
-}
-
-interface CreateAccountLabelProps {
-  label: string;
-  required?: boolean;
-}
-
-function CreateAccountLabel(props: CreateAccountLabelProps) {
-  const { label, required = false } = props;
-  return (
-    <label>
-      {label}
-      {required && (
-        <>
-          {" "}
-          <span className={styles.requiredAsterisk}>*</span>
-        </>
-      )}
-    </label>
   );
 }
