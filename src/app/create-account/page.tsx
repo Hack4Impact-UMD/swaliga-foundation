@@ -18,7 +18,6 @@ import {
   FaCity,
   FaEnvelope,
   FaFlag,
-  FaFlask,
   FaGraduationCap,
   FaLandmark,
   FaMapPin,
@@ -29,12 +28,12 @@ import {
 import { RiParentFill } from "react-icons/ri";
 import { FaHouse } from "react-icons/fa6";
 import TextField from "./TextField";
-import Select from './Select';
+import Select from "./Select";
+import moment from "moment";
+import { runTransaction } from "firebase/firestore";
+import { db } from "@/config/firebaseConfig";
 
 export default function CreateAccountPage() {
-  const [formError, setFormError] = useState("");
-  const router = useRouter();
-
   // student info fields
   const [firstName, setFirstName] = useState<string>("");
   const [middleName, setMiddleName] = useState<string>("");
@@ -82,6 +81,8 @@ export default function CreateAccountPage() {
   const [schoolCountry, setSchoolCountry] = useState<string>("");
   const [schoolZipCode, setSchoolZipCode] = useState<string>("");
 
+  const [formErrors, setFormErrors] = useState<string[]>([]);
+
   const auth = useAuth();
 
   const addEmergencyContact = () => {
@@ -113,7 +114,105 @@ export default function CreateAccountPage() {
     );
   };
 
-  const handleSubmit = async () => {};
+  console.log(formErrors);
+
+  const isFormValid = (): boolean => {
+    let errors: string[] = [];
+    if (
+      !firstName ||
+      !lastName ||
+      !dateOfBirth ||
+      !joinedSwaligaDate ||
+      (gender === "Other" && !genderOtherText) ||
+      ethnicity.length === 0 ||
+      (ethnicity.includes("Other") && !ethnicityOtherText) ||
+      !addressLine1 ||
+      !city ||
+      !state ||
+      !country ||
+      !zipCode ||
+      !schoolName ||
+      !gradYear ||
+      !gpa ||
+      !schoolAddressLine1 ||
+      !schoolCity ||
+      !schoolState ||
+      !schoolCountry ||
+      !schoolZipCode ||
+      !guardianFirstNames.every(
+        (_, i) =>
+          guardianFirstNames[i] &&
+          guardianLastNames[i] &&
+          guardianEmails[i] &&
+          (guardianGenders[i] !== "Other" || guardianGenderOtherTexts[i]) &&
+          (guardianRelationships[i] !== "Other" ||
+            guardianRelationshipOtherTexts[i])
+      )
+    ) {
+      errors.push("At least 1 required field is empty.");
+    }
+
+    const phoneRegex = /^\(\d{3}\)-\d{3}-\d{4}$/;
+    if (phone && !phoneRegex.test(phone)) {
+      errors.push(
+        "The Phone field should either be empty or contain a valid phone number in the format (XXX)-XXX-XXXX."
+      );
+    }
+
+    const dateOfBirthMoment = moment(dateOfBirth, "YYYY/MM/DD");
+    if (!dateOfBirthMoment.isValid()) {
+      errors.push("Valid date of birth must be in the format YYYY/MM/DD.");
+    }
+
+    const joinedSwaligaDateMoment = moment(joinedSwaligaDate, "YYYY/MM/DD");
+    if (!joinedSwaligaDateMoment.isValid()) {
+      errors.push(
+        "Valid date for when you joined the Swaliga Foundation must be in the format YYYY/MM/DD."
+      );
+    }
+
+    const zipCodeRegex = /^\d{5}$/;
+    if (!zipCodeRegex.test(zipCode)) {
+      errors.push("Zip Code must be a 5 digit number.");
+    }
+
+    const numGradYear = Number(gradYear);
+    if (Number.isNaN(numGradYear) || numGradYear < 1900) {
+      errors.push("Graduation Year must be a valid year after 1900.");
+    }
+
+    const numGPA = parseFloat(gpa);
+    if (Number.isNaN(numGPA) || numGPA < 0.0 || numGPA > 5.0) {
+      errors.push("GPA must be a number between 0.0 and 5.0.");
+    }
+
+    if (!zipCodeRegex.test(schoolZipCode)) {
+      errors.push("School Zip Code must be a 5 digit number.");
+    }
+
+    const emailRegex = /^.+@.+\..{2,}$/;
+    if (!guardianEmails.every((email) => emailRegex.test(email))) {
+      errors.push("At least 1 parent/guardian email address is invalid.");
+    }
+
+    if (
+      !guardianPhones.every((phone) => phone === "" || phoneRegex.test(phone))
+    ) {
+      errors.push(
+        "At least 1 parent/guardian phone number is invalid. Either omit the phone number of provide a valid phone number in the format (XXX)-XXX-XXXX."
+      );
+    }
+
+    setFormErrors(errors);
+    return errors.length === 0;
+  };
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    if (!isFormValid()) {
+      return;
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -152,6 +251,7 @@ export default function CreateAccountPage() {
             />
             <TextField
               label="Phone Number"
+              placeholder="(XXX)-XXX-XXXX"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               icon={<FaPhone />}
@@ -420,6 +520,7 @@ export default function CreateAccountPage() {
                 />
                 <TextField
                   label="Phone Number"
+                  placeholder="(XXX)-XXX-XXXX"
                   value={guardianPhones[index]}
                   onChange={(e) =>
                     setGuardianPhones((prev) =>
@@ -486,12 +587,20 @@ export default function CreateAccountPage() {
           >
             Add Emergency Contact
           </button>
-
+          {formErrors.length > 0 && (
+            <div className={styles.errors}>
+              <h3>Please fix the following:</h3>
+              <ul>
+                {formErrors.map((error) => (
+                  <li>{error}</li>
+                ))}
+              </ul>
+            </div>
+          )}
           <button type="submit" className={styles.submitButton}>
             Submit
           </button>
         </form>
-        {formError && <p className={styles.errorText}>{formError}</p>}
       </div>
     </div>
   );
