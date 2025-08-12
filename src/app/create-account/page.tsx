@@ -9,7 +9,6 @@ import {
   GuardianRelationship,
   guardianRelationshipValues,
 } from "@/types/user-types";
-import { useRouter } from "next/navigation";
 import useAuth from "@/features/auth/useAuth";
 import {
   FaAddressCard,
@@ -55,20 +54,24 @@ export default function CreateAccountPage() {
   const [zipCode, setZipCode] = useState<string>("");
 
   // guardian fields
-  const [guardianFirstNames, setGuardianFirstNames] = useState<string[]>([]);
-  const [guardianMiddleNames, setGuardianMiddleNames] = useState<string[]>([]);
-  const [guardianLastNames, setGuardianLastNames] = useState<string[]>([]);
-  const [guardianGenders, setGuardianGenders] = useState<Gender[]>([]);
+  const [guardianFirstNames, setGuardianFirstNames] = useState<string[]>([""]);
+  const [guardianMiddleNames, setGuardianMiddleNames] = useState<string[]>([
+    "",
+  ]);
+  const [guardianLastNames, setGuardianLastNames] = useState<string[]>([""]);
+  const [guardianGenders, setGuardianGenders] = useState<Gender[]>([
+    genderValues[0],
+  ]);
   const [guardianGenderOtherTexts, setGuardianGenderOtherTexts] = useState<
     string[]
-  >([]);
-  const [guardianEmails, setGuardianEmails] = useState<string[]>([]);
-  const [guardianPhones, setGuardianPhones] = useState<string[]>([]);
+  >([""]);
+  const [guardianEmails, setGuardianEmails] = useState<string[]>([""]);
+  const [guardianPhones, setGuardianPhones] = useState<string[]>([""]);
   const [guardianRelationships, setGuardianRelationships] = useState<
     GuardianRelationship[]
-  >([]);
+  >([guardianRelationshipValues[0]]);
   const [guardianRelationshipOtherTexts, setGuardianRelationshipOtherTexts] =
-    useState<string[]>([]);
+    useState<string[]>([""]);
 
   // school fields
   const [schoolName, setSchoolName] = useState<string>("");
@@ -455,13 +458,15 @@ export default function CreateAccountPage() {
             <>
               <div className={styles.row}>
                 <label>Parent/Guardian {index + 1}</label>
-                <button
-                  className={styles.emergencyRemoveButton}
-                  type="button"
-                  onClick={() => deleteEmergencyContact(index)}
-                >
-                  Remove Contact
-                </button>
+                {guardianFirstNames.length >= 2 && (
+                  <button
+                    className={styles.emergencyRemoveButton}
+                    type="button"
+                    onClick={() => deleteEmergencyContact(index)}
+                  >
+                    Remove Parent/Guardian {index + 1}
+                  </button>
+                )}
               </div>
 
               <div className={styles.row}>
@@ -580,13 +585,15 @@ export default function CreateAccountPage() {
               </div>
             </>
           ))}
-          <button
-            className={styles.emergencyAddButton}
-            type="button"
-            onClick={addEmergencyContact}
-          >
-            Add Emergency Contact
-          </button>
+          {guardianFirstNames.length <= 3 && (
+            <button
+              className={styles.emergencyAddButton}
+              type="button"
+              onClick={addEmergencyContact}
+            >
+              Add Parent/Guardian
+            </button>
+          )}
           {formErrors.length > 0 && (
             <div className={styles.errors}>
               <h3>Please fix the following:</h3>
