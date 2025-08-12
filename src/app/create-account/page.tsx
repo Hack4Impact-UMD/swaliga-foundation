@@ -8,6 +8,7 @@ import {
   genderValues,
   GuardianRelationship,
   guardianRelationshipValues,
+  Student,
 } from "@/types/user-types";
 import useAuth from "@/features/auth/useAuth";
 import {
@@ -29,8 +30,10 @@ import { FaHouse } from "react-icons/fa6";
 import TextField from "./TextField";
 import Select from "./Select";
 import moment from "moment";
-import { runTransaction } from "firebase/firestore";
+import { doc, runTransaction } from "firebase/firestore";
 import { db } from "@/config/firebaseConfig";
+import { Collection } from "@/data/firestore/utils";
+import { createStudent } from "@/data/firestore/students";
 
 export default function CreateAccountPage() {
   // student info fields
@@ -85,6 +88,7 @@ export default function CreateAccountPage() {
   const [schoolZipCode, setSchoolZipCode] = useState<string>("");
 
   const [formErrors, setFormErrors] = useState<string[]>([]);
+  const [error, setError] = useState<string>("");
 
   const auth = useAuth();
 
@@ -116,8 +120,6 @@ export default function CreateAccountPage() {
       prev.filter((_, i) => i !== index)
     );
   };
-
-  console.log(formErrors);
 
   const isFormValid = (): boolean => {
     let errors: string[] = [];
@@ -212,15 +214,93 @@ export default function CreateAccountPage() {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    setError("");
     if (!isFormValid()) {
       return;
+    }
+    try {
+      await runTransaction(db, async (transaction) => {
+        const studentIdRef = doc(db, Collection.METADATA, "nextStudentId");
+        const { nextStudentId } = (
+          await transaction.get(studentIdRef)
+        ).data() as { nextStudentId: number };
+        await transaction.update(studentIdRef, {
+          nextStudentId: nextStudentId + 1,
+        });
+
+        const student: Student = {
+          id: `${nextStudentId}`,
+          name: {
+            firstName,
+            ...(middleName.trim() ? { middleName: middleName.trim() } : {}),
+            lastName,
+          },
+          gender: gender === "Other" ? genderOtherText : gender,
+          email: auth.user!.email!,
+          phone: phone && phone,
+          uid: auth.user!.uid,
+          role: "STUDENT",
+          dateOfBirth,
+          joinedSwaligaDate,
+          ethnicity: ethnicity.map((eth) =>
+            eth === "Other" ? ethnicityOtherText : eth
+          ),
+          guardians: guardianFirstNames.map((_, index) => ({
+            name: {
+              firstName: guardianFirstNames[index],
+              ...(guardianMiddleNames[index].trim()
+                ? { middleName: guardianMiddleNames[index].trim() }
+                : {}),
+              lastName: guardianLastNames[index],
+            },
+            gender:
+              guardianGenders[index] === "Other"
+                ? guardianGenderOtherTexts[index]
+                : guardianGenders[index],
+            email: guardianEmails[index],
+            ...(guardianPhones[index] ? { phone: guardianPhones[index] } : {}),
+            relationship:
+              guardianRelationships[index] === "Other"
+                ? guardianRelationshipOtherTexts[index]
+                : guardianRelationships[index],
+          })),
+          address: {
+            addressLine1,
+            ...(addressLine2.trim()
+              ? { addressLine2: addressLine2.trim() }
+              : {}),
+            city,
+            state,
+            country,
+            zipCode: Number(zipCode),
+          },
+          school: {
+            name: schoolName,
+            address: {
+              addressLine1: schoolAddressLine1,
+              ...(schoolAddressLine2.trim()
+                ? { addressLine2: schoolAddressLine2.trim() }
+                : {}),
+              city: schoolCity,
+              state: schoolState,
+              country: schoolCountry,
+              zipCode: Number(schoolZipCode),
+            },
+            gradYear: Number(gradYear),
+            gpa: parseFloat(gpa),
+          },
+        };
+        await createStudent(student, transaction);
+      });
+    } catch (error) {
+      setError("Failed to create account. Please try again later.");
     }
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.background}>
-        <form className={styles.accountForm} onSubmit={handleSubmit}>
+        <form className={styles.accountForm}>
           <label className={styles.sectionHeader}>Student Information</label>
           <div className={styles.row}>
             <TextField
@@ -604,9 +684,10 @@ export default function CreateAccountPage() {
               </ul>
             </div>
           )}
-          <button type="submit" className={styles.submitButton}>
+          <button className={styles.submitButton} onClick={handleSubmit}>
             Submit
           </button>
+          {error && <p className={styles.error}>{error}</p>}
         </form>
       </div>
     </div>
