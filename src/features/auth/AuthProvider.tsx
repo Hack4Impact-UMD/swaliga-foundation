@@ -42,7 +42,7 @@ export default function AuthProvider({
           if (refreshIdToken) {
             newToken = await newUser.getIdTokenResult(true);
           } else if (newToken.claims.email_verified && !newToken.claims?.role) {
-            await httpsCallable(functions, "setAdminRole")();
+            await httpsCallable(functions, "setRole")();
             newToken = await newUser.getIdTokenResult(true);
           }
           setToken(newToken);

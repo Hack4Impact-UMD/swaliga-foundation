@@ -89,4 +89,4 @@ export const ethnicityValues = [
   "Other"
 ]
 
-export type Role = "ADMIN" | "STUDENT";
+export type Role = "ADMIN" | "STAFF" | "STUDENT";
