@@ -14,32 +14,6 @@
   overflow: hidden;
 }
 
-.stage {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: block;
-  z-index: 1;
-}
-
-.createAccountContainer {
-  position: absolute;
-  width: 60%;
-  max-width: 800px;
-  padding: 0.5px 20px 20px;
-  border-radius: 8px;
-  display: flex;
-  color: #fff;
-  flex-direction: column;
-  box-sizing: border-box;
-  z-index: 2;
-}
-
-.createAccountTitle {
-  margin-left: 0;
-  font-size: 24px;
-}
-
 .accountForm {
   position: absolute;
   top: 50%;
@@ -107,25 +81,6 @@
   opacity: 0.8;
 }
 
-.passwordError {
-  color: red;
-}
-
-.inputError input {
-  border: 1px solid red;
-  background-color: #ffcccc;
-}
-
-.inputError i {
-  color: red;
-}
-
-.fa-eye,
-.fa-eye-slash {
-  right: 10px;
-  cursor: pointer;
-}
-
 .submitButton {
   margin-top: auto;
   background-color: #4caf50;
@@ -138,12 +93,6 @@
 
 .submitButton:hover {
   opacity: 0.8;
-}
-
-.labelWithCheckbox {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .requiredAsterisk {
@@ -171,7 +120,7 @@
   display: inline-block;
 }
 
-.errors {
+.formErrors {
   display: flex;
   flex-direction: column;
   background-color: rgb(223, 85, 85);

@@ -675,7 +675,7 @@ export default function CreateAccountPage() {
             </button>
           )}
           {formErrors.length > 0 && (
-            <div className={styles.errors}>
+            <div className={styles.formErrors}>
               <h3>Please fix the following:</h3>
               <ul>
                 {formErrors.map((error) => (
