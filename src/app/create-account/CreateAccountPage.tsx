@@ -31,9 +31,10 @@ import TextField from "./TextField";
 import Select from "./Select";
 import moment from "moment";
 import { doc, runTransaction } from "firebase/firestore";
-import { db } from "@/config/firebaseConfig";
+import { db, functions } from "@/config/firebaseConfig";
 import { Collection } from "@/data/firestore/utils";
 import { createStudent } from "@/data/firestore/students";
+import { httpsCallable } from "firebase/functions";
 
 export default function CreateAccountPage() {
   // student info fields
@@ -219,7 +220,7 @@ export default function CreateAccountPage() {
       return;
     }
     try {
-      await runTransaction(db, async (transaction) => {
+      const studentId = await runTransaction(db, async (transaction) => {
         const studentIdRef = doc(db, Collection.METADATA, "nextStudentId");
         const { nextStudentId } = (
           await transaction.get(studentIdRef)
@@ -291,7 +292,10 @@ export default function CreateAccountPage() {
           },
         };
         await createStudent(student, transaction);
+        return student.id;
       });
+      await httpsCallable(functions, "setStudentId")(studentId);
+      await auth.user!.getIdToken(true);
     } catch (error) {
       setError("Failed to create account. Please try again later.");
     }

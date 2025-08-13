@@ -129,6 +129,20 @@ export const assignSurveys = onCall(async (data) => {
   });
 })
 
+export const setStudentId = onCall(async (req) => {
+  if (!req.auth) {
+    throw new Error("Unauthorized");
+  } else if (req.auth.token.role !== 'STUDENT') {
+    throw new Error("Only STUDENT role can have a studentId")
+  }
+
+  const customClaims = (await adminAuth.getUser(req.auth.uid)).customClaims;
+  await adminAuth.setCustomUserClaims(req.auth?.uid, {
+    ...customClaims,
+    studentId: req.data
+  });
+});
+
 export const onSurveyDocCreated = onDocumentCreated('/surveys/{surveyId}', (event) => {
   const surveyId = event.params.surveyId;
   adminDb.collection(Collection.METADATA).doc('surveyIds').update({ surveyIds: FieldValue.arrayUnion(surveyId) })
