@@ -4,9 +4,10 @@ import "./globals.css";
 import styles from "./layout.module.css";
 import AuthProvider from "@/features/auth/AuthProvider";
 import Navbar from "@/components/ui/Navbar";
-import DataProvider from "@/data/hooks/DataProvider";
 import { Suspense } from "react";
 import LoadingPage from "./loading";
+import SurveysProvider from "@/data/hooks/SurveysProvider";
+import StudentsProvider from "@/data/hooks/StudentsProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,7 +27,9 @@ export default function RootLayout({
         <Suspense fallback={<LoadingPage />}>
           <AuthProvider>
             <Navbar />
-            <DataProvider>{children as JSX.Element}</DataProvider>
+            <SurveysProvider>
+              <StudentsProvider>{children as JSX.Element}</StudentsProvider>
+            </SurveysProvider>
           </AuthProvider>
         </Suspense>
       </body>

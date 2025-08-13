@@ -1,11 +1,12 @@
 "use client";
 
 import React, { createContext, useEffect, useState } from "react";
-import { Student } from "@/types/user-types";
-import { collection, onSnapshot } from "firebase/firestore";
+import { Role, Student } from "@/types/user-types";
+import { collection, doc, onSnapshot } from "firebase/firestore";
 import { Collection } from "../firestore/utils";
 import { db } from "@/config/firebaseConfig";
 import LoadingPage from "@/app/loading";
+import useAuth from "@/features/auth/useAuth";
 
 export interface StudentsContextType {
   students: Student[];
@@ -23,17 +24,36 @@ export default function StudentsProvider({
   const [students, setStudents] = useState<Student[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  const auth = useAuth();
+  const role: Role = auth.token?.claims.role as Role;
+
   useEffect(() => {
+    if (!role || (role === "STUDENT" && !auth.token?.claims.studentId)) {
+      setStudents([]);
+      setIsLoading(false);
+      return;
+    }
+    
     setIsLoading(true);
-    const unsubscribe = onSnapshot(
-      collection(db, Collection.STUDENTS),
-      (snapshot) => {
-        setStudents(snapshot.docs.map((doc) => doc.data()) as Student[]);
-        setIsLoading(false);
-      }
-    );
+    const unsubscribe =
+      role === "STUDENT"
+        ? onSnapshot(
+            doc(
+              db,
+              Collection.STUDENTS,
+              auth.token?.claims.studentId as string
+            ),
+            (doc) => {
+              setStudents([doc.data() as Student]);
+              setIsLoading(false);
+            }
+          )
+        : onSnapshot(collection(db, Collection.STUDENTS), (snapshot) => {
+            setStudents(snapshot.docs.map((doc) => doc.data() as Student));
+            setIsLoading(false);
+          });
     return () => unsubscribe();
-  }, []);
+  }, [role, auth.token?.claims.studentId]);
 
   if (isLoading) {
     return <LoadingPage />;
