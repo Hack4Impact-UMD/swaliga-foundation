@@ -238,7 +238,7 @@ export default function CreateAccountPage() {
           },
           gender: gender === "Other" ? genderOtherText : gender,
           email: auth.user!.email!,
-          phone: phone && phone,
+          ...(phone ? { phone } : {}),
           uid: auth.user!.uid,
           role: "STUDENT",
           dateOfBirth,
