@@ -258,7 +258,7 @@ export default function CreateAccountPage() {
               guardianGenders[index] === "Other"
                 ? guardianGenderOtherTexts[index]
                 : guardianGenders[index],
-            email: guardianEmails[index],
+            email: guardianEmails[index].toLowerCase(),
             ...(guardianPhones[index] ? { phone: guardianPhones[index] } : {}),
             relationship:
               guardianRelationships[index] === "Other"
