@@ -1,39 +1,33 @@
-.container {
+.page {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
+  width: 100%;
+  min-height: calc(100vh - 50px);
+  padding: 50px 0;
+  background-image: url("../../../public/background.png");
+  background-size: 100% 100%;
 }
 
-.background {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
+.container {
+  display: flex;
+  flex-direction: row;
+  width: 85%;
 }
 
 .accountForm {
-  position: absolute;
-  top: 50%;
-  left: 53%;
-  transform: translate(-50%, -50%);
-  z-index: 2;
-  width: 87%;
-  height: 85%;
-  overflow-y: auto;
-  min-width: 300px;
-  max-width: 1600px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 15px;
+  width: 100%;
   padding: 10px 12px;
   background-color: #0f0f0d;
   color: #fff;
   font-family: Poppins;
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  gap: 15px;
 }
 
 .sectionHeader {
@@ -82,6 +76,7 @@
 }
 
 .submitButton {
+  width: 100%;
   margin-top: auto;
   background-color: #4caf50;
   color: white;
@@ -123,13 +118,18 @@
 .formErrors {
   display: flex;
   flex-direction: column;
+  width: 100%;
   background-color: rgb(223, 85, 85);
   border: 2px solid red;
   border-radius: 20px;
-  padding: 5px 10px;
+}
+
+.formErrors h3 {
+  margin: 10px 0 0 10px;
 }
 
 .error {
+  width: 100%;
   color: red;
   text-align: center;
 }

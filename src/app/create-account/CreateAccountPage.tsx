@@ -298,8 +298,8 @@ export default function CreateAccountPage() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.background}>
+    <div className={styles.page}>
+      <div className={styles.container}>
         <form className={styles.accountForm}>
           <label className={styles.sectionHeader}>Student Information</label>
           <div className={styles.row}>
