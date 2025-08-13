@@ -10,6 +10,7 @@ import { v4 as uuid } from "uuid";
 import { onCall, onRequest } from "firebase-functions/https";
 import { onDocumentCreated, onDocumentDeleted } from "firebase-functions/firestore";
 import moment from "moment";
+import { StudentCustomClaims, StudentDecodedIdTokenWithCustomClaims } from "@/types/auth-types";
 
 const addResponsesToFirestore = async (responses: GoogleFormResponse[], transaction: Transaction) => {
   const surveysCollection = adminDb.collection(Collection.SURVEYS);
@@ -136,11 +137,11 @@ export const setStudentId = onCall(async (req) => {
     throw new Error("Only STUDENT role can have a studentId")
   }
 
-  const customClaims = (await adminAuth.getUser(req.auth.uid)).customClaims;
+  const decodedToken = req.auth.token as StudentDecodedIdTokenWithCustomClaims
   await adminAuth.setCustomUserClaims(req.auth?.uid, {
-    ...customClaims,
-    studentId: req.data
-  });
+    role: decodedToken.role,
+    studentId: req.data,
+  } as StudentCustomClaims);
 });
 
 export const onSurveyDocCreated = onDocumentCreated('/surveys/{surveyId}', (event) => {

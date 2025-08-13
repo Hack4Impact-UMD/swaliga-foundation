@@ -7,6 +7,8 @@ export async function GET(req: NextRequest) {
   let decodedToken: DecodedIdTokenWithCustomClaims | false;
   if (!(decodedToken = await isIdTokenValid(idToken))) {
     return NextResponse.json('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+  } else if (decodedToken.role !== "ADMIN") {
+    return NextResponse.json("You do not have permission to perform this action.", { status: 403, statusText: "Forbidden" });
   }
 
   const redirectUri = encodeURIComponent(`${process.env.NEXT_PUBLIC_DOMAIN}/api/auth/handler`);

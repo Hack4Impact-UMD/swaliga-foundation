@@ -6,9 +6,8 @@ export async function isIdTokenValid(idToken: string | undefined | null): Promis
   if (!idToken) {
     return false;
   }
-  let decodedToken: DecodedIdTokenWithCustomClaims;
   try {
-    decodedToken = await adminAuth.verifyIdToken(idToken);
+    var decodedToken: DecodedIdTokenWithCustomClaims = await adminAuth.verifyIdToken(idToken);
   } catch (error) {
     return false;
   }
