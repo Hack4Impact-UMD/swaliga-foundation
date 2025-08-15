@@ -188,7 +188,7 @@ export const onSurveyDocUpdated = onDocumentUpdated('/surveys/{surveyId}', async
 
 export const onSurveyDocDeleted = onDocumentDeleted('/surveys/{surveyId}', async (event) => {
   const surveyId = event.params.surveyId;
-  adminDb.recursiveDelete(adminDb.collection(Collection.SURVEYS).doc(surveyId));
+  adminDb.recursiveDelete(adminDb.collection(Collection.SURVEYS).doc(surveyId).collection(Collection.ASSIGNMENTS));
   const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc('surveys').collection(Collection.SURVEYS);
   await adminDb.runTransaction(async (transaction: Transaction) => {
     const docNum = (await collectionRef.orderBy(surveyId).limit(1).get()).docs[0]?.id;
