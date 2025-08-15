@@ -8,7 +8,7 @@ import { Collection } from "@/data/firestore/utils";
 import { PendingAssignmentID, SurveyResponseStudentEmail, SurveyResponseStudentId, SurveyResponseUnidentified } from "@/types/survey-types";
 import { v4 as uuid } from "uuid";
 import { onCall, onRequest } from "firebase-functions/https";
-import { onDocumentCreated, onDocumentDeleted } from "firebase-functions/firestore";
+import { onDocumentCreated, onDocumentDeleted, onDocumentUpdated } from "firebase-functions/firestore";
 import moment from "moment";
 import { StudentCustomClaims, StudentDecodedIdTokenWithCustomClaims } from "@/types/auth-types";
 
@@ -144,13 +144,55 @@ export const setStudentId = onCall(async (req) => {
   } as StudentCustomClaims);
 });
 
-export const onSurveyDocCreated = onDocumentCreated('/surveys/{surveyId}', (event) => {
+export const onSurveyDocCreated = onDocumentCreated('/surveys/{surveyId}', async (event) => {
   const surveyId = event.params.surveyId;
-  adminDb.collection(Collection.METADATA).doc('surveyIds').update({ surveyIds: FieldValue.arrayUnion(surveyId) })
+  const doc = event.data?.data();
+  await adminDb.runTransaction(async (transaction: Transaction) => {
+    await addSurveyToAdminData(surveyId, doc, transaction);
+  })
 });
 
-export const onSurveyDocDeleted = onDocumentDeleted('/surveys/{surveyId}', (event) => {
+async function addSurveyToAdminData(docId: string, doc: any, transaction: Transaction, count?: number) {
+  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc('surveys').collection(Collection.SURVEYS);
+  if (!count) {
+    count = (await transaction.get(collectionRef.count())).data().count;
+  }
+  for (let i = count - 1; i >= 0; i--) {
+    try {
+      await transaction.set(collectionRef.doc(i.toString()), { [docId]: doc }, { merge: true });
+      return;
+    } catch (error) { }
+  }
+  await transaction.set(collectionRef.doc(count.toString()), { [docId]: doc }, { merge: true });
+}
+
+export const onSurveyDocUpdated = onDocumentUpdated('/surveys/{surveyId}', async (event) => {
   const surveyId = event.params.surveyId;
-  adminDb.collection(Collection.METADATA).doc('surveyIds').update({ surveyIds: FieldValue.arrayRemove(surveyId) });
+  const afterDoc = event.data?.after.data();
+  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc('surveys').collection(Collection.SURVEYS);
+  await adminDb.runTransaction(async (transaction: Transaction) => {
+    const docNum = (await transaction.get(collectionRef.orderBy(surveyId).limit(1))).docs[0]?.id;
+    const count = (await transaction.get(collectionRef.count())).data().count;
+    if (!docNum) {
+      await addSurveyToAdminData(surveyId, afterDoc, transaction, count);
+      return;
+    }
+    try {
+      await transaction.set(collectionRef.doc(docNum), { [surveyId]: afterDoc }, { merge: true });
+    } catch (error) {
+      await transaction.set(collectionRef.doc(docNum), { [surveyId]: FieldValue.delete() }, { merge: true });
+      await addSurveyToAdminData(surveyId, afterDoc, transaction, count);
+    }
+  });
+});
+
+export const onSurveyDocDeleted = onDocumentDeleted('/surveys/{surveyId}', async (event) => {
+  const surveyId = event.params.surveyId;
   adminDb.recursiveDelete(adminDb.collection(Collection.SURVEYS).doc(surveyId));
+  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc('surveys').collection(Collection.SURVEYS);
+  await adminDb.runTransaction(async (transaction: Transaction) => {
+    const docNum = (await collectionRef.orderBy(surveyId).limit(1).get()).docs[0]?.id;
+    if (!docNum) { return; }
+    await transaction.set(collectionRef.doc(docNum), { [surveyId]: FieldValue.delete() }, { merge: true });
+  });
 });

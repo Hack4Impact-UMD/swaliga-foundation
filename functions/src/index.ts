@@ -9,6 +9,7 @@ exports.addExistingSurveyAndResponses = firestoreFunctions.addExistingSurveyAndR
 exports.assignSurveys = firestoreFunctions.assignSurveys;
 exports.setStudentId = firestoreFunctions.setStudentId;
 exports.onSurveyDocCreated = firestoreFunctions.onSurveyDocCreated;
+exports.onSurveyDocUpdated = firestoreFunctions.onSurveyDocUpdated;
 exports.onSurveyDocDeleted = firestoreFunctions.onSurveyDocDeleted;
 
 exports.sendEmail = emailFunctions.sendEmail;
