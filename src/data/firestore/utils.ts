@@ -1,5 +1,5 @@
 export enum Collection {
-  ADMINS = "admins",
+  ADMIN_DATA = "adminData",
   STUDENTS = "students",
   SURVEYS = "surveys",
   ASSIGNMENTS = "assignments",
