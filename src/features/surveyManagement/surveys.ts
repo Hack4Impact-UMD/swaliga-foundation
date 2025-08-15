@@ -44,19 +44,25 @@ export async function addExistingSurvey(surveyId: string): Promise<SurveyID> {
 export async function deleteSurvey(accessToken: string, surveyId: string) {
   try {
     await FirestoreSurveys.deleteSurvey(surveyId);
-    await AppsScript.deleteSurvey(accessToken, surveyId);
   } catch (error) {
     throw new Error('Failed to delete survey');
   }
+
+  try {
+    await AppsScript.deleteSurvey(accessToken, surveyId);
+  } catch (error) { }
 }
 
 export async function deleteSurveys(accessToken: string, surveyIds: string[]) {
   try {
     const batch: WriteBatch = writeBatch(db);
     surveyIds.forEach((surveyId: string) => FirestoreSurveys.deleteSurvey(surveyId, batch));
-    await AppsScript.deleteSurveys(accessToken, surveyIds);
     await batch.commit();
   } catch (error) {
     throw new Error('Failed to delete surveys');
   }
+
+  try {
+    await AppsScript.deleteSurveys(accessToken, surveyIds);
+  } catch (error) { }
 }
