@@ -78,12 +78,12 @@ export const testHandleRecentUpdates = onRequest(async (req, res) => {
   res.send("Test successful");
 });
 
-export const addExistingSurveyAndResponses = onCall(async (data) => {
+export const addExistingSurveyAndResponses = onCall(async (req) => {
   const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
   const tokenData = await fetchAccessToken(adminUser.customClaims?.googleTokens?.refreshToken || '');
   return await adminDb.runTransaction(async (transaction: Transaction) => {
     const { timestamp } = (await transaction.get(adminDb.collection(Collection.METADATA).doc('surveyIds'))).data() || {};
-    const { survey, responses } = await addExistingSurvey(tokenData.accessToken, data.data, timestamp);
+    const { survey, responses } = await addExistingSurvey(tokenData.accessToken, req.data, timestamp);
     const { id, ...surveyData } = survey;
     await addResponsesToFirestore(responses, transaction);
     transaction.set(adminDb.collection(Collection.SURVEYS).doc(id), surveyData);
@@ -91,8 +91,8 @@ export const addExistingSurveyAndResponses = onCall(async (data) => {
   })
 });
 
-export const assignSurveys = onCall(async (data) => {
-  const { studentIds, surveyIds }: { studentIds: string[]; surveyIds: string[]; } = data.data;
+export const assignSurveys = onCall(async (req) => {
+  const { studentIds, surveyIds }: { studentIds: string[]; surveyIds: string[]; } = req.data;
   await adminDb.runTransaction(async (transaction: Transaction) => {
     const timestamp = moment();
     const surveysCollection = adminDb.collection(Collection.SURVEYS);

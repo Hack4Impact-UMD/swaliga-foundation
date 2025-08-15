@@ -34,10 +34,10 @@ async function getTransporter() {
 }
 
 
-export const sendEmail = onCall(async (data) => {
+export const sendEmail = onCall(async (req) => {
   try {
     const transporter = await getTransporter();
-    const email: Mail.Options = data.data;
+    const email: Mail.Options = req.data;
     await transporter.sendMail(email)
   } catch (error) {
     throw new Error("Failed to send email");
