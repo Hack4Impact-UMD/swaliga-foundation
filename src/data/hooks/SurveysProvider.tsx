@@ -26,9 +26,15 @@ export default function SurveysProvider({
   useEffect(() => {
     setIsLoading(true);
     const unsubscribe = onSnapshot(
-      collection(db, Collection.SURVEYS),
+      collection(db, Collection.ADMIN_DATA, "surveys", Collection.SURVEYS),
       (snapshot) => {
-        setSurveys(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as SurveyID[]);
+        const newSurveys: SurveyID[] = [];
+        for (const doc of snapshot.docs) {
+          for (const [id, survey] of Object.entries(doc.data())) {
+            newSurveys.push({ id, ...survey } as SurveyID);
+          }
+        }
+        setSurveys(newSurveys);
         setIsLoading(false);
       }
     );
