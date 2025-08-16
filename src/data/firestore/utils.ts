@@ -5,3 +5,10 @@ export enum Collection {
   ASSIGNMENTS = "assignments",
   METADATA = "metadata",
 }
+
+export enum Document {
+  LAST_UPDATED = "lastUpdated",
+  NEXT_STUDENT_ID = "nextStudentId",
+  SURVEYS = "surveys",
+  STUDENTS = "students",
+}

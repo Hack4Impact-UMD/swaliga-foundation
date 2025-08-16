@@ -32,7 +32,7 @@ import Select from "./Select";
 import moment from "moment";
 import { doc, runTransaction } from "firebase/firestore";
 import { db, functions } from "@/config/firebaseConfig";
-import { Collection } from "@/data/firestore/utils";
+import { Collection, Document } from "@/data/firestore/utils";
 import { createStudent } from "@/data/firestore/students";
 import { httpsCallable } from "firebase/functions";
 
@@ -221,7 +221,11 @@ export default function CreateAccountPage() {
     }
     try {
       const studentId = await runTransaction(db, async (transaction) => {
-        const studentIdRef = doc(db, Collection.METADATA, "nextStudentId");
+        const studentIdRef = doc(
+          db,
+          Collection.METADATA,
+          Document.NEXT_STUDENT_ID
+        );
         const { nextStudentId } = (
           await transaction.get(studentIdRef)
         ).data() as { nextStudentId: number };
@@ -230,7 +234,7 @@ export default function CreateAccountPage() {
         });
 
         const student: Student = {
-          id: `${nextStudentId}`,
+          id: nextStudentId.toString(),
           name: {
             firstName,
             ...(middleName.trim() ? { middleName: middleName.trim() } : {}),

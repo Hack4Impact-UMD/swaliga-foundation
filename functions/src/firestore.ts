@@ -4,7 +4,7 @@ import { fetchAccessToken } from '@/features/auth/serverAuthZ';
 import { adminAuth, adminDb } from "@/config/firebaseAdminConfig";
 import { FieldValue, Transaction } from "firebase-admin/firestore";
 import { GoogleFormResponse, isGoogleFormResponseStudentEmail, isGoogleFormResponseStudentId, isGoogleFormResponseUnidentified } from "@/types/apps-script-types";
-import { Collection } from "@/data/firestore/utils";
+import { Collection, Document } from "@/data/firestore/utils";
 import { PendingAssignmentID, SurveyResponseStudentEmail, SurveyResponseStudentId, SurveyResponseUnidentified } from "@/types/survey-types";
 import { v4 as uuid } from "uuid";
 import { onCall, onRequest } from "firebase-functions/https";
@@ -57,7 +57,7 @@ const handleRecentUpdatesCallback = async (e: ScheduledEvent) => {
   const tokenData = await fetchAccessToken(adminUser.customClaims?.googleTokens?.refreshToken || '');
 
   await adminDb.runTransaction(async (transaction: Transaction) => {
-    const { lastUpdated } = (await transaction.get(adminDb.collection(Collection.METADATA).doc('lastUpdated'))).data() || {};
+    const { lastUpdated } = (await transaction.get(adminDb.collection(Collection.METADATA).doc(Document.LAST_UPDATED))).data() || {};
     const surveyIds = await getAllSurveyIds(transaction);
     const { surveys, responses } = await getRecentUpdates(tokenData.accessToken, surveyIds, endTime, lastUpdated);
     const surveysCollection = adminDb.collection(Collection.SURVEYS);
@@ -66,7 +66,7 @@ const handleRecentUpdatesCallback = async (e: ScheduledEvent) => {
       name: survey.name,
       description: survey.description,
     }));
-    transaction.update(adminDb.collection(Collection.METADATA).doc('lastUpdated'), { timestamp: endTime })
+    transaction.update(adminDb.collection(Collection.METADATA).doc(Document.LAST_UPDATED), { timestamp: endTime })
   })
 }
 export const handleRecentUpdates = onSchedule('every day 00:00', handleRecentUpdatesCallback);
@@ -83,7 +83,7 @@ export const addExistingSurveyAndResponses = onCall(async (req) => {
   const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
   const tokenData = await fetchAccessToken(adminUser.customClaims?.googleTokens?.refreshToken || '');
   return await adminDb.runTransaction(async (transaction: Transaction) => {
-    const { lastUpdated } = (await transaction.get(adminDb.collection(Collection.METADATA).doc('lastUpdated'))).data() || {};
+    const { lastUpdated } = (await transaction.get(adminDb.collection(Collection.METADATA).doc(Document.LAST_UPDATED))).data() || {};
     const { survey, responses } = await addExistingSurvey(tokenData.accessToken, req.data, lastUpdated);
     const { id, ...surveyData } = survey;
     await addResponsesToFirestore(responses, transaction);
@@ -146,7 +146,7 @@ export const setStudentId = onCall(async (req) => {
 });
 
 async function getAllSurveyIds(transaction: Transaction): Promise<string[]> {
-  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc('surveys').collection(Collection.SURVEYS);
+  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS);
   const count = (await transaction.get(collectionRef.count())).data().count;
   const promises = [];
   for (let i = 0; i < count; i++) {
@@ -165,7 +165,7 @@ export const onSurveyDocCreated = onDocumentCreated('/surveys/{surveyId}', async
 });
 
 async function addSurveyToAdminData(docId: string, doc: any, transaction: Transaction, count?: number) {
-  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc('surveys').collection(Collection.SURVEYS);
+  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS);
   if (!count) {
     count = (await transaction.get(collectionRef.count())).data().count;
   }
@@ -181,7 +181,7 @@ async function addSurveyToAdminData(docId: string, doc: any, transaction: Transa
 export const onSurveyDocUpdated = onDocumentUpdated('/surveys/{surveyId}', async (event) => {
   const surveyId = event.params.surveyId;
   const afterDoc = event.data?.after.data();
-  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc('surveys').collection(Collection.SURVEYS);
+  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS);
   await adminDb.runTransaction(async (transaction: Transaction) => {
     const docNum = (await transaction.get(collectionRef.orderBy(surveyId).limit(1))).docs[0]?.id;
     const count = (await transaction.get(collectionRef.count())).data().count;
@@ -201,7 +201,7 @@ export const onSurveyDocUpdated = onDocumentUpdated('/surveys/{surveyId}', async
 export const onSurveyDocDeleted = onDocumentDeleted('/surveys/{surveyId}', async (event) => {
   const surveyId = event.params.surveyId;
   adminDb.recursiveDelete(adminDb.collection(Collection.SURVEYS).doc(surveyId).collection(Collection.ASSIGNMENTS));
-  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc('surveys').collection(Collection.SURVEYS);
+  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS);
   await adminDb.runTransaction(async (transaction: Transaction) => {
     const docNum = (await collectionRef.orderBy(surveyId).limit(1).get()).docs[0]?.id;
     if (!docNum) { return; }
