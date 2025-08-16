@@ -57,15 +57,16 @@ const handleRecentUpdatesCallback = async (e: ScheduledEvent) => {
   const tokenData = await fetchAccessToken(adminUser.customClaims?.googleTokens?.refreshToken || '');
 
   await adminDb.runTransaction(async (transaction: Transaction) => {
-    const { surveyIds, timestamp } = (await transaction.get(adminDb.collection(Collection.METADATA).doc('surveyIds'))).data() || {};
-    const { surveys, responses } = await getRecentUpdates(tokenData.accessToken, surveyIds, endTime, timestamp);
+    const { lastUpdated } = (await transaction.get(adminDb.collection(Collection.METADATA).doc('lastUpdated'))).data() || {};
+    const surveyIds = await getAllSurveyIds(transaction);
+    const { surveys, responses } = await getRecentUpdates(tokenData.accessToken, surveyIds, endTime, lastUpdated);
     const surveysCollection = adminDb.collection(Collection.SURVEYS);
     await addResponsesToFirestore(responses, transaction);
     surveys.forEach(survey => transaction.update(surveysCollection.doc(survey.id), {
       name: survey.name,
       description: survey.description,
     }));
-    transaction.update(adminDb.collection(Collection.METADATA).doc('surveyIds'), { timestamp: endTime })
+    transaction.update(adminDb.collection(Collection.METADATA).doc('lastUpdated'), { timestamp: endTime })
   })
 }
 export const handleRecentUpdates = onSchedule('every day 00:00', handleRecentUpdatesCallback);
@@ -82,8 +83,8 @@ export const addExistingSurveyAndResponses = onCall(async (req) => {
   const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
   const tokenData = await fetchAccessToken(adminUser.customClaims?.googleTokens?.refreshToken || '');
   return await adminDb.runTransaction(async (transaction: Transaction) => {
-    const { timestamp } = (await transaction.get(adminDb.collection(Collection.METADATA).doc('surveyIds'))).data() || {};
-    const { survey, responses } = await addExistingSurvey(tokenData.accessToken, req.data, timestamp);
+    const { lastUpdated } = (await transaction.get(adminDb.collection(Collection.METADATA).doc('lastUpdated'))).data() || {};
+    const { survey, responses } = await addExistingSurvey(tokenData.accessToken, req.data, lastUpdated);
     const { id, ...surveyData } = survey;
     await addResponsesToFirestore(responses, transaction);
     transaction.set(adminDb.collection(Collection.SURVEYS).doc(id), surveyData);
@@ -143,6 +144,17 @@ export const setStudentId = onCall(async (req) => {
     studentId: req.data,
   } as StudentCustomClaims);
 });
+
+async function getAllSurveyIds(transaction: Transaction): Promise<string[]> {
+  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc('surveys').collection(Collection.SURVEYS);
+  const count = (await transaction.get(collectionRef.count())).data().count;
+  const promises = [];
+  for (let i = 0; i < count; i++) {
+    promises.push(transaction.get(collectionRef.doc(i.toString())));
+  }
+  const surveyIds = (await Promise.all(promises)).flatMap(doc => Object.keys(doc.data() || {}));
+  return surveyIds;
+}
 
 export const onSurveyDocCreated = onDocumentCreated('/surveys/{surveyId}', async (event) => {
   const surveyId = event.params.surveyId;
