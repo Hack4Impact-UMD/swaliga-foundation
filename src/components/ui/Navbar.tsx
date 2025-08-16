@@ -10,16 +10,11 @@ import { CgProfile } from "react-icons/cg";
 import { logOut } from "@/features/auth/authN/googleAuthN";
 
 const navbarLinks: { name: string; href: string; roles: Role[] }[] = [
-  { name: "Students", href: "/students", roles: ["ADMIN"] },
+  { name: "Students", href: "/students", roles: ["ADMIN", "STAFF"] },
   {
     name: "Surveys",
     href: "/surveys",
-    roles: ["ADMIN"],
-  },
-  {
-    name: "Programs",
-    href: "/programs",
-    roles: ["ADMIN", "STUDENT"],
+    roles: ["ADMIN", "STAFF"],
   },
 ];
 
