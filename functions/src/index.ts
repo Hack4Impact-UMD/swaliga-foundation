@@ -11,5 +11,8 @@ exports.setStudentId = firestoreFunctions.setStudentId;
 exports.onSurveyDocCreated = firestoreFunctions.onSurveyDocCreated;
 exports.onSurveyDocUpdated = firestoreFunctions.onSurveyDocUpdated;
 exports.onSurveyDocDeleted = firestoreFunctions.onSurveyDocDeleted;
+exports.onStudentDocCreated = firestoreFunctions.onStudentDocCreated;
+exports.onStudentDocUpdated = firestoreFunctions.onStudentDocUpdated;
+exports.onStudentDocDeleted = firestoreFunctions.onStudentDocDeleted;
 
 exports.sendEmail = emailFunctions.sendEmail;

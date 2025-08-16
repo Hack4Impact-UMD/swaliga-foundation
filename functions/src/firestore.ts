@@ -156,55 +156,92 @@ async function getAllSurveyIds(transaction: Transaction): Promise<string[]> {
   return surveyIds;
 }
 
-export const onSurveyDocCreated = onDocumentCreated('/surveys/{surveyId}', async (event) => {
-  const surveyId = event.params.surveyId;
-  const doc = event.data?.data();
-  await adminDb.runTransaction(async (transaction: Transaction) => {
-    await addSurveyToAdminData(surveyId, doc, transaction);
-  })
-});
-
-async function addSurveyToAdminData(docId: string, doc: any, transaction: Transaction, count?: number) {
-  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS);
+const addDocToAdminData = async (collectionRef: FirebaseFirestore.CollectionReference, docId: string, docData: any, transaction: Transaction, count?: number) => {
   if (!count) {
     count = (await transaction.get(collectionRef.count())).data().count;
   }
   for (let i = count - 1; i >= 0; i--) {
     try {
-      await transaction.update(collectionRef.doc(i.toString()), { [docId]: doc });
+      await transaction.update(collectionRef.doc(i.toString()), { [docId]: docData });
       return;
     } catch (error) { }
   }
-  await transaction.set(collectionRef.doc(count.toString()), { [docId]: doc });
+  await transaction.set(collectionRef.doc(count.toString()), { [docId]: docData });
 }
 
-export const onSurveyDocUpdated = onDocumentUpdated('/surveys/{surveyId}', async (event) => {
-  const surveyId = event.params.surveyId;
-  const afterDoc = event.data?.after.data();
-  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS);
+const updateAdminDataOnDocCreated = async (collectionRef: FirebaseFirestore.CollectionReference, docId: string, docData: any) => {
   await adminDb.runTransaction(async (transaction: Transaction) => {
-    const docNum = (await transaction.get(collectionRef.orderBy(surveyId).limit(1))).docs[0]?.id;
+    await addDocToAdminData(collectionRef, docId, docData, transaction);
+  });
+}
+
+const updateAdminDataOnDocUpdated = async (collectionRef: FirebaseFirestore.CollectionReference, docId: string, docData: any) => {
+  await adminDb.runTransaction(async (transaction: Transaction) => {
+    const docNum = (await transaction.get(collectionRef.orderBy(docId).limit(1))).docs[0]?.id;
     const count = (await transaction.get(collectionRef.count())).data().count;
     if (!docNum) {
-      await addSurveyToAdminData(surveyId, afterDoc, transaction, count);
+      await addDocToAdminData(collectionRef, docId, docData, transaction, count);
       return;
     }
     try {
-      await transaction.update(collectionRef.doc(docNum), { [surveyId]: afterDoc });
+      await transaction.update(collectionRef.doc(docNum), { [docId]: docData });
     } catch (error) {
-      await transaction.update(collectionRef.doc(docNum), { [surveyId]: FieldValue.delete() });
-      await addSurveyToAdminData(surveyId, afterDoc, transaction, count);
+      await transaction.update(collectionRef.doc(docNum), { [docId]: FieldValue.delete() });
+      await addDocToAdminData(collectionRef, docId, docData, transaction, count);
     }
   });
-});
+}
 
-export const onSurveyDocDeleted = onDocumentDeleted('/surveys/{surveyId}', async (event) => {
-  const surveyId = event.params.surveyId;
-  adminDb.recursiveDelete(adminDb.collection(Collection.SURVEYS).doc(surveyId).collection(Collection.ASSIGNMENTS));
-  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS);
+const updateAdminDataOnDocDeleted = async (collectionRef: FirebaseFirestore.CollectionReference, docId: string) => {
   await adminDb.runTransaction(async (transaction: Transaction) => {
-    const docNum = (await collectionRef.orderBy(surveyId).limit(1).get()).docs[0]?.id;
+    const docNum = (await collectionRef.orderBy(docId).limit(1).get()).docs[0]?.id;
     if (!docNum) { return; }
-    await transaction.update(collectionRef.doc(docNum), { [surveyId]: FieldValue.delete() });
+    await transaction.update(collectionRef.doc(docNum), { [docId]: FieldValue.delete() });
   });
-});
+}
+
+export const onSurveyDocCreated = onDocumentCreated('/surveys/{surveyId}', async (event) =>
+  await updateAdminDataOnDocCreated(
+    adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS),
+    event.params.surveyId,
+    event.data?.data()
+  )
+);
+
+export const onSurveyDocUpdated = onDocumentUpdated('/surveys/{surveyId}', async (event) =>
+  await updateAdminDataOnDocUpdated(
+    adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS),
+    event.params.surveyId,
+    event.data?.after.data()
+  )
+);
+
+export const onSurveyDocDeleted = onDocumentDeleted('/surveys/{surveyId}', async (event) =>
+  await updateAdminDataOnDocDeleted(
+    adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS),
+    event.params.surveyId
+  )
+);
+
+export const onStudentDocCreated = onDocumentCreated('/students/{studentId}', async (event) =>
+  await updateAdminDataOnDocCreated(
+    adminDb.collection(Collection.ADMIN_DATA).doc(Document.STUDENTS).collection(Collection.STUDENTS),
+    event.params.studentId,
+    event.data?.data()
+  )
+);
+
+export const onStudentDocUpdated = onDocumentUpdated('/students/{studentId}', async (event) =>
+  await updateAdminDataOnDocUpdated(
+    adminDb.collection(Collection.ADMIN_DATA).doc(Document.STUDENTS).collection(Collection.STUDENTS),
+    event.params.studentId,
+    event.data?.after.data()
+  )
+);
+
+export const onStudentDocDeleted = onDocumentDeleted('/students/{studentId}', async (event) =>
+  await updateAdminDataOnDocDeleted(
+    adminDb.collection(Collection.ADMIN_DATA).doc(Document.STUDENTS).collection(Collection.STUDENTS),
+    event.params.studentId
+  )
+);
