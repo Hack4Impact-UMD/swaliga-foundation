@@ -23,11 +23,11 @@ import SendSurveyReminderEmailModal from "@/features/notifications/SendSurveyRem
 import AssignStudentsModal from "@/features/surveyManagement/AssignStudentsModal";
 import useAssignments from "@/data/hooks/useAssignments";
 
-interface StudentPageProps {
+interface SurveyPageProps {
   surveyId: string;
 }
 
-export default function StudentPage(props: StudentPageProps) {
+export default function SurveyPage(props: SurveyPageProps) {
   const { surveyId } = props;
 
   const survey = useSurveys().find((survey) => survey.id === surveyId)!;
