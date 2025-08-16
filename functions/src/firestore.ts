@@ -171,11 +171,11 @@ async function addSurveyToAdminData(docId: string, doc: any, transaction: Transa
   }
   for (let i = count - 1; i >= 0; i--) {
     try {
-      await transaction.set(collectionRef.doc(i.toString()), { [docId]: doc }, { merge: true });
+      await transaction.update(collectionRef.doc(i.toString()), { [docId]: doc });
       return;
     } catch (error) { }
   }
-  await transaction.set(collectionRef.doc(count.toString()), { [docId]: doc }, { merge: true });
+  await transaction.set(collectionRef.doc(count.toString()), { [docId]: doc });
 }
 
 export const onSurveyDocUpdated = onDocumentUpdated('/surveys/{surveyId}', async (event) => {
@@ -190,9 +190,9 @@ export const onSurveyDocUpdated = onDocumentUpdated('/surveys/{surveyId}', async
       return;
     }
     try {
-      await transaction.set(collectionRef.doc(docNum), { [surveyId]: afterDoc }, { merge: true });
+      await transaction.update(collectionRef.doc(docNum), { [surveyId]: afterDoc });
     } catch (error) {
-      await transaction.set(collectionRef.doc(docNum), { [surveyId]: FieldValue.delete() }, { merge: true });
+      await transaction.update(collectionRef.doc(docNum), { [surveyId]: FieldValue.delete() });
       await addSurveyToAdminData(surveyId, afterDoc, transaction, count);
     }
   });
@@ -205,6 +205,6 @@ export const onSurveyDocDeleted = onDocumentDeleted('/surveys/{surveyId}', async
   await adminDb.runTransaction(async (transaction: Transaction) => {
     const docNum = (await collectionRef.orderBy(surveyId).limit(1).get()).docs[0]?.id;
     if (!docNum) { return; }
-    await transaction.set(collectionRef.doc(docNum), { [surveyId]: FieldValue.delete() }, { merge: true });
+    await transaction.update(collectionRef.doc(docNum), { [surveyId]: FieldValue.delete() });
   });
 });
