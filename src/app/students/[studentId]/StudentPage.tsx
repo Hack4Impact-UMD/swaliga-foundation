@@ -11,7 +11,7 @@ import {
 } from "@/types/survey-types";
 import { getFullAddress, getFullName, Role, Student } from "@/types/user-types";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { cloneElement, useEffect, useState } from "react";
 import styles from "./StudentPage.module.css";
 import LoadingPage from "@/app/loading";
 import useSurveys from "@/data/hooks/useSurveys";
@@ -24,6 +24,15 @@ import {
 } from "@radix-ui/react-accordion";
 import { GoTriangleDown, GoTriangleUp } from "react-icons/go";
 import useAssignments from "@/data/hooks/useAssignments";
+import {
+  FaAddressBook,
+  FaBirthdayCake,
+  FaEnvelope,
+  FaIdBadge,
+  FaPhone,
+  FaVenusMars,
+} from "react-icons/fa";
+import { FaPeopleGroup } from "react-icons/fa6";
 
 interface StudentPageProps {
   studentId: string;
@@ -40,7 +49,11 @@ export default function StudentPage(props: StudentPageProps) {
 
   const student = useStudents().find((student) => student.id === studentId)!;
   const assignments = useAssignments({ studentId });
-  const surveys = useSurveys(role === "STUDENT" ? [...new Set(assignments.map(assignment => assignment.surveyId))] : []);
+  const surveys = useSurveys(
+    role === "STUDENT"
+      ? [...new Set(assignments.map((assignment) => assignment.surveyId))]
+      : []
+  );
 
   const pendingAssignments: PendingAssignmentID[] = [];
   const surveyResponses: SurveyResponseID[] = [];
@@ -54,30 +67,37 @@ export default function StudentPage(props: StudentPageProps) {
     {
       field: "ID Number",
       value: student.id,
+      icon: <FaIdBadge />,
     },
     {
       field: "Email",
       value: student.email,
+      icon: <FaEnvelope />,
     },
     {
       field: "Date of Birth",
       value: moment(student.dateOfBirth).format("MMMM D, YYYY"),
+      icon: <FaBirthdayCake />,
     },
     {
       field: "Gender",
       value: student.gender,
+      icon: <FaVenusMars />,
     },
     {
       field: "Ethnicity",
       value: student.ethnicity.join(", "),
+      icon: <FaPeopleGroup />,
     },
     {
       field: "Phone",
       value: student.phone,
+      icon: <FaPhone />,
     },
     {
       field: "Address",
       value: getFullAddress(student.address),
+      icon: <FaAddressBook />,
     },
   ];
 
@@ -89,6 +109,7 @@ export default function StudentPage(props: StudentPageProps) {
           {studentInfo.map((info) => (
             <div className={styles.infoRow} key={info.field}>
               <div className={`${styles.infoRowField} ${styles.infoRowBox}`}>
+                {cloneElement(info.icon, { className: styles.icon })}
                 {info.field}
               </div>
               <div className={`${styles.infoRowValue} ${styles.infoRowBox}`}>

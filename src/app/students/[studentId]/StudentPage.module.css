@@ -44,6 +44,10 @@
 }
 
 .infoRowField {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 2px;
   width: 25%;
 }
 
