@@ -6,8 +6,8 @@ import useAuth from "@/features/auth/useAuth";
 import { Role } from "@/types/user-types";
 import styles from "./Navbar.module.css";
 import logo from "@/../public/logo.png";
-import { CgProfile } from "react-icons/cg";
 import { logOut } from "@/features/auth/authN/googleAuthN";
+import { MdLogout } from "react-icons/md";
 
 const navbarLinks: { name: string; href: string; roles: Role[] }[] = [
   { name: "Students", href: "/students", roles: ["ADMIN", "STAFF"] },
@@ -23,7 +23,7 @@ export default function Navbar() {
   const role: Role = auth.token?.claims.role as Role;
 
   return (
-    <nav className={styles.navbar} onClick={() => logOut()}>
+    <nav className={styles.navbar}>
       {/* Logo on the left */}
       <div>
         <Link href="/">
@@ -50,12 +50,10 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* Profile Icon on the right */}
+      {/* Logout Icon */}
       {auth.token && (
-        <div>
-          <Link href="/profile" className={styles.temp}>
-            <CgProfile className={styles.profile} size={40} />
-          </Link>
+        <div onClick={() => logOut()}>
+          <MdLogout className={styles.profile} size={40} title="Logout" />
         </div>
       )}
     </nav>

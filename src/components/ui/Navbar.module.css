@@ -41,5 +41,10 @@
 
 .profile {
   padding-right: 2rem;
-  color: #dddddd;
+  color: #eeeeee;
+  cursor: pointer;
+}
+
+.profile:hover {
+  color: #cccccc;
 }
