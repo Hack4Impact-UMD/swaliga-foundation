@@ -23,6 +23,7 @@ import {
   AccordionTrigger,
 } from "@radix-ui/react-accordion";
 import { GoTriangleDown, GoTriangleUp } from "react-icons/go";
+import useAssignments from "@/data/hooks/useAssignments";
 
 interface StudentPageProps {
   studentId: string;
@@ -31,26 +32,19 @@ interface StudentPageProps {
 export default function StudentPage(props: StudentPageProps) {
   const { studentId } = props;
 
-  const [assignments, setAssignments] = useState<AssignmentID[]>([]);
   const [openPendingId, setOpenPendingId] = useState<string | null>(null);
   const [openResponseId, setOpenResponseId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
-
-  const students = useStudents();
-  const student: Student =students.find((student) => student.id === studentId)!;
-
-  const surveys = useSurveys();
 
   const role = useAuth().token?.claims.role as Role;
 
-  useEffect(() => {
-    setIsLoading(true);
-    getAssignmentsByStudentId(studentId)
-      .then((assignments) => setAssignments(assignments))
-      .catch(() => setError("Failed to load assignments"))
-      .finally(() => setIsLoading(false));
-  }, []);
+  const students = useStudents();
+  const student: Student = students.find(
+    (student) => student.id === studentId
+  )!;
+
+  const surveys = useSurveys();
+  const assignments = useAssignments({ studentId });
 
   const pendingAssignments: PendingAssignmentID[] = [];
   const surveyResponses: SurveyResponseID[] = [];
@@ -59,10 +53,6 @@ export default function StudentPage(props: StudentPageProps) {
       ? pendingAssignments.push(assignment)
       : surveyResponses.push(assignment)
   );
-
-  if (isLoading) {
-    return <LoadingPage />;
-  }
 
   const studentInfo = [
     {

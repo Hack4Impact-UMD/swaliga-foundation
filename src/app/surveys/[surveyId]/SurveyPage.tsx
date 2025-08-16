@@ -21,6 +21,7 @@ import moment from "moment";
 import { FilterCondition } from "@/components/Filter";
 import SendSurveyReminderEmailModal from "@/features/notifications/SendSurveyReminderEmailModal";
 import AssignStudentsModal from "@/features/surveyManagement/AssignStudentsModal";
+import useAssignments from "@/data/hooks/useAssignments";
 
 interface StudentPageProps {
   surveyId: string;
@@ -30,25 +31,12 @@ export default function StudentPage(props: StudentPageProps) {
   const { surveyId } = props;
 
   const survey = useSurveys().find((survey) => survey.id === surveyId)!;
-  const [assignments, setAssignments] = useState<AssignmentID[]>([]);
   const [selectedAssignmentIds, setSelectedAssignmentIds] = useState<string[]>(
     []
   );
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const students = useStudents();
-
-  useEffect(() => {
-    setIsLoading(true);
-    getAssignmentsBySurveyId(surveyId)
-      .then((assignments) => setAssignments(assignments))
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false));
-  }, [surveyId]);
-
-  if (isLoading) {
-    return <LoadingPage />;
-  }
+  const assignments = useAssignments({ surveyId });
 
   const columns: Column<AssignmentID>[] = [
     {
