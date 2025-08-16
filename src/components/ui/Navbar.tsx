@@ -54,7 +54,7 @@ export default function Navbar() {
       {auth.token && (
         <div>
           <Link href="/profile" className={styles.temp}>
-            <CgProfile className={styles.profile} size={40} color="#DDDDDD" />
+            <CgProfile className={styles.profile} size={40} />
           </Link>
         </div>
       )}
