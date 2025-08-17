@@ -9,6 +9,8 @@ firebaseAdminCredentials.json
 
 .vscode
 
+/testData
+
 # dependencies
 /node_modules
 /.pnp
