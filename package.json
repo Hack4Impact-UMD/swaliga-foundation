@@ -13,7 +13,6 @@
     "@fortawesome/fontawesome-free": "^6.6.0",
     "@google-cloud/pubsub": "^4.7.2",
     "@googleapis/forms": "^2.0.7",
-    "@radix-ui/react-accordion": "^1.2.11",
     "@types/google-apps-script": "^1.0.97",
     "autoprefixer": "^10.4.20",
     "esbuild": "^0.25.6",

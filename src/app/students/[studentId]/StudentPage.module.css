@@ -122,3 +122,16 @@
   width: 95%;
   height: 500px;
 }
+
+.tableContainer {
+  width: 75%;
+}
+
+.icon {
+  color: black;
+  cursor: pointer;
+}
+
+.icon:hover {
+  color: #555555;
+}
