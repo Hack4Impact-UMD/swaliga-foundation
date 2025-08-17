@@ -20,6 +20,7 @@ export default function EditAccountModal(props: EditAccountModalProps) {
     <Modal>
       <FaEdit className={styles.icon} size={20} />
       <div className={styles.modalContainer}>
+        <h1 className={styles.header}>Edit Account</h1>
         <EditAccountForm mode={"EDIT"} student={student} />
       </div>
     </Modal>
