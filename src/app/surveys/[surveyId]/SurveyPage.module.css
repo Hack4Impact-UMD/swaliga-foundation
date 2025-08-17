@@ -43,7 +43,7 @@
   margin: 20px 0;
 }
 
-.optionMenu {
+.surveyOptionMenu {
   display: flex;
   flex-direction: row;
   gap: 20px;
@@ -75,4 +75,26 @@
 
 .tableIcon:hover {
   color: #00000080;
+}
+
+.tableHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.tableTitle {
+  font-family: "Poppins", sans-serif;
+  color: #d0d12a;
+  font-size: 30px;
+  font-weight: 600;
+  margin: 20px 0;
+}
+
+.tableOptionMenu {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: flex-end;
 }

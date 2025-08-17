@@ -6,6 +6,8 @@ import {
   isSurveyResponseStudentEmailID,
   isSurveyResponseStudentIdID,
   isSurveyResponseUnidentifiedID,
+  PendingAssignmentID,
+  SurveyResponseID,
 } from "@/types/survey-types";
 import { useEffect, useState } from "react";
 import styles from "./SurveyPage.module.css";
@@ -31,57 +33,72 @@ export default function SurveyPage(props: SurveyPageProps) {
   const { surveyId } = props;
 
   const survey = useSurveys().find((survey) => survey.id === surveyId)!;
-  const [selectedAssignmentIds, setSelectedAssignmentIds] = useState<string[]>(
-    []
-  );
+  const [selectedPendingAssignmentIds, setSelectedPendingAssignmentIds] =
+    useState<string[]>([]);
 
   const students = useStudents();
   const assignments = useAssignments({ surveyId });
 
-  const columns: Column<AssignmentID>[] = [
+  const pendingAssignments: PendingAssignmentID[] = [];
+  const surveyResponses: SurveyResponseID[] = [];
+  assignments.forEach((assignment) =>
+    isPendingAssignmentID(assignment)
+      ? pendingAssignments.push(assignment)
+      : surveyResponses.push(assignment)
+  );
+
+  const pendingAssignmentColumns: Column<PendingAssignmentID>[] = [
     {
       name: "Student Name",
-      getValue: (assignment: AssignmentID) =>
-        isSurveyResponseUnidentifiedID(assignment)
-          ? "N/A"
-          : getFullName(
-              students.find((student) => student.id === assignment.studentId)!
-                .name
-            ),
+      getValue: (assignment: PendingAssignmentID) =>
+        getFullName(
+          students.find((student) => student.id === assignment.studentId)!.name
+        ),
     },
     {
       name: "Student ID",
-      getValue: (assignment: AssignmentID) =>
-        isPendingAssignmentID(assignment) ||
-        isSurveyResponseStudentIdID(assignment)
-          ? assignment.studentId
-          : "N/A",
-    },
-    {
-      name: "Student Email",
-      getValue: (assignment: AssignmentID) =>
-        isSurveyResponseStudentEmailID(assignment)
-          ? assignment.studentEmail
-          : "N/A",
-    },
-    {
-      name: "Status",
-      getValue: (assignment: AssignmentID) =>
-        isPendingAssignmentID(assignment) ? "Pending" : "Completed",
+      getValue: (assignment: PendingAssignmentID) => assignment.studentId,
     },
     {
       name: "Assignment Date",
-      getValue: (assignment: AssignmentID) =>
-        "assignedAt" in assignment
-          ? moment(assignment.assignedAt).format("MMM D, YYYY")
+      getValue: (assignment: PendingAssignmentID) =>
+        moment(assignment.assignedAt).format("MMM D, YYYY"),
+    },
+  ];
+
+  const surveyResponsesColumns: Column<SurveyResponseID>[] = [
+    {
+      name: "Student Name",
+      getValue: (assignment: SurveyResponseID) =>
+        isSurveyResponseStudentIdID(assignment)
+          ? getFullName(
+              students.find((student) => student.id === assignment.studentId)!
+                .name
+            )
           : "N/A",
     },
     {
+      name: "Student ID",
+      getValue: (assignment: SurveyResponseID) =>
+        isSurveyResponseStudentIdID(assignment) ? assignment.studentId : "N/A",
+    },
+    {
+      name: "Student Email",
+      getValue: (assignment: SurveyResponseID) => {
+        if (isSurveyResponseStudentEmailID(assignment)) {
+          return assignment.studentEmail;
+        } else if (isSurveyResponseStudentIdID(assignment)) {
+          return students.find(
+            (student) => student.id === assignment.studentId
+          )!.email;
+        }
+        return "N/A";
+      },
+    },
+    {
       name: "Submission Timestamp",
-      getValue: (assignment: AssignmentID) =>
-        isPendingAssignmentID(assignment)
-          ? "N/A"
-          : moment(assignment.submittedAt).format("M/D/YYYY HH:mm:ss"),
+      getValue: (assignment: SurveyResponseID) =>
+        moment(assignment.submittedAt).format("M/D/YYYY HH:mm:ss"),
     },
   ];
 
@@ -111,16 +128,7 @@ export default function SurveyPage(props: SurveyPageProps) {
           ? assignment.studentEmail
           : "N/A",
     },
-    {
-      name: "Status",
-      getValue: (assignment: AssignmentID) =>
-        isPendingAssignmentID(assignment) ? "Pending" : "Completed",
-    },
   ];
-
-  const selectedPendingAssignments = assignments
-    .filter((assignment) => selectedAssignmentIds.includes(assignment.id))
-    .filter(isPendingAssignmentID);
 
   return (
     <div className={styles.page}>
@@ -128,7 +136,7 @@ export default function SurveyPage(props: SurveyPageProps) {
         <div className={styles.header}>
           <h1 className={styles.surveyTitle}>{survey.name}</h1>
           <h2 className={styles.surveyDescription}>{survey.description}</h2>
-          <div className={styles.optionMenu}>
+          <div className={styles.surveyOptionMenu}>
             <Link
               href={`https://docs.google.com/forms/d/${survey.id}/edit`}
               target="_blank"
@@ -148,26 +156,45 @@ export default function SurveyPage(props: SurveyPageProps) {
                 title="View Responses Spreadsheet"
               />
             </Link>
-            {selectedPendingAssignments.length > 0 && (
-              <SendSurveyReminderEmailModal
-                survey={survey}
-                assignments={selectedPendingAssignments}
-              />
-            )}
-            <AssignStudentsModal
-              survey={survey}
-              assignments={assignments.filter(isPendingAssignmentID)}
-            />
           </div>
         </div>
         <div className={styles.tableContainer}>
-          <Table<AssignmentID>
-            items={assignments}
-            columns={columns}
+          <div className={styles.tableHeader}>
+            <h2 className={styles.tableTitle}>Pending Assignments</h2>
+            <div className={styles.tableOptionMenu}>
+              {selectedPendingAssignmentIds.length > 0 && (
+                <SendSurveyReminderEmailModal
+                  survey={survey}
+                  assignments={pendingAssignments.filter((assignment) =>
+                    selectedPendingAssignmentIds.includes(assignment.id)
+                  )}
+                />
+              )}
+              <AssignStudentsModal
+                survey={survey}
+                assignments={pendingAssignments}
+              />
+            </div>
+          </div>
+          <Table<PendingAssignmentID>
+            items={pendingAssignments}
+            columns={pendingAssignmentColumns}
             selectOptions={{
-              selectedItemIds: selectedAssignmentIds,
-              setSelectedItemIds: setSelectedAssignmentIds,
+              selectedItemIds: selectedPendingAssignmentIds,
+              setSelectedItemIds: setSelectedPendingAssignmentIds,
             }}
+            paginationOptions={{
+              itemsPerPageOptions: [5, 10, 25, 50, 100],
+              includeAllOption: true,
+            }}
+            filterConditions={filterConditions.slice(0, 2)}
+          />
+        </div>
+        <div className={styles.tableContainer}>
+          <h2 className={styles.tableTitle}>Responses</h2>
+          <Table<SurveyResponseID>
+            items={surveyResponses}
+            columns={surveyResponsesColumns}
             paginationOptions={{
               itemsPerPageOptions: [5, 10, 25, 50, 100],
               includeAllOption: true,
