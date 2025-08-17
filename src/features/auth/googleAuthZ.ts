@@ -4,10 +4,13 @@ import moment from "moment";
 import { AuthContextType } from "./AuthProvider";
 
 export async function getAccessToken(tokens: GoogleTokens, user: User, idToken: string): Promise<string> {
-  const { accessToken, expirationTime } = tokens;
-  if (moment().isBefore(moment(expirationTime))) {
-    return accessToken;
+  if (tokens) {
+    var { accessToken, expirationTime } = tokens;
+    if (accessToken && expirationTime && moment().isBefore(moment(expirationTime))) {
+      return accessToken;
+    }
   }
+
   const response = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/auth/token`, {
     method: "POST",
     headers: {
