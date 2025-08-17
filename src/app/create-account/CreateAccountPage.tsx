@@ -35,6 +35,11 @@ import { db, functions } from "@/config/firebaseConfig";
 import { Collection, Document } from "@/data/firestore/utils";
 import { createStudent } from "@/data/firestore/students";
 import { httpsCallable } from "firebase/functions";
+import {
+  FIRST_STUDENT_ID,
+  MAX_NUM_PARENTS_GUARDIANS,
+  MIN_NUM_PARENTS_GUARDIANS,
+} from "@/constants/constants";
 
 export default function CreateAccountPage() {
   // student info fields
@@ -58,24 +63,32 @@ export default function CreateAccountPage() {
   const [zipCode, setZipCode] = useState<string>("");
 
   // guardian fields
-  const [guardianFirstNames, setGuardianFirstNames] = useState<string[]>([""]);
-  const [guardianMiddleNames, setGuardianMiddleNames] = useState<string[]>([
-    "",
-  ]);
-  const [guardianLastNames, setGuardianLastNames] = useState<string[]>([""]);
-  const [guardianGenders, setGuardianGenders] = useState<Gender[]>([
-    genderValues[0],
-  ]);
+  const [guardianFirstNames, setGuardianFirstNames] = useState<string[]>(
+    Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
+  );
+  const [guardianMiddleNames, setGuardianMiddleNames] = useState<string[]>(
+    Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
+  );
+  const [guardianLastNames, setGuardianLastNames] = useState<string[]>(
+    Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
+  );
+  const [guardianGenders, setGuardianGenders] = useState<Gender[]>(
+    Array(MIN_NUM_PARENTS_GUARDIANS).fill(genderValues[0])
+  );
   const [guardianGenderOtherTexts, setGuardianGenderOtherTexts] = useState<
     string[]
-  >([""]);
-  const [guardianEmails, setGuardianEmails] = useState<string[]>([""]);
-  const [guardianPhones, setGuardianPhones] = useState<string[]>([""]);
+  >(Array(MIN_NUM_PARENTS_GUARDIANS).fill(""));
+  const [guardianEmails, setGuardianEmails] = useState<string[]>(
+    Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
+  );
+  const [guardianPhones, setGuardianPhones] = useState<string[]>(
+    Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
+  );
   const [guardianRelationships, setGuardianRelationships] = useState<
     GuardianRelationship[]
-  >([guardianRelationshipValues[0]]);
+  >(Array(MIN_NUM_PARENTS_GUARDIANS).fill(guardianRelationshipValues[0]));
   const [guardianRelationshipOtherTexts, setGuardianRelationshipOtherTexts] =
-    useState<string[]>([""]);
+    useState<string[]>(Array(MIN_NUM_PARENTS_GUARDIANS).fill(""));
 
   // school fields
   const [schoolName, setSchoolName] = useState<string>("");
@@ -548,7 +561,7 @@ export default function CreateAccountPage() {
             <>
               <div className={styles.row}>
                 <label>Parent/Guardian {index + 1}</label>
-                {guardianFirstNames.length >= 2 && (
+                {guardianFirstNames.length >= MIN_NUM_PARENTS_GUARDIANS + 1 && (
                   <button
                     className={styles.emergencyRemoveButton}
                     type="button"
@@ -675,7 +688,7 @@ export default function CreateAccountPage() {
               </div>
             </>
           ))}
-          {guardianFirstNames.length <= 3 && (
+          {guardianFirstNames.length <= MAX_NUM_PARENTS_GUARDIANS - 1 && (
             <button
               className={styles.emergencyAddButton}
               type="button"
