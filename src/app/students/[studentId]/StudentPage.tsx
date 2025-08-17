@@ -37,6 +37,7 @@ import {
 } from "react-icons/fa";
 import { FaPeopleGroup } from "react-icons/fa6";
 import Table, { Column } from "@/components/ui/Table";
+import RespondToSurveyModal from "@/features/surveyManagement/RespondToSurveyModal";
 
 interface StudentPageProps {
   studentId: string;
@@ -117,7 +118,7 @@ export default function StudentPage(props: StudentPageProps) {
     {
       name: "Respond",
       getValue: (assignment: PendingAssignmentID) => (
-        <FaEdit className={styles.icon} size={20} />
+        <RespondToSurveyModal survey={surveys.find(survey => survey.id === assignment.surveyId)!} />
       ),
     },
   ];

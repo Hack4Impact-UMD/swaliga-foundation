@@ -1,0 +1,14 @@
+.icon {
+  color: black;
+  cursor: pointer;
+}
+
+.icon:hover {
+  color: #555555;
+}
+
+.surveyWindow {
+  width: 60vw;
+  height: 90vh;
+  margin: 40px;
+}
