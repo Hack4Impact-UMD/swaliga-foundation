@@ -1,0 +1,1 @@
+export const FIRST_STUDENT_ID = 1000000;

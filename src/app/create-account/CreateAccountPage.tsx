@@ -226,10 +226,12 @@ export default function CreateAccountPage() {
           Collection.METADATA,
           Document.NEXT_STUDENT_ID
         );
-        const { nextStudentId } = (
+        const { nextStudentId } = ((
           await transaction.get(studentIdRef)
-        ).data() as { nextStudentId: number };
-        await transaction.update(studentIdRef, {
+        ).data() as { nextStudentId: number }) || {
+          nextStudentId: FIRST_STUDENT_ID,
+        };
+        await transaction.set(studentIdRef, {
           nextStudentId: nextStudentId + 1,
         });
 
