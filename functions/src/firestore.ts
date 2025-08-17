@@ -216,12 +216,16 @@ export const onSurveyDocUpdated = onDocumentUpdated('/surveys/{surveyId}', async
   )
 );
 
-export const onSurveyDocDeleted = onDocumentDeleted('/surveys/{surveyId}', async (event) =>
-  await updateAdminDataOnDocDeleted(
-    adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS),
-    event.params.surveyId
-  )
-);
+export const onSurveyDocDeleted = onDocumentDeleted('/surveys/{surveyId}', async (event) => {
+  const surveyId = event.params.surveyId;
+  await Promise.all([
+    adminDb.recursiveDelete(adminDb.collection(Collection.SURVEYS).doc(surveyId).collection(Collection.ASSIGNMENTS)),
+    updateAdminDataOnDocDeleted(
+      adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS),
+      surveyId
+    )
+  ]);
+});
 
 export const onStudentDocCreated = onDocumentCreated('/students/{studentId}', async (event) =>
   await updateAdminDataOnDocCreated(
