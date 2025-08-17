@@ -40,11 +40,6 @@ export default function Table<T extends ID>(props: TableProps<T>) {
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
   const [filteredItems, setFilteredItems] = useState<T[]>(items);
 
-  useEffect(() => {
-    setFilteredItems(items);
-    setCurrentPage(0);
-  }, [items]);
-
   const numPages = Math.ceil(filteredItems.length / numItemsPerPage);
 
   const handleSelect = (id: string, checked: boolean) => {
