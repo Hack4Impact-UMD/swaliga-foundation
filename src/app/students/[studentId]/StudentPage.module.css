@@ -1,11 +1,10 @@
 .page {
   display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  width: 100%;
-  height: calc(100vh - 50px);
-  background-image: url("../../../../public/background.png");
-  background-size: 100% 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 50px);
+  background-color: #d9d9d9;
 }
 
 .container {
@@ -13,11 +12,21 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  gap: 5px;
-  background-color: #ffffff;
-  width: 50%;
+  width: 90%;
+  min-height: 85vh;
+  background-color: #1e4154;
+  border-radius: 20px;
+  padding: 2.5%;
+}
+
+.header {
+  width: 80%;
   text-align: center;
-  overflow-y: scroll;
+  font-family: "Poppins", sans-serif;
+  color: #d0d12a;
+  font-size: 40px;
+  font-weight: 700;
+  margin: 20px 0;
 }
 
 .infoFieldsContainer {
@@ -41,13 +50,14 @@
   border-radius: 10px;
   padding: 5px 10px;
   font-weight: 400;
+  background-color: #dedeb2;
 }
 
 .infoRowField {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  gap: 2px;
+  gap: 8px;
   width: 25%;
 }
 
@@ -55,9 +65,21 @@
   width: 60%;
 }
 
+.subheader {
+  width: 75%;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+  color: #d0d12a;
+  font-size: 35px;
+  font-weight: 600;
+  margin: 20px 0;
+}
+
 .surveysSectionHeader {
   width: 75%;
   text-align: left;
+  color: #d0d12a;
+  font-family: "Poppins", sans-serif;
 }
 
 .accordion {

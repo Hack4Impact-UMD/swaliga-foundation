@@ -104,7 +104,7 @@ export default function StudentPage(props: StudentPageProps) {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <h1>{getFullName(student.name)}</h1>
+        <h1 className={styles.header}>{getFullName(student.name)}</h1>
         <div className={styles.infoFieldsContainer}>
           {studentInfo.map((info) => (
             <div className={styles.infoRow} key={info.field}>
@@ -118,7 +118,7 @@ export default function StudentPage(props: StudentPageProps) {
             </div>
           ))}
         </div>
-        <h2>Surveys</h2>
+        <h2 className={styles.subheader}>Surveys</h2>
         <h3 className={styles.surveysSectionHeader}>Pending Assignments</h3>
         <Accordion
           className={styles.accordion}
