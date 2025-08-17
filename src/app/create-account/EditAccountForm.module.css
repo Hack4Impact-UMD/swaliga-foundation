@@ -1,0 +1,118 @@
+
+.accountForm {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 15px;
+  width: 100%;
+  padding: 10px 12px;
+  background-color: #0f0f0d;
+  color: #fff;
+  font-family: Poppins;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.sectionHeader {
+  font-size: 20px;
+  color: #d0d12a;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.emergencyAddButton {
+  float: left;
+  background-color: #d9d9d9;
+  color: black;
+  padding: 5px 15px;
+  font-size: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.emergencyRemoveButton {
+  float: right;
+  background-color: #d9d9d9;
+  color: black;
+  padding: 5px 15px;
+  font-size: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.emergencyAddButton:hover {
+  opacity: 0.8;
+}
+
+.emergencyRemoveButton:hover {
+  opacity: 0.8;
+}
+
+.submitButton {
+  width: 100%;
+  margin-top: auto;
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submitButton:hover {
+  opacity: 0.8;
+}
+
+.requiredAsterisk {
+  color: red;
+}
+
+.checkboxContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.checkboxGroup {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.checkboxGroup label {
+  margin-left: 8px;
+  text-transform: capitalize;
+}
+
+.otherTextInput {
+  margin-left: 8px;
+  display: inline-block;
+}
+
+.formErrors {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: rgb(223, 85, 85);
+  border: 2px solid red;
+  border-radius: 20px;
+}
+
+.formErrors h3 {
+  margin: 10px 0 0 10px;
+}
+
+.error {
+  width: 100%;
+  color: red;
+  text-align: center;
+}
