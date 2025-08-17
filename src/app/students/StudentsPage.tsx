@@ -7,6 +7,7 @@ import { FilterCondition } from "@/components/Filter";
 import { getFullAddress, getFullName, Student } from "@/types/user-types";
 import moment from "moment";
 import useStudents from "@/data/hooks/useStudents";
+import Link from "next/link";
 
 export default function StudentsPage() {
   const students = useStudents();
@@ -15,7 +16,11 @@ export default function StudentsPage() {
   const columns: Column<Student>[] = [
     {
       name: "Name",
-      getValue: (student: Student) => getFullName(student.name),
+      getValue: (student: Student) => (
+        <Link href={`/students/${student.id}`}>
+          <p className={styles.linkText}>{getFullName(student.name)}</p>
+        </Link>
+      ),
     },
     {
       name: "ID",
