@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./EditAccountForm.module.css";
 import {
   ethnicityValues,
@@ -34,7 +34,7 @@ import moment from "moment";
 import { doc, runTransaction } from "firebase/firestore";
 import { db, functions } from "@/config/firebaseConfig";
 import { Collection, Document } from "@/data/firestore/utils";
-import { createStudent } from "@/data/firestore/students";
+import { createStudent, updateStudent } from "@/data/firestore/students";
 import { httpsCallable } from "firebase/functions";
 import {
   FIRST_STUDENT_ID,
@@ -47,76 +47,232 @@ type EditAccountFormProps =
     }
   | {
       mode: "EDIT";
-      studentId: string;
+      student: Student;
     };
 
 export default function EditAccountForm(props: EditAccountFormProps) {
   // @ts-expect-error
-  const { mode, studentId = undefined } = props;
+  const { mode, student } = props;
 
   // student info fields
-  const [firstName, setFirstName] = useState<string>("");
-  const [middleName, setMiddleName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [gender, setGender] = useState<Gender>(genderValues[0]);
-  const [genderOtherText, setGenderOtherText] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [dateOfBirth, setDateOfBirth] = useState<string>("");
-  const [joinedSwaligaDate, setJoinedSwaligaDate] = useState<string>("");
-  const [ethnicity, setEthnicity] = useState<Ethnicity[]>([]);
-  const [ethnicityOtherText, setEthnicityOtherText] = useState<string>("");
+  const [firstName, setFirstName] = useState<string>(
+    mode === "EDIT" ? student.name.firstName : ""
+  );
+  const [middleName, setMiddleName] = useState<string>(
+    mode === "EDIT" ? student.name.middleName || "" : ""
+  );
+  const [lastName, setLastName] = useState<string>(
+    mode === "EDIT" ? student.name.lastName : ""
+  );
+  const [gender, setGender] = useState<Gender>(
+    mode === "EDIT"
+      ? genderValues.includes(student.gender)
+        ? student.gender
+        : "Other"
+      : genderValues[0]
+  );
+  const [genderOtherText, setGenderOtherText] = useState<string>(() => {
+    if (mode === "CREATE") {
+      return "";
+    }
+
+    const isOtherGender = !genderValues.includes(student.gender);
+    if (isOtherGender || gender === "Other") {
+      return student.gender;
+    }
+    return "";
+  });
+  const [phone, setPhone] = useState<string>(
+    mode === "EDIT" ? student.phone || "" : ""
+  );
+  const [dateOfBirth, setDateOfBirth] = useState<string>(
+    mode === "EDIT" ? moment(student.dateOfBirth).format("YYYY/MM/DD") : ""
+  );
+  const [joinedSwaligaDate, setJoinedSwaligaDate] = useState<string>(
+    mode === "EDIT"
+      ? moment(student.joinedSwaligaDate).format("YYYY/MM/DD")
+      : ""
+  );
+  const [ethnicity, setEthnicity] = useState<Ethnicity[]>(
+    mode === "EDIT"
+      ? student.ethnicity.map((ethnicity) =>
+          ethnicityValues.includes(ethnicity) ? ethnicity : "Other"
+        )
+      : []
+  );
+  const [ethnicityOtherText, setEthnicityOtherText] = useState<string>(
+    mode === "EDIT"
+      ? student.ethnicity.filter(
+          (ethnicity) => !ethnicityValues.includes(ethnicity)
+        )[0] || ""
+      : ""
+  );
 
   // student address fields
-  const [addressLine1, setAddressLine1] = useState<string>("");
-  const [addressLine2, setAddressLine2] = useState<string>("");
-  const [city, setCity] = useState<string>("");
-  const [state, setState] = useState<string>("");
-  const [country, setCountry] = useState<string>("");
-  const [zipCode, setZipCode] = useState<string>("");
+  const [addressLine1, setAddressLine1] = useState<string>(
+    mode === "EDIT" ? student.address.addressLine1 : ""
+  );
+  const [addressLine2, setAddressLine2] = useState<string>(
+    mode === "EDIT" ? student.address.addressLine2 || "" : ""
+  );
+  const [city, setCity] = useState<string>(
+    mode === "EDIT" ? student.address.city : ""
+  );
+  const [state, setState] = useState<string>(
+    mode === "EDIT" ? student.address.state : ""
+  );
+  const [country, setCountry] = useState<string>(
+    mode === "EDIT" ? student.address.country : ""
+  );
+  const [zipCode, setZipCode] = useState<string>(
+    mode === "EDIT" ? String(student.address.zipCode) : ""
+  );
 
   // guardian fields
   const [guardianFirstNames, setGuardianFirstNames] = useState<string[]>(
-    Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
+    mode === "EDIT"
+      ? student.guardians.map((g) => g.name.firstName)
+      : Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
   );
   const [guardianMiddleNames, setGuardianMiddleNames] = useState<string[]>(
-    Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
+    mode === "EDIT"
+      ? student.guardians.map((g) => g.name.middleName || "")
+      : Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
   );
   const [guardianLastNames, setGuardianLastNames] = useState<string[]>(
-    Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
+    mode === "EDIT"
+      ? student.guardians.map((g) => g.name.lastName)
+      : Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
   );
   const [guardianGenders, setGuardianGenders] = useState<Gender[]>(
-    Array(MIN_NUM_PARENTS_GUARDIANS).fill(genderValues[0])
+    mode === "EDIT"
+      ? student.guardians.map((g) =>
+          genderValues.includes(g.gender) ? g.gender : "Other"
+        )
+      : Array(MIN_NUM_PARENTS_GUARDIANS).fill(genderValues[0])
   );
   const [guardianGenderOtherTexts, setGuardianGenderOtherTexts] = useState<
     string[]
-  >(Array(MIN_NUM_PARENTS_GUARDIANS).fill(""));
+  >(
+    mode === "EDIT"
+      ? student.guardians.map((g) =>
+          genderValues.includes(g.gender) && g.gender !== "Other"
+            ? ""
+            : g.gender
+        )
+      : Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
+  );
   const [guardianEmails, setGuardianEmails] = useState<string[]>(
-    Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
+    mode === "EDIT"
+      ? student.guardians.map((g) => g.email)
+      : Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
   );
   const [guardianPhones, setGuardianPhones] = useState<string[]>(
-    Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
+    mode === "EDIT"
+      ? student.guardians.map((g) => g.phone || "")
+      : Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
   );
   const [guardianRelationships, setGuardianRelationships] = useState<
     GuardianRelationship[]
-  >(Array(MIN_NUM_PARENTS_GUARDIANS).fill(guardianRelationshipValues[0]));
+  >(
+    mode === "EDIT"
+      ? student.guardians.map((g) =>
+          guardianRelationshipValues.includes(g.relationship)
+            ? g.relationship
+            : "Other"
+        )
+      : Array(MIN_NUM_PARENTS_GUARDIANS).fill(guardianRelationshipValues[0])
+  );
   const [guardianRelationshipOtherTexts, setGuardianRelationshipOtherTexts] =
-    useState<string[]>(Array(MIN_NUM_PARENTS_GUARDIANS).fill(""));
+    useState<string[]>(
+      mode === "EDIT"
+        ? student.guardians.map((g) =>
+            guardianRelationshipValues.includes(g.relationship) &&
+            g.relationship !== "Other"
+              ? ""
+              : g.relationship
+          )
+        : Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
+    );
 
   // school fields
-  const [schoolName, setSchoolName] = useState<string>("");
-  const [gradYear, setGradYear] = useState<string>("");
-  const [gpa, setGPA] = useState<string>("");
-  const [schoolAddressLine1, setSchoolAddressLine1] = useState<string>("");
-  const [schoolAddressLine2, setSchoolAddressLine2] = useState<string>("");
-  const [schoolCity, setSchoolCity] = useState<string>("");
-  const [schoolState, setSchoolState] = useState<string>("");
-  const [schoolCountry, setSchoolCountry] = useState<string>("");
-  const [schoolZipCode, setSchoolZipCode] = useState<string>("");
+  const [schoolName, setSchoolName] = useState<string>(
+    mode === "EDIT" ? student.school.name : ""
+  );
+  const [gradYear, setGradYear] = useState<string>(
+    mode === "EDIT" ? String(student.school.gradYear) : ""
+  );
+  const [gpa, setGPA] = useState<string>(
+    mode === "EDIT" ? String(student.school.gpa) : ""
+  );
+  const [schoolAddressLine1, setSchoolAddressLine1] = useState<string>(
+    mode === "EDIT" ? student.school.address.addressLine1 : ""
+  );
+  const [schoolAddressLine2, setSchoolAddressLine2] = useState<string>(
+    mode === "EDIT" ? student.school.address.addressLine2 || "" : ""
+  );
+  const [schoolCity, setSchoolCity] = useState<string>(
+    mode === "EDIT" ? student.school.address.city : ""
+  );
+  const [schoolState, setSchoolState] = useState<string>(
+    mode === "EDIT" ? student.school.address.state : ""
+  );
+  const [schoolCountry, setSchoolCountry] = useState<string>(
+    mode === "EDIT" ? student.school.address.country : ""
+  );
+  const [schoolZipCode, setSchoolZipCode] = useState<string>(
+    mode === "EDIT" ? String(student.school.address.zipCode) : ""
+  );
 
   const [formErrors, setFormErrors] = useState<string[]>([]);
   const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
 
   const auth = useAuth();
+
+  useEffect(() => {
+    if (error) {
+      setError("");
+    }
+    if (success) {
+      setSuccess("");
+    }
+  }, [
+    firstName,
+    middleName,
+    lastName,
+    gender,
+    genderOtherText,
+    phone,
+    dateOfBirth,
+    joinedSwaligaDate,
+    ethnicity,
+    ethnicityOtherText,
+    addressLine1,
+    addressLine2,
+    city,
+    state,
+    country,
+    zipCode,
+    guardianFirstNames,
+    guardianMiddleNames,
+    guardianLastNames,
+    guardianGenders,
+    guardianGenderOtherTexts,
+    guardianEmails,
+    guardianPhones,
+    guardianRelationships,
+    guardianRelationshipOtherTexts,
+    schoolName,
+    gradYear,
+    gpa,
+    schoolAddressLine1,
+    schoolAddressLine2,
+    schoolCity,
+    schoolState,
+    schoolCountry,
+    schoolZipCode,
+  ]);
 
   const addEmergencyContact = () => {
     setGuardianFirstNames((prev) => [...prev, ""]);
@@ -246,22 +402,25 @@ export default function EditAccountForm(props: EditAccountFormProps) {
     }
     try {
       const studentId = await runTransaction(db, async (transaction) => {
-        const studentIdRef = doc(
-          db,
-          Collection.METADATA,
-          Document.NEXT_STUDENT_ID
-        );
-        const { nextStudentId } = ((
-          await transaction.get(studentIdRef)
-        ).data() as { nextStudentId: number }) || {
-          nextStudentId: FIRST_STUDENT_ID,
-        };
-        await transaction.set(studentIdRef, {
-          nextStudentId: nextStudentId + 1,
-        });
+        if (mode === "CREATE") {
+          const studentIdRef = doc(
+            db,
+            Collection.METADATA,
+            Document.NEXT_STUDENT_ID
+          );
+          var studentId = `${
+            (await transaction.get(studentIdRef)).data()?.nextStudentId ||
+            FIRST_STUDENT_ID
+          }`;
+          await transaction.set(studentIdRef, {
+            nextStudentId: studentId + 1,
+          });
+        } else {
+          var studentId = student.id;
+        }
 
-        const student: Student = {
-          id: nextStudentId.toString(),
+        const studentData: Student = {
+          id: studentId,
           name: {
             firstName,
             ...(middleName.trim() ? { middleName: middleName.trim() } : {}),
@@ -322,11 +481,18 @@ export default function EditAccountForm(props: EditAccountFormProps) {
             gpa: parseFloat(gpa),
           },
         };
-        await createStudent(student, transaction);
-        return student.id;
+        (await mode) === "EDIT"
+          ? updateStudent(student.id, studentData, transaction)
+          : createStudent(studentData, transaction);
+        return studentData.id;
       });
-      await httpsCallable(functions, "setStudentId")(studentId);
-      await auth.user!.getIdToken(true);
+      if (mode === "CREATE") {
+        await httpsCallable(functions, "setStudentId")(studentId);
+        await auth.user!.getIdToken(true);
+      }
+      setSuccess(
+        `Account ${mode === "CREATE" ? "created" : "updated"} successfully!`
+      );
     } catch (error) {
       setError("Failed to create account. Please try again later.");
     }
@@ -707,6 +873,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
         Submit
       </button>
       {error && <p className={styles.error}>{error}</p>}
+      {success && <p className={styles.success}>{success}</p>}
     </form>
   );
 }

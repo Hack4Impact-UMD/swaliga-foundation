@@ -1,4 +1,3 @@
-
 .accountForm {
   display: flex;
   flex-direction: column;
@@ -114,5 +113,11 @@
 .error {
   width: 100%;
   color: red;
+  text-align: center;
+}
+
+.success {
+  width: 100%;
+  color: #37e23d;
   text-align: center;
 }
