@@ -18,7 +18,7 @@ export default function EditAccountModal(props: EditAccountModalProps) {
 
   return (
     <Modal>
-      <FaEdit className={styles.icon} size={20} />
+      <FaEdit className={styles.icon} size={30} />
       <div className={styles.modalContainer}>
         <h1 className={styles.header}>Edit Account</h1>
         <EditAccountForm mode={"EDIT"} student={student} />

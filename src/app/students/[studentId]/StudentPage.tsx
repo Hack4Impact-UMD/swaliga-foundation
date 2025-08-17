@@ -38,6 +38,7 @@ import {
 import { FaPeopleGroup } from "react-icons/fa6";
 import Table, { Column } from "@/components/ui/Table";
 import RespondToSurveyModal from "@/features/surveyManagement/RespondToSurveyModal";
+import EditAccountModal from "@/app/create-account/EditAccountModal";
 
 interface StudentPageProps {
   studentId: string;
@@ -118,7 +119,9 @@ export default function StudentPage(props: StudentPageProps) {
     {
       name: "Respond",
       getValue: (assignment: PendingAssignmentID) => (
-        <RespondToSurveyModal survey={surveys.find(survey => survey.id === assignment.surveyId)!} />
+        <RespondToSurveyModal
+          survey={surveys.find((survey) => survey.id === assignment.surveyId)!}
+        />
       ),
     },
   ];
@@ -145,7 +148,10 @@ export default function StudentPage(props: StudentPageProps) {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <h1 className={styles.header}>{getFullName(student.name)}</h1>
+        <div className={styles.headerContainer}>
+          <h1 className={styles.header}>{getFullName(student.name)}</h1>
+          <EditAccountModal student={student} />
+        </div>
         <div className={styles.infoFieldsContainer}>
           {studentInfo.map((info) => (
             <div className={styles.infoRow} key={info.field}>
@@ -159,7 +165,6 @@ export default function StudentPage(props: StudentPageProps) {
             </div>
           ))}
         </div>
-        <h2 className={styles.subheader}>Surveys</h2>
         <h3 className={styles.surveysSectionHeader}>Pending Assignments</h3>
         <div className={styles.tableContainer}>
           <Table
