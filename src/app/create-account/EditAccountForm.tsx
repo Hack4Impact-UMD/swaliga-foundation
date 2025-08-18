@@ -481,9 +481,9 @@ export default function EditAccountForm(props: EditAccountFormProps) {
             gpa: parseFloat(gpa),
           },
         };
-        (await mode) === "EDIT"
-          ? updateStudent(student.id, studentData, transaction)
-          : createStudent(studentData, transaction);
+        mode === "EDIT"
+          ? await updateStudent(student.id, studentData, transaction)
+          : await createStudent(studentData, transaction);
         return studentData.id;
       });
       if (mode === "CREATE") {
