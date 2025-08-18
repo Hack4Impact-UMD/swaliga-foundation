@@ -7,7 +7,7 @@ exports.setRole = authFunctions.setRole;
 exports.handleRecentUpdates = process.env.NODE_ENV === 'development' ? firestoreFunctions.testHandleRecentUpdates : firestoreFunctions.handleRecentUpdates;
 exports.addExistingSurveyAndResponses = firestoreFunctions.addExistingSurveyAndResponses;
 exports.assignSurveys = firestoreFunctions.assignSurveys;
-exports.setStudentId = firestoreFunctions.setStudentId;
+exports.onStudentAccountCreated = firestoreFunctions.onStudentAccountCreated;
 exports.onSurveyDocCreated = firestoreFunctions.onSurveyDocCreated;
 exports.onSurveyDocUpdated = firestoreFunctions.onSurveyDocUpdated;
 exports.onSurveyDocDeleted = firestoreFunctions.onSurveyDocDeleted;

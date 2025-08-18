@@ -5,7 +5,7 @@ import { adminAuth, adminDb } from "@/config/firebaseAdminConfig";
 import { FieldValue, Transaction } from "firebase-admin/firestore";
 import { GoogleFormResponse, isGoogleFormResponseStudentEmail, isGoogleFormResponseStudentId, isGoogleFormResponseUnidentified } from "@/types/apps-script-types";
 import { Collection, Document } from "@/data/firestore/utils";
-import { PendingAssignmentID, SurveyResponseStudentEmail, SurveyResponseStudentId, SurveyResponseUnidentified } from "@/types/survey-types";
+import { PendingAssignmentID, SurveyResponseStudentEmail, SurveyResponseStudentEmailID, SurveyResponseStudentId, SurveyResponseUnidentified } from "@/types/survey-types";
 import { v4 as uuid } from "uuid";
 import { onCall, onRequest } from "firebase-functions/https";
 import { onDocumentCreated, onDocumentDeleted, onDocumentUpdated } from "firebase-functions/firestore";
@@ -131,12 +131,21 @@ export const assignSurveys = onCall(async (req) => {
   });
 })
 
-export const setStudentId = onCall(async (req) => {
+export const onStudentAccountCreated = onCall(async (req) => {
   if (!req.auth) {
     throw new Error("Unauthorized");
   } else if (req.auth.token.role !== 'STUDENT') {
-    throw new Error("Only STUDENT role can have a studentId")
+    throw new Error("Only STUDENT role can create student accounts")
+  } else if (req.auth.token.studentId) {
+    throw new Error("Student account already exists for this user");
   }
+
+  await adminDb.runTransaction(async (transaction: Transaction) => {
+    const docs = (await transaction.get(adminDb.collectionGroup(Collection.ASSIGNMENTS).where('studentEmail', '==', req.auth!.token.email!))).docs.map(doc => ({ id: doc.id, surveyId: doc.ref.parent.parent!.id, ...doc.data() } as SurveyResponseStudentEmailID));
+    const surveysCollectionRef = adminDb.collection(Collection.SURVEYS);
+    const updates = { studentId: req.data, studentEmail: FieldValue.delete() }
+    await Promise.all(docs.map(doc => transaction.update(surveysCollectionRef.doc(doc.surveyId).collection(Collection.ASSIGNMENTS).doc(doc.id), updates)));
+  });
 
   const decodedToken = req.auth.token as StudentDecodedIdTokenWithCustomClaims
   await adminAuth.setCustomUserClaims(req.auth?.uid, {
