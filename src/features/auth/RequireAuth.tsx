@@ -1,3 +1,5 @@
+"use client";
+
 import { Role } from "@/types/user-types";
 import useAuth from "./useAuth";
 

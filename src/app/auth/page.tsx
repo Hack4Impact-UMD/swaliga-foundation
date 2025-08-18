@@ -42,7 +42,7 @@ export default function AuthHandlerPage() {
   switch (mode) {
     case "verifyEmail":
       return (
-        <RequireAuth allowedRoles={["ADMIN", "STUDENT"]}>
+        <RequireAuth allowedRoles={[]} allowNoRole>
           <VerifyEmailPage oobCode={oobCode} />
         </RequireAuth>
       );

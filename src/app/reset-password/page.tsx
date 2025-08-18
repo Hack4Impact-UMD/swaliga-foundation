@@ -1,5 +1,3 @@
-"use client";
-
 import RequireAuth from "@/features/auth/RequireAuth";
 import SendResetPasswordEmailPage from "./SendResetPasswordEmailPage";
 
