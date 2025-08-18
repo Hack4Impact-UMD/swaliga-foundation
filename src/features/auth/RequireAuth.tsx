@@ -2,6 +2,7 @@
 
 import { Role } from "@/types/user-types";
 import useAuth from "./useAuth";
+import { useRouter } from "next/navigation";
 
 interface RequireAuthProps {
   children: JSX.Element;
@@ -10,6 +11,14 @@ interface RequireAuthProps {
   allowNoRole?: boolean;
 }
 
+const defaultRedirects: Record<Role | "NO_ROLE" | "UNAUTHENTICATED", string> = {
+  UNAUTHENTICATED: "/",
+  NO_ROLE: "/",
+  STUDENT: "/",
+  STAFF: "/students",
+  ADMIN: "/students",
+};
+
 export default function RequireAuth(props: RequireAuthProps) {
   const {
     children,
@@ -17,7 +26,11 @@ export default function RequireAuth(props: RequireAuthProps) {
     allowUnauthenticated = false,
     allowNoRole,
   } = props;
+
   const auth = useAuth();
+  const role = auth.token?.claims.role as Role | undefined;
+
+  const router = useRouter();
 
   if (
     (allowUnauthenticated && !auth.user) ||
@@ -27,5 +40,11 @@ export default function RequireAuth(props: RequireAuthProps) {
     return children;
   }
 
-  throw Error("You do not have permission to access this page.");
+  if (!auth.user) {
+    router.push(defaultRedirects.UNAUTHENTICATED);
+  } else if (!role) {
+    router.push(defaultRedirects.NO_ROLE);
+  } else {
+    router.push(defaultRedirects[role]);
+  }
 }
