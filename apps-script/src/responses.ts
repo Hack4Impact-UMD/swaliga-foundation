@@ -8,6 +8,7 @@ function mapResponseToGoogleFormResponse_(response: GoogleAppsScript.Forms.FormR
       responseId: response.getId(),
       submittedAt: response.getTimestamp().toISOString(),
       studentId: idQuestionResponse.getResponse() as string,
+      studentEmail: response.getRespondentEmail()
     } as GoogleFormResponseStudentId
   }
   return response.getRespondentEmail() ? {
@@ -19,6 +20,7 @@ function mapResponseToGoogleFormResponse_(response: GoogleAppsScript.Forms.FormR
     surveyId,
     responseId: response.getId(),
     submittedAt: response.getTimestamp().toISOString(),
+    studentEmail: response.getRespondentEmail()
   } as GoogleFormResponseUnidentified
 }
 globalThis.mapResponseToGoogleFormResponse_ = mapResponseToGoogleFormResponse_;
