@@ -45,7 +45,7 @@ function addExistingSurvey(surveyId: string, endTime?: string) {
       responderUri: survey.getPublishedUrl(),
       linkedSheetId: survey.getDestinationId(),
       idQuestionEntryNumber: getIdQuestionEntryNumber_(survey),
-    } as SurveyID,
+    },
     responses: (endTime ? survey.getResponses().filter(response => response.getTimestamp().toISOString() < endTime) : survey.getResponses()).map((response) => mapResponseToGoogleFormResponse_(response, surveyId, idQuestionItem)),
   };
 }

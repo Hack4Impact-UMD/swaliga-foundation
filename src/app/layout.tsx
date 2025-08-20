@@ -28,7 +28,7 @@ export default function RootLayout({
           <AuthProvider>
             <Navbar />
             <SurveysProvider>
-              <StudentsProvider>{children as JSX.Element}</StudentsProvider>
+              <StudentsProvider>{children}</StudentsProvider>
             </SurveysProvider>
           </AuthProvider>
         </Suspense>
