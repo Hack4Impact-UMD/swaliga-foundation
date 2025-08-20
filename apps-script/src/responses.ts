@@ -1,6 +1,6 @@
 import { GoogleFormResponse, GoogleFormResponseStudentEmail, GoogleFormResponseStudentId, GoogleFormResponseUnidentified } from "@/types/apps-script-types";
 
-function mapResponseToGoogleFormResponse(response: GoogleAppsScript.Forms.FormResponse, surveyId: string, idQuestionItem?: GoogleAppsScript.Forms.Item): GoogleFormResponse {
+function mapResponseToGoogleFormResponse_(response: GoogleAppsScript.Forms.FormResponse, surveyId: string, idQuestionItem?: GoogleAppsScript.Forms.Item): GoogleFormResponse {
   let idQuestionResponse;
   if (idQuestionItem && (idQuestionResponse = response.getResponseForItem(idQuestionItem))) {
     return {
@@ -21,7 +21,7 @@ function mapResponseToGoogleFormResponse(response: GoogleAppsScript.Forms.FormRe
     submittedAt: response.getTimestamp().toISOString(),
   } as GoogleFormResponseUnidentified
 }
-globalThis.mapResponseToGoogleFormResponse = mapResponseToGoogleFormResponse;
+globalThis.mapResponseToGoogleFormResponse_ = mapResponseToGoogleFormResponse_;
 
 function getRecentResponses_(surveyIds: string[], endTime: string, startTime?: string) {
   const recentResponses: GoogleFormResponse[] = [];
@@ -29,7 +29,7 @@ function getRecentResponses_(surveyIds: string[], endTime: string, startTime?: s
     const survey = FormApp.openById(surveyId);
     const idQuestionItem = getIdQuestionItem_(survey.getItems());
     const responses = (startTime ? survey.getResponses(new Date(startTime)) : survey.getResponses()).filter(response => response.getTimestamp().toISOString() < endTime);
-    recentResponses.push(...responses.map((response) => mapResponseToGoogleFormResponse(response, surveyId, idQuestionItem)));
+    recentResponses.push(...responses.map((response) => mapResponseToGoogleFormResponse_(response, surveyId, idQuestionItem)));
   });
   return recentResponses;
 }

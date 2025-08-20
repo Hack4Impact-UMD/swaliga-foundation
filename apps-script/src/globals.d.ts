@@ -10,7 +10,7 @@ declare global {
 
   // responses.ts
   var getRecentResponses_: (surveyIds: string[], endTime: string, startTime?: string) => GoogleFormResponse[];
-  var mapResponseToGoogleFormResponse: (response: GoogleAppsScript.Forms.FormResponse, surveyId: string, idQuestionItem?: GoogleAppsScript.Forms.Item) => GoogleFormResponse;
+  var mapResponseToGoogleFormResponse_: (response: GoogleAppsScript.Forms.FormResponse, surveyId: string, idQuestionItem?: GoogleAppsScript.Forms.Item) => GoogleFormResponse;
 
   //surveys.ts
   var createNewSurvey: (title: string, description: string) => SurveyID;
