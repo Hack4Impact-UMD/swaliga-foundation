@@ -1,7 +1,7 @@
 import { onSchedule, ScheduledEvent } from "firebase-functions/scheduler";
 import { addExistingSurvey, getRecentUpdates } from "@/data/apps-script/calls"
 import { fetchAccessToken } from '@/features/auth/serverAuthZ';
-import { GoogleFormResponse, isGoogleFormResponseStudentEmail, isGoogleFormResponseStudentId, isGoogleFormResponseUnidentified } from "@/types/apps-script-types";
+import { GoogleFormResponse, GoogleFormResponseStudentId, isGoogleFormResponseStudentId, isGoogleFormResponseUnidentified } from "@/types/apps-script-types";
 import { SurveyResponseStudentEmail, SurveyResponseStudentId, SurveyResponseUnidentified } from "@/types/survey-types";
 import { onCall, onRequest } from "firebase-functions/https";
 import { Transaction } from "firebase-admin/firestore";
@@ -20,28 +20,56 @@ async function getAllSurveyIds(transaction: Transaction): Promise<string[]> {
   return surveyIds;
 }
 
+async function getAllStudentIds(transaction: Transaction): Promise<string[]> {
+  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc(Document.STUDENTS).collection(Collection.STUDENTS);
+  const count = (await transaction.get(collectionRef.count())).data().count;
+  const promises = [];
+  for (let i = 0; i < count; i++) {
+    promises.push(transaction.get(collectionRef.doc(i.toString())));
+  }
+  const studentIds = (await Promise.all(promises)).flatMap(doc => Object.keys(doc.data() || {}));
+  return studentIds;
+}
+
 const addResponsesToFirestore = async (responses: GoogleFormResponse[], transaction: Transaction) => {
   const surveysCollection = adminDb.collection(Collection.SURVEYS);
+  const studentIds = await getAllStudentIds(transaction);
 
-  const idResponses = responses.filter(isGoogleFormResponseStudentId);
-  const existingDocs = await Promise.all(
+  const idResponses: GoogleFormResponseStudentId[] = [];
+  const emailResponses: GoogleFormResponse[] = [];
+  const unidentifiedResponses: GoogleFormResponse[] = [];
+  responses.forEach(response => {
+    if (isGoogleFormResponseStudentId(response)) {
+      if (studentIds.includes(response.studentId)) {
+        idResponses.push(response);
+      } else if (response.studentEmail !== "") {
+        emailResponses.push(response);
+      } else {
+        unidentifiedResponses.push(response);
+      }
+    } else if (isGoogleFormResponseUnidentified(response)) {
+      unidentifiedResponses.push(response);
+    } else {
+      emailResponses.push(response);
+    }
+  });
+
+  const existingAssignments = await Promise.all(
     idResponses.map(response => transaction.get(adminDb.collection(Collection.SURVEYS).doc(response.surveyId).collection(Collection.ASSIGNMENTS).where('studentId', '==', response.studentId).where('surveyId', '==', response.surveyId).where('responseId', '==', null).limit(1)))
   );
   idResponses.forEach((response, index) => {
-    existingDocs[index].empty ? transaction.set(surveysCollection.doc(response.surveyId).collection(Collection.ASSIGNMENTS).doc(uuid()), {
+    existingAssignments[index].empty ? transaction.set(surveysCollection.doc(response.surveyId).collection(Collection.ASSIGNMENTS).doc(uuid()), {
       studentId: response.studentId,
       responseId: response.responseId,
       submittedAt: response.submittedAt
-    } as SurveyResponseStudentId) : transaction.update(existingDocs[index].docs[0].ref, { responseId: response.responseId, submittedAt: response.submittedAt });
+    } as SurveyResponseStudentId) : transaction.update(existingAssignments[index].docs[0].ref, { responseId: response.responseId, submittedAt: response.submittedAt });
   });
 
-  const unidentifiedResponses = responses.filter(isGoogleFormResponseUnidentified);
   unidentifiedResponses.forEach(response => transaction.set(surveysCollection.doc(response.surveyId).collection(Collection.ASSIGNMENTS).doc(uuid()), {
     responseId: response.responseId,
     submittedAt: response.submittedAt,
   } as SurveyResponseUnidentified))
 
-  const emailResponses = responses.filter(isGoogleFormResponseStudentEmail);
   const { users } = await adminAuth.getUsers([...new Set(emailResponses.map(response => response.studentEmail))].map(email => ({ email })));
   const emailIds: { [email: string]: string } = {};
   users.forEach(user => emailIds[user.email!] = user.uid);
