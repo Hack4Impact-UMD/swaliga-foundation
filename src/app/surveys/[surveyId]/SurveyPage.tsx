@@ -39,13 +39,16 @@ export default function SurveyPage(props: SurveyPageProps) {
   const students = useStudents();
   const { assignments } = useAssignments({ surveyId });
 
-  const pendingAssignments: PendingAssignmentID[] = [];
-  const surveyResponses: SurveyResponseID[] = [];
-  assignments.forEach((assignment) =>
-    isPendingAssignmentID(assignment)
-      ? pendingAssignments.push(assignment)
-      : surveyResponses.push(assignment)
-  );
+  const { pendingAssignments, surveyResponses } = useMemo(() => {
+    const pendingAssignments: PendingAssignmentID[] = [];
+    const surveyResponses: SurveyResponseID[] = [];
+    assignments.forEach((assignment) =>
+      isPendingAssignmentID(assignment)
+        ? pendingAssignments.push(assignment)
+        : surveyResponses.push(assignment)
+    );
+    return { pendingAssignments, surveyResponses };
+  }, [assignments]);
 
   const pendingAssignmentColumns: Column<PendingAssignmentID>[] = [
     {
