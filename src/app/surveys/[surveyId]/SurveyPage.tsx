@@ -37,7 +37,7 @@ export default function SurveyPage(props: SurveyPageProps) {
     useState<string[]>([]);
 
   const students = useStudents();
-  const assignments = useAssignments({ surveyId });
+  const { assignments } = useAssignments({ surveyId });
 
   const pendingAssignments: PendingAssignmentID[] = [];
   const surveyResponses: SurveyResponseID[] = [];

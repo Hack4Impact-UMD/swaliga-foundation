@@ -19,5 +19,5 @@ export default function useAssignments(params: useAssignmentsParams) {
     ).then((assignments) => setAssignments(assignments));
   }, [studentId, surveyId]);
 
-  return assignments;
+  return { assignments, setAssignments };
 }
