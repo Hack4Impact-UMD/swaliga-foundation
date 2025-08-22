@@ -1,0 +1,42 @@
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 15px;
+  width: 80%;
+  height: 100%;
+  margin: 20px;
+}
+
+.text {
+  text-align: center;
+}
+
+.select {
+  width: 80%;
+  max-width: 100%;
+}
+
+.button {
+  width: 80%;
+  height: 50px;
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+  background-color: rgb(76, 175, 80);
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: rgba(76, 175, 80, 0.8);
+}
+
+.error {
+  color: red;
+}
+
+.success {
+  color: rgb(76, 175, 80);
+}
