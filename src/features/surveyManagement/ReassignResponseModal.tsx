@@ -58,7 +58,7 @@ export default function ReassignResponseModal(
   const handleClose = () => {
     setSelectedStudentId(currStudent?.id);
     setMessage(undefined);
-  }
+  };
 
   return (
     <Modal onClose={handleClose}>
@@ -79,15 +79,15 @@ export default function ReassignResponseModal(
         )}
         <Select
           className={styles.select}
-          // @ts-expect-error
           options={students.map((student) => ({
             value: student.id,
             label: `${getFullName(student.name)} (ID: ${student.id})`,
           }))}
           isClearable
           isSearchable
-          value={selectedStudentId}
-          onChange={(option) => setSelectedStudentId(option || undefined)}
+          onChange={(option) =>
+            setSelectedStudentId(option?.value ?? undefined)
+          }
         />
         <button onClick={handleReassignResponse} className={styles.button}>
           Confirm Reassignment
