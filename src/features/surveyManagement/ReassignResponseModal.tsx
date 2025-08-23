@@ -64,7 +64,7 @@ export default function ReassignResponseModal(
     <Modal onClose={handleClose}>
       <MdAssignmentInd />
       <div className={styles.modalContent}>
-        <h1>Reassign Assignment</h1>
+        <h1>Reassign Response</h1>
         {currStudent ? (
           <p className={styles.text}>
             This response was submitted by {getFullName(currStudent.name)} (ID:{" "}
