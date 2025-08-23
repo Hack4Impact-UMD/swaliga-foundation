@@ -26,9 +26,9 @@ export default function ReassignResponseModal(
 ) {
   const { response, currStudent, onReassign } = props;
 
-  const [selectedStudentId, setSelectedStudentId] = useState<
-    string | undefined
-  >(currStudent?.id ?? undefined);
+  const [selectedStudentId, setSelectedStudentId] = useState<string>(
+    currStudent?.id ?? ""
+  );
   const [message, setMessage] = useState<
     ReassignResponseModalMessages | undefined
   >(undefined);
@@ -55,8 +55,15 @@ export default function ReassignResponseModal(
     }
   };
 
+  const options = [{ value: "", label: "Unassigned" }].concat(
+    students.map((student) => ({
+      value: student.id,
+      label: `${getFullName(student.name)} (ID: ${student.id})`,
+    }))
+  );
+
   const handleClose = () => {
-    setSelectedStudentId(currStudent?.id);
+    setSelectedStudentId(currStudent?.id ?? "");
     setMessage(undefined);
   };
 
@@ -79,15 +86,11 @@ export default function ReassignResponseModal(
         )}
         <Select
           className={styles.select}
-          options={students.map((student) => ({
-            value: student.id,
-            label: `${getFullName(student.name)} (ID: ${student.id})`,
-          }))}
+          options={options}
           isClearable
           isSearchable
-          onChange={(option) =>
-            setSelectedStudentId(option?.value ?? undefined)
-          }
+          value={options.find((option) => option.value === selectedStudentId)}
+          onChange={(option) => setSelectedStudentId(option?.value ?? "")}
         />
         <button onClick={handleReassignResponse} className={styles.button}>
           Confirm Reassignment
