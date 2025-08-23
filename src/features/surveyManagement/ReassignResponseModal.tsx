@@ -2,8 +2,9 @@ import styles from "./ReassignResponseModal.module.css";
 import Modal from "@/components/ui/Modal";
 import { updateAssignment } from "@/data/firestore/assignments";
 import useStudents from "@/data/hooks/useStudents";
-import { SurveyResponseID } from "@/types/survey-types";
+import { isSurveyResponseStudentEmailID, SurveyResponseID } from "@/types/survey-types";
 import { getFullName, Student } from "@/types/user-types";
+import { deleteField } from "firebase/firestore";
 import { useState } from "react";
 import { MdAssignmentInd } from "react-icons/md";
 import Select from "react-select";
@@ -46,7 +47,8 @@ export default function ReassignResponseModal(
       }
       setMessage(ReassignResponseModalMessages.LOADING);
       await updateAssignment(response.surveyId, response.id, {
-        studentId: selectedStudentId,
+        studentId: selectedStudentId ? selectedStudentId : deleteField(),
+        ...(isSurveyResponseStudentEmailID(response) && { studentEmail: deleteField() }),
       });
       onReassign(response.id, selectedStudentId);
       setMessage(ReassignResponseModalMessages.SUCCESS);
