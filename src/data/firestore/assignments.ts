@@ -1,7 +1,7 @@
 import { Assignment, AssignmentID, PendingAssignment } from "@/types/survey-types";
 import { db } from "../../config/firebaseConfig";
 import { getDoc, doc, updateDoc, deleteDoc, Transaction, WriteBatch, collection, getDocs, collectionGroup, query, where } from "firebase/firestore";
-import { Collection } from "./utils";
+import { Collection, FirestorePartial } from "./utils";
 import { v4 as uuid } from "uuid";
 
 export async function getAssignmentById(surveyId: string, assignmentId: string, transaction?: Transaction): Promise<AssignmentID> {
@@ -61,7 +61,7 @@ export async function createAssignment(surveyId: string, assignment: PendingAssi
   }
 }
 
-export async function updateAssignment(surveyId: string, assignmentId: string, updates: Partial<Assignment>, instance?: Transaction | WriteBatch): Promise<void> {
+export async function updateAssignment(surveyId: string, assignmentId: string, updates: FirestorePartial<Assignment>, instance?: Transaction | WriteBatch): Promise<void> {
   try {
     const assignmentRef = doc(db, Collection.SURVEYS, surveyId, Collection.ASSIGNMENTS, assignmentId);
     // @ts-ignore

@@ -1,7 +1,7 @@
 import { Survey, SurveyID } from '@/types/survey-types';
 import { db } from "../../config/firebaseConfig";
 import { collection, deleteDoc, doc, getDoc, getDocs, setDoc, Transaction, updateDoc, WriteBatch } from 'firebase/firestore';
-import { Collection } from './utils';
+import { Collection, FirestorePartial } from './utils';
 
 export async function getSurveyById(id: string, transaction?: Transaction): Promise<SurveyID> {
   const surveyRef = doc(db, Collection.SURVEYS, id);
@@ -43,7 +43,7 @@ export async function createSurvey(surveyId: string, survey: Survey, instance?: 
   }
 }
 
-export async function updateSurvey(id: string, updates: Partial<Survey>, instance?: Transaction | WriteBatch): Promise<void> {
+export async function updateSurvey(id: string, updates: FirestorePartial<Survey>, instance?: Transaction | WriteBatch): Promise<void> {
   try {
     const surveyRef = doc(db, Collection.SURVEYS, id);
     // @ts-ignore

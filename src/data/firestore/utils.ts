@@ -1,3 +1,5 @@
+import { FieldValue } from "firebase/firestore";
+
 export enum Collection {
   ADMIN_DATA = "adminData",
   STUDENTS = "students",
@@ -11,4 +13,8 @@ export enum Document {
   NEXT_STUDENT_ID = "nextStudentId",
   SURVEYS = "surveys",
   STUDENTS = "students",
+}
+
+export type FirestorePartial<T> = {
+  [P in keyof T]?: T[P] | FieldValue;
 }

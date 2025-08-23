@@ -1,7 +1,7 @@
 import { db } from "@/config/firebaseConfig";
 import { Student } from "@/types/user-types";
 import { deleteDoc, doc, getDoc, setDoc, Transaction, updateDoc, WriteBatch } from "firebase/firestore";
-import { Collection } from "./utils";
+import { Collection, FirestorePartial } from "./utils";
 
 export async function getStudentById(id: string, transaction?: Transaction): Promise<Student> {
   const studentRef = doc(db, Collection.STUDENTS, id);
@@ -27,7 +27,7 @@ export async function createStudent(student: Student, instance?: Transaction | W
   }
 }
 
-export async function updateStudent(id: string, updates: Partial<Student>, instance?: Transaction | WriteBatch): Promise<void> {
+export async function updateStudent(id: string, updates: FirestorePartial<Student>, instance?: Transaction | WriteBatch): Promise<void> {
   try {
     const studentRef = doc(db, Collection.STUDENTS, id);
     // @ts-ignore
