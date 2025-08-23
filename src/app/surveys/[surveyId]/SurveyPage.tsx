@@ -3,13 +3,16 @@
 import {
   AssignmentID,
   isPendingAssignmentID,
+  isSurveyResponseID,
   isSurveyResponseStudentEmailID,
   isSurveyResponseStudentIdID,
   isSurveyResponseUnidentifiedID,
   PendingAssignmentID,
   SurveyResponseID,
+  SurveyResponseStudentIdID,
+  SurveyResponseUnidentifiedID,
 } from "@/types/survey-types";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styles from "./SurveyPage.module.css";
 import { getAssignmentsBySurveyId } from "@/data/firestore/assignments";
 import LoadingPage from "@/app/loading";
@@ -24,6 +27,7 @@ import { FilterCondition } from "@/components/Filter";
 import SendSurveyReminderEmailModal from "@/features/notifications/SendSurveyReminderEmailModal";
 import AssignStudentsModal from "@/features/surveyManagement/AssignStudentsModal";
 import useAssignments from "@/data/hooks/useAssignments";
+import ReassignResponseModal from "@/features/surveyManagement/ReassignResponseModal";
 
 interface SurveyPageProps {
   surveyId: string;
@@ -37,7 +41,7 @@ export default function SurveyPage(props: SurveyPageProps) {
     useState<string[]>([]);
 
   const students = useStudents();
-  const { assignments } = useAssignments({ surveyId });
+  const { assignments, setAssignments } = useAssignments({ surveyId });
 
   const { pendingAssignments, surveyResponses } = useMemo(() => {
     const pendingAssignments: PendingAssignmentID[] = [];
@@ -102,6 +106,45 @@ export default function SurveyPage(props: SurveyPageProps) {
       name: "Submission Timestamp",
       getValue: (assignment: SurveyResponseID) =>
         moment(assignment.submittedAt).format("M/D/YYYY HH:mm:ss"),
+    },
+    {
+      name: "Reassign Response",
+      getValue: (assignment: SurveyResponseID) => (
+        <ReassignResponseModal
+          response={assignment}
+          currStudent={
+            isSurveyResponseStudentIdID(assignment)
+              ? students.find((student) => student.id === assignment.studentId)
+              : undefined
+          }
+          onReassign={(newStudentId: string) =>
+            setAssignments((prev) =>
+              prev.map((a) => {
+                if (isSurveyResponseID(a) && a.id === assignment.id) {
+                  return newStudentId
+                    ? ({
+                        id: a.id,
+                        surveyId: a.surveyId,
+                        responseId: a.responseId,
+                        studentId: newStudentId,
+                        submittedAt: a.submittedAt,
+                        ...(isSurveyResponseStudentIdID(a) && a.assignedAt
+                          ? { assignedAt: a.assignedAt }
+                          : {}),
+                      } satisfies SurveyResponseStudentIdID)
+                    : ({
+                        id: a.id,
+                        surveyId: a.surveyId,
+                        responseId: a.responseId,
+                        submittedAt: a.submittedAt,
+                      } satisfies SurveyResponseUnidentifiedID);
+                }
+                return a;
+              })
+            )
+          }
+        />
+      ),
     },
   ];
 

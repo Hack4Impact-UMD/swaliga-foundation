@@ -12,7 +12,7 @@ import Select from "react-select";
 interface ReassignResponseModalProps {
   response: SurveyResponseID;
   currStudent?: Student;
-  onReassign: (responseId: string, studentId?: string) => void;
+  onReassign: (studentId: string) => void;
 }
 
 enum ReassignResponseModalMessages {
@@ -50,7 +50,7 @@ export default function ReassignResponseModal(
         studentId: selectedStudentId ? selectedStudentId : deleteField(),
         ...(isSurveyResponseStudentEmailID(response) && { studentEmail: deleteField() }),
       });
-      onReassign(response.id, selectedStudentId);
+      onReassign(selectedStudentId);
       setMessage(ReassignResponseModalMessages.SUCCESS);
     } catch (error) {
       setMessage(ReassignResponseModalMessages.ERROR);

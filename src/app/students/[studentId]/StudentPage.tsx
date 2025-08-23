@@ -39,6 +39,7 @@ import { FaPeopleGroup } from "react-icons/fa6";
 import Table, { Column } from "@/components/ui/Table";
 import RespondToSurveyModal from "@/features/surveyManagement/RespondToSurveyModal";
 import EditAccountModal from "@/app/create-account/EditAccountModal";
+import ReassignResponseModal from "@/features/surveyManagement/ReassignResponseModal";
 
 interface StudentPageProps {
   studentId: string;
@@ -52,7 +53,7 @@ export default function StudentPage(props: StudentPageProps) {
   const role = useAuth().token?.claims.role as Role;
 
   const student = useStudents().find((student) => student.id === studentId)!;
-  const { assignments } = useAssignments({ studentId });
+  const { assignments, setAssignments } = useAssignments({ studentId });
   const surveys = useSurveys(
     role === "STUDENT"
       ? [...new Set(assignments.map((assignment) => assignment.surveyId))]
@@ -141,6 +142,18 @@ export default function StudentPage(props: StudentPageProps) {
       name: "View Response",
       getValue: (assignment: SurveyResponseStudentIdID) => (
         <FaEye className={styles.icon} size={20} />
+      ),
+    },
+    {
+      name: "Reassign Response",
+      getValue: (assignment: SurveyResponseStudentIdID) => (
+        <ReassignResponseModal
+          response={assignment}
+          currStudent={student}
+          onReassign={() =>
+            setAssignments((prev) => prev.filter((a) => a.id !== assignment.id))
+          }
+        />
       ),
     },
   ];
