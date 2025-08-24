@@ -71,6 +71,11 @@ function addIdQuestion_(survey: GoogleAppsScript.Forms.Form) {
 }
 globalThis.addIdQuestion_ = addIdQuestion_;
 
+function getIdQuestionItem_(items: GoogleAppsScript.Forms.Item[]) {
+  return items.find((item) => item.getTitle() === "Swaliga ID");
+}
+globalThis.getIdQuestionItem_ = getIdQuestionItem_;
+
 function getIdQuestionEntryNumber_(survey: GoogleAppsScript.Forms.Form): string {
   const idQuestionItem = getIdQuestionItem_(survey.getItems());
   const response = survey.createResponse();
@@ -97,11 +102,6 @@ function getUpdatedSurveyTitlesAndDescriptions_(surveyIds: string[], startTime?:
   return surveys;
 }
 globalThis.getUpdatedSurveyTitlesAndDescriptions_ = getUpdatedSurveyTitlesAndDescriptions_;
-
-function getIdQuestionItem_(items: GoogleAppsScript.Forms.Item[]) {
-  return items.find((item) => item.getTitle() === "Swaliga ID");
-}
-globalThis.getIdQuestionItem_ = getIdQuestionItem_;
 
 function deleteSurvey(surveyId: string) {
   DriveApp.getFileById(surveyId).setTrashed(true);
