@@ -6,6 +6,7 @@ import { httpsCallable } from "firebase/functions";
 import { useEffect, useState } from "react";
 import useAuth from "./useAuth";
 import { Role } from "@/types/user-types";
+import InvalidRefreshTokenPage from "@/app/InvalidRefreshTokenPage";
 
 interface AvailabilityProviderProps {
   children: React.ReactNode;
@@ -40,7 +41,7 @@ export default function AvailabilityProvider(props: AvailabilityProviderProps) {
   } else if (isError) {
     throw new Error("We ran into an unexpected error. Please try again later.");
   } else if (!isRefreshTokenValid) {
-    return <div>Invalid refresh token</div>;
+    return <InvalidRefreshTokenPage />;
   }
   return children;
 }
