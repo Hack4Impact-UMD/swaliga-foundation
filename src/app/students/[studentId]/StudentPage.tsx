@@ -12,7 +12,7 @@ import {
 } from "@/types/survey-types";
 import { getFullAddress, getFullName, Role, Student } from "@/types/user-types";
 import moment from "moment";
-import { cloneElement, useEffect, useState } from "react";
+import { cloneElement, useMemo, useState } from "react";
 import styles from "./StudentPage.module.css";
 import LoadingPage from "@/app/loading";
 import useSurveys from "@/data/hooks/useSurveys";
@@ -54,20 +54,28 @@ export default function StudentPage(props: StudentPageProps) {
 
   const { students } = useStudents();
   const student = students.find((student) => student.id === studentId)!;
-  const { assignments, setAssignments } = useAssignments({ studentId });
-  const { surveys } = useSurveys(
-    role === "STUDENT"
-      ? [...new Set(assignments.map((assignment) => assignment.surveyId))]
-      : []
-  );
 
-  const pendingAssignments: PendingAssignmentID[] = [];
-  const surveyResponses: SurveyResponseStudentIdID[] = [];
-  assignments.forEach((assignment) =>
-    isPendingAssignmentID(assignment)
-      ? pendingAssignments.push(assignment)
-      : surveyResponses.push(assignment as SurveyResponseStudentIdID)
-  );
+  const { assignments, setAssignments } = useAssignments({
+    studentId,
+  });
+
+  const surveyIds = useMemo(() => {
+    return role === "STUDENT"
+      ? [...new Set(assignments.map((assignment) => assignment.surveyId))]
+      : [];
+  }, [assignments, role]);
+  const { surveys } = useSurveys(surveyIds);
+
+  const { pendingAssignments, surveyResponses } = useMemo(() => {
+    const pendingAssignments: PendingAssignmentID[] = [];
+    const surveyResponses: SurveyResponseStudentIdID[] = [];
+    assignments.forEach((assignment) =>
+      isPendingAssignmentID(assignment)
+        ? pendingAssignments.push(assignment)
+        : surveyResponses.push(assignment as SurveyResponseStudentIdID)
+    );
+    return { pendingAssignments, surveyResponses };
+  }, [assignments]);
 
   const studentInfo = [
     {
