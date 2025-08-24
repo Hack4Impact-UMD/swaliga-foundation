@@ -13,6 +13,8 @@ export async function GET(req: NextRequest) {
 
   const redirectUri = encodeURIComponent(`${process.env.NEXT_PUBLIC_DOMAIN}/api/auth/handler`);
   const scopes: string = encodeURIComponent([
+    'https://www.googleapis.com/auth/script.external_request',
+    'https://www.googleapis.com/auth/script.scriptapp',
     'https://www.googleapis.com/auth/forms',
     'https://www.googleapis.com/auth/drive',
     'https://www.googleapis.com/auth/spreadsheets',
