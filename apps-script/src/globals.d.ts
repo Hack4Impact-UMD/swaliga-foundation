@@ -15,7 +15,7 @@ declare global {
 
   //surveys.ts
   var createNewSurvey: (title: string, description: string) => SurveyID;
-  var addExistingSurvey: (surveyId: string, endTime?: string) => {
+  var addExistingSurvey: (surveyId: string) => {
     survey: SurveyID;
     responses: GoogleFormResponse[];
   }

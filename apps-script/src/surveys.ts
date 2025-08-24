@@ -21,7 +21,7 @@ function createNewSurvey(title: string, description: string): SurveyID {
 }
 globalThis.createNewSurvey = createNewSurvey;
 
-function addExistingSurvey(surveyId: string, endTime?: string) {
+function addExistingSurvey(surveyId: string) {
   const survey = FormApp.openById(surveyId);
   try {
     survey.getDestinationId();
@@ -52,7 +52,7 @@ function addExistingSurvey(surveyId: string, endTime?: string) {
       linkedSheetId: survey.getDestinationId(),
       idQuestionEntryNumber: getIdQuestionEntryNumber_(survey),
     },
-    responses: (endTime ? survey.getResponses().filter(response => response.getTimestamp().toISOString() < endTime) : survey.getResponses()).map((response) => mapResponseToGoogleFormResponse_(response, surveyId, idQuestionItem)),
+    responses: survey.getResponses().map((response) => mapResponseToGoogleFormResponse_(response, surveyId, idQuestionItem)),
   };
 }
 globalThis.addExistingSurvey = addExistingSurvey;

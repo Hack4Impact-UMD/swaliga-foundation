@@ -119,8 +119,7 @@ export const addExistingSurveyAndResponses = onCall(async (req) => {
   const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
   const tokenData = await fetchAccessToken(adminUser.customClaims?.googleTokens?.refreshToken || '');
   return await adminDb.runTransaction(async (transaction: Transaction) => {
-    const { lastUpdated } = (await transaction.get(adminDb.collection(Collection.METADATA).doc(Document.LAST_UPDATED))).data() || {};
-    const { survey, responses } = await addExistingSurvey(tokenData.accessToken, req.data, lastUpdated);
+    const { survey, responses } = await addExistingSurvey(tokenData.accessToken, req.data);
     const { id, ...surveyData } = survey;
     await addResponsesToFirestore(responses, transaction);
     transaction.set(adminDb.collection(Collection.SURVEYS).doc(id), surveyData);
