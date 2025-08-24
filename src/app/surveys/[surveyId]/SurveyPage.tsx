@@ -35,14 +35,13 @@ interface SurveyPageProps {
 
 export default function SurveyPage(props: SurveyPageProps) {
   const { surveyId } = props;
-
   const { surveys, isLoading: isSurveysLoading, isError: isSurveysError } = useSurveys();
   const survey = surveys.find((survey) => survey.id === surveyId)!;
-  const [selectedPendingAssignmentIds, setSelectedPendingAssignmentIds] =
-    useState<string[]>([]);
 
   const { students, isLoading: isStudentsLoading, isError: isStudentsError } = useStudents();
 
+  const [selectedPendingAssignmentIds, setSelectedPendingAssignmentIds] =
+    useState<string[]>([]);
   const { assignments, setAssignments, isLoading: isAssignmentsLoading, isError: isAssignmentsError } = useAssignments({ surveyId });
   const { pendingAssignments, surveyResponses } = useMemo(() => {
     const pendingAssignments: PendingAssignmentID[] = [];

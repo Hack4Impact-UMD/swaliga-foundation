@@ -46,24 +46,15 @@ interface StudentPageProps {
 }
 
 export default function StudentPage(props: StudentPageProps) {
-  const { studentId } = props;
-
   const role = useAuth().token?.claims.role as Role;
 
+  const { studentId } = props;
   const { students, isLoading: isStudentsLoading, isError: isStudentsError } = useStudents();
   const student = students.find((student) => student.id === studentId)!;
 
   const { assignments, setAssignments, isLoading: isAssignmentsLoading, isError: isAssignmentsError } = useAssignments({
     studentId,
   });
-
-  const surveyIds = useMemo(() => {
-    return role === "STUDENT"
-      ? [...new Set(assignments.map((assignment) => assignment.surveyId))]
-      : [];
-  }, [assignments, role]);
-  const { surveys, isLoading: isSurveysLoading, isError: isSurveysError } = useSurveys(surveyIds);
-
   const { pendingAssignments, surveyResponses } = useMemo(() => {
     const pendingAssignments: PendingAssignmentID[] = [];
     const surveyResponses: SurveyResponseStudentIdID[] = [];
@@ -74,6 +65,13 @@ export default function StudentPage(props: StudentPageProps) {
     );
     return { pendingAssignments, surveyResponses };
   }, [assignments]);
+
+  const surveyIds = useMemo(() => {
+    return role === "STUDENT"
+      ? [...new Set(assignments.map((assignment) => assignment.surveyId))]
+      : [];
+  }, [assignments, role]);
+  const { surveys, isLoading: isSurveysLoading, isError: isSurveysError } = useSurveys(surveyIds);
 
   if (isStudentsLoading) {
     return <LoadingPage />;
