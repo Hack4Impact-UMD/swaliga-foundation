@@ -33,7 +33,7 @@ function addExistingSurvey(surveyId: string) {
   }
 
   const onFormSubmitTrigger = ScriptApp.getProjectTriggers().filter(trigger => trigger.getEventType() === ScriptApp.EventType.ON_FORM_SUBMIT && trigger.getTriggerSourceId() === surveyId)[0];
-  if (onFormSubmitTrigger) {
+  if (!onFormSubmitTrigger) {
     installTrigger_(survey);
   }
 
