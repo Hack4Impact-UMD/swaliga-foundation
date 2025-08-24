@@ -3,7 +3,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import { Role, Student } from "@/types/user-types";
 import { collection, doc, onSnapshot } from "firebase/firestore";
-import { Collection } from "../firestore/utils";
+import { Collection, Document } from "../firestore/utils";
 import { db } from "@/config/firebaseConfig";
 import LoadingPage from "@/app/loading";
 import useAuth from "@/features/auth/useAuth";
@@ -50,9 +50,20 @@ export default function StudentsProvider({
             }
           )
         : onSnapshot(
-            collection(db, Collection.STUDENTS),
+            collection(
+              db,
+              Collection.ADMIN_DATA,
+              Document.STUDENTS,
+              Collection.STUDENTS
+            ),
             (snapshot) => {
-              setStudents(snapshot.docs.map((doc) => doc.data() as Student));
+              const newStudents: Student[] = [];
+              for (const doc of snapshot.docs) {
+                for (const [_, student] of Object.entries(doc.data())) {
+                  newStudents.push(student as Student);
+                }
+              }
+              setStudents(newStudents);
               setIsLoading(false);
             },
             () => {
