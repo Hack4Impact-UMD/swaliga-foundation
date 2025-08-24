@@ -12,7 +12,7 @@ import DeleteSurveyModal from "@/features/surveyManagement/DeleteSurveyModal";
 import useSurveys from "@/data/hooks/useSurveys";
 
 export default function SurveysPage() {
-  const { surveys } = useSurveys();
+  const { surveys, isLoading, isError } = useSurveys();
   const [selectedSurveyIds, setSelectedSurveyIds] = useState<string[]>([]);
 
   const columns: Column<SurveyID>[] = [
@@ -94,6 +94,8 @@ export default function SurveysPage() {
             includeAllOption: true,
           }}
           filterConditions={filterConditions}
+          isLoading={isLoading}
+          isError={isError}
         />
       </div>
     </div>

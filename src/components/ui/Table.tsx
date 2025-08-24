@@ -25,11 +25,20 @@ interface TableProps<T extends ID> {
   selectOptions?: SelectOptions;
   paginationOptions?: PaginationOptions;
   filterConditions?: FilterCondition<T>[];
+  isLoading?: boolean;
+  isError?: boolean;
 }
 
 export default function Table<T extends ID>(props: TableProps<T>) {
-  const { columns, items, selectOptions, paginationOptions, filterConditions } =
-    props;
+  const {
+    columns,
+    items,
+    selectOptions,
+    paginationOptions,
+    filterConditions,
+    isLoading = false,
+    isError = false,
+  } = props;
 
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [numItemsPerPage, setNumItemsPerPage] = useState<number>(
@@ -39,7 +48,7 @@ export default function Table<T extends ID>(props: TableProps<T>) {
   );
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
   const [filteredItems, setFilteredItems] = useState<T[]>(items);
-  
+
   const numPages = Math.ceil(filteredItems.length / numItemsPerPage);
 
   useEffect(() => {
@@ -113,13 +122,17 @@ export default function Table<T extends ID>(props: TableProps<T>) {
               </tr>
             </thead>
             <tbody>
-              {filteredItems.length === 0 ? (
+              {filteredItems.length === 0 || isLoading || isError ? (
                 <tr className={styles.tableRow}>
                   <td
                     className={styles.rowItem}
                     colSpan={columns.length + (selectOptions ? 1 : 0)}
                   >
-                    No items to display
+                    {isLoading
+                      ? "Loading..."
+                      : isError
+                      ? "Error loading items"
+                      : "No items to display"}
                   </td>
                 </tr>
               ) : (

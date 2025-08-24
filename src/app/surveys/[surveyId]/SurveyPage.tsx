@@ -36,14 +36,14 @@ interface SurveyPageProps {
 export default function SurveyPage(props: SurveyPageProps) {
   const { surveyId } = props;
 
-  const { surveys } = useSurveys();
+  const { surveys, isLoading: isSurveysLoading, isError: isSurveysError } = useSurveys();
   const survey = surveys.find((survey) => survey.id === surveyId)!;
   const [selectedPendingAssignmentIds, setSelectedPendingAssignmentIds] =
     useState<string[]>([]);
 
-  const { students } = useStudents();
-  const { assignments, setAssignments } = useAssignments({ surveyId });
+  const { students, isLoading: isStudentsLoading, isError: isStudentsError } = useStudents();
 
+  const { assignments, setAssignments, isLoading: isAssignmentsLoading, isError: isAssignmentsError } = useAssignments({ surveyId });
   const { pendingAssignments, surveyResponses } = useMemo(() => {
     const pendingAssignments: PendingAssignmentID[] = [];
     const surveyResponses: SurveyResponseID[] = [];
@@ -54,6 +54,14 @@ export default function SurveyPage(props: SurveyPageProps) {
     );
     return { pendingAssignments, surveyResponses };
   }, [assignments]);
+
+  if (isSurveysLoading) {
+    return <LoadingPage />
+  }
+
+  if (isSurveysError) {
+    throw new Error("Failed to get survey data.");
+  }
 
   const pendingAssignmentColumns: Column<PendingAssignmentID>[] = [
     {
@@ -235,6 +243,8 @@ export default function SurveyPage(props: SurveyPageProps) {
               includeAllOption: true,
             }}
             filterConditions={filterConditions.slice(0, 2)}
+            isLoading={isAssignmentsLoading || isStudentsLoading}
+            isError={isAssignmentsError || isStudentsError}
           />
         </div>
         <div className={styles.tableContainer}>
@@ -247,6 +257,8 @@ export default function SurveyPage(props: SurveyPageProps) {
               includeAllOption: true,
             }}
             filterConditions={filterConditions}
+            isLoading={isAssignmentsLoading || isStudentsLoading}
+            isError={isAssignmentsError || isStudentsError}
           />
         </div>
       </div>

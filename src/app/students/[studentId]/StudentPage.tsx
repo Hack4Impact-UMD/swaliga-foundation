@@ -48,14 +48,12 @@ interface StudentPageProps {
 export default function StudentPage(props: StudentPageProps) {
   const { studentId } = props;
 
-  const [error, setError] = useState<string>("");
-
   const role = useAuth().token?.claims.role as Role;
 
-  const { students } = useStudents();
+  const { students, isLoading: isStudentsLoading, isError: isStudentsError } = useStudents();
   const student = students.find((student) => student.id === studentId)!;
 
-  const { assignments, setAssignments } = useAssignments({
+  const { assignments, setAssignments, isLoading: isAssignmentsLoading, isError: isAssignmentsError } = useAssignments({
     studentId,
   });
 
@@ -64,7 +62,7 @@ export default function StudentPage(props: StudentPageProps) {
       ? [...new Set(assignments.map((assignment) => assignment.surveyId))]
       : [];
   }, [assignments, role]);
-  const { surveys } = useSurveys(surveyIds);
+  const { surveys, isLoading: isSurveysLoading, isError: isSurveysError } = useSurveys(surveyIds);
 
   const { pendingAssignments, surveyResponses } = useMemo(() => {
     const pendingAssignments: PendingAssignmentID[] = [];
@@ -76,6 +74,14 @@ export default function StudentPage(props: StudentPageProps) {
     );
     return { pendingAssignments, surveyResponses };
   }, [assignments]);
+
+  if (isStudentsLoading) {
+    return <LoadingPage />;
+  }
+
+  if (isStudentsError) {
+    throw new Error("Failed to get student data.");
+  }
 
   const studentInfo = [
     {
@@ -196,6 +202,8 @@ export default function StudentPage(props: StudentPageProps) {
               itemsPerPageOptions: [5, 10, 20],
               includeAllOption: true,
             }}
+            isLoading={isAssignmentsLoading || isSurveysLoading}
+            isError={isAssignmentsError || isSurveysError}
           />
         </div>
         <h3 className={styles.surveysSectionHeader}>Past Responses</h3>
@@ -207,6 +215,8 @@ export default function StudentPage(props: StudentPageProps) {
               itemsPerPageOptions: [5, 10, 20],
               includeAllOption: true,
             }}
+            isLoading={isAssignmentsLoading || isSurveysLoading}
+            isError={isAssignmentsError || isSurveysError}
           />
         </div>
       </div>

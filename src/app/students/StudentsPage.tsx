@@ -10,7 +10,7 @@ import useStudents from "@/data/hooks/useStudents";
 import Link from "next/link";
 
 export default function StudentsPage() {
-  const { students } = useStudents();
+  const { students, isLoading, isError } = useStudents();
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
 
   const columns: Column<Student>[] = [
@@ -92,6 +92,8 @@ export default function StudentsPage() {
             includeAllOption: true,
           }}
           filterConditions={filterConditions}
+          isLoading={isLoading}
+          isError={isError}
         />
       </div>
     </div>
