@@ -19,8 +19,8 @@ export default function useAssignments(params: useAssignmentsParams): useAssignm
   const { studentId, surveyId } = params;
   const [assignments, setAssignments] = useState<AssignmentID[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isError, setIsError] = useState<boolean>(true);
-
+  const [isError, setIsError] = useState<boolean>(false);
+  
   useEffect(() => {
     (studentId
       ? getAssignmentsByStudentId(studentId)
