@@ -105,11 +105,11 @@ const handleRecentSurveyTitlesAndDescriptionsUpdatesCallback = async (e: Schedul
 export const handleRecentSurveyTitlesAndDescriptionsUpdates = onSchedule('every day 00:00', handleRecentSurveyTitlesAndDescriptionsUpdatesCallback);
 export const testHandleRecentSurveyTitlesAndDescriptionsUpdates = onRequest(async (req, res) => {
   if (req.method !== 'POST') {
-    res.status(405).send("Method Not Allowed");
+    res.status(405).json({ statusText: "Method Not Allowed" });
     return;
   }
   await handleRecentSurveyTitlesAndDescriptionsUpdatesCallback({ scheduleTime: req.body.scheduleTime || new Date().toISOString() });
-  res.send("Test successful");
+  res.status(200).json({ statusText: "OK" });
 });
 
 export const addExistingSurveyAndResponses = onCall(async (req) => {
