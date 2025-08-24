@@ -34,14 +34,14 @@ export async function POST(req: NextRequest) {
       {
         role: decodedToken.role,
         googleTokens: tokenData
-      } as AdminCustomClaims :
+      } satisfies AdminCustomClaims :
       {
         role: decodedToken.role,
         googleTokens: {
           accessToken: tokenData.accessToken,
           expirationTime: tokenData.expirationTime
         }
-      } as StaffCustomClaims
+      } satisfies StaffCustomClaims
   await adminAuth.setCustomUserClaims(decodedToken.uid, customClaims)
   return NextResponse.json(tokenData.accessToken, { status: 200, statusText: "OK" });
 }

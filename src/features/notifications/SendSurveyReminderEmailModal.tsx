@@ -52,7 +52,7 @@ export default function SendSurveyReminderEmailModal(
         bcc: receivingStudents.map((student) => student.email),
         subject: `Reminder to Complete Survey "${survey.name}"`,
         html: emailTemplate,
-      } as Mail.Options);
+      } satisfies Mail.Options);
       setMessage("Email sent successfully!");
     } catch (error) {
       setError("Failed to send email. Please try again later.");

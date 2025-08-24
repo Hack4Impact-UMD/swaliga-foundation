@@ -49,5 +49,5 @@ export const onStudentAccountCreated = onCall(async (req) => {
   await adminAuth.setCustomUserClaims(req.auth?.uid, {
     role: decodedToken.role,
     studentId: req.data,
-  } as StudentCustomClaims);
+  } satisfies StudentCustomClaims);
 });

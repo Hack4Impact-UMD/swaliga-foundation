@@ -62,13 +62,13 @@ const addResponsesToFirestore = async (responses: GoogleFormResponse[], transact
       studentId: response.studentId,
       responseId: response.responseId,
       submittedAt: response.submittedAt
-    } as SurveyResponseStudentId) : transaction.update(existingAssignments[index].docs[0].ref, { responseId: response.responseId, submittedAt: response.submittedAt });
+    } satisfies SurveyResponseStudentId) : transaction.update(existingAssignments[index].docs[0].ref, { responseId: response.responseId, submittedAt: response.submittedAt });
   });
 
   unidentifiedResponses.forEach(response => transaction.set(surveysCollection.doc(response.surveyId).collection(Collection.ASSIGNMENTS).doc(uuid()), {
     responseId: response.responseId,
     submittedAt: response.submittedAt,
-  } as SurveyResponseUnidentified))
+  } satisfies SurveyResponseUnidentified))
 
   const { users } = await adminAuth.getUsers([...new Set(emailResponses.map(response => response.studentEmail))].map(email => ({ email })));
   const emailIds: { [email: string]: string } = {};
@@ -79,11 +79,11 @@ const addResponsesToFirestore = async (responses: GoogleFormResponse[], transact
       studentId: emailIds[response.studentEmail],
       responseId: response.responseId,
       submittedAt: response.submittedAt,
-    } as SurveyResponseStudentId) : transaction.set(docRef, {
+    } satisfies SurveyResponseStudentId) : transaction.set(docRef, {
       studentEmail: response.studentEmail,
       responseId: response.responseId,
       submittedAt: response.submittedAt,
-    } as SurveyResponseStudentEmail);
+    } satisfies SurveyResponseStudentEmail);
   })
 }
 

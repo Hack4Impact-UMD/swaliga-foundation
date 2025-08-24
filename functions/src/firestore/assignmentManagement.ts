@@ -34,7 +34,7 @@ export const assignSurveys = onCall(async (req) => {
             studentId,
             assignedAt: timestamp.toISOString(),
             responseId: null
-          } as PendingAssignmentID);
+          } satisfies PendingAssignmentID);
         }
       })
     });
