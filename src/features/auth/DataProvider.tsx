@@ -1,3 +1,5 @@
+"use client";
+
 import useAuth from "./useAuth";
 import SurveysProvider from "@/data/hooks/SurveysProvider";
 import StudentsProvider from "@/data/hooks/StudentsProvider";

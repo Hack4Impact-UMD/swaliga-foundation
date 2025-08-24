@@ -7,6 +7,7 @@ import Navbar from "@/components/ui/Navbar";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
 import DataProvider from "@/features/auth/DataProvider";
+import AvailabilityProvider from "@/features/auth/AvailabilityProvider";
 
 const LoadingPage = dynamic(() => import("./loading"));
 
@@ -28,7 +29,9 @@ export default function RootLayout({
         <Suspense fallback={<LoadingPage />}>
           <AuthProvider>
             <Navbar />
-            <DataProvider>{children}</DataProvider>
+            <AvailabilityProvider>
+              <DataProvider>{children}</DataProvider>
+            </AvailabilityProvider>
           </AuthProvider>
         </Suspense>
       </body>
