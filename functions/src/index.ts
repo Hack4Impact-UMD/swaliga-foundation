@@ -10,7 +10,7 @@ exports.checkRefreshTokenValidity = authFunctions.checkRefreshTokenValidity;
 
 exports.assignSurveys = assignmentManagementFunctions.assignSurveys;
 
-exports.handleRecentUpdates = process.env.NODE_ENV === 'development' ? responseManagementFunctions.testHandleRecentUpdates : responseManagementFunctions.handleRecentUpdates;
+exports.handleRecentSurveyTitlesAndDescriptionsUpdates = process.env.NODE_ENV === 'development' ? responseManagementFunctions.testHandleRecentSurveyTitlesAndDescriptionsUpdates : responseManagementFunctions.handleRecentSurveyTitlesAndDescriptionsUpdates;
 exports.addExistingSurveyAndResponses = responseManagementFunctions.addExistingSurveyAndResponses;
 
 exports.onSurveyDocCreated = syncAdminDataFunctions.onSurveyDocCreated;

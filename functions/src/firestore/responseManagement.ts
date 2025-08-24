@@ -1,5 +1,5 @@
 import { onSchedule, ScheduledEvent } from "firebase-functions/scheduler";
-import { addExistingSurvey, getRecentUpdates } from "@/data/apps-script/calls"
+import { addExistingSurvey, getUpdatedSurveyTitlesAndDescriptions } from "@/data/apps-script/calls"
 import { fetchAccessToken } from '@/features/auth/serverAuthZ';
 import { GoogleFormResponse, GoogleFormResponseStudentId, isGoogleFormResponseStudentId, isGoogleFormResponseUnidentified } from "@/types/apps-script-types";
 import { SurveyResponseStudentEmail, SurveyResponseStudentId, SurveyResponseUnidentified } from "@/types/survey-types";
@@ -87,31 +87,28 @@ const addResponsesToFirestore = async (responses: GoogleFormResponse[], transact
   })
 }
 
-const handleRecentUpdatesCallback = async (e: ScheduledEvent) => {
-  const endTime = e.scheduleTime;
+const handleRecentSurveyTitlesAndDescriptionsUpdatesCallback = async (e: ScheduledEvent) => {
+  const startTime = e.scheduleTime;
   const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
   const tokenData = await fetchAccessToken(adminUser.customClaims?.googleTokens?.refreshToken || '');
 
   await adminDb.runTransaction(async (transaction: Transaction) => {
-    const { lastUpdated } = (await transaction.get(adminDb.collection(Collection.METADATA).doc(Document.LAST_UPDATED))).data() || {};
     const surveyIds = await getAllSurveyIds(transaction);
-    const { surveys, responses } = await getRecentUpdates(tokenData.accessToken, surveyIds, endTime, lastUpdated);
+    const surveys = await getUpdatedSurveyTitlesAndDescriptions(tokenData.accessToken, surveyIds, startTime);
     const surveysCollection = adminDb.collection(Collection.SURVEYS);
-    await addResponsesToFirestore(responses, transaction);
     surveys.forEach(survey => transaction.update(surveysCollection.doc(survey.id), {
       name: survey.name,
       description: survey.description,
     }));
-    transaction.update(adminDb.collection(Collection.METADATA).doc(Document.LAST_UPDATED), { timestamp: endTime })
   })
 }
-export const handleRecentUpdates = onSchedule('every day 00:00', handleRecentUpdatesCallback);
-export const testHandleRecentUpdates = onRequest(async (req, res) => {
+export const handleRecentSurveyTitlesAndDescriptionsUpdates = onSchedule('every day 00:00', handleRecentSurveyTitlesAndDescriptionsUpdatesCallback);
+export const testHandleRecentSurveyTitlesAndDescriptionsUpdates = onRequest(async (req, res) => {
   if (req.method !== 'POST') {
     res.status(405).send("Method Not Allowed");
     return;
   }
-  await handleRecentUpdatesCallback({ scheduleTime: req.body.scheduleTime || new Date().toISOString() });
+  await handleRecentSurveyTitlesAndDescriptionsUpdatesCallback({ scheduleTime: req.body.scheduleTime || new Date().toISOString() });
   res.send("Test successful");
 });
 

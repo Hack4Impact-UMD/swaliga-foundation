@@ -25,18 +25,6 @@ function mapResponseToGoogleFormResponse_(response: GoogleAppsScript.Forms.FormR
 }
 globalThis.mapResponseToGoogleFormResponse_ = mapResponseToGoogleFormResponse_;
 
-function getRecentResponses_(surveyIds: string[], endTime: string, startTime?: string) {
-  const recentResponses: GoogleFormResponse[] = [];
-  surveyIds.forEach((surveyId) => {
-    const survey = FormApp.openById(surveyId);
-    const idQuestionItem = getIdQuestionItem_(survey.getItems());
-    const responses = (startTime ? survey.getResponses(new Date(startTime)) : survey.getResponses()).filter(response => response.getTimestamp().toISOString() < endTime);
-    recentResponses.push(...responses.map((response) => mapResponseToGoogleFormResponse_(response, surveyId, idQuestionItem)));
-  });
-  return recentResponses;
-}
-globalThis.getRecentResponses_ = getRecentResponses_;
-
 function onFormSubmit_(e: GoogleAppsScript.Events.FormsOnFormSubmit) {
   
 }

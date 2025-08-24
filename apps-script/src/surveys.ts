@@ -103,11 +103,11 @@ function getIdQuestionEntryNumber_(survey: GoogleAppsScript.Forms.Form): string 
 }
 globalThis.getIdQuestionEntryNumber_ = getIdQuestionEntryNumber_;
 
-function getUpdatedSurveyTitlesAndDescriptions_(surveyIds: string[], startTime?: string) {
+function getUpdatedSurveyTitlesAndDescriptions(surveyIds: string[], startTime: string) {
   const surveys: Pick<SurveyID, 'id' | 'name' | 'description'>[] = [];
   surveyIds.forEach((surveyId) => {
     const file = DriveApp.getFileById(surveyId);
-    if (!startTime || startTime <= file.getLastUpdated().toISOString()) {
+    if (new Date(startTime).toString() !== 'Invalid Date' && startTime <= file.getLastUpdated().toISOString()) {
       const survey = FormApp.openById(surveyId);
       surveys.push({
         id: surveyId,
@@ -118,7 +118,7 @@ function getUpdatedSurveyTitlesAndDescriptions_(surveyIds: string[], startTime?:
   });
   return surveys;
 }
-globalThis.getUpdatedSurveyTitlesAndDescriptions_ = getUpdatedSurveyTitlesAndDescriptions_;
+globalThis.getUpdatedSurveyTitlesAndDescriptions = getUpdatedSurveyTitlesAndDescriptions;
 
 function deleteSurvey(surveyId: string) {
   DriveApp.getFileById(surveyId).setTrashed(true);
