@@ -1,5 +1,7 @@
 import RequireAuth from "@/features/auth/RequireAuth";
-import StudentPage from "./StudentPage";
+import dynamic from "next/dynamic";
+
+const StudentPage = dynamic(() => import("./StudentPage"));
 
 export default function StudentPageWrapper({
   params,

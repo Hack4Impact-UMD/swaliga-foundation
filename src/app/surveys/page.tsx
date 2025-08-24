@@ -1,5 +1,7 @@
 import RequireAuth from "@/features/auth/RequireAuth";
-import SurveysPage from "./SurveysPage";
+import dynamic from "next/dynamic";
+
+const SurveysPage = dynamic(() => import("./SurveysPage"));
 
 export default function SurveysPageWrapper() {
   return (

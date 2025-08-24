@@ -2,11 +2,17 @@
 
 import RequireAuth from "@/features/auth/RequireAuth";
 import RoleBasedPage from "@/features/auth/RoleBasedPage";
-import LoginPage from "./LoginPage";
 import useAuth from "@/features/auth/useAuth";
-import SendVerificationEmailPage from "./SendVerificationEmailPage";
-import StudentPage from "./students/[studentId]/StudentPage";
-import CreateAccountPage from "./create-account/CreateAccountPage";
+import dynamic from "next/dynamic";
+
+const StudentPage = dynamic(() => import("./students/[studentId]/StudentPage"));
+const CreateAccountPage = dynamic(
+  () => import("./create-account/CreateAccountPage")
+);
+const LoginPage = dynamic(() => import("./LoginPage"));
+const SendVerificationEmailPage = dynamic(
+  () => import("./SendVerificationEmailPage")
+);
 
 export default function LoginPageWrapper() {
   const auth = useAuth();

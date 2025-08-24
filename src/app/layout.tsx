@@ -5,9 +5,11 @@ import styles from "./layout.module.css";
 import AuthProvider from "@/features/auth/AuthProvider";
 import Navbar from "@/components/ui/Navbar";
 import { Suspense } from "react";
-import LoadingPage from "./loading";
+import dynamic from "next/dynamic";
 import SurveysProvider from "@/data/hooks/SurveysProvider";
 import StudentsProvider from "@/data/hooks/StudentsProvider";
+
+const LoadingPage = dynamic(() => import("./loading"));
 
 const inter = Inter({ subsets: ["latin"] });
 

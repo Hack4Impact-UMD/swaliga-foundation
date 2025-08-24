@@ -1,12 +1,14 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import VerifyEmailPage from "./VerifyEmailPage";
-import ResetPasswordPage from "./ResetPasswordPage";
 import RequireAuth from "@/features/auth/RequireAuth";
 import { checkCodeValidity } from "@/features/auth/authN/emailPasswordAuthN";
 import { useEffect, useState } from "react";
-import LoadingPage from "../loading";
+import dynamic from "next/dynamic";
+
+const LoadingPage = dynamic(() => import("../loading"));
+const VerifyEmailPage = dynamic(() => import("./VerifyEmailPage"));
+const ResetPasswordPage = dynamic(() => import("./ResetPasswordPage"));
 
 export default function AuthHandlerPage() {
   const searchParams = useSearchParams();
