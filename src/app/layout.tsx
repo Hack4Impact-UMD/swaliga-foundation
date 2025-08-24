@@ -6,8 +6,7 @@ import AuthProvider from "@/features/auth/AuthProvider";
 import Navbar from "@/components/ui/Navbar";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
-import SurveysProvider from "@/data/hooks/SurveysProvider";
-import StudentsProvider from "@/data/hooks/StudentsProvider";
+import DataProvider from "@/features/auth/DataProvider";
 
 const LoadingPage = dynamic(() => import("./loading"));
 
@@ -29,9 +28,7 @@ export default function RootLayout({
         <Suspense fallback={<LoadingPage />}>
           <AuthProvider>
             <Navbar />
-            <SurveysProvider>
-              <StudentsProvider>{children}</StudentsProvider>
-            </SurveysProvider>
+            <DataProvider>{children}</DataProvider>
           </AuthProvider>
         </Suspense>
       </body>
