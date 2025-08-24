@@ -2,7 +2,7 @@
 
 import React, { createContext, useEffect, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
-import { Collection } from "../firestore/utils";
+import { Collection, Document } from "../firestore/utils";
 import { db } from "@/config/firebaseConfig";
 import { SurveyID } from "@/types/survey-types";
 import LoadingPage from "@/app/loading";
@@ -23,7 +23,7 @@ export default function SurveysProvider({
   useEffect(() => {
     setIsLoading(true);
     const unsubscribe = onSnapshot(
-      collection(db, Collection.ADMIN_DATA, "surveys", Collection.SURVEYS),
+      collection(db, Collection.ADMIN_DATA, Document.SURVEYS, Collection.SURVEYS),
       (snapshot) => {
         const newSurveys: SurveyID[] = [];
         for (const doc of snapshot.docs) {
