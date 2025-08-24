@@ -7,14 +7,10 @@ import { Collection } from "../firestore/utils";
 import { db } from "@/config/firebaseConfig";
 import LoadingPage from "@/app/loading";
 import useAuth from "@/features/auth/useAuth";
+import { useStudentsDefault, useStudentsReturn } from "./useStudents";
 
-export interface StudentsContextType {
-  students: Student[];
-}
-
-export const StudentsContext = createContext<StudentsContextType>({
-  students: [],
-});
+export const StudentsContext =
+  createContext<useStudentsReturn>(useStudentsDefault);
 
 export default function StudentsProvider({
   children,
@@ -23,6 +19,7 @@ export default function StudentsProvider({
 }): JSX.Element {
   const [students, setStudents] = useState<Student[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isError, setIsError] = useState<boolean>(false);
 
   const auth = useAuth();
   const role: Role = auth.token?.claims.role as Role;
@@ -33,7 +30,7 @@ export default function StudentsProvider({
       setIsLoading(false);
       return;
     }
-    
+
     setIsLoading(true);
     const unsubscribe =
       role === "STUDENT"
@@ -46,21 +43,28 @@ export default function StudentsProvider({
             (doc) => {
               setStudents([doc.data() as Student]);
               setIsLoading(false);
+            },
+            () => {
+              setIsLoading(false);
+              setIsError(true);
             }
           )
-        : onSnapshot(collection(db, Collection.STUDENTS), (snapshot) => {
-            setStudents(snapshot.docs.map((doc) => doc.data() as Student));
-            setIsLoading(false);
-          });
+        : onSnapshot(
+            collection(db, Collection.STUDENTS),
+            (snapshot) => {
+              setStudents(snapshot.docs.map((doc) => doc.data() as Student));
+              setIsLoading(false);
+            },
+            () => {
+              setIsLoading(false);
+              setIsError(true);
+            }
+          );
     return () => unsubscribe();
   }, [role, auth.token?.claims.studentId]);
 
-  if (isLoading) {
-    return <LoadingPage />;
-  }
-
   return (
-    <StudentsContext.Provider value={{ students }}>
+    <StudentsContext.Provider value={{ students, isLoading, isError }}>
       {children}
     </StudentsContext.Provider>
   );

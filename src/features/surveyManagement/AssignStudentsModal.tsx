@@ -22,7 +22,7 @@ export default function AssignStudentsModal(props: AssignStudentsModalProps) {
   const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
-  const students: Student[] = useStudents();
+  const { students } = useStudents();
   const currAssignedStudents: {
     student: Student;
     assignment: PendingAssignmentID;

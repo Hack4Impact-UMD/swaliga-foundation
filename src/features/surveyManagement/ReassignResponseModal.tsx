@@ -34,7 +34,7 @@ export default function ReassignResponseModal(
     ReassignResponseModalMessages | undefined
   >(undefined);
 
-  const students = useStudents();
+  const { students } = useStudents();
 
   const handleReassignResponse = async () => {
     try {

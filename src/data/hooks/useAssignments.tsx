@@ -7,17 +7,29 @@ import {
 
 type useAssignmentsParams = { studentId: string } | { surveyId: string };
 
-export default function useAssignments(params: useAssignmentsParams) {
+interface useAssignmentsReturn {
+  assignments: AssignmentID[];
+  setAssignments: React.Dispatch<React.SetStateAction<AssignmentID[]>>;
+  isLoading: boolean;
+  isError: boolean;
+}
+
+export default function useAssignments(params: useAssignmentsParams): useAssignmentsReturn {
   // @ts-expect-error
   const { studentId, surveyId } = params;
   const [assignments, setAssignments] = useState<AssignmentID[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isError, setIsError] = useState<boolean>(true);
 
   useEffect(() => {
     (studentId
       ? getAssignmentsByStudentId(studentId)
       : getAssignmentsBySurveyId(surveyId)
-    ).then((assignments) => setAssignments(assignments));
+    )
+      .then((assignments) => setAssignments(assignments))
+      .catch(() => setIsError(true))
+      .finally(() => setIsLoading(false));
   }, [studentId, surveyId]);
 
-  return { assignments, setAssignments };
+  return { assignments, setAssignments, isLoading, isError };
 }

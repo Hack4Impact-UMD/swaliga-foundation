@@ -27,7 +27,7 @@ export default function SendSurveyReminderEmailModal(
   const [message, setMessage] = useState<string>("");
   const [error, setError] = useState<string>("");
 
-  const students = useStudents();
+  const { students } = useStudents();
 
   const receivingStudents = students.filter((student) =>
     assignments.some((assignment) => assignment.studentId === student.id)

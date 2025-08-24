@@ -36,11 +36,12 @@ interface SurveyPageProps {
 export default function SurveyPage(props: SurveyPageProps) {
   const { surveyId } = props;
 
-  const survey = useSurveys().find((survey) => survey.id === surveyId)!;
+  const { surveys } = useSurveys();
+  const survey = surveys.find((survey) => survey.id === surveyId)!;
   const [selectedPendingAssignmentIds, setSelectedPendingAssignmentIds] =
     useState<string[]>([]);
 
-  const students = useStudents();
+  const { students } = useStudents();
   const { assignments, setAssignments } = useAssignments({ surveyId });
 
   const { pendingAssignments, surveyResponses } = useMemo(() => {

@@ -52,9 +52,10 @@ export default function StudentPage(props: StudentPageProps) {
 
   const role = useAuth().token?.claims.role as Role;
 
-  const student = useStudents().find((student) => student.id === studentId)!;
+  const { students } = useStudents();
+  const student = students.find((student) => student.id === studentId)!;
   const { assignments, setAssignments } = useAssignments({ studentId });
-  const surveys = useSurveys(
+  const { surveys } = useSurveys(
     role === "STUDENT"
       ? [...new Set(assignments.map((assignment) => assignment.surveyId))]
       : []

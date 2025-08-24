@@ -14,7 +14,7 @@ interface ResponseSurveyModalProps {
 export default function RespondSurveyModal(props: ResponseSurveyModalProps) {
   const { survey } = props;
 
-  const studentId = useStudents()[0].id;
+  const studentId = useStudents().students[0].id;
 
   return (
     <Modal>

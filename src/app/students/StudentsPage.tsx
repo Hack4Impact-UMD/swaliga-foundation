@@ -10,7 +10,7 @@ import useStudents from "@/data/hooks/useStudents";
 import Link from "next/link";
 
 export default function StudentsPage() {
-  const students = useStudents();
+  const { students } = useStudents();
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
 
   const columns: Column<Student>[] = [

@@ -6,14 +6,10 @@ import { Collection } from "../firestore/utils";
 import { db } from "@/config/firebaseConfig";
 import { SurveyID } from "@/types/survey-types";
 import LoadingPage from "@/app/loading";
+import { useSurveysDefault, useSurveysReturn } from "./useSurveys";
 
-export interface SurveysContextType {
-  surveys: SurveyID[];
-}
-
-export const SurveysContext = createContext<SurveysContextType>({
-  surveys: [],
-});
+export const SurveysContext =
+  createContext<useSurveysReturn>(useSurveysDefault);
 
 export default function SurveysProvider({
   children,
@@ -22,6 +18,7 @@ export default function SurveysProvider({
 }): JSX.Element {
   const [surveys, setSurveys] = useState<SurveyID[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isError, setIsError] = useState<boolean>(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -36,17 +33,17 @@ export default function SurveysProvider({
         }
         setSurveys(newSurveys);
         setIsLoading(false);
+      },
+      () => {
+        setIsLoading(false);
+        setIsError(true);
       }
     );
     return () => unsubscribe();
   }, []);
 
-  if (isLoading) {
-    return <LoadingPage />;
-  }
-
   return (
-    <SurveysContext.Provider value={{ surveys }}>
+    <SurveysContext.Provider value={{ surveys, isLoading, isError }}>
       {children}
     </SurveysContext.Provider>
   );
