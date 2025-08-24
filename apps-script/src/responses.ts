@@ -37,4 +37,9 @@ function getRecentResponses_(surveyIds: string[], endTime: string, startTime?: s
 }
 globalThis.getRecentResponses_ = getRecentResponses_;
 
+function onFormSubmit_(e: GoogleAppsScript.Events.FormsOnFormSubmit) {
+  
+}
+globalThis.onFormSubmit_ = onFormSubmit_;
+
 export { };

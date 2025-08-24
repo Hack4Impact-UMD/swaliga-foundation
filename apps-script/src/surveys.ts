@@ -8,6 +8,7 @@ function createNewSurvey(title: string, description: string): SurveyID {
       SpreadsheetApp.create(`${title} - Responses`).getId()
     );
   addIdQuestion_(survey);
+  installTrigger_(survey);
 
   return {
     id: survey.getId(),
@@ -31,6 +32,11 @@ function addExistingSurvey(surveyId: string, endTime?: string) {
     );
   }
 
+  const onFormSubmitTrigger = ScriptApp.getProjectTriggers().filter(trigger => trigger.getEventType() === ScriptApp.EventType.ON_FORM_SUBMIT && trigger.getTriggerSourceId() === surveyId)[0];
+  if (onFormSubmitTrigger) {
+    installTrigger_(survey);
+  }
+
   const items = survey.getItems();
   let idQuestionItem = undefined;
   if (items.length === 0 || !(idQuestionItem = getIdQuestionItem_(items))) {
@@ -50,6 +56,17 @@ function addExistingSurvey(surveyId: string, endTime?: string) {
   };
 }
 globalThis.addExistingSurvey = addExistingSurvey;
+
+function installTrigger_(survey: GoogleAppsScript.Forms.Form) {
+  ScriptApp.newTrigger("onFormSubmit").forForm(survey).onFormSubmit().create();
+}
+globalThis.installTrigger_ = installTrigger_;
+
+function uninstallTrigger_(survey: GoogleAppsScript.Forms.Form) {
+  const triggers = ScriptApp.getProjectTriggers().filter(trigger => trigger.getTriggerSourceId() === survey.getId());
+  triggers.forEach(trigger => ScriptApp.deleteTrigger(trigger));
+}
+globalThis.uninstallTrigger_ = uninstallTrigger_;
 
 function addIdQuestion_(survey: GoogleAppsScript.Forms.Form) {
   const idQuestion = survey
