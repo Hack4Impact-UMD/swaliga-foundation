@@ -6,6 +6,7 @@ import * as emailFunctions from './email';
 
 exports.setRole = authFunctions.setRole;
 exports.onStudentAccountCreated = authFunctions.onStudentAccountCreated;
+exports.checkRefreshTokenValidity = authFunctions.checkRefreshTokenValidity;
 
 exports.assignSurveys = assignmentManagementFunctions.assignSurveys;
 

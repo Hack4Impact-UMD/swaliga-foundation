@@ -1,5 +1,6 @@
 import { adminAuth, adminDb } from '@/config/firebaseAdminConfig';
 import { Collection } from '@/data/firestore/utils';
+import { fetchAccessToken } from '@/features/auth/serverAuthZ';
 import { StudentCustomClaims, StudentDecodedIdTokenWithCustomClaims } from '@/types/auth-types';
 import { SurveyResponseStudentEmailID } from '@/types/survey-types';
 import { FieldValue, Transaction } from 'firebase-admin/firestore';
@@ -51,3 +52,22 @@ export const onStudentAccountCreated = onCall(async (req) => {
     studentId: req.data,
   } satisfies StudentCustomClaims);
 });
+
+export const checkRefreshTokenValidity = onCall(async (req) => {
+  if (!req.auth) {
+    throw new Error("Unauthorized");
+  }
+
+  const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
+  const refreshToken = adminUser.customClaims?.googleTokens?.refreshToken;
+  if (!refreshToken) {
+    return false;
+  }
+
+  try {
+    await fetchAccessToken(refreshToken);
+    return true;
+  } catch (error) {
+    return false;
+  }
+})
