@@ -1,5 +1,7 @@
 import { SurveyID } from "@/types/survey-types";
 
+const MAX_TRIGGERS_PER_USER = 20;
+
 function createNewSurvey(title: string, description: string): SurveyID {
   const survey = FormApp.create(title)
     .setDescription(description)
@@ -53,16 +55,23 @@ function addExistingSurvey(surveyId: string) {
 }
 globalThis.addExistingSurvey = addExistingSurvey;
 
-function installTrigger_(survey: GoogleAppsScript.Forms.Form) {
+function installTrigger(surveyId: string) {
+  const survey = FormApp.openById(surveyId);
+  const triggers = ScriptApp.getProjectTriggers();
+  if (triggers.length === MAX_TRIGGERS_PER_USER) {
+    throw new Error("Maximum number of triggers reached.");
+  } else if (triggers.some(trigger => trigger.getTriggerSourceId() === surveyId)) {
+    throw new Error("Trigger already exists for this survey.");
+  }
   ScriptApp.newTrigger("onFormSubmit_").forForm(survey).onFormSubmit().create();
 }
-globalThis.installTrigger_ = installTrigger_;
+globalThis.installTrigger = installTrigger;
 
-function uninstallTrigger_(survey: GoogleAppsScript.Forms.Form) {
-  const triggers = ScriptApp.getProjectTriggers().filter(trigger => trigger.getTriggerSourceId() === survey.getId());
+function uninstallTrigger(surveyId: string) {
+  const triggers = ScriptApp.getProjectTriggers().filter(trigger => trigger.getTriggerSourceId() === surveyId);
   triggers.forEach(trigger => ScriptApp.deleteTrigger(trigger));
 }
-globalThis.uninstallTrigger_ = uninstallTrigger_;
+globalThis.uninstallTrigger = uninstallTrigger;
 
 function addIdQuestion_(survey: GoogleAppsScript.Forms.Form) {
   const idQuestion = survey
@@ -118,6 +127,7 @@ globalThis.getUpdatedSurveyTitlesAndDescriptions = getUpdatedSurveyTitlesAndDesc
 
 function deleteSurvey(surveyId: string) {
   const survey = FormApp.openById(surveyId);
+  uninstallTrigger(surveyId);
   DriveApp.getFileById(survey.getPublishedUrl()).setTrashed(true);
   DriveApp.getFileById(surveyId).setTrashed(true);
 }

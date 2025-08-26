@@ -12,8 +12,8 @@ declare global {
     survey: SurveyID;
     responses: GoogleFormResponse[];
   }
-  var installTrigger_: (survey: GoogleAppsScript.Forms.Form) => void;
-  var uninstallTrigger_: (survey: GoogleAppsScript.Forms.Form) => void;
+  var installTrigger: (surveyId: string) => void;
+  var uninstallTrigger: (surveyId: string) => void;
   var addIdQuestion_: (survey: GoogleAppsScript.Forms.Form) => void;
   var getIdQuestionItem_: (items: GoogleAppsScript.Forms.Item[]) => GoogleAppsScript.Forms.Item | undefined;
   var getIdQuestionEntryNumber_: (survey: GoogleAppsScript.Forms.Form) => string;

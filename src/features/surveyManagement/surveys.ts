@@ -4,6 +4,7 @@ import { SurveyID } from "@/types/survey-types";
 import { db, functions } from "@/config/firebaseConfig";
 import { httpsCallable } from "firebase/functions";
 import { WriteBatch, writeBatch } from "firebase/firestore";
+import { Firestore } from "firebase-admin/firestore";
 
 export async function createNewSurvey(accessToken: string, name: string, description: string): Promise<SurveyID> {
   try {
@@ -38,6 +39,36 @@ export async function addExistingSurvey(surveyId: string): Promise<SurveyID> {
     return (await httpsCallable(functions, 'addExistingSurveyAndResponses')(surveyId)).data as SurveyID;
   } catch (error) {
     throw new Error('Failed to add existing survey');
+  }
+}
+
+export async function activateSurvey(accessToken: string, surveyId: string) {
+  try {
+    await AppsScript.installTrigger(accessToken, surveyId);
+  } catch (error) {
+    throw new Error("Failed to activate survey");
+  }
+
+  try {
+    await FirestoreSurveys.updateSurvey(surveyId, { isActive: true });
+  } catch (error) {
+    await AppsScript.uninstallTrigger(accessToken, surveyId);
+    throw new Error("Failed to activate survey");
+  }
+}
+
+export async function deactivateSurvey(accessToken: string, surveyId: string) {
+  try {
+    await AppsScript.uninstallTrigger(accessToken, surveyId);
+  } catch (error) {
+    throw new Error("Failed to deactivate survey");
+  }
+
+  try {
+    await FirestoreSurveys.updateSurvey(surveyId, { isActive: false });
+  } catch (error) {
+    await AppsScript.installTrigger(accessToken, surveyId);
+    throw new Error("Failed to deactivate survey");
   }
 }
 
