@@ -121,6 +121,8 @@ function getUpdatedSurveyTitlesAndDescriptions(surveyIds: string[], startTime: s
 globalThis.getUpdatedSurveyTitlesAndDescriptions = getUpdatedSurveyTitlesAndDescriptions;
 
 function deleteSurvey(surveyId: string) {
+  const survey = FormApp.openById(surveyId);
+  DriveApp.getFileById(survey.getPublishedUrl()).setTrashed(true);
   DriveApp.getFileById(surveyId).setTrashed(true);
 }
 globalThis.deleteSurvey = deleteSurvey;
