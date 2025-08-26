@@ -6,6 +6,7 @@ export interface Survey {
   responderUri: string;
   linkedSheetId: string;
   idQuestionEntryNumber: string;
+  isActive: boolean;
 }
 export interface SurveyID extends Survey, ID { }
 

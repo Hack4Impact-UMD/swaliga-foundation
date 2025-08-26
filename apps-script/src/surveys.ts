@@ -8,7 +8,6 @@ function createNewSurvey(title: string, description: string): SurveyID {
       SpreadsheetApp.create(`${title} - Responses`).getId()
     );
   addIdQuestion_(survey);
-  installTrigger_(survey);
 
   return {
     id: survey.getId(),
@@ -17,6 +16,7 @@ function createNewSurvey(title: string, description: string): SurveyID {
     responderUri: survey.getPublishedUrl(),
     linkedSheetId: survey.getDestinationId(),
     idQuestionEntryNumber: getIdQuestionEntryNumber_(survey),
+    isActive: false
   };
 }
 globalThis.createNewSurvey = createNewSurvey;
@@ -30,11 +30,6 @@ function addExistingSurvey(surveyId: string) {
       FormApp.DestinationType.SPREADSHEET,
       SpreadsheetApp.create(`${survey.getTitle()} - Responses`).getId()
     );
-  }
-
-  const onFormSubmitTrigger = ScriptApp.getProjectTriggers().filter(trigger => trigger.getEventType() === ScriptApp.EventType.ON_FORM_SUBMIT && trigger.getTriggerSourceId() === surveyId)[0];
-  if (!onFormSubmitTrigger) {
-    installTrigger_(survey);
   }
 
   const items = survey.getItems();
@@ -51,6 +46,7 @@ function addExistingSurvey(surveyId: string) {
       responderUri: survey.getPublishedUrl(),
       linkedSheetId: survey.getDestinationId(),
       idQuestionEntryNumber: getIdQuestionEntryNumber_(survey),
+      isActive: false
     },
     responses: survey.getResponses().map((response) => mapResponseToGoogleFormResponse_(response, surveyId, idQuestionItem)),
   };
