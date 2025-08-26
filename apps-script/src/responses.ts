@@ -26,7 +26,14 @@ function mapResponseToGoogleFormResponse_(response: GoogleAppsScript.Forms.FormR
 globalThis.mapResponseToGoogleFormResponse_ = mapResponseToGoogleFormResponse_;
 
 function onFormSubmit_(e: GoogleAppsScript.Events.FormsOnFormSubmit) {
-  
+  UrlFetchApp.fetch('https://onformsubmit-fuicsqotja-uc.a.run.app', {
+    method: 'post',
+    headers: {
+      Authorization: `Bearer ${ScriptApp.getOAuthToken()}`
+    },
+    payload: JSON.stringify(mapResponseToGoogleFormResponse_(e.response, e.source.getId(), getIdQuestionItem_(e.source.getItems()))),
+    contentType: "application/json"
+  })
 }
 globalThis.onFormSubmit_ = onFormSubmit_;
 

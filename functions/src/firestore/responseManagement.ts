@@ -8,6 +8,7 @@ import { Transaction } from "firebase-admin/firestore";
 import { adminAuth, adminDb } from "@/config/firebaseAdminConfig";
 import { Collection, Document } from "@/data/firestore/utils";
 import { v4 as uuid } from "uuid";
+import moment from "moment";
 
 async function getAllSurveyIds(transaction: Transaction): Promise<string[]> {
   const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS);
@@ -86,6 +87,32 @@ const addResponsesToFirestore = async (responses: GoogleFormResponse[], transact
     } satisfies SurveyResponseStudentEmail);
   })
 }
+
+export const onFormSubmit = onRequest(async (req, res) => {
+  if (req.method !== 'POST') {
+    res.status(405).json({ statusText: "Method Not Allowed" });
+    return;
+  }
+
+  if (!req.headers.authorization?.startsWith('Bearer ')) {
+    res.status(401).json({ statusText: "Unauthorized" });
+    return;
+  }
+
+  const accessToken = req.headers.authorization.split('Bearer ')[1];
+  const verifyAccessTokenRes = await fetch('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=' + accessToken);
+  const data = await verifyAccessTokenRes.json();
+  if (!data.verified_email || data.email !== process.env.ADMIN_EMAIL) {
+    res.status(401).json({ statusText: "Unauthorized" });
+    return;
+  }
+
+  const response = req.body as GoogleFormResponse;
+  await adminDb.runTransaction(async (transaction: Transaction) => {
+    await addResponsesToFirestore([response], transaction);
+  })
+  res.status(200).json({ statusText: "OK" });
+});
 
 const handleRecentSurveyTitlesAndDescriptionsUpdatesCallback = async (e: ScheduledEvent) => {
   const startTime = moment(e.scheduleTime).subtract(1, 'days').subtract(30, 'minutes').toISOString();
