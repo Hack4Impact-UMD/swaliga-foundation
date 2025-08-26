@@ -23,11 +23,14 @@ export default function SurveysPage() {
   const { surveys, setSurveys, isLoading, isError } = useSurveys();
   const [selectedSurveyIds, setSelectedSurveyIds] = useState<string[]>([]);
   const numActiveSurveys = surveys.filter((survey) => survey.isActive).length;
+  const [isUpdatingActivation, setIsUpdatingActivation] =
+    useState<boolean>(false);
 
   const auth = useAuth();
 
   const handleToggleActive = async (surveyId: string, activate: boolean) => {
     try {
+      setIsUpdatingActivation(true);
       if (activate) {
         await activateSurvey(await getAccessTokenFromAuth(auth), surveyId);
       } else {
@@ -38,8 +41,9 @@ export default function SurveysPage() {
           survey.id === surveyId ? { ...survey, isActive: activate } : survey
         )
       );
+      setIsUpdatingActivation(false);
     } catch (error) {
-      console.log(error);
+      setIsUpdatingActivation(false);
     }
   };
 
@@ -86,11 +90,12 @@ export default function SurveysPage() {
       name: "Active?",
       getValue: (survey: SurveyID) => (
         <Switch.Root
-          className={styles.switch}
+          className={`${styles.switch} ${isUpdatingActivation ? styles.switchDisabled : ""}`}
           defaultChecked={survey.isActive}
           onCheckedChange={(checked: boolean) =>
             handleToggleActive(survey.id, checked)
           }
+          disabled={isUpdatingActivation || (!survey.isActive && numActiveSurveys >= MAX_TRIGGERS_PER_USER)}
         >
           <Switch.Thumb className={styles.switchThumb} />
         </Switch.Root>

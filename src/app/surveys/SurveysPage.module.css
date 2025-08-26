@@ -80,6 +80,11 @@
   &[data-state="checked"] {
     background-color: black;
   }
+  cursor: pointer;
+}
+
+.switchDisabled {
+  cursor: not-allowed;
 }
 
 .switchThumb {
