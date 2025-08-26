@@ -43,7 +43,7 @@ export default function SurveysProvider({
   }, []);
 
   return (
-    <SurveysContext.Provider value={{ surveys, isLoading, isError }}>
+    <SurveysContext.Provider value={{ surveys, setSurveys, isLoading, isError }}>
       {children}
     </SurveysContext.Provider>
   );

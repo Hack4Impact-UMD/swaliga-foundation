@@ -7,12 +7,14 @@ import { SurveyID } from "@/types/survey-types";
 
 export interface useSurveysReturn {
   surveys: SurveyID[];
+  setSurveys: React.Dispatch<React.SetStateAction<SurveyID[]>>;
   isLoading: boolean;
   isError: boolean;
 }
 
 export const useSurveysDefault: useSurveysReturn = {
   surveys: [],
+  setSurveys: () => { },
   isLoading: false,
   isError: false,
 }
@@ -25,7 +27,7 @@ export default function useSurveys(surveyIds: string[] = []): useSurveysReturn {
   const studentSurveys = useStudentSurveys(surveyIds, role === "STUDENT");
 
   if (!role) {
-    return { surveys: [], isLoading: false, isError: false };
+    return { surveys: [], setSurveys: () => { }, isLoading: false, isError: false };
   }
   return role === "STUDENT" ? studentSurveys : adminSurveys;
 }

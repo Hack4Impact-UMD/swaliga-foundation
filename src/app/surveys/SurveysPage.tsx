@@ -10,10 +10,36 @@ import { FilterCondition } from "@/components/Filter";
 import CreateSurveyModal from "@/features/surveyManagement/CreateSurveyModal";
 import DeleteSurveyModal from "@/features/surveyManagement/DeleteSurveyModal";
 import useSurveys from "@/data/hooks/useSurveys";
+import { Switch } from "radix-ui";
+import {
+  activateSurvey,
+  deactivateSurvey,
+} from "@/features/surveyManagement/surveys";
+import useAuth from "@/features/auth/useAuth";
+import { getAccessTokenFromAuth } from "@/features/auth/googleAuthZ";
 
 export default function SurveysPage() {
-  const { surveys, isLoading, isError } = useSurveys();
+  const { surveys, setSurveys, isLoading, isError } = useSurveys();
   const [selectedSurveyIds, setSelectedSurveyIds] = useState<string[]>([]);
+
+  const auth = useAuth();
+
+  const handleToggleActive = async (surveyId: string, activate: boolean) => {
+    try {
+      if (activate) {
+        await activateSurvey(await getAccessTokenFromAuth(auth), surveyId);
+      } else {
+        await deactivateSurvey(await getAccessTokenFromAuth(auth), surveyId);
+      }
+      setSurveys((prev) =>
+        prev.map((survey) =>
+          survey.id === surveyId ? { ...survey, isActive: activate } : survey
+        )
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const columns: Column<SurveyID>[] = [
     {
@@ -54,12 +80,30 @@ export default function SurveysPage() {
         </Link>
       ),
     },
+    {
+      name: "Active?",
+      getValue: (survey: SurveyID) => (
+        <Switch.Root
+          className={styles.switch}
+          defaultChecked={survey.isActive}
+          onCheckedChange={(checked: boolean) =>
+            handleToggleActive(survey.id, checked)
+          }
+        >
+          <Switch.Thumb className={styles.switchThumb} />
+        </Switch.Root>
+      ),
+    },
   ];
 
   const filterConditions: FilterCondition<SurveyID>[] = [
     {
       name: "Name",
       getValue: (survey: SurveyID) => survey.name,
+    },
+    {
+      name: "Active?",
+      getValue: (survey: SurveyID) => (survey.isActive ? "Yes" : "No"),
     },
   ];
 

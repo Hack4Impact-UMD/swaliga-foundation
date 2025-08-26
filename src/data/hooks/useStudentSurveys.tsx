@@ -21,5 +21,5 @@ export default function useStudentSurveys(
       .finally(() => setIsLoading(false));
   }, [surveyIds, enabled]);
 
-  return { surveys, isLoading, isError };
+  return { surveys, setSurveys, isLoading, isError };
 }
