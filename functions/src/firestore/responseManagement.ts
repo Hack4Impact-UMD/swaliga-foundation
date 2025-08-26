@@ -88,7 +88,7 @@ const addResponsesToFirestore = async (responses: GoogleFormResponse[], transact
 }
 
 const handleRecentSurveyTitlesAndDescriptionsUpdatesCallback = async (e: ScheduledEvent) => {
-  const startTime = e.scheduleTime;
+  const startTime = moment(e.scheduleTime).subtract(1, 'days').subtract(30, 'minutes').toISOString();
   const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
   const tokenData = await fetchAccessToken(adminUser.customClaims?.googleTokens?.refreshToken || '');
 
