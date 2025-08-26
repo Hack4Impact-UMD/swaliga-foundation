@@ -27,6 +27,15 @@
   width: 100%;
 }
 
+.span {
+  padding: 10px;
+  margin: 10px;
+  border-radius: 20px;
+  color: #1e4154;
+  font-weight: 600;
+  background-color: #d0d12a;
+}
+
 .headerText {
   font-family: "Poppins", sans-serif;
   color: #d0d12a;

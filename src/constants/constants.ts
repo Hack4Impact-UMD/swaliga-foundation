@@ -2,3 +2,5 @@ export const FIRST_STUDENT_ID = 1000000;
 
 export const MIN_NUM_PARENTS_GUARDIANS = 1;
 export const MAX_NUM_PARENTS_GUARDIANS = 4;
+
+export const MAX_TRIGGERS_PER_USER = 20;

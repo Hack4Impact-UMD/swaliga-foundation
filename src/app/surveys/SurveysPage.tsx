@@ -17,10 +17,12 @@ import {
 } from "@/features/surveyManagement/surveys";
 import useAuth from "@/features/auth/useAuth";
 import { getAccessTokenFromAuth } from "@/features/auth/googleAuthZ";
+import { MAX_TRIGGERS_PER_USER } from "@/constants/constants";
 
 export default function SurveysPage() {
   const { surveys, setSurveys, isLoading, isError } = useSurveys();
   const [selectedSurveyIds, setSelectedSurveyIds] = useState<string[]>([]);
+  const numActiveSurveys = surveys.filter((survey) => survey.isActive).length;
 
   const auth = useAuth();
 
@@ -113,6 +115,9 @@ export default function SurveysPage() {
         <div className={styles.header}>
           <h1 className={styles.headerText}>Surveys</h1>
           <div className={styles.optionMenu}>
+            <span className={styles.span}>
+              {numActiveSurveys}/{MAX_TRIGGERS_PER_USER} active
+            </span>
             {selectedSurveyIds.length > 0 && (
               <DeleteSurveyModal
                 surveys={surveys
