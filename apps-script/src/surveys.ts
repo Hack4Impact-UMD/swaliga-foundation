@@ -58,7 +58,7 @@ function addExistingSurvey(surveyId: string) {
 globalThis.addExistingSurvey = addExistingSurvey;
 
 function installTrigger_(survey: GoogleAppsScript.Forms.Form) {
-  ScriptApp.newTrigger("onFormSubmit").forForm(survey).onFormSubmit().create();
+  ScriptApp.newTrigger("onFormSubmit_").forForm(survey).onFormSubmit().create();
 }
 globalThis.installTrigger_ = installTrigger_;
 
