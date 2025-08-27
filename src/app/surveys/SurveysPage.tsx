@@ -102,7 +102,10 @@ export default function SurveysPage() {
           <div className={styles.activeContainer}>
             <Switch.Root
               className={`${styles.switch} ${
-                isUpdatingActivation ? styles.switchDisabled : ""
+                isUpdatingActivation ||
+                (!survey.isActive && numActiveSurveys >= MAX_TRIGGERS_PER_USER)
+                  ? styles.switchDisabled
+                  : ""
               }`}
               checked={survey.isActive}
               onCheckedChange={(checked: boolean) =>
