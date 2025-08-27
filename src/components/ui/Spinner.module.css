@@ -1,0 +1,13 @@
+.spinner {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #e5e7eb;
+  fill: #2563eb;
+  animation: spin 1s linear infinite;  
+}
+
+@keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
