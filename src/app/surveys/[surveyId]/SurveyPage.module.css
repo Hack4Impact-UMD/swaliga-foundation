@@ -98,3 +98,15 @@
   gap: 20px;
   justify-content: flex-end;
 }
+
+.activateSpan {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 20px;
+  color: #1e4154;
+  font-weight: 600;
+  background-color: #d0d12a;
+}

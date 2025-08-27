@@ -28,6 +28,7 @@ import SendSurveyReminderEmailModal from "@/features/notifications/SendSurveyRem
 import AssignStudentsModal from "@/features/surveyManagement/AssignStudentsModal";
 import useAssignments from "@/data/hooks/useAssignments";
 import ReassignResponseModal from "@/features/surveyManagement/ReassignResponseModal";
+import SurveyActivationSwitch from "@/features/surveyManagement/SurveyActivationSwitch";
 
 interface SurveyPageProps {
   surveyId: string;
@@ -35,14 +36,27 @@ interface SurveyPageProps {
 
 export default function SurveyPage(props: SurveyPageProps) {
   const { surveyId } = props;
-  const { surveys, isLoading: isSurveysLoading, isError: isSurveysError } = useSurveys();
+  const {
+    surveys,
+    isLoading: isSurveysLoading,
+    isError: isSurveysError,
+  } = useSurveys();
   const survey = surveys.find((survey) => survey.id === surveyId)!;
 
-  const { students, isLoading: isStudentsLoading, isError: isStudentsError } = useStudents();
+  const {
+    students,
+    isLoading: isStudentsLoading,
+    isError: isStudentsError,
+  } = useStudents();
 
   const [selectedPendingAssignmentIds, setSelectedPendingAssignmentIds] =
     useState<string[]>([]);
-  const { assignments, setAssignments, isLoading: isAssignmentsLoading, isError: isAssignmentsError } = useAssignments({ surveyId });
+  const {
+    assignments,
+    setAssignments,
+    isLoading: isAssignmentsLoading,
+    isError: isAssignmentsError,
+  } = useAssignments({ surveyId });
   const { pendingAssignments, surveyResponses } = useMemo(() => {
     let pendingAssignments: PendingAssignmentID[] = [];
     let surveyResponses: SurveyResponseID[] = [];
@@ -51,13 +65,17 @@ export default function SurveyPage(props: SurveyPageProps) {
         ? pendingAssignments.push(assignment)
         : surveyResponses.push(assignment)
     );
-    pendingAssignments = pendingAssignments.sort((a, b) => a.assignedAt.localeCompare(b.assignedAt));
-    surveyResponses = surveyResponses.sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));
+    pendingAssignments = pendingAssignments.sort((a, b) =>
+      a.assignedAt.localeCompare(b.assignedAt)
+    );
+    surveyResponses = surveyResponses.sort((a, b) =>
+      b.submittedAt.localeCompare(a.submittedAt)
+    );
     return { pendingAssignments, surveyResponses };
   }, [assignments]);
 
   if (isSurveysLoading) {
-    return <LoadingPage />
+    return <LoadingPage />;
   }
 
   if (isSurveysError) {
@@ -212,6 +230,9 @@ export default function SurveyPage(props: SurveyPageProps) {
                 title="View Responses Spreadsheet"
               />
             </Link>
+            <span className={styles.activateSpan}>
+              Accepting Responses? <SurveyActivationSwitch survey={survey} />
+            </span>
           </div>
         </div>
         <div className={styles.tableContainer}>
