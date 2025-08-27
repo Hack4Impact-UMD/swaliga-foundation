@@ -49,10 +49,19 @@ export default function StudentPage(props: StudentPageProps) {
   const role = useAuth().token?.claims.role as Role;
 
   const { studentId } = props;
-  const { students, isLoading: isStudentsLoading, isError: isStudentsError } = useStudents();
+  const {
+    students,
+    isLoading: isStudentsLoading,
+    isError: isStudentsError,
+  } = useStudents();
   const student = students.find((student) => student.id === studentId)!;
 
-  const { assignments, setAssignments, isLoading: isAssignmentsLoading, isError: isAssignmentsError } = useAssignments({
+  const {
+    assignments,
+    setAssignments,
+    isLoading: isAssignmentsLoading,
+    isError: isAssignmentsError,
+  } = useAssignments({
     studentId,
   });
   const { pendingAssignments, surveyResponses } = useMemo(() => {
@@ -63,8 +72,12 @@ export default function StudentPage(props: StudentPageProps) {
         ? pendingAssignments.push(assignment)
         : surveyResponses.push(assignment as SurveyResponseStudentIdID)
     );
-    pendingAssignments = pendingAssignments.sort((a, b) => a.assignedAt.localeCompare(b.assignedAt));
-    surveyResponses = surveyResponses.sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));
+    pendingAssignments = pendingAssignments.sort((a, b) =>
+      a.assignedAt.localeCompare(b.assignedAt)
+    );
+    surveyResponses = surveyResponses.sort((a, b) =>
+      b.submittedAt.localeCompare(a.submittedAt)
+    );
     return { pendingAssignments, surveyResponses };
   }, [assignments]);
 
@@ -73,7 +86,11 @@ export default function StudentPage(props: StudentPageProps) {
       ? [...new Set(assignments.map((assignment) => assignment.surveyId))]
       : [];
   }, [assignments, role]);
-  const { surveys, isLoading: isSurveysLoading, isError: isSurveysError } = useSurveys(surveyIds);
+  const {
+    surveys,
+    isLoading: isSurveysLoading,
+    isError: isSurveysError,
+  } = useSurveys(surveyIds);
 
   if (isStudentsLoading) {
     return <LoadingPage />;
@@ -132,14 +149,20 @@ export default function StudentPage(props: StudentPageProps) {
       getValue: (assignment: PendingAssignmentID) =>
         moment(assignment.assignedAt).format("MMM D, YYYY"),
     },
-    {
-      name: "Respond",
-      getValue: (assignment: PendingAssignmentID) => (
-        <RespondToSurveyModal
-          survey={surveys.find((survey) => survey.id === assignment.surveyId)!}
-        />
-      ),
-    },
+    ...(role === "STUDENT"
+      ? [
+          {
+            name: "Respond",
+            getValue: (assignment: PendingAssignmentID) => (
+              <RespondToSurveyModal
+                survey={
+                  surveys.find((survey) => survey.id === assignment.surveyId)!
+                }
+              />
+            ),
+          },
+        ]
+      : []),
   ];
 
   const responsesColumns: Column<SurveyResponseStudentIdID>[] = [
@@ -159,18 +182,24 @@ export default function StudentPage(props: StudentPageProps) {
         <FaEye className={styles.icon} size={20} />
       ),
     },
-    {
-      name: "Reassign Response",
-      getValue: (assignment: SurveyResponseStudentIdID) => (
-        <ReassignResponseModal
-          response={assignment}
-          currStudent={student}
-          onReassign={() =>
-            setAssignments((prev) => prev.filter((a) => a.id !== assignment.id))
-          }
-        />
-      ),
-    },
+    ...(role === "ADMIN" || role === "STAFF"
+      ? [
+          {
+            name: "Reassign Response",
+            getValue: (assignment: SurveyResponseStudentIdID) => (
+              <ReassignResponseModal
+                response={assignment}
+                currStudent={student}
+                onReassign={() =>
+                  setAssignments((prev) =>
+                    prev.filter((a) => a.id !== assignment.id)
+                  )
+                }
+              />
+            ),
+          },
+        ]
+      : []),
   ];
 
   return (
