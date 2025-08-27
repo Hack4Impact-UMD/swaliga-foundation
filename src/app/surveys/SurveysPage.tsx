@@ -19,6 +19,7 @@ import useAuth from "@/features/auth/useAuth";
 import { getAccessTokenFromAuth } from "@/features/auth/googleAuthZ";
 import { MAX_TRIGGERS_PER_USER } from "@/constants/constants";
 import Spinner from "@/components/ui/Spinner";
+import { MdError } from "react-icons/md";
 
 export default function SurveysPage() {
   const { surveys, setSurveys, isLoading, isError } = useSurveys();
@@ -26,14 +27,16 @@ export default function SurveysPage() {
   const numActiveSurveys = surveys.filter((survey) => survey.isActive).length;
   const [isUpdatingActivation, setIsUpdatingActivation] =
     useState<boolean>(false);
-  const [updatingSurveyId, setUpdatingSurveyId] = useState<string>("");
+  const [lastUpdatedSurveyId, setLastUpdatedSurveyId] = useState<string>("");
+  const [isActivationError, setIsActivationError] = useState<boolean>(false);
 
   const auth = useAuth();
 
   const handleToggleActive = async (surveyId: string, activate: boolean) => {
     try {
       setIsUpdatingActivation(true);
-      setUpdatingSurveyId(surveyId);
+      setLastUpdatedSurveyId(surveyId);
+      setIsActivationError(false);
       if (activate) {
         await activateSurvey(await getAccessTokenFromAuth(auth), surveyId);
       } else {
@@ -45,10 +48,9 @@ export default function SurveysPage() {
         )
       );
       setIsUpdatingActivation(false);
-      setUpdatingSurveyId("");
     } catch (error) {
       setIsUpdatingActivation(false);
-      setUpdatingSurveyId("");
+      setIsActivationError(true);
     }
   };
 
@@ -94,24 +96,33 @@ export default function SurveysPage() {
     {
       name: "Active?",
       getValue: (survey: SurveyID) =>
-        updatingSurveyId === survey.id ? (
+        lastUpdatedSurveyId === survey.id && isUpdatingActivation ? (
           <Spinner />
         ) : (
-          <Switch.Root
-            className={`${styles.switch} ${
-              isUpdatingActivation ? styles.switchDisabled : ""
-            }`}
-            checked={survey.isActive}
-            onCheckedChange={(checked: boolean) =>
-              handleToggleActive(survey.id, checked)
-            }
-            disabled={
-              isUpdatingActivation ||
-              (!survey.isActive && numActiveSurveys >= MAX_TRIGGERS_PER_USER)
-            }
-          >
-            <Switch.Thumb className={styles.switchThumb} />
-          </Switch.Root>
+          <div className={styles.activeContainer}>
+            <Switch.Root
+              className={`${styles.switch} ${
+                isUpdatingActivation ? styles.switchDisabled : ""
+              }`}
+              checked={survey.isActive}
+              onCheckedChange={(checked: boolean) =>
+                handleToggleActive(survey.id, checked)
+              }
+              disabled={
+                isUpdatingActivation ||
+                (!survey.isActive && numActiveSurveys >= MAX_TRIGGERS_PER_USER)
+              }
+            >
+              <Switch.Thumb className={styles.switchThumb} />
+            </Switch.Root>
+            {isActivationError && lastUpdatedSurveyId === survey.id && (
+              <MdError
+                className={styles.errorIcon}
+                size={25}
+                title="An unexpected error occurred. Make sure that you have less than 20 active surveys before you attempt to active another one."
+              />
+            )}
+          </div>
         ),
     },
   ];

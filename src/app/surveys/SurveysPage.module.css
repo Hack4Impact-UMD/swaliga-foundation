@@ -67,6 +67,18 @@
   color: #00000080;
 }
 
+.activeContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 5px;
+}
+
+.errorIcon {
+  color: #aa0000;
+  cursor: pointer;
+}
+
 .switch {
   all: unset;
   width: 42px;
