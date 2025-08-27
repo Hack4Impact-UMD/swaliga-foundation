@@ -44,7 +44,7 @@ export async function addExistingSurvey(surveyId: string): Promise<SurveyID> {
 
 export async function activateSurvey(accessToken: string, surveyId: string) {
   try {
-    await AppsScript.installTrigger(accessToken, surveyId);
+    await AppsScript.activateSurvey(accessToken, surveyId);
   } catch (error) {
     throw new Error("Failed to activate survey");
   }
@@ -52,14 +52,14 @@ export async function activateSurvey(accessToken: string, surveyId: string) {
   try {
     await FirestoreSurveys.updateSurvey(surveyId, { isActive: true });
   } catch (error) {
-    await AppsScript.uninstallTrigger(accessToken, surveyId);
+    await AppsScript.deactivateSurvey(accessToken, surveyId);
     throw new Error("Failed to activate survey");
   }
 }
 
 export async function deactivateSurvey(accessToken: string, surveyId: string) {
   try {
-    await AppsScript.uninstallTrigger(accessToken, surveyId);
+    await AppsScript.deactivateSurvey(accessToken, surveyId);
   } catch (error) {
     throw new Error("Failed to deactivate survey");
   }
@@ -67,7 +67,7 @@ export async function deactivateSurvey(accessToken: string, surveyId: string) {
   try {
     await FirestoreSurveys.updateSurvey(surveyId, { isActive: false });
   } catch (error) {
-    await AppsScript.installTrigger(accessToken, surveyId);
+    await AppsScript.activateSurvey(accessToken, surveyId);
     throw new Error("Failed to deactivate survey");
   }
 }

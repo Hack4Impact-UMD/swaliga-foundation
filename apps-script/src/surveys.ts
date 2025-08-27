@@ -55,7 +55,7 @@ function addExistingSurvey(surveyId: string) {
 }
 globalThis.addExistingSurvey = addExistingSurvey;
 
-function installTrigger(surveyId: string) {
+function activateSurvey(surveyId: string) {
   const survey = FormApp.openById(surveyId);
   const triggers = ScriptApp.getProjectTriggers();
   if (triggers.length === MAX_TRIGGERS_PER_USER) {
@@ -63,14 +63,16 @@ function installTrigger(surveyId: string) {
   } else if (!triggers.some(trigger => trigger.getTriggerSourceId() === surveyId)) {
     ScriptApp.newTrigger("onFormSubmit_").forForm(survey).onFormSubmit().create();
   }
+  survey.setAcceptingResponses(true);
 }
-globalThis.installTrigger = installTrigger;
+globalThis.activateSurvey = activateSurvey;
 
-function uninstallTrigger(surveyId: string) {
+function deactivateSurvey(surveyId: string) {
   const triggers = ScriptApp.getProjectTriggers().filter(trigger => trigger.getTriggerSourceId() === surveyId);
   triggers.forEach(trigger => ScriptApp.deleteTrigger(trigger));
+  FormApp.openById(surveyId).setAcceptingResponses(false);
 }
-globalThis.uninstallTrigger = uninstallTrigger;
+globalThis.deactivateSurvey = deactivateSurvey;
 
 function addIdQuestion_(survey: GoogleAppsScript.Forms.Form) {
   const idQuestion = survey
@@ -126,7 +128,7 @@ globalThis.getUpdatedSurveyTitlesAndDescriptions = getUpdatedSurveyTitlesAndDesc
 
 function deleteSurvey(surveyId: string) {
   const survey = FormApp.openById(surveyId);
-  uninstallTrigger(surveyId);
+  deactivateSurvey(surveyId);
   DriveApp.getFileById(survey.getPublishedUrl()).setTrashed(true);
   DriveApp.getFileById(surveyId).setTrashed(true);
 }
