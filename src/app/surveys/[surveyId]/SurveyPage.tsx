@@ -44,13 +44,15 @@ export default function SurveyPage(props: SurveyPageProps) {
     useState<string[]>([]);
   const { assignments, setAssignments, isLoading: isAssignmentsLoading, isError: isAssignmentsError } = useAssignments({ surveyId });
   const { pendingAssignments, surveyResponses } = useMemo(() => {
-    const pendingAssignments: PendingAssignmentID[] = [];
-    const surveyResponses: SurveyResponseID[] = [];
+    let pendingAssignments: PendingAssignmentID[] = [];
+    let surveyResponses: SurveyResponseID[] = [];
     assignments.forEach((assignment) =>
       isPendingAssignmentID(assignment)
         ? pendingAssignments.push(assignment)
         : surveyResponses.push(assignment)
     );
+    pendingAssignments = pendingAssignments.sort((a, b) => a.assignedAt.localeCompare(b.assignedAt));
+    surveyResponses = surveyResponses.sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));
     return { pendingAssignments, surveyResponses };
   }, [assignments]);
 

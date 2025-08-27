@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useEffect, useState } from "react";
-import { Role, Student } from "@/types/user-types";
+import { getFullName, Role, Student } from "@/types/user-types";
 import { collection, doc, onSnapshot } from "firebase/firestore";
 import { Collection, Document } from "../firestore/utils";
 import { db } from "@/config/firebaseConfig";
@@ -63,7 +63,11 @@ export default function StudentsProvider({
                   newStudents.push(student as Student);
                 }
               }
-              setStudents(newStudents);
+              setStudents(
+                newStudents.sort((a: Student, b: Student) =>
+                  getFullName(a.name).localeCompare(getFullName(b.name))
+                )
+              );
               setIsLoading(false);
             },
             () => {

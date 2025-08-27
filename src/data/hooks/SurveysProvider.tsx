@@ -31,7 +31,7 @@ export default function SurveysProvider({
             newSurveys.push({ id, ...survey } as SurveyID);
           }
         }
-        setSurveys(newSurveys);
+        setSurveys(newSurveys.sort((a: SurveyID, b: SurveyID) => a.name.localeCompare(b.name)));
         setIsLoading(false);
       },
       () => {

@@ -56,13 +56,15 @@ export default function StudentPage(props: StudentPageProps) {
     studentId,
   });
   const { pendingAssignments, surveyResponses } = useMemo(() => {
-    const pendingAssignments: PendingAssignmentID[] = [];
-    const surveyResponses: SurveyResponseStudentIdID[] = [];
+    let pendingAssignments: PendingAssignmentID[] = [];
+    let surveyResponses: SurveyResponseStudentIdID[] = [];
     assignments.forEach((assignment) =>
       isPendingAssignmentID(assignment)
         ? pendingAssignments.push(assignment)
         : surveyResponses.push(assignment as SurveyResponseStudentIdID)
     );
+    pendingAssignments = pendingAssignments.sort((a, b) => a.assignedAt.localeCompare(b.assignedAt));
+    surveyResponses = surveyResponses.sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));
     return { pendingAssignments, surveyResponses };
   }, [assignments]);
 
