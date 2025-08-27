@@ -21,7 +21,7 @@ export default function AvailabilityProvider(props: AvailabilityProviderProps) {
   const [isRefreshTokenValid, setIsRefreshTokenValid] = useState<boolean>(
     !role
   );
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
 
   useEffect(() => {
