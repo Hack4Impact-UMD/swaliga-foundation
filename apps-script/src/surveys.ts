@@ -60,10 +60,9 @@ function installTrigger(surveyId: string) {
   const triggers = ScriptApp.getProjectTriggers();
   if (triggers.length === MAX_TRIGGERS_PER_USER) {
     throw new Error("Maximum number of triggers reached.");
-  } else if (triggers.some(trigger => trigger.getTriggerSourceId() === surveyId)) {
-    throw new Error("Trigger already exists for this survey.");
+  } else if (!triggers.some(trigger => trigger.getTriggerSourceId() === surveyId)) {
+    ScriptApp.newTrigger("onFormSubmit_").forForm(survey).onFormSubmit().create();
   }
-  ScriptApp.newTrigger("onFormSubmit_").forForm(survey).onFormSubmit().create();
 }
 globalThis.installTrigger = installTrigger;
 
