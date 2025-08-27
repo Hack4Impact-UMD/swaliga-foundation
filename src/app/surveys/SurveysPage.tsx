@@ -64,6 +64,10 @@ export default function SurveysPage() {
       ),
     },
     {
+      name: "Description",
+      getValue: (survey: SurveyID) => survey.description,
+    },
+    {
       name: "Edit Survey",
       getValue: (survey: SurveyID) => (
         <Link
