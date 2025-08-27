@@ -145,6 +145,11 @@ export default function StudentPage(props: StudentPageProps) {
         surveys.find((survey) => survey.id === assignment.surveyId)!.name,
     },
     {
+      name: "Description",
+      getValue: (assignment: PendingAssignmentID) =>
+        surveys.find((survey) => survey.id === assignment.surveyId)!.description,
+    },
+    {
       name: "Assignment Date",
       getValue: (assignment: PendingAssignmentID) =>
         moment(assignment.assignedAt).format("MMM D, YYYY"),
@@ -172,15 +177,14 @@ export default function StudentPage(props: StudentPageProps) {
         surveys.find((survey) => survey.id === assignment.surveyId)!.name,
     },
     {
+      name: "Description",
+      getValue: (assignment: SurveyResponseStudentIdID) =>
+        surveys.find((survey) => survey.id === assignment.surveyId)!.description,
+    },
+    {
       name: "Submission Date",
       getValue: (assignment: SurveyResponseStudentIdID) =>
         moment(assignment.submittedAt).format("MMM D, YYYY"),
-    },
-    {
-      name: "View Response",
-      getValue: (assignment: SurveyResponseStudentIdID) => (
-        <FaEye className={styles.icon} size={20} />
-      ),
     },
     ...(role === "ADMIN" || role === "STAFF"
       ? [
