@@ -12,6 +12,7 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  gap: 15px;
   width: 90%;
   min-height: 85vh;
   background-color: #1e4154;
@@ -121,6 +122,9 @@
 }
 
 .tableContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
   width: 75%;
 }
 
@@ -131,4 +135,12 @@
 
 .icon:hover {
   color: #555555;
+}
+
+.optionsMenu {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }

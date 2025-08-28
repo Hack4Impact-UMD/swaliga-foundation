@@ -1,13 +1,10 @@
 "use client";
 
-import { getAssignmentsByStudentId } from "@/data/firestore/assignments";
 import useStudents from "@/data/hooks/useStudents";
 import useAuth from "@/features/auth/useAuth";
 import {
-  AssignmentID,
   isPendingAssignmentID,
   PendingAssignmentID,
-  SurveyResponseID,
   SurveyResponseStudentIdID,
 } from "@/types/survey-types";
 import { getFullAddress, getFullName, Role, Student } from "@/types/user-types";
@@ -16,21 +13,11 @@ import { cloneElement, useMemo, useState } from "react";
 import styles from "./StudentPage.module.css";
 import LoadingPage from "@/app/loading";
 import useSurveys from "@/data/hooks/useSurveys";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionHeader,
-  AccordionContent,
-  AccordionTrigger,
-} from "@radix-ui/react-accordion";
-import { GoTriangleDown, GoTriangleUp } from "react-icons/go";
 import useAssignments from "@/data/hooks/useAssignments";
 import {
   FaAddressBook,
   FaBirthdayCake,
-  FaEdit,
   FaEnvelope,
-  FaEye,
   FaIdBadge,
   FaPhone,
   FaVenusMars,
@@ -40,6 +27,7 @@ import Table, { Column } from "@/components/ui/Table";
 import RespondToSurveyModal from "@/features/surveyManagement/RespondToSurveyModal";
 import EditAccountModal from "@/app/create-account/EditAccountModal";
 import ReassignResponseModal from "@/features/surveyManagement/ReassignResponseModal";
+import AssignSurveysModal from "@/features/surveyManagement/AssignSurveysModal";
 
 interface StudentPageProps {
   studentId: string;
@@ -147,7 +135,8 @@ export default function StudentPage(props: StudentPageProps) {
     {
       name: "Description",
       getValue: (assignment: PendingAssignmentID) =>
-        surveys.find((survey) => survey.id === assignment.surveyId)!.description,
+        surveys.find((survey) => survey.id === assignment.surveyId)!
+          .description,
     },
     {
       name: "Assignment Date",
@@ -179,7 +168,8 @@ export default function StudentPage(props: StudentPageProps) {
     {
       name: "Description",
       getValue: (assignment: SurveyResponseStudentIdID) =>
-        surveys.find((survey) => survey.id === assignment.surveyId)!.description,
+        surveys.find((survey) => survey.id === assignment.surveyId)!
+          .description,
     },
     {
       name: "Submission Date",
@@ -226,8 +216,16 @@ export default function StudentPage(props: StudentPageProps) {
             </div>
           ))}
         </div>
-        <h3 className={styles.surveysSectionHeader}>Pending Assignments</h3>
         <div className={styles.tableContainer}>
+          <div className={styles.optionsMenu}>
+            <h3 className={styles.surveysSectionHeader}>Pending Assignments</h3>
+            {(role === "ADMIN" || role === "STAFF") && (
+              <AssignSurveysModal
+                student={student}
+                existingAssignments={pendingAssignments}
+              />
+            )}
+          </div>
           <Table
             items={pendingAssignments}
             columns={pendingAssignmentsColumns}
@@ -239,8 +237,8 @@ export default function StudentPage(props: StudentPageProps) {
             isError={isAssignmentsError || isSurveysError}
           />
         </div>
-        <h3 className={styles.surveysSectionHeader}>Past Responses</h3>
         <div className={styles.tableContainer}>
+          <h3 className={styles.surveysSectionHeader}>Past Responses</h3>
           <Table
             items={surveyResponses}
             columns={responsesColumns}
