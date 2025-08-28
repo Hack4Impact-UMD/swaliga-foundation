@@ -25,7 +25,7 @@ import { getFullName } from "@/types/user-types";
 import moment from "moment";
 import { FilterCondition } from "@/components/Filter";
 import SendSurveyReminderEmailModal from "@/features/notifications/SendSurveyReminderEmailModal";
-import AssignStudentsModal from "@/features/surveyManagement/AssignStudentsModal";
+import AssignStudentsModal from "@/features/surveyManagement/AssignSurveysModal";
 import useAssignments from "@/data/hooks/useAssignments";
 import ReassignResponseModal from "@/features/surveyManagement/ReassignResponseModal";
 import SurveyActivationSwitch from "@/features/surveyManagement/SurveyActivationSwitch";
@@ -249,7 +249,7 @@ export default function SurveyPage(props: SurveyPageProps) {
               )}
               <AssignStudentsModal
                 survey={survey}
-                assignments={pendingAssignments}
+                existingAssignments={pendingAssignments}
               />
             </div>
           </div>
