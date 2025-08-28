@@ -64,8 +64,8 @@ export default function AssignSurveysModal(props: AssignSurveysModalProps) {
         <p>{message}</p>
       ) : (
         <>
-          <h1>"{getFullName(student.name)}" Assignments</h1>
-          <h2>Assign New Students</h2>
+          <h1>{getFullName(student.name)}'s Assignments</h1>
+          <h2>Assign New Surveys</h2>
           <Select
             className={styles.select}
             options={currUnassignedSurveys.map((survey) => ({
@@ -89,7 +89,7 @@ export default function AssignSurveysModal(props: AssignSurveysModalProps) {
                   }`}
                   key={assignment.id}
                 >
-                  {`${getFullName(student.name)} (${student.email})`}
+                  {survey.name}
                   {isRemoved ? (
                     <FaUndo
                       className={styles.assignmentButton}
