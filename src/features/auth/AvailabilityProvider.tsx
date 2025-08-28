@@ -27,6 +27,7 @@ export default function AvailabilityProvider(props: AvailabilityProviderProps) {
   useEffect(() => {
     if (!role) {
       setIsRefreshTokenValid(true);
+      setIsLoading(false);
       return;
     }
     setIsLoading(true);
