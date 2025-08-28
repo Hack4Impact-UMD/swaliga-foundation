@@ -11,11 +11,11 @@ import { FaX } from "react-icons/fa6";
 
 interface AssignStudentsModalProps {
   survey: SurveyID;
-  assignments: PendingAssignmentID[];
+  existingAssignments: PendingAssignmentID[];
 }
 
 export default function AssignStudentsModal(props: AssignStudentsModalProps) {
-  const { survey, assignments } = props;
+  const { survey, existingAssignments } = props;
 
   const [addedStudentIds, setAddedStudentIds] = useState<string[]>([]);
   const [removedStudentIds, setRemovedStudentIds] = useState<string[]>([]);
@@ -29,7 +29,7 @@ export default function AssignStudentsModal(props: AssignStudentsModalProps) {
   }[] = [];
   const currUnassignedStudents: Student[] = [];
   students.forEach((student) => {
-    const assignment = assignments.find(
+    const assignment = existingAssignments.find(
       (assignment) => assignment.studentId === student.id
     );
     if (assignment) {
@@ -48,7 +48,7 @@ export default function AssignStudentsModal(props: AssignStudentsModalProps) {
       await Promise.all([
         assignSurveys(addedStudentIds, [survey.id]),
         unassignSurveys(
-          assignments.filter((assignment) =>
+          existingAssignments.filter((assignment) =>
             removedStudentIds.includes(assignment.studentId)
           )
         ),
