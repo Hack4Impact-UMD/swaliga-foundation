@@ -341,7 +341,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       errors.push("At least 1 required field is empty.");
     }
 
-    const phoneRegex = /^\(\d{3}\)-\d{3}-\d{4}$/;
+    const phoneRegex = /^\(\d{3}\)\s\d{3}-\d{4}$/;
     if (phone && !phoneRegex.test(phone)) {
       errors.push(
         "The Phone field should either be empty or contain a valid phone number in the format (XXX)-XXX-XXXX."
