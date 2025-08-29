@@ -520,12 +520,14 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           onChange={(e) => setFirstName(e.target.value)}
           required
           icon={<FaAddressCard />}
+          maxLength={50}
         />
         <TextField
           label="Middle Name"
           value={middleName}
           onChange={(e) => setMiddleName(e.target.value)}
           icon={<FaAddressCard />}
+          maxLength={50}
         />
         <TextField
           label="Last Name"
@@ -533,6 +535,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           onChange={(e) => setLastName(e.target.value)}
           required
           icon={<FaAddressCard />}
+          maxLength={50}
         />
       </div>
       <div className={styles.row}>
@@ -578,6 +581,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           otherText={genderOtherText}
           onOtherTextChange={(e) => setGenderOtherText(e.target.value)}
           icon={<FaVenusMars />}
+          maxOtherLength={50}
         />
       </div>
       <label>
@@ -629,6 +633,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           onChange={(e) => setAddressLine1(e.target.value)}
           required
           icon={<FaHouse />}
+          maxLength={100}
         />
       </div>
       <div className={styles.row}>
@@ -637,6 +642,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           value={addressLine2}
           onChange={(e) => setAddressLine2(e.target.value)}
           icon={<FaHouse />}
+          maxLength={100}
         />
       </div>
       <div className={styles.row}>
@@ -646,6 +652,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           onChange={(e) => setCity(e.target.value)}
           required
           icon={<FaCity />}
+          maxLength={50}
         />
         <TextField
           label="State"
@@ -653,6 +660,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           onChange={(e) => setState(e.target.value)}
           required
           icon={<FaLandmark />}
+          maxLength={50}
         />
         <TextField
           label="Country"
@@ -660,6 +668,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           onChange={(e) => setCountry(e.target.value)}
           required
           icon={<FaFlag />}
+          maxLength={50}
         />
         <TextField
           label="Zip Code"
@@ -678,6 +687,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           onChange={(e) => setSchoolName(e.target.value)}
           required
           icon={<FaSchool />}
+          maxLength={100}
         />
         <TextField
           label="Graduation Year"
@@ -701,7 +711,8 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           onChange={(e) => setSchoolAddressLine1(e.target.value)}
           required
           icon={<FaHouse />}
-        />{" "}
+          maxLength={100}
+        />
       </div>
       <div className={styles.row}>
         <TextField
@@ -709,7 +720,8 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           value={schoolAddressLine2}
           onChange={(e) => setSchoolAddressLine2(e.target.value)}
           icon={<FaHouse />}
-        />{" "}
+          maxLength={100}
+        />
       </div>
       <div className={styles.row}>
         <TextField
@@ -718,6 +730,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           onChange={(e) => setSchoolCity(e.target.value)}
           required
           icon={<FaCity />}
+          maxLength={50}
         />
         <TextField
           label="School State"
@@ -725,6 +738,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           onChange={(e) => setSchoolState(e.target.value)}
           required
           icon={<FaLandmark />}
+          maxLength={50}
         />
         <TextField
           label="School Country"
@@ -732,6 +746,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           onChange={(e) => setSchoolCountry(e.target.value)}
           required
           icon={<FaFlag />}
+          maxLength={50}
         />
         <TextField
           label="School Zip Code"
@@ -771,6 +786,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
               }
               required
               icon={<FaAddressCard />}
+              maxLength={50}
             />
             <TextField
               label="Middle Name"
@@ -781,6 +797,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
                 )
               }
               icon={<FaAddressCard />}
+              maxLength={50}
             />
             <TextField
               label="Last Name"
@@ -792,6 +809,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
               }
               required
               icon={<FaAddressCard />}
+              maxLength={50}
             />
           </div>
           <div className={styles.row}>
@@ -805,6 +823,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
               }
               required
               icon={<FaEnvelope />}
+              maxLength={320}
             />
             <TextField
               label="Phone Number"
@@ -839,6 +858,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
                 )
               }
               icon={<FaVenusMars />}
+              maxOtherLength={50}
             />
             <Select
               label="Guardian Relationship"
@@ -860,6 +880,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
                 )
               }
               icon={<RiParentFill />}
+              maxOtherLength={50}
             />
           </div>
         </>

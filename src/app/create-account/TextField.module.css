@@ -30,3 +30,10 @@
   display: flex;
   color: black;
 }
+
+.characterCount {
+  height: 1em;
+  align-self: flex-end;
+  font-size: 14px;
+  margin: 0 10px;
+}

@@ -10,6 +10,7 @@ interface TextFieldProps {
   required?: boolean;
   disabled?: boolean;
   icon: JSX.Element;
+  maxLength?: number;
 }
 
 export default function TextField(props: TextFieldProps) {
@@ -20,6 +21,7 @@ export default function TextField(props: TextFieldProps) {
     required = false,
     disabled = false,
     icon,
+    maxLength = undefined,
   } = props;
   const placeholder = props.placeholder || label;
   return (
@@ -31,10 +33,16 @@ export default function TextField(props: TextFieldProps) {
           className={styles.inputText}
           placeholder={placeholder}
           value={value}
-          onChange={onChange}
+          onChange={(e) => {
+            if (maxLength && e.target.value.length > maxLength) return;
+            if (onChange) onChange(e);
+          }}
           disabled={disabled}
         />
       </div>
+      <span className={styles.characterCount}>
+        {maxLength && `${value.length}/${maxLength}`}
+      </span>
     </div>
   );
 }

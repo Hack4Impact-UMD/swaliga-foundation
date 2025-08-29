@@ -10,6 +10,7 @@ interface SelectProps {
   otherText: string;
   onOtherTextChange: (e: ChangeEvent<HTMLInputElement>) => void;
   icon: JSX.Element;
+  maxOtherLength?: number;
 }
 
 export default function Select(props: SelectProps) {
@@ -21,6 +22,7 @@ export default function Select(props: SelectProps) {
     otherText,
     onOtherTextChange,
     icon,
+    maxOtherLength = undefined,
   } = props;
   return (
     <div className={styles.inputGroup}>
@@ -39,14 +41,24 @@ export default function Select(props: SelectProps) {
           ))}
         </select>
         {selectedValue === "Other" && (
-          <input
-            className={styles.inputText}
-            type="text"
-            placeholder="Please specify"
-            value={otherText}
-            onChange={onOtherTextChange}
-            hidden={true}
-          />
+          <div className={styles.otherTextContainer}>
+            <input
+              className={styles.inputText}
+              type="text"
+              placeholder="Please specify"
+              value={otherText}
+              onChange={(e) => {
+                if (maxOtherLength && e.target.value.length > maxOtherLength) return;
+                onOtherTextChange(e);
+              }}
+              hidden={true}
+            />
+            {maxOtherLength && (
+              <span
+                className={styles.characterCount}
+              >{`${otherText.length}/${maxOtherLength}`}</span>
+            )}
+          </div>
         )}
       </div>
     </div>
