@@ -27,7 +27,7 @@ export default function TextField(props: TextFieldProps) {
   return (
     <div className={styles.inputGroup}>
       <Label label={label} required={required} />
-      <div className={styles.inputField}>
+      <div className={`${styles.inputField} ${disabled ? styles.disabledInputField : ""}`}>
         {cloneElement(icon, { className: styles.inputIcon })}
         <input
           className={styles.inputText}

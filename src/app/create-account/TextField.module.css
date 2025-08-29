@@ -16,6 +16,10 @@
   border-radius: 10px;
 }
 
+.disabledInputField * {
+  cursor: not-allowed;
+}
+
 .inputText {
   width: calc(100% - 50px);
   padding: 10px 40px;
