@@ -510,6 +510,16 @@ export default function EditAccountForm(props: EditAccountFormProps) {
     return `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
   };
 
+  const formatDate = (value: string) => {
+    const digits = value.replace(/\D/g, "");
+    if (digits.length <= 4) {
+      return digits;
+    } else if (digits.length <= 6) {
+      return `${digits.slice(0, 4)}/${digits.slice(4)}`;
+    }
+    return `${digits.slice(0, 4)}/${digits.slice(4, 6)}/${digits.slice(6, 8)}`;
+  }
+
   return (
     <form className={styles.accountForm}>
       <label className={styles.sectionHeader}>Student Information</label>
@@ -559,7 +569,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="Date of Birth"
           placeholder="YYYY/MM/DD"
           value={dateOfBirth}
-          onChange={(e) => setDateOfBirth(e.target.value)}
+          onChange={(e) => setDateOfBirth(formatDate(e.target.value))}
           required
           icon={<FaBirthdayCake />}
         />
@@ -567,7 +577,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="Approximately when did you join the Swaliga Foundation?"
           placeholder="YYYY/MM/DD"
           value={joinedSwaligaDate}
-          onChange={(e) => setJoinedSwaligaDate(e.target.value)}
+          onChange={(e) => setJoinedSwaligaDate(formatDate(e.target.value))}
           required
           icon={<FaCalendar />}
         />
