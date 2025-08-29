@@ -41,6 +41,7 @@ import {
   MAX_NUM_PARENTS_GUARDIANS,
   MIN_NUM_PARENTS_GUARDIANS,
 } from "@/constants/constants";
+import Spinner from "@/components/ui/Spinner";
 type EditAccountFormProps =
   | {
       mode: "CREATE";
@@ -224,6 +225,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
     mode === "EDIT" ? String(student.school.address.zipCode) : ""
   );
 
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formErrors, setFormErrors] = useState<string[]>([]);
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
@@ -396,8 +398,10 @@ export default function EditAccountForm(props: EditAccountFormProps) {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    setIsSubmitting(true);
     setError("");
     if (!isFormValid()) {
+      setIsSubmitting(false);
       return;
     }
     try {
@@ -493,7 +497,9 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       setSuccess(
         `Account ${mode === "CREATE" ? "created" : "updated"} successfully!`
       );
+      setIsSubmitting(false);
     } catch (error) {
+      setIsSubmitting(false);
       setError("Failed to create account. Please try again later.");
     }
   };
@@ -925,8 +931,8 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           </ul>
         </div>
       )}
-      <button className={styles.submitButton} onClick={handleSubmit}>
-        Submit
+      <button className={`${styles.submitButton} ${isSubmitting ? styles.disabledSubmitButton : ""}`} onClick={handleSubmit} disabled={isSubmitting}>
+        {isSubmitting ? <Spinner /> : "Submit"}
       </button>
       {error && <p className={styles.error}>{error}</p>}
       {success && <p className={styles.success}>{success}</p>}

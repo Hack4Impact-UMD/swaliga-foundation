@@ -72,6 +72,11 @@
   opacity: 0.8;
 }
 
+.disabledSubmitButton {
+  background-color: grey;
+  cursor: not-allowed
+}
+
 .requiredAsterisk {
   color: red;
 }
