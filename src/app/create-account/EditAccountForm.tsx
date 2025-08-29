@@ -417,7 +417,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
             FIRST_STUDENT_ID
           }`;
           await transaction.set(studentIdRef, {
-            nextStudentId: studentId + 1,
+            nextStudentId: Number(studentId) + 1,
           });
         } else {
           var studentId = student.id;
