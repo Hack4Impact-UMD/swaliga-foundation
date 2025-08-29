@@ -23,6 +23,7 @@
   align-items: center;
   gap: 15px;
   width: 100%;
+  flex-wrap: wrap;
 }
 
 .emergencyAddButton {
