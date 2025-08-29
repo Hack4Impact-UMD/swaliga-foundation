@@ -518,7 +518,11 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       return `${digits.slice(0, 4)}/${digits.slice(4)}`;
     }
     return `${digits.slice(0, 4)}/${digits.slice(4, 6)}/${digits.slice(6, 8)}`;
-  }
+  };
+
+  const formatYear = (value: string) => {
+    return value.replace(/\D/g, "").slice(0, 4);
+  };
 
   return (
     <form className={styles.accountForm}>
@@ -702,14 +706,21 @@ export default function EditAccountForm(props: EditAccountFormProps) {
         <TextField
           label="Graduation Year"
           value={gradYear}
-          onChange={(e) => setGradYear(e.target.value)}
+          onChange={(e) => setGradYear(formatYear(e.target.value))}
           required
           icon={<FaGraduationCap />}
         />
         <TextField
           label="GPA"
           value={gpa}
-          onChange={(e) => setGPA(e.target.value)}
+          onChange={(e) => {
+            if (
+              e.target.value === "" ||
+              e.target.value.match(/^\d(\.(\d{1,2})?)?$/)
+            ) {
+              setGPA(e.target.value);
+            }
+          }}
           required
           icon={<FaGraduationCap />}
         />
