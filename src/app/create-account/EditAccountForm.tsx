@@ -498,6 +498,18 @@ export default function EditAccountForm(props: EditAccountFormProps) {
     }
   };
 
+  const formatPhone = (value: string) => {
+    value = value.replace(/\D/g, "");
+    if (value.length === 0) {
+      return "";
+    } else if (value.length <= 3) {
+      return `(${value}`;
+    } else if (value.length <= 6) {
+      return `(${value.slice(0, 3)}) ${value.slice(3)}`;
+    }
+    return `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
+  };
+
   return (
     <form className={styles.accountForm}>
       <label className={styles.sectionHeader}>Student Information</label>
@@ -533,9 +545,9 @@ export default function EditAccountForm(props: EditAccountFormProps) {
         />
         <TextField
           label="Phone Number"
-          placeholder="(XXX)-XXX-XXXX"
+          placeholder="(XXX) XXX-XXXX"
           value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          onChange={(e) => setPhone(formatPhone(e.target.value))}
           icon={<FaPhone />}
         />
       </div>
@@ -796,11 +808,13 @@ export default function EditAccountForm(props: EditAccountFormProps) {
             />
             <TextField
               label="Phone Number"
-              placeholder="(XXX)-XXX-XXXX"
+              placeholder="(XXX) XXX-XXXX"
               value={guardianPhones[index]}
               onChange={(e) =>
                 setGuardianPhones((prev) =>
-                  prev.map((phone, i) => (i === index ? e.target.value : phone))
+                  prev.map((phone, i) =>
+                    i === index ? formatPhone(e.target.value) : phone
+                  )
                 )
               }
               icon={<FaPhone />}
