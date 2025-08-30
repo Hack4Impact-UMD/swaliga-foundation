@@ -42,7 +42,7 @@ export default function StudentPage(props: StudentPageProps) {
     isLoading: isStudentsLoading,
     isError: isStudentsError,
   } = useStudents();
-  const student = students.find((student) => student.id === studentId)!;
+  const student = role === "STUDENT" ? students[0] : students.find((student) => student.id === studentId);
 
   const {
     assignments,
@@ -82,10 +82,10 @@ export default function StudentPage(props: StudentPageProps) {
 
   if (isStudentsLoading) {
     return <LoadingPage />;
-  }
-
-  if (isStudentsError) {
+  } else if (isStudentsError) {
     throw new Error("Failed to get student data.");
+  } else if (!student) {
+    throw new Error("Student not found.");
   }
 
   const studentInfo = [
