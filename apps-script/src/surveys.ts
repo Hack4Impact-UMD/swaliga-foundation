@@ -10,6 +10,7 @@ function createNewSurvey(title: string, description: string): SurveyID {
       SpreadsheetApp.create(`${title} - Responses`).getId()
     );
   addIdQuestion_(survey);
+  survey.setAcceptingResponses(false);
   survey.setCustomClosedFormMessage('This survey is no longer accepting responses. If you believe this is an error, please ask an administrator to open the survey on the Swaliga Survey portal.');
 
   return {
@@ -40,6 +41,7 @@ function addExistingSurvey(surveyId: string) {
   if (items.length === 0 || !(idQuestionItem = getIdQuestionItem_(items))) {
     addIdQuestion_(survey);
   }
+  survey.setAcceptingResponses(false);
   survey.setCustomClosedFormMessage('This survey is no longer accepting responses. If you believe this is an error, please ask an administrator to open the survey on the Swaliga Survey portal.');
 
   return {
