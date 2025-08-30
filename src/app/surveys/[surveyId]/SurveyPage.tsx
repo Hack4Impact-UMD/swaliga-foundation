@@ -25,7 +25,7 @@ import { getFullName } from "@/types/user-types";
 import moment from "moment";
 import { FilterCondition } from "@/components/Filter";
 import SendSurveyReminderEmailModal from "@/features/notifications/SendSurveyReminderEmailModal";
-import AssignStudentsModal from "@/features/surveyManagement/AssignSurveysModal";
+import AssignStudentsModal from "@/features/surveyManagement/AssignStudentsModal";
 import useAssignments from "@/data/hooks/useAssignments";
 import ReassignResponseModal from "@/features/surveyManagement/ReassignResponseModal";
 import SurveyActivationSwitch from "@/features/surveyManagement/SurveyActivationSwitch";
@@ -41,7 +41,7 @@ export default function SurveyPage(props: SurveyPageProps) {
     isLoading: isSurveysLoading,
     isError: isSurveysError,
   } = useSurveys();
-  const survey = surveys.find((survey) => survey.id === surveyId)!;
+  const survey = surveys.find((survey) => survey.id === surveyId);
 
   const {
     students,
@@ -76,19 +76,44 @@ export default function SurveyPage(props: SurveyPageProps) {
 
   if (isSurveysLoading) {
     return <LoadingPage />;
+  } else if (isSurveysError) {
+    throw new Error("Failed to get survey data.");
+  } else if (!survey) {
+    throw new Error("Survey not found.");
   }
 
-  if (isSurveysError) {
-    throw new Error("Failed to get survey data.");
-  }
+  const getStudentNameFromAssignment = (assignment: AssignmentID) => {
+    if (
+      isPendingAssignmentID(assignment) ||
+      isSurveyResponseStudentIdID(assignment)
+    ) {
+      const student = students.find(
+        (student) => student.id === assignment.studentId
+      );
+      return student ? getFullName(student.name) : "N/A";
+    }
+    return "N/A";
+  };
+
+  const getStudentEmailFromAssignment = (assignment: AssignmentID) => {
+    if (
+      isSurveyResponseStudentIdID(assignment) ||
+      isPendingAssignmentID(assignment)
+    ) {
+      const student = students.find(
+        (student) => student.id === assignment.studentId
+      );
+      return student ? student.email : "N/A";
+    } else if (isSurveyResponseStudentEmailID(assignment)) {
+      return assignment.studentEmail;
+    }
+    return "N/A";
+  };
 
   const pendingAssignmentColumns: Column<PendingAssignmentID>[] = [
     {
       name: "Student Name",
-      getValue: (assignment: PendingAssignmentID) =>
-        getFullName(
-          students.find((student) => student.id === assignment.studentId)!.name
-        ),
+      getValue: getStudentNameFromAssignment,
     },
     {
       name: "Student ID",
@@ -106,10 +131,7 @@ export default function SurveyPage(props: SurveyPageProps) {
       name: "Student Name",
       getValue: (assignment: SurveyResponseID) =>
         isSurveyResponseStudentIdID(assignment)
-          ? getFullName(
-              students.find((student) => student.id === assignment.studentId)!
-                .name
-            )
+          ? getStudentNameFromAssignment(assignment)
           : "N/A",
     },
     {
@@ -119,16 +141,7 @@ export default function SurveyPage(props: SurveyPageProps) {
     },
     {
       name: "Student Email",
-      getValue: (assignment: SurveyResponseID) => {
-        if (isSurveyResponseStudentEmailID(assignment)) {
-          return assignment.studentEmail;
-        } else if (isSurveyResponseStudentIdID(assignment)) {
-          return students.find(
-            (student) => student.id === assignment.studentId
-          )!.email;
-        }
-        return "N/A";
-      },
+      getValue: getStudentEmailFromAssignment,
     },
     {
       name: "Submission Timestamp",
@@ -179,13 +192,7 @@ export default function SurveyPage(props: SurveyPageProps) {
   const filterConditions: FilterCondition<AssignmentID>[] = [
     {
       name: "Student Name",
-      getValue: (assignment: AssignmentID) =>
-        isSurveyResponseUnidentifiedID(assignment)
-          ? "N/A"
-          : getFullName(
-              students.find((student) => student.id === assignment.studentId)!
-                .name
-            ),
+      getValue: getStudentNameFromAssignment,
     },
     {
       name: "Student ID",
