@@ -73,7 +73,7 @@ const addResponsesToFirestore = async (responses: GoogleFormResponse[], transact
 
   const { users } = await adminAuth.getUsers([...new Set(emailResponses.map(response => response.studentEmail))].map(email => ({ email })));
   const emailIds: { [email: string]: string } = {};
-  users.forEach(user => emailIds[user.email!] = user.uid);
+  users.forEach(user => emailIds[user.email!] = user.customClaims?.studentId);
   emailResponses.forEach(response => {
     const docRef = surveysCollection.doc(response.surveyId).collection(Collection.ASSIGNMENTS).doc(uuid());
     emailIds[response.studentEmail] ? transaction.set(docRef, {
