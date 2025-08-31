@@ -1,86 +1,69 @@
-// import { User } from "@/types/user-types";
-// import { Timestamp } from "firebase/firestore";
-// import os from 'os';
-// import { getSurveyByID } from "../../data/firestore/surveys";
-// import { Survey, Response } from "@/types/survey-types";
-// import { getResponseByID } from "../../data/firestore/assignments";
+import { Survey } from "@/types/survey-types";
+import { getFullAddress, getFullName, Student } from "@/types/user-types";
 
-// type flattenDoc = {
-//   [key: string]: any;
-// };
+const EOL = '\r\n';
 
-// export function exportUsersToCSV(users: User[], surveys: Survey[]): void {
-//   const fields: (keyof User)[] = [
-//     "firstName",
-//     "lastName",
-//     "middleName",
-//     "address",
-//     "school",
-//     "birthdate",
-//     "gradYear",
-//     "email",
-//     "phone",
-//     "yearsWithSwaliga",
-//     "ethnicity",
-//     "gender",
-//     "guardian",
-//     "swaligaID",
-//     "assignedSurveys",
-//     "completedResponses",
-//   ];
+function getStudentSummaryRow(student: Student, maxNumGuardians: number): string[] {
+  return [
+    student.id,
+    getFullName(student.name),
+    student.email,
+    student.phone || "N/A",
+    student.gender,
+    `"${student.ethnicity.join(', ')}"`,
+    student.dateOfBirth,
+    student.joinedSwaligaDate,
+    `"${getFullAddress(student.address)}"`,
+    student.school.name,
+    `"${getFullAddress(student.school.address)}"`,
+    student.school.gradYear.toString(),
+    student.school.gpa.toString(),
+    ...student.guardians.map(g => [
+      getFullName(g.name),
+      g.email,
+      g.phone || "N/A",
+      g.gender,
+      g.relationship
+    ]).flat()
+  ]
+}
 
-//   const csv: string[] = [];
-//   users.forEach((user) => {
-//     if (!user.isAdmin) {
-//       const values = fields.map((field) => {
-//         switch (field) {
-//           case "guardian":
-//             if (!user[field]) {
-//               return "N/A";
-//             }
-//             //only mapping guardian's first name and last name for now because if map individual properties of guardian, it will overwrite the student's properties that share the same field spelling
-//             //can try to map g again like we did with users
-//             return user.guardian?.map((g) => `"${g.name} (${g.email}, ${g.phone})"`).join("; ");
-//           case "birthdate":
-//             const timestamp = (user[field] as Timestamp | undefined)?.seconds;
-//             if (timestamp) {
-//               const date = new Date(timestamp * 1000);
-//               const bday = `${date.getMonth() + 1
-//                 }/${date.getDate()}/${date.getFullYear()}`;
-//               return bday;
-//             } else {
-//               return "";
-//             }
-//           case "completedResponses":
-//             return user[field].map((responseID: string) => surveys.filter((survey: Survey) => survey.responseIds.includes(responseID))[0].info.title).join("; ");
-//           case "assignedSurveys":
-//             return user[field].map((surveyID: string) => surveys.filter((survey: Survey) => survey.formId === surveyID)[0].info.title).join("; ");
-//           case "address":
-//             if (!user[field]) {
-//               return "N/A";
-//             }
-//             const address = user[field];
-//             return `"${address.street} ${address.city}, ${address.state}, ${address.country} ${address.zip}"`;
-//           case "ethnicity":
-//             const ethnicities: string[] = [];
-//             user[field].forEach((val) => ethnicities.push(val));
-//             return ethnicities.join(", ");
-//           default:
-//             return user[field];
-//         }
-//       });
-//       csv.push(values.join(","));
-//     }
-//   });
+export function exportStudentSummariesToCSV(students: Student[]) {
+  const maxNumGuardians = Math.max(...students.map(s => s.guardians.length));
+  const columnHeaders: string[] = [
+    'ID',
+    'Name',
+    'Email',
+    'Phone',
+    'Gender',
+    'Ethnicity',
+    'Date of Birth',
+    'Joined Swaliga Date',
+    'Address',
+    'School Name',
+    'School Address',
+    'Graduation Year',
+    'GPA',
+    ...Array.from({ length: maxNumGuardians }, (_, i) => [`Guardian ${i + 1} Name`, `Guardian ${i + 1} Email`, `Guardian ${i + 1} Phone`, `Guardian ${i + 1} Gender`, `Guardian ${i + 1} Relationship`]).flat()
+  ]
+  const cells: string[][] = [
+    columnHeaders,
+    ...students.map(student => getStudentSummaryRow(student, maxNumGuardians))
+  ]
+  createCSV(cells, "student_summaries");
+}
 
-//   csv.unshift(fields.join(","));
+export function exportSurveyToCSV(survey: Survey) {
 
-//   const csvContent = "data:text/csv;charset=utf-8," + csv.join(os.EOL);
-//   const encodedUri = encodeURI(csvContent);
-//   var link = document.createElement("a");
-//   link.setAttribute("href", encodedUri);
-//   link.setAttribute("download", "students.csv");
-//   document.body.appendChild(link); // Required for FF
-//   link.click();
-//   document.body.removeChild(link)
-// };
+}
+
+export function createCSV(cells: string[][], filename: string) {
+  const csvContent = "data:text/csv;charset=utf-8," + cells.join(EOL);
+  const encodedUri = encodeURI(csvContent);
+  var link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", `${filename}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link)
+}
