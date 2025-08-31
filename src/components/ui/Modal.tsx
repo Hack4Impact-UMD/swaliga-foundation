@@ -18,14 +18,16 @@ export default function Modal(props: ModalProps) {
 
   const toggleModal = () => {
     setIsOpen((prev) => !prev);
-    if (onClose) { onClose(); }
+    if (isOpen && onClose) {
+      onClose();
+    }
   };
 
   return (
     <>
       {cloneElement(trigger, { onClick: toggleModal })}
       {isOpen && (
-        <div className={styles.modalBackground}>
+        <div className={styles.modalBackground} onClick={toggleModal}>
           <dialog className={styles.modal}>
             <span className={styles.closeIcon} onClick={toggleModal}>
               <Image src={closeIcon} alt="Close Icon" />
