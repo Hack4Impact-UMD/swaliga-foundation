@@ -5,6 +5,7 @@ import RequireAuth from "@/features/auth/RequireAuth";
 import { checkCodeValidity } from "@/features/auth/authN/emailPasswordAuthN";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import ErrorPage from "../error";
 
 const LoadingPage = dynamic(() => import("../loading"));
 const VerifyEmailPage = dynamic(() => import("./VerifyEmailPage"));
@@ -15,7 +16,7 @@ export default function AuthHandlerPage() {
   const mode = searchParams.get("mode");
   const oobCode = searchParams.get("oobCode");
   if (!mode || !oobCode) {
-    throw new Error("We're unable to find the page you're looking for.");
+    return <ErrorPage error="We're unable to find the page you're looking for." />;
   }
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -38,7 +39,7 @@ export default function AuthHandlerPage() {
   }
 
   if (error) {
-    throw new Error(error);
+    return <ErrorPage error={error} />;
   }
 
   switch (mode) {
@@ -55,6 +56,6 @@ export default function AuthHandlerPage() {
         </RequireAuth>
       );
     default:
-      throw new Error("We're unable to find the page you're looking for.");
+      return <ErrorPage error="We're unable to find the page you're looking for." />;
   }
 }

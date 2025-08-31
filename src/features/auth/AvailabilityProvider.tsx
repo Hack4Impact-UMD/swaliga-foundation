@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import useAuth from "./useAuth";
 import { Role } from "@/types/user-types";
 import InvalidRefreshTokenPage from "@/app/InvalidRefreshTokenPage";
+import ErrorPage from "@/app/error";
 
 interface AvailabilityProviderProps {
   children: React.ReactNode;
@@ -40,7 +41,7 @@ export default function AvailabilityProvider(props: AvailabilityProviderProps) {
   if (isLoading) {
     return <LoadingPage />;
   } else if (isError) {
-    throw new Error("We ran into an unexpected error. Please try again later.");
+    return <ErrorPage error="We ran into an unexpected error. Please try again later." />;
   } else if (!isRefreshTokenValid) {
     return <InvalidRefreshTokenPage />;
   }

@@ -29,6 +29,7 @@ import AssignStudentsModal from "@/features/surveyManagement/AssignStudentsModal
 import useAssignments from "@/data/hooks/useAssignments";
 import ReassignResponseModal from "@/features/surveyManagement/ReassignResponseModal";
 import SurveyActivationSwitch from "@/features/surveyManagement/SurveyActivationSwitch";
+import ErrorPage from "@/app/error";
 
 interface SurveyPageProps {
   surveyId: string;
@@ -77,9 +78,9 @@ export default function SurveyPage(props: SurveyPageProps) {
   if (isSurveysLoading) {
     return <LoadingPage />;
   } else if (isSurveysError) {
-    throw new Error("Failed to get survey data.");
+    return <ErrorPage error="Failed to get survey data." />;
   } else if (!survey) {
-    throw new Error("Survey not found.");
+    return <ErrorPage error="Survey not found." />;
   }
 
   const getStudentNameFromAssignment = (assignment: AssignmentID) => {

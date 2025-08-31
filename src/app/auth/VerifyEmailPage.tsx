@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { verifyEmail } from "@/features/auth/authN/emailPasswordAuthN";
 import useAuth from "@/features/auth/useAuth";
+import ErrorPage from "../error";
 
 interface VerifyEmailPageProps {
   oobCode: string;
@@ -36,7 +37,7 @@ export default function VerifyEmailPage(props: VerifyEmailPageProps) {
   }, []);
 
   if (error) {
-    throw new Error(error);
+    return <ErrorPage error={error} />;
   }
 
   return (

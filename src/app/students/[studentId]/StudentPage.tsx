@@ -28,6 +28,7 @@ import RespondToSurveyModal from "@/features/surveyManagement/RespondToSurveyMod
 import EditAccountModal from "@/app/create-account/EditAccountModal";
 import ReassignResponseModal from "@/features/surveyManagement/ReassignResponseModal";
 import AssignSurveysModal from "@/features/surveyManagement/AssignSurveysModal";
+import ErrorPage from "@/app/error";
 
 interface StudentPageProps {
   studentId: string;
@@ -42,7 +43,10 @@ export default function StudentPage(props: StudentPageProps) {
     isLoading: isStudentsLoading,
     isError: isStudentsError,
   } = useStudents();
-  const student = role === "STUDENT" ? students[0] : students.find((student) => student.id === studentId);
+  const student =
+    role === "STUDENT"
+      ? students[0]
+      : students.find((student) => student.id === studentId);
 
   const {
     assignments,
@@ -83,9 +87,9 @@ export default function StudentPage(props: StudentPageProps) {
   if (isStudentsLoading) {
     return <LoadingPage />;
   } else if (isStudentsError) {
-    throw new Error("Failed to get student data.");
+    return <ErrorPage error="Failed to get student data." />;
   } else if (!student) {
-    throw new Error("Student not found.");
+    return <ErrorPage error="Student not found." />;
   }
 
   const studentInfo = [
