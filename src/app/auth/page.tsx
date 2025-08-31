@@ -6,10 +6,10 @@ import { checkCodeValidity } from "@/features/auth/authN/emailPasswordAuthN";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import ErrorPage from "../error";
+import LoadingPage from "../loading";
 
-const LoadingPage = dynamic(() => import("../loading"));
-const VerifyEmailPage = dynamic(() => import("./VerifyEmailPage"));
-const ResetPasswordPage = dynamic(() => import("./ResetPasswordPage"));
+const VerifyEmailPage = dynamic(() => import("./VerifyEmailPage"), { loading: () => <LoadingPage /> });
+const ResetPasswordPage = dynamic(() => import("./ResetPasswordPage"), { loading: () => <LoadingPage /> });
 
 export default function AuthHandlerPage() {
   const searchParams = useSearchParams();

@@ -4,14 +4,22 @@ import RequireAuth from "@/features/auth/RequireAuth";
 import RoleBasedPage from "@/features/auth/RoleBasedPage";
 import useAuth from "@/features/auth/useAuth";
 import dynamic from "next/dynamic";
+import LoadingPage from "./loading";
 
-const StudentPage = dynamic(() => import("./students/[studentId]/StudentPage"));
-const CreateAccountPage = dynamic(
-  () => import("./create-account/CreateAccountPage")
+const StudentPage = dynamic(
+  () => import("./students/[studentId]/StudentPage"),
+  { loading: () => <LoadingPage /> }
 );
-const LoginPage = dynamic(() => import("./LoginPage"));
+const CreateAccountPage = dynamic(
+  () => import("./create-account/CreateAccountPage"),
+  { loading: () => <LoadingPage /> }
+);
+const LoginPage = dynamic(() => import("./LoginPage"), {
+  loading: () => <LoadingPage />,
+});
 const SendVerificationEmailPage = dynamic(
-  () => import("./SendVerificationEmailPage")
+  () => import("./SendVerificationEmailPage"),
+  { loading: () => <LoadingPage /> }
 );
 
 export default function LoginPageWrapper() {
