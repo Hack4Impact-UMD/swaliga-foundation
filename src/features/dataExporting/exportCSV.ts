@@ -29,6 +29,7 @@ function getStudentSummaryRow(student: Student, maxNumGuardians: number): string
 }
 
 export function exportStudentSummariesToCSV(students: Student[]) {
+  students = students.sort((a, b) => a.id.localeCompare(b.id));
   const maxNumGuardians = Math.max(...students.map(s => s.guardians.length));
   const columnHeaders: string[] = [
     'ID',
