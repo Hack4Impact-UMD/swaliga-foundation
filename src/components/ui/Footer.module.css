@@ -1,0 +1,77 @@
+.footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: 20px;
+  background-color: #1e4154;
+  box-sizing: border-box;
+  color: #d0d12a;
+}
+
+.logoSocialsColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex-basis: 50%;
+}
+
+.logo {
+  width: 100%;
+  height: 50%;
+}
+
+.socials {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  gap: 12px;
+  width: 100%;
+}
+
+.socialIcon {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  color: #d0d12a;
+}
+
+.contactInfoColumn {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 25%;
+}
+
+.contactHeader {
+  font-weight: bold;
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.contactInfo {
+  margin: 24px 0 0;
+}
+
+.contactInfo span {
+  font-weight: bold;
+}
+
+.h4iColumn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-basis: 25%;
+  gap: 12px;
+}
+
+.linkText {
+  color: #1ca1df;
+}
+
+.linkText:hover {
+  color: #54bbeb;
+}

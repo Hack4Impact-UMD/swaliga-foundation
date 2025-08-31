@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import AvailabilityProvider from "@/features/auth/AvailabilityProvider";
 import SurveysProvider from "@/data/hooks/SurveysProvider";
 import StudentsProvider from "@/data/hooks/StudentsProvider";
+import Footer from "@/components/ui/Footer";
 
 const LoadingPage = dynamic(() => import("./loading"));
 
@@ -35,6 +36,7 @@ export default function RootLayout({
                 <StudentsProvider>{children}</StudentsProvider>
               </SurveysProvider>
             </AvailabilityProvider>
+            <Footer />
           </AuthProvider>
         </Suspense>
       </body>
