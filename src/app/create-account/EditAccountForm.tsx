@@ -530,6 +530,10 @@ export default function EditAccountForm(props: EditAccountFormProps) {
     return value.replace(/\D/g, "").slice(0, 4);
   };
 
+  const formatZipCode = (value: string) => {
+    return value.replace(/\D/g, "").slice(0, 5);
+  };
+
   return (
     <form className={styles.accountForm}>
       <label className={styles.sectionHeader}>Student Information</label>
@@ -693,7 +697,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
         <TextField
           label="Zip Code"
           value={zipCode}
-          onChange={(e) => setZipCode(e.target.value)}
+          onChange={(e) => setZipCode(formatZipCode(e.target.value))}
           required
           icon={<FaMapPin />}
         />
@@ -778,7 +782,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
         <TextField
           label="School Zip Code"
           value={schoolZipCode}
-          onChange={(e) => setSchoolZipCode(e.target.value)}
+          onChange={(e) => setSchoolZipCode(formatZipCode(e.target.value))}
           required
           icon={<FaMapPin />}
         />
