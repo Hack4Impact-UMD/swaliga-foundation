@@ -59,8 +59,13 @@ export default function SendSurveyReminderEmailModal(
     }
   };
 
+  const handleClose = () => {
+    setMessage("");
+    setError("");
+  };
+
   return (
-    <Modal>
+    <Modal onClose={handleClose}>
       <FaEnvelope
         className={styles.icon}
         size={30}

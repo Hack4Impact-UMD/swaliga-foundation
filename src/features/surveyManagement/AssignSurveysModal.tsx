@@ -57,8 +57,15 @@ export default function AssignSurveysModal(props: AssignSurveysModalProps) {
     }
   };
 
+  const handleClose = () => {
+    setAddedSurveyIds([]);
+    setRemovedSurveyIds([]);
+    setMessage("");
+    setError("");
+  }
+
   return (
-    <Modal>
+    <Modal onClose={handleClose}>
       <FaPlus className={styles.icon} size={30} title="Assign Survey" />
       {message ? (
         <p>{message}</p>

@@ -59,8 +59,15 @@ export default function AssignStudentsModal(props: AssignStudentsModalProps) {
     }
   };
 
+  const handleClose = () => {
+    setAddedStudentIds([]);
+    setRemovedStudentIds([]);
+    setMessage("");
+    setError("");
+  };
+
   return (
-    <Modal>
+    <Modal onClose={handleClose}>
       <FaPlus className={styles.icon} size={30} title="Assign Survey" />
       {message ? (
         <p>{message}</p>
