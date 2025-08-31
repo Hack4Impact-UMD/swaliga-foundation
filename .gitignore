@@ -9,7 +9,7 @@ firebaseAdminCredentials.json
 
 .vscode
 
-/testData
+/emulatorData
 
 # dependencies
 /node_modules
