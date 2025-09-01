@@ -8,6 +8,9 @@ import { getFullAddress, getFullName, Student } from "@/types/user-types";
 import moment from "moment";
 import useStudents from "@/data/hooks/useStudents";
 import Link from "next/link";
+import { FaFileExport } from "react-icons/fa";
+import { exportStudentSummariesToCSV } from "@/features/dataExporting/exportCSV";
+import MenuIcon from "@/components/ui/MenuIcon";
 
 export default function StudentsPage() {
   const { students, isLoading, isError } = useStudents();
@@ -78,7 +81,21 @@ export default function StudentsPage() {
       <div className={styles.container}>
         <div className={styles.header}>
           <h1 className={styles.headerText}>Students</h1>
-          <div className={styles.optionMenu}></div>
+          <div className={styles.optionMenu}>
+            {selectedStudentIds.length > 0 && (
+              <MenuIcon
+                icon={FaFileExport}
+                title="Export Student Data"
+                onClick={() =>
+                  exportStudentSummariesToCSV(
+                    students.filter((student) =>
+                      selectedStudentIds.includes(student.id)
+                    )
+                  )
+                }
+              />
+            )}
+          </div>
         </div>
         <Table<Student>
           items={students}

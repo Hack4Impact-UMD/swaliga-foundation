@@ -18,6 +18,7 @@ import {
   FaAddressBook,
   FaBirthdayCake,
   FaEnvelope,
+  FaFileExport,
   FaIdBadge,
   FaPhone,
   FaVenusMars,
@@ -29,6 +30,8 @@ import EditAccountModal from "@/app/create-account/EditAccountModal";
 import ReassignResponseModal from "@/features/surveyManagement/ReassignResponseModal";
 import AssignSurveysModal from "@/features/surveyManagement/AssignSurveysModal";
 import ErrorPage from "@/app/error";
+import MenuIcon from "@/components/ui/MenuIcon";
+import { exportFullStudentDataToCSV } from "@/features/dataExporting/exportCSV";
 
 interface StudentPageProps {
   studentId: string;
@@ -205,6 +208,23 @@ export default function StudentPage(props: StudentPageProps) {
       <div className={styles.container}>
         <div className={styles.headerContainer}>
           <h1 className={styles.header}>{getFullName(student.name)}</h1>
+          {!isAssignmentsLoading && !isSurveysLoading && (
+            <MenuIcon
+              icon={FaFileExport}
+              title="Export Student Data"
+              onClick={() =>
+                exportFullStudentDataToCSV(
+                  student,
+                  surveyResponses.map((response) => ({
+                    ...response,
+                    surveyName:
+                      surveys.find((survey) => survey.id === response.surveyId)
+                        ?.name || "Unknown Survey",
+                  }))
+                )
+              }
+            />
+          )}
           <EditAccountModal student={student} />
         </div>
         <div className={styles.infoFieldsContainer}>
