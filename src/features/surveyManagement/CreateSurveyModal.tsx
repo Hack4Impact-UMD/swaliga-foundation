@@ -8,6 +8,7 @@ import { createNewSurvey, addExistingSurvey } from "./surveys";
 import useAuth from "../auth/useAuth";
 import { getAccessTokenFromAuth } from "../auth/googleAuthZ";
 import { FaCirclePlus } from "react-icons/fa6";
+import MenuIcon from "@/components/ui/MenuIcon";
 
 enum CreateSurveyModalErrorMessages {
   SURVEY_NAME_REQUIRED = "Survey name is required.",
@@ -83,7 +84,7 @@ export default function CreateSurveyModal(): JSX.Element {
 
   return (
     <Modal onClose={onClose}>
-      <FaCirclePlus className={styles.icon} size={40} title="Create Survey" />
+      <MenuIcon icon={FaCirclePlus} title="Create Survey" />
       {message ? (
         <p>{message}</p>
       ) : (

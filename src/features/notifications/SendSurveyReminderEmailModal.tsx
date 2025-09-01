@@ -13,6 +13,7 @@ import {
 import { FaEnvelope } from "react-icons/fa";
 import useStudents from "@/data/hooks/useStudents";
 import { getFullName } from "@/types/user-types";
+import MenuIcon from "@/components/ui/MenuIcon";
 
 interface SendSurveyReminderEmailModalProps {
   survey: SurveyID;
@@ -66,11 +67,7 @@ export default function SendSurveyReminderEmailModal(
 
   return (
     <Modal onClose={handleClose}>
-      <FaEnvelope
-        className={styles.icon}
-        size={30}
-        title="Send Reminder Email"
-      />
+      <MenuIcon icon={FaEnvelope} title="Send Reminder Email" />
       {message ? (
         <p>{message}</p>
       ) : (

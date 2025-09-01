@@ -1,15 +1,3 @@
-.icon {
-  color: #35627a;
-  background-color: #dedeb2;
-  border-radius: 10%;
-  padding: 10px;
-  cursor: pointer;
-}
-
-.icon:hover {
-  color: #5d8195;
-}
-
 .text {
   font-size: x-large;
   text-align: center;

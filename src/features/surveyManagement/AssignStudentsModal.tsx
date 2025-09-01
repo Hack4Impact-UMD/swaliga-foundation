@@ -8,6 +8,7 @@ import useStudents from "@/data/hooks/useStudents";
 import { getFullName, Student } from "@/types/user-types";
 import Select from "react-select";
 import { FaX } from "react-icons/fa6";
+import MenuIcon from "@/components/ui/MenuIcon";
 
 interface AssignStudentsModalProps {
   survey: SurveyID;
@@ -68,7 +69,7 @@ export default function AssignStudentsModal(props: AssignStudentsModalProps) {
 
   return (
     <Modal onClose={handleClose}>
-      <FaPlus className={styles.icon} size={30} title="Assign Survey" />
+      <MenuIcon icon={FaPlus} title="Assign Survey" />
       {message ? (
         <p>{message}</p>
       ) : (

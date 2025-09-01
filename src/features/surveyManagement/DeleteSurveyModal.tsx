@@ -6,6 +6,7 @@ import { deleteSurvey, deleteSurveys } from "./surveys";
 import { FaTrash } from "react-icons/fa";
 import { getAccessTokenFromAuth } from "../auth/googleAuthZ";
 import useAuth from "../auth/useAuth";
+import MenuIcon from "@/components/ui/MenuIcon";
 
 interface DeleteSurveyModalProps {
   surveys: Pick<SurveyID, "id" | "name">[];
@@ -54,7 +55,7 @@ export default function DeleteSurveyModal(props: DeleteSurveyModalProps) {
 
   return (
     <Modal onClose={onClose}>
-      <FaTrash className={styles.icon} size={40} title={`Delete Survey${surveys.length > 1 ? "s" : ""}`} />
+      <MenuIcon icon={FaTrash} title={`Delete Survey${surveys.length > 1 ? "s" : ""}`} />
       {message ? (
         <p>{message}</p>
       ) : (

@@ -30,6 +30,7 @@ import useAssignments from "@/data/hooks/useAssignments";
 import ReassignResponseModal from "@/features/surveyManagement/ReassignResponseModal";
 import SurveyActivationSwitch from "@/features/surveyManagement/SurveyActivationSwitch";
 import ErrorPage from "@/app/error";
+import MenuIcon from "@/components/ui/MenuIcon";
 
 interface SurveyPageProps {
   surveyId: string;
@@ -223,20 +224,16 @@ export default function SurveyPage(props: SurveyPageProps) {
               href={`https://docs.google.com/forms/d/${survey.id}/edit`}
               target="_blank"
             >
-              <FaEdit className={styles.icon} size={30} title="Edit Survey" />
+              <MenuIcon icon={FaEdit} title="Edit Survey" />
             </Link>
             <Link href={survey.responderUri} target="_blank">
-              <FaEye className={styles.icon} size={30} title="View Survey" />
+              <MenuIcon icon={FaEye} title="View Survey" />
             </Link>
             <Link
               href={`https://docs.google.com/spreadsheets/d/${survey.linkedSheetId}/edit`}
               target="_blank"
             >
-              <FaFileExcel
-                className={styles.icon}
-                size={30}
-                title="View Responses Spreadsheet"
-              />
+              <MenuIcon icon={FaFileExcel} title="View Responses Spreadsheet" />
             </Link>
             <span className={styles.activateSpan}>
               Accepting Responses? <SurveyActivationSwitch survey={survey} />
