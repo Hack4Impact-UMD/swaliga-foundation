@@ -10,7 +10,9 @@
     "esModuleInterop": true,
     "paths": {
       "@/*": ["../src/*"]
-    }
+    },
+    "types": ["google-apps-script"],
+    "skipLibCheck": true
   },
   "compileOnSave": true,
   "include": ["src"]
