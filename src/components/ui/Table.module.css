@@ -116,3 +116,13 @@
 .filterIcon {
   padding: 3px;
 }
+
+.sortSpan {
+  cursor: pointer;
+  padding: 0 5px;
+  border-radius: 10px;
+}
+
+.sortSpan:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}

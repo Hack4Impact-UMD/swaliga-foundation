@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styles from "./Table.module.css";
 import Filter, { FilterCondition } from "../Filter";
 import { FaChevronLeft, FaChevronRight, FaFilter } from "react-icons/fa";
@@ -49,8 +49,25 @@ export default function Table<T extends ID>(props: TableProps<T>) {
   );
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
   const [filteredItems, setFilteredItems] = useState<T[]>(items);
+  const [sortConfig, setSortConfig] = useState<{
+    column: string;
+    direction: "asc" | "desc";
+  } | null>(null);
 
   const numPages = Math.ceil(filteredItems.length / numItemsPerPage);
+
+  const sortCol = columns.find(
+    (col) => col.sortFunc && col.name === sortConfig?.column
+  );
+  const sortFunc: (a: T, b: T) => number = useCallback(
+    (a, b) => {
+      if (!sortCol || !sortConfig) return 0;
+      return (
+        (sortConfig.direction === "asc" ? 1 : -1) * sortCol.sortFunc!(a, b)
+      );
+    },
+    [sortConfig, sortCol]
+  );
 
   useEffect(() => {
     setFilteredItems(items);
@@ -118,7 +135,32 @@ export default function Table<T extends ID>(props: TableProps<T>) {
                   </th>
                 )}
                 {columns.map((column: Column<T>) => (
-                  <th className={styles.rowItem}>{column.name}</th>
+                  <th className={styles.rowItem}>
+                    {column.name}
+                    {column.sortFunc && (
+                      <span
+                        className={styles.sortSpan}
+                        onClick={() => {
+                          setSortConfig((prev) => {
+                            if (prev?.column === column.name) {
+                              return {
+                                column: column.name,
+                                direction:
+                                  prev.direction === "asc" ? "desc" : "asc",
+                              };
+                            }
+                            return { column: column.name, direction: "asc" };
+                          });
+                        }}
+                      >
+                        {sortConfig?.column !== column.name
+                          ? "⇅"
+                          : sortConfig.direction === "asc"
+                          ? "↑"
+                          : "↓"}
+                      </span>
+                    )}
+                  </th>
                 ))}
               </tr>
             </thead>
@@ -145,6 +187,7 @@ export default function Table<T extends ID>(props: TableProps<T>) {
                       (currentPage + 1) * numItemsPerPage
                     )
                   )
+                  .sort(sortFunc)
                   .map((item: T) => {
                     const checked = selectOptions?.selectedItemIds?.includes(
                       item.id
