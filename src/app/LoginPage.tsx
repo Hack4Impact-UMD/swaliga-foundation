@@ -9,8 +9,6 @@ import {
 } from "@/features/auth/authN/emailPasswordAuthN";
 import { signInWithGoogle } from "@/features/auth/authN/googleAuthN";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
-import { validatePassword } from "firebase/auth";
-import { auth } from "@/config/firebaseConfig";
 
 export default function LoginPage() {
   const [isLoginMode, setIsLoginMode] = useState<boolean>(true);

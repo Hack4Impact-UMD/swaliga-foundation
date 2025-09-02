@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import styles from "./CreateSurveyModal.module.css";
 import Modal from "../../../components/ui/Modal";
-import { SurveyID } from "@/types/survey-types";
 import { createNewSurvey, addExistingSurvey } from "../surveys";
 import useAuth from "../../auth/authN/components/useAuth";
 import { getAccessTokenFromAuth } from "../../auth/authZ/googleAuthZ";

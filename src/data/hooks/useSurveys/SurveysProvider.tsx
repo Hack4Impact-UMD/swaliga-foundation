@@ -5,7 +5,6 @@ import { collection, onSnapshot } from "firebase/firestore";
 import { Collection, Document } from "../../firestore/utils";
 import { db } from "@/config/firebaseConfig";
 import { SurveyID } from "@/types/survey-types";
-import LoadingPage from "@/app/loading";
 import { useSurveysDefault, useSurveysReturn } from "./useSurveys";
 
 export const SurveysContext =

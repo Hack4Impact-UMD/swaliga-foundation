@@ -1,4 +1,4 @@
-import { PendingAssignmentID, Survey, SurveyResponseID, SurveyResponseStudentIdID } from "@/types/survey-types";
+import { SurveyResponseStudentIdID } from "@/types/survey-types";
 import { getFullAddress, getFullName, Student } from "@/types/user-types";
 import moment from "moment";
 

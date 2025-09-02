@@ -5,7 +5,6 @@ import { getFullName, Role, Student } from "@/types/user-types";
 import { collection, doc, onSnapshot } from "firebase/firestore";
 import { Collection, Document } from "../../firestore/utils";
 import { db } from "@/config/firebaseConfig";
-import LoadingPage from "@/app/loading";
 import useAuth from "@/features/auth/authN/components/useAuth";
 import { useStudentsDefault, useStudentsReturn } from "./useStudents";
 

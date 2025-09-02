@@ -4,7 +4,6 @@ import Image from "next/image";
 import styles from "./Modal.module.css";
 import closeIcon from "@/../public/icons/close-icon.png";
 import { cloneElement, MouseEvent, useState } from "react";
-import { on } from "events";
 
 interface ModalProps {
   children: [JSX.Element, React.ReactNode];

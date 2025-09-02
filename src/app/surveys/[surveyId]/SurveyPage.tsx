@@ -6,15 +6,13 @@ import {
   isSurveyResponseID,
   isSurveyResponseStudentEmailID,
   isSurveyResponseStudentIdID,
-  isSurveyResponseUnidentifiedID,
   PendingAssignmentID,
   SurveyResponseID,
   SurveyResponseStudentIdID,
   SurveyResponseUnidentifiedID,
 } from "@/types/survey-types";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import styles from "./SurveyPage.module.css";
-import { getAssignmentsBySurveyId } from "@/data/firestore/assignments";
 import LoadingPage from "@/app/loading";
 import Link from "next/link";
 import { FaEdit, FaEye, FaFileExcel, FaPlus } from "react-icons/fa";

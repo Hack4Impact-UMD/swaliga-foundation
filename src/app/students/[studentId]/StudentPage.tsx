@@ -7,9 +7,9 @@ import {
   PendingAssignmentID,
   SurveyResponseStudentIdID,
 } from "@/types/survey-types";
-import { getFullAddress, getFullName, Role, Student } from "@/types/user-types";
+import { getFullAddress, getFullName, Role } from "@/types/user-types";
 import moment from "moment";
-import { cloneElement, useMemo, useState } from "react";
+import { cloneElement, useMemo } from "react";
 import styles from "./StudentPage.module.css";
 import LoadingPage from "@/app/loading";
 import useSurveys from "@/data/hooks/useSurveys/useSurveys";

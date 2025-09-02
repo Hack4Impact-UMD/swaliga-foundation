@@ -4,12 +4,7 @@ import styles from "./SendSurveyReminderEmailModal.module.css";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/config/firebaseConfig";
 import Mail from "nodemailer/lib/mailer";
-import {
-  AssignmentID,
-  isPendingAssignmentID,
-  PendingAssignmentID,
-  SurveyID,
-} from "@/types/survey-types";
+import { PendingAssignmentID, SurveyID } from "@/types/survey-types";
 import { FaEnvelope } from "react-icons/fa";
 import useStudents from "@/data/hooks/useStudents/useStudents";
 import { getFullName } from "@/types/user-types";
