@@ -3,6 +3,7 @@
 import { Role } from "@/types/user-types";
 import useAuth from "./useAuth";
 import { useRouter } from "next/navigation";
+import LoadingPage from "@/app/loading";
 
 interface RequireAuthProps {
   children: JSX.Element;
@@ -47,4 +48,5 @@ export default function RequireAuth(props: RequireAuthProps) {
   } else {
     router.push(defaultRedirects[role]);
   }
+  return <LoadingPage />;
 }
