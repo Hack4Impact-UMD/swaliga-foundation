@@ -138,17 +138,27 @@ export default function StudentPage(props: StudentPageProps) {
       name: "Survey Name",
       getValue: (assignment: PendingAssignmentID) =>
         surveys.find((survey) => survey.id === assignment.surveyId)!.name,
+      sortFunc: (a, b) =>
+        surveys.find((survey) => survey.id === a.surveyId)!.name.localeCompare(
+          surveys.find((survey) => survey.id === b.surveyId)!.name
+        ),
     },
     {
       name: "Description",
       getValue: (assignment: PendingAssignmentID) =>
         surveys.find((survey) => survey.id === assignment.surveyId)!
           .description,
+      sortFunc: (a, b) =>
+        surveys.find((survey) => survey.id === a.surveyId)!.description.localeCompare(
+          surveys.find((survey) => survey.id === b.surveyId)!.description
+        ),
     },
     {
       name: "Assignment Date",
       getValue: (assignment: PendingAssignmentID) =>
         moment(assignment.assignedAt).format("MMM D, YYYY"),
+      sortFunc: (a, b) =>
+        moment(a.assignedAt).isBefore(moment(b.assignedAt)) ? -1 : 1,
     },
     ...(role === "STUDENT"
       ? [
@@ -171,17 +181,26 @@ export default function StudentPage(props: StudentPageProps) {
       name: "Survey Name",
       getValue: (assignment: SurveyResponseStudentIdID) =>
         surveys.find((survey) => survey.id === assignment.surveyId)!.name,
+      sortFunc: (a, b) =>
+        surveys.find((survey) => survey.id === a.surveyId)!.name.localeCompare(
+          surveys.find((survey) => survey.id === b.surveyId)!.name
+        ),
     },
     {
       name: "Description",
       getValue: (assignment: SurveyResponseStudentIdID) =>
         surveys.find((survey) => survey.id === assignment.surveyId)!
           .description,
+      sortFunc: (a, b) =>
+        surveys.find((survey) => survey.id === a.surveyId)!.description.localeCompare(
+          surveys.find((survey) => survey.id === b.surveyId)!.description
+        ),
     },
     {
       name: "Submission Date",
       getValue: (assignment: SurveyResponseStudentIdID) =>
         moment(assignment.submittedAt).format("MMM D, YYYY"),
+      sortFunc: (a, b) => moment(a.submittedAt).isBefore(moment(b.submittedAt)) ? -1 : 1
     },
     ...(role === "ADMIN" || role === "STAFF"
       ? [

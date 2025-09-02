@@ -7,6 +7,7 @@ import { ID } from "@/types/utils";
 export interface Column<T extends ID> {
   name: string;
   getValue: (item: T) => React.ReactNode;
+  sortFunc?: (a: T, b: T) => number;
 }
 
 interface SelectOptions {

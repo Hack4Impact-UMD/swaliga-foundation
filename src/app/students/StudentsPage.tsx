@@ -24,27 +24,33 @@ export default function StudentsPage() {
           <p className={styles.linkText}>{getFullName(student.name)}</p>
         </Link>
       ),
+      sortFunc: (a, b) => getFullName(a.name).localeCompare(getFullName(b.name)),
     },
     {
       name: "ID",
       getValue: (student: Student) => student.id,
+      sortFunc: (a, b) => a.id.localeCompare(b.id),
     },
     {
       name: "Email",
       getValue: (student: Student) => student.email,
+      sortFunc: (a, b) => a.email.localeCompare(b.email),
     },
     {
       name: "Address",
       getValue: (student: Student) => getFullAddress(student.address),
+      sortFunc: (a, b) => getFullAddress(a.address).localeCompare(getFullAddress(b.address)),
     },
     {
       name: "Date of Birth",
       getValue: (student: Student) =>
         moment(student.dateOfBirth).format("MMM D, YYYY"),
+      sortFunc: (a, b) => moment(a.dateOfBirth).isBefore(moment(b.dateOfBirth)) ? -1 : 1
     },
     {
       name: "School",
       getValue: (student: Student) => student.school.name,
+      sortFunc: (a, b) => a.school.name.localeCompare(b.school.name),
     },
   ];
 

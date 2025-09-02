@@ -26,10 +26,12 @@ export default function SurveysPage() {
           <p className={styles.linkText}>{survey.name}</p>
         </Link>
       ),
+      sortFunc: (a, b) => a.name.localeCompare(b.name),
     },
     {
       name: "Description",
       getValue: (survey: SurveyID) => survey.description,
+      sortFunc: (a, b) => a.description.localeCompare(b.description),
     },
     {
       name: "Edit Survey",
@@ -66,6 +68,7 @@ export default function SurveysPage() {
       getValue: (survey: SurveyID) => (
         <SurveyActivationSwitch survey={survey} />
       ),
+      sortFunc: (a, b) => (a.isActive === b.isActive ? 0 : a.isActive ? -1 : 1),
     },
   ];
 

@@ -116,15 +116,18 @@ export default function SurveyPage(props: SurveyPageProps) {
     {
       name: "Student Name",
       getValue: getStudentNameFromAssignment,
+      sortFunc: (a, b) => getStudentNameFromAssignment(a).localeCompare(getStudentNameFromAssignment(b)),
     },
     {
       name: "Student ID",
       getValue: (assignment: PendingAssignmentID) => assignment.studentId,
+      sortFunc: (a, b) => a.studentId.localeCompare(b.studentId),
     },
     {
       name: "Assignment Date",
       getValue: (assignment: PendingAssignmentID) =>
         moment(assignment.assignedAt).format("MMM D, YYYY"),
+      sortFunc: (a, b) => moment(a.assignedAt).isBefore(moment(b.assignedAt)) ? -1 : 1
     },
   ];
 
@@ -135,20 +138,53 @@ export default function SurveyPage(props: SurveyPageProps) {
         isSurveyResponseStudentIdID(assignment)
           ? getStudentNameFromAssignment(assignment)
           : "N/A",
+      sortFunc: (a, b) => {
+        if (isSurveyResponseStudentIdID(a) && isSurveyResponseStudentIdID(b)) {
+          return getStudentNameFromAssignment(a).localeCompare(getStudentNameFromAssignment(b));
+        } else if (isSurveyResponseStudentIdID(a)) {
+          return -1;
+        } else if (isSurveyResponseStudentIdID(b)) {
+          return 1;
+        }
+        return 0;
+      }
     },
     {
       name: "Student ID",
       getValue: (assignment: SurveyResponseID) =>
         isSurveyResponseStudentIdID(assignment) ? assignment.studentId : "N/A",
+      sortFunc: (a, b) => {
+        if (isSurveyResponseStudentIdID(a) && isSurveyResponseStudentIdID(b)) {
+          return a.studentId.localeCompare(b.studentId);
+        } else if (isSurveyResponseStudentIdID(a)) {
+          return -1;
+        } else if (isSurveyResponseStudentIdID(b)) {
+          return 1;
+        }
+        return 0;
+      }
     },
     {
       name: "Student Email",
       getValue: getStudentEmailFromAssignment,
+      sortFunc: (a, b) => {
+        const aEmail = getStudentEmailFromAssignment(a);
+        const bEmail = getStudentEmailFromAssignment(b);
+        if (aEmail !== "N/A" && bEmail !== "N/A") {
+          return aEmail.localeCompare(bEmail);
+        } else if (aEmail !== "N/A") {
+          return -1;
+        } else if (bEmail !== "N/A") {
+          return 1;
+        }
+        return 0;
+      }
     },
     {
       name: "Submission Timestamp",
       getValue: (assignment: SurveyResponseID) =>
         moment(assignment.submittedAt).format("M/D/YYYY HH:mm:ss"),
+      sortFunc: (a, b) => moment(a.submittedAt).isBefore(moment(b.submittedAt)) ? -1 : 1
     },
     {
       name: "Reassign Response",
