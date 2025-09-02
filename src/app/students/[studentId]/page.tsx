@@ -1,8 +1,10 @@
-import RequireAuth from "@/features/auth/RequireAuth";
+import RequireAuth from "@/features/auth/authN/components/RequireAuth";
 import dynamic from "next/dynamic";
 import LoadingPage from "@/app/loading";
 
-const StudentPage = dynamic(() => import("./StudentPage"), { loading: () => <LoadingPage /> });
+const StudentPage = dynamic(() => import("./StudentPage"), {
+  loading: () => <LoadingPage />,
+});
 
 export default function StudentPageWrapper({
   params,

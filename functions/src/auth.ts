@@ -1,6 +1,6 @@
 import { adminAuth, adminDb } from '@/config/firebaseAdminConfig';
 import { Collection } from '@/data/firestore/utils';
-import { fetchAccessToken } from '@/features/auth/serverAuthZ';
+import { fetchAccessToken } from '@/features/auth/authZ/serverAuthZ';
 import { StudentCustomClaims, StudentDecodedIdTokenWithCustomClaims } from '@/types/auth-types';
 import { SurveyResponseStudentEmailID } from '@/types/survey-types';
 import { FieldValue, Transaction } from 'firebase-admin/firestore';

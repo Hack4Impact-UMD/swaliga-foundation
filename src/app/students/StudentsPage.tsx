@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import styles from "./StudentsPage.module.css";
-import Table, { Column } from "@/components/ui/Table";
-import { FilterCondition } from "@/components/Filter";
+import Table, { Column } from "@/components/ui/table/Table";
+import { FilterCondition } from "@/components/ui/table/Filter";
 import { getFullAddress, getFullName, Student } from "@/types/user-types";
 import moment from "moment";
-import useStudents from "@/data/hooks/useStudents";
+import useStudents from "@/data/hooks/useStudents/useStudents";
 import Link from "next/link";
 import { FaFileExport } from "react-icons/fa";
 import { exportStudentSummariesToCSV } from "@/features/dataExporting/exportCSV";
@@ -24,7 +24,8 @@ export default function StudentsPage() {
           <p className={styles.linkText}>{getFullName(student.name)}</p>
         </Link>
       ),
-      sortFunc: (a, b) => getFullName(a.name).localeCompare(getFullName(b.name)),
+      sortFunc: (a, b) =>
+        getFullName(a.name).localeCompare(getFullName(b.name)),
     },
     {
       name: "ID",
@@ -39,13 +40,15 @@ export default function StudentsPage() {
     {
       name: "Address",
       getValue: (student: Student) => getFullAddress(student.address),
-      sortFunc: (a, b) => getFullAddress(a.address).localeCompare(getFullAddress(b.address)),
+      sortFunc: (a, b) =>
+        getFullAddress(a.address).localeCompare(getFullAddress(b.address)),
     },
     {
       name: "Date of Birth",
       getValue: (student: Student) =>
         moment(student.dateOfBirth).format("MMM D, YYYY"),
-      sortFunc: (a, b) => moment(a.dateOfBirth).isBefore(moment(b.dateOfBirth)) ? -1 : 1
+      sortFunc: (a, b) =>
+        moment(a.dateOfBirth).isBefore(moment(b.dateOfBirth)) ? -1 : 1,
     },
     {
       name: "School",

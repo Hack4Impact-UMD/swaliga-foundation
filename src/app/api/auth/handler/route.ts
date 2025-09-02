@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminAuth } from "@/config/firebaseAdminConfig";
 import moment from "moment";
-import { isIdTokenValid } from "@/features/auth/serverAuthZ";
+import { isIdTokenValid } from "@/features/auth/authZ/serverAuthZ";
 import { AdminCustomClaims, DecodedIdTokenWithCustomClaims } from "@/types/auth-types";
 
 export async function GET(req: NextRequest) {

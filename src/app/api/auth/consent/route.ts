@@ -1,4 +1,4 @@
-import { isIdTokenValid } from "@/features/auth/serverAuthZ";
+import { isIdTokenValid } from "@/features/auth/authZ/serverAuthZ";
 import { DecodedIdTokenWithCustomClaims } from "@/types/auth-types";
 import { NextRequest, NextResponse } from "next/server";
 

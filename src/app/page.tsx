@@ -1,8 +1,8 @@
 "use client";
 
-import RequireAuth from "@/features/auth/RequireAuth";
-import RoleBasedPage from "@/features/auth/RoleBasedPage";
-import useAuth from "@/features/auth/useAuth";
+import RequireAuth from "@/features/auth/authN/components/RequireAuth";
+import RoleBasedPage from "@/features/auth/authN/components/RoleBasedPage";
+import useAuth from "@/features/auth/authN/components/useAuth";
 import dynamic from "next/dynamic";
 import LoadingPage from "./loading";
 
@@ -11,7 +11,7 @@ const StudentPage = dynamic(
   { loading: () => <LoadingPage /> }
 );
 const CreateAccountPage = dynamic(
-  () => import("./create-account/CreateAccountPage"),
+  () => import("../features/accountManagement/components/CreateAccountPage"),
   { loading: () => <LoadingPage /> }
 );
 const LoginPage = dynamic(() => import("./LoginPage"), {

@@ -3,15 +3,15 @@
 import { useState } from "react";
 import styles from "./SurveysPage.module.css";
 import { SurveyID } from "@/types/survey-types";
-import Table, { Column } from "@/components/ui/Table";
+import Table, { Column } from "@/components/ui/table/Table";
 import { FaEdit, FaEye, FaFileExcel } from "react-icons/fa";
 import Link from "next/link";
-import { FilterCondition } from "@/components/Filter";
-import CreateSurveyModal from "@/features/surveyManagement/CreateSurveyModal";
-import DeleteSurveyModal from "@/features/surveyManagement/DeleteSurveyModal";
-import useSurveys from "@/data/hooks/useSurveys";
+import { FilterCondition } from "@/components/ui/table/Filter";
+import CreateSurveyModal from "@/features/surveyManagement/components/CreateSurveyModal";
+import DeleteSurveyModal from "@/features/surveyManagement/components/DeleteSurveyModal";
+import useSurveys from "@/data/hooks/useSurveys/useSurveys";
 import { MAX_TRIGGERS_PER_USER } from "@/constants/constants";
-import SurveyActivationSwitch from "@/features/surveyManagement/SurveyActivationSwitch";
+import SurveyActivationSwitch from "@/features/surveyManagement/components/SurveyActivationSwitch";
 
 export default function SurveysPage() {
   const { surveys, isLoading, isError } = useSurveys();

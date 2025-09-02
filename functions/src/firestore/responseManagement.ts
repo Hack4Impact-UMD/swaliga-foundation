@@ -1,6 +1,6 @@
 import { onSchedule, ScheduledEvent } from "firebase-functions/scheduler";
 import { addExistingSurvey, getUpdatedSurveyTitlesAndDescriptions } from "@/data/apps-script/calls"
-import { fetchAccessToken } from '@/features/auth/serverAuthZ';
+import { fetchAccessToken } from '@/features/auth/authZ/serverAuthZ';
 import { GoogleFormResponse, GoogleFormResponseStudentId, isGoogleFormResponseStudentId, isGoogleFormResponseUnidentified } from "@/types/apps-script-types";
 import { SurveyResponseStudentEmail, SurveyResponseStudentId, SurveyResponseUnidentified } from "@/types/survey-types";
 import { onCall, onRequest } from "firebase-functions/https";

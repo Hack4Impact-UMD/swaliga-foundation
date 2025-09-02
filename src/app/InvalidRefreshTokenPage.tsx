@@ -1,6 +1,6 @@
 "use client";
 
-import useAuth from "@/features/auth/useAuth";
+import useAuth from "@/features/auth/authN/components/useAuth";
 import { Role } from "@/types/user-types";
 import styles from "./InvalidRefreshTokenPage.module.css";
 import Link from "next/link";

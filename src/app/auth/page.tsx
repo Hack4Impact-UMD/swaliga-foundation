@@ -1,22 +1,28 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import RequireAuth from "@/features/auth/RequireAuth";
+import RequireAuth from "@/features/auth/authN/components/RequireAuth";
 import { checkCodeValidity } from "@/features/auth/authN/emailPasswordAuthN";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import ErrorPage from "../error";
 import LoadingPage from "../loading";
 
-const VerifyEmailPage = dynamic(() => import("./VerifyEmailPage"), { loading: () => <LoadingPage /> });
-const ResetPasswordPage = dynamic(() => import("./ResetPasswordPage"), { loading: () => <LoadingPage /> });
+const VerifyEmailPage = dynamic(() => import("./VerifyEmailPage"), {
+  loading: () => <LoadingPage />,
+});
+const ResetPasswordPage = dynamic(() => import("./ResetPasswordPage"), {
+  loading: () => <LoadingPage />,
+});
 
 export default function AuthHandlerPage() {
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode");
   const oobCode = searchParams.get("oobCode");
   if (!mode || !oobCode) {
-    return <ErrorPage error="We're unable to find the page you're looking for." />;
+    return (
+      <ErrorPage error="We're unable to find the page you're looking for." />
+    );
   }
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -56,6 +62,8 @@ export default function AuthHandlerPage() {
         </RequireAuth>
       );
     default:
-      return <ErrorPage error="We're unable to find the page you're looking for." />;
+      return (
+        <ErrorPage error="We're unable to find the page you're looking for." />
+      );
   }
 }

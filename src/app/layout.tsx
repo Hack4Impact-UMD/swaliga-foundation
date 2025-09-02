@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import styles from "./layout.module.css";
-import AuthProvider from "@/features/auth/AuthProvider";
-import Navbar from "@/components/ui/Navbar";
+import AuthProvider from "@/features/auth/authN/components/AuthProvider";
+import Navbar from "@/components/layout/Navbar";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
-import AvailabilityProvider from "@/features/auth/AvailabilityProvider";
-import SurveysProvider from "@/data/hooks/SurveysProvider";
-import StudentsProvider from "@/data/hooks/StudentsProvider";
-import Footer from "@/components/ui/Footer";
+import AvailabilityProvider from "@/features/auth/authZ/AvailabilityProvider";
+import SurveysProvider from "@/data/hooks/useSurveys/SurveysProvider";
+import StudentsProvider from "@/data/hooks/useStudents/StudentsProvider";
+import Footer from "@/components/layout/Footer";
 
 const LoadingPage = dynamic(() => import("./loading"));
 

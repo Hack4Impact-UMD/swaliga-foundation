@@ -1,5 +1,5 @@
 import { adminAuth } from "@/config/firebaseAdminConfig";
-import { fetchAccessToken, isIdTokenValid } from "@/features/auth/serverAuthZ";
+import { fetchAccessToken, isIdTokenValid } from "@/features/auth/authZ/serverAuthZ";
 import { AdminCustomClaims, DecodedIdTokenWithCustomClaims, GoogleTokens, StaffCustomClaims } from "@/types/auth-types";
 import { NextRequest, NextResponse } from "next/server";
 

@@ -1,8 +1,10 @@
 import LoadingPage from "@/app/loading";
-import RequireAuth from "@/features/auth/RequireAuth";
+import RequireAuth from "@/features/auth/authN/components/RequireAuth";
 import dynamic from "next/dynamic";
 
-const SurveyPage = dynamic(() => import("./SurveyPage"), { loading: () => <LoadingPage /> });
+const SurveyPage = dynamic(() => import("./SurveyPage"), {
+  loading: () => <LoadingPage />,
+});
 
 export default function SurveyPageWrapper({
   params,

@@ -1,7 +1,7 @@
 "use client";
 
-import useStudents from "@/data/hooks/useStudents";
-import useAuth from "@/features/auth/useAuth";
+import useStudents from "@/data/hooks/useStudents/useStudents";
+import useAuth from "@/features/auth/authN/components/useAuth";
 import {
   isPendingAssignmentID,
   PendingAssignmentID,
@@ -12,8 +12,8 @@ import moment from "moment";
 import { cloneElement, useMemo, useState } from "react";
 import styles from "./StudentPage.module.css";
 import LoadingPage from "@/app/loading";
-import useSurveys from "@/data/hooks/useSurveys";
-import useAssignments from "@/data/hooks/useAssignments";
+import useSurveys from "@/data/hooks/useSurveys/useSurveys";
+import useAssignments from "@/data/hooks/useAssignments/useAssignments";
 import {
   FaAddressBook,
   FaBirthdayCake,
@@ -24,11 +24,11 @@ import {
   FaVenusMars,
 } from "react-icons/fa";
 import { FaPeopleGroup } from "react-icons/fa6";
-import Table, { Column } from "@/components/ui/Table";
-import RespondToSurveyModal from "@/features/surveyManagement/RespondToSurveyModal";
-import EditAccountModal from "@/app/create-account/EditAccountModal";
-import ReassignResponseModal from "@/features/surveyManagement/ReassignResponseModal";
-import AssignSurveysModal from "@/features/surveyManagement/AssignSurveysModal";
+import Table, { Column } from "@/components/ui/table/Table";
+import RespondToSurveyModal from "@/features/surveyManagement/components/RespondToSurveyModal";
+import EditAccountModal from "@/features/accountManagement/components/EditAccountModal";
+import ReassignResponseModal from "@/features/surveyManagement/components/ReassignResponseModal";
+import AssignSurveysModal from "@/features/surveyManagement/components/AssignSurveysModal";
 import ErrorPage from "@/app/error";
 import MenuIcon from "@/components/ui/MenuIcon";
 import { exportFullStudentDataToCSV } from "@/features/dataExporting/exportCSV";
@@ -139,9 +139,11 @@ export default function StudentPage(props: StudentPageProps) {
       getValue: (assignment: PendingAssignmentID) =>
         surveys.find((survey) => survey.id === assignment.surveyId)!.name,
       sortFunc: (a, b) =>
-        surveys.find((survey) => survey.id === a.surveyId)!.name.localeCompare(
-          surveys.find((survey) => survey.id === b.surveyId)!.name
-        ),
+        surveys
+          .find((survey) => survey.id === a.surveyId)!
+          .name.localeCompare(
+            surveys.find((survey) => survey.id === b.surveyId)!.name
+          ),
     },
     {
       name: "Description",
@@ -149,9 +151,11 @@ export default function StudentPage(props: StudentPageProps) {
         surveys.find((survey) => survey.id === assignment.surveyId)!
           .description,
       sortFunc: (a, b) =>
-        surveys.find((survey) => survey.id === a.surveyId)!.description.localeCompare(
-          surveys.find((survey) => survey.id === b.surveyId)!.description
-        ),
+        surveys
+          .find((survey) => survey.id === a.surveyId)!
+          .description.localeCompare(
+            surveys.find((survey) => survey.id === b.surveyId)!.description
+          ),
     },
     {
       name: "Assignment Date",
@@ -182,9 +186,11 @@ export default function StudentPage(props: StudentPageProps) {
       getValue: (assignment: SurveyResponseStudentIdID) =>
         surveys.find((survey) => survey.id === assignment.surveyId)!.name,
       sortFunc: (a, b) =>
-        surveys.find((survey) => survey.id === a.surveyId)!.name.localeCompare(
-          surveys.find((survey) => survey.id === b.surveyId)!.name
-        ),
+        surveys
+          .find((survey) => survey.id === a.surveyId)!
+          .name.localeCompare(
+            surveys.find((survey) => survey.id === b.surveyId)!.name
+          ),
     },
     {
       name: "Description",
@@ -192,15 +198,18 @@ export default function StudentPage(props: StudentPageProps) {
         surveys.find((survey) => survey.id === assignment.surveyId)!
           .description,
       sortFunc: (a, b) =>
-        surveys.find((survey) => survey.id === a.surveyId)!.description.localeCompare(
-          surveys.find((survey) => survey.id === b.surveyId)!.description
-        ),
+        surveys
+          .find((survey) => survey.id === a.surveyId)!
+          .description.localeCompare(
+            surveys.find((survey) => survey.id === b.surveyId)!.description
+          ),
     },
     {
       name: "Submission Date",
       getValue: (assignment: SurveyResponseStudentIdID) =>
         moment(assignment.submittedAt).format("MMM D, YYYY"),
-      sortFunc: (a, b) => moment(a.submittedAt).isBefore(moment(b.submittedAt)) ? -1 : 1
+      sortFunc: (a, b) =>
+        moment(a.submittedAt).isBefore(moment(b.submittedAt)) ? -1 : 1,
     },
     ...(role === "ADMIN" || role === "STAFF"
       ? [

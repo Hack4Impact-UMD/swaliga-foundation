@@ -1,8 +1,11 @@
-import RequireAuth from "@/features/auth/RequireAuth";
+import RequireAuth from "@/features/auth/authN/components/RequireAuth";
 import dynamic from "next/dynamic";
 import LoadingPage from "../loading";
 
-const SendResetPasswordEmailPage = dynamic(() => import("./SendResetPasswordEmailPage"), { loading: () => <LoadingPage /> });
+const SendResetPasswordEmailPage = dynamic(
+  () => import("./SendResetPasswordEmailPage"),
+  { loading: () => <LoadingPage /> }
+);
 
 export default function ResetPasswordPageWrapper() {
   return (

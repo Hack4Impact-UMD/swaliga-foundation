@@ -1,7 +1,7 @@
 import { sendVerificationEmail } from "@/features/auth/authN/emailPasswordAuthN";
 import styles from "./SendVerificationEmailPage.module.css";
 import { useState } from "react";
-import useAuth from "@/features/auth/useAuth";
+import useAuth from "@/features/auth/authN/components/useAuth";
 
 export default function SendVerificationEmailPage() {
   const [success, setSuccess] = useState<boolean>(false);
@@ -29,7 +29,11 @@ export default function SendVerificationEmailPage() {
         <button className={styles.button} onClick={handleSendVerificationEmail}>
           Resend Verification Email
         </button>
-        <p className={`${styles.message} ${success ? styles.success : styles.error}`}>
+        <p
+          className={`${styles.message} ${
+            success ? styles.success : styles.error
+          }`}
+        >
           {success
             ? "Verification email sent successfully! Please check your email."
             : error}

@@ -3,7 +3,7 @@ import styles from "./VerifyEmailPage.module.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { verifyEmail } from "@/features/auth/authN/emailPasswordAuthN";
-import useAuth from "@/features/auth/useAuth";
+import useAuth from "@/features/auth/authN/components/useAuth";
 import ErrorPage from "../error";
 
 interface VerifyEmailPageProps {

@@ -18,17 +18,17 @@ import { getAssignmentsBySurveyId } from "@/data/firestore/assignments";
 import LoadingPage from "@/app/loading";
 import Link from "next/link";
 import { FaEdit, FaEye, FaFileExcel, FaPlus } from "react-icons/fa";
-import useSurveys from "@/data/hooks/useSurveys";
-import Table, { Column } from "@/components/ui/Table";
-import useStudents from "@/data/hooks/useStudents";
+import useSurveys from "@/data/hooks/useSurveys/useSurveys";
+import Table, { Column } from "@/components/ui/table/Table";
+import useStudents from "@/data/hooks/useStudents/useStudents";
 import { getFullName } from "@/types/user-types";
 import moment from "moment";
-import { FilterCondition } from "@/components/Filter";
-import SendSurveyReminderEmailModal from "@/features/notifications/SendSurveyReminderEmailModal";
-import AssignStudentsModal from "@/features/surveyManagement/AssignStudentsModal";
-import useAssignments from "@/data/hooks/useAssignments";
-import ReassignResponseModal from "@/features/surveyManagement/ReassignResponseModal";
-import SurveyActivationSwitch from "@/features/surveyManagement/SurveyActivationSwitch";
+import { FilterCondition } from "@/components/ui/table/Filter";
+import SendSurveyReminderEmailModal from "@/features/notifications/components/SendSurveyReminderEmailModal";
+import AssignStudentsModal from "@/features/surveyManagement/components/AssignStudentsModal";
+import useAssignments from "@/data/hooks/useAssignments/useAssignments";
+import ReassignResponseModal from "@/features/surveyManagement/components/ReassignResponseModal";
+import SurveyActivationSwitch from "@/features/surveyManagement/components/SurveyActivationSwitch";
 import ErrorPage from "@/app/error";
 import MenuIcon from "@/components/ui/MenuIcon";
 
@@ -116,7 +116,10 @@ export default function SurveyPage(props: SurveyPageProps) {
     {
       name: "Student Name",
       getValue: getStudentNameFromAssignment,
-      sortFunc: (a, b) => getStudentNameFromAssignment(a).localeCompare(getStudentNameFromAssignment(b)),
+      sortFunc: (a, b) =>
+        getStudentNameFromAssignment(a).localeCompare(
+          getStudentNameFromAssignment(b)
+        ),
     },
     {
       name: "Student ID",
@@ -127,7 +130,8 @@ export default function SurveyPage(props: SurveyPageProps) {
       name: "Assignment Date",
       getValue: (assignment: PendingAssignmentID) =>
         moment(assignment.assignedAt).format("MMM D, YYYY"),
-      sortFunc: (a, b) => moment(a.assignedAt).isBefore(moment(b.assignedAt)) ? -1 : 1
+      sortFunc: (a, b) =>
+        moment(a.assignedAt).isBefore(moment(b.assignedAt)) ? -1 : 1,
     },
   ];
 
@@ -140,14 +144,16 @@ export default function SurveyPage(props: SurveyPageProps) {
           : "N/A",
       sortFunc: (a, b) => {
         if (isSurveyResponseStudentIdID(a) && isSurveyResponseStudentIdID(b)) {
-          return getStudentNameFromAssignment(a).localeCompare(getStudentNameFromAssignment(b));
+          return getStudentNameFromAssignment(a).localeCompare(
+            getStudentNameFromAssignment(b)
+          );
         } else if (isSurveyResponseStudentIdID(a)) {
           return -1;
         } else if (isSurveyResponseStudentIdID(b)) {
           return 1;
         }
         return 0;
-      }
+      },
     },
     {
       name: "Student ID",
@@ -162,7 +168,7 @@ export default function SurveyPage(props: SurveyPageProps) {
           return 1;
         }
         return 0;
-      }
+      },
     },
     {
       name: "Student Email",
@@ -178,13 +184,14 @@ export default function SurveyPage(props: SurveyPageProps) {
           return 1;
         }
         return 0;
-      }
+      },
     },
     {
       name: "Submission Timestamp",
       getValue: (assignment: SurveyResponseID) =>
         moment(assignment.submittedAt).format("M/D/YYYY HH:mm:ss"),
-      sortFunc: (a, b) => moment(a.submittedAt).isBefore(moment(b.submittedAt)) ? -1 : 1
+      sortFunc: (a, b) =>
+        moment(a.submittedAt).isBefore(moment(b.submittedAt)) ? -1 : 1,
     },
     {
       name: "Reassign Response",
