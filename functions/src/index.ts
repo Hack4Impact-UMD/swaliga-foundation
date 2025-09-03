@@ -9,6 +9,7 @@ exports.onStudentAccountCreated = authFunctions.onStudentAccountCreated;
 exports.checkRefreshTokenValidity = authFunctions.checkRefreshTokenValidity;
 
 exports.assignSurveys = assignmentManagementFunctions.assignSurveys;
+exports.onAssignmentWritten = assignmentManagementFunctions.onAssignmentWritten;
 
 exports.onFormSubmit = responseManagementFunctions.onFormSubmit;
 exports.handleRecentSurveyTitlesAndDescriptionsUpdates = process.env.NODE_ENV === 'development' ? responseManagementFunctions.testHandleRecentSurveyTitlesAndDescriptionsUpdates : responseManagementFunctions.handleRecentSurveyTitlesAndDescriptionsUpdates;

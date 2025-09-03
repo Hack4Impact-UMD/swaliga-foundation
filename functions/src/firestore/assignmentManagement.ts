@@ -1,7 +1,8 @@
 import { adminDb } from "@/config/firebaseAdminConfig";
-import { Collection } from "@/data/firestore/utils";
+import { Collection, Document } from "@/data/firestore/utils";
 import { PendingAssignmentID } from "@/types/survey-types";
-import { Transaction } from "firebase-admin/firestore";
+import { FieldValue, Transaction } from "firebase-admin/firestore";
+import { onDocumentWritten } from "firebase-functions/firestore";
 import { onCall } from "firebase-functions/https";
 import moment from "moment";
 import { v4 as uuid } from "uuid";
@@ -44,3 +45,29 @@ export const assignSurveys = onCall(async (req) => {
     })
   });
 })
+
+export const onAssignmentWritten = onDocumentWritten('/surveys/{surveyId}/assignments/{assignmentId}', async (event) => {
+  const { surveyId } = event.params;
+  const beforeId = event.data?.before.exists ? event.data?.before.data()?.studentId : undefined;
+  const afterId = event.data?.after.exists ? event.data?.after.data()?.studentId : undefined;
+
+  const accessListRef = adminDb.collection(Collection.SURVEYS).doc(surveyId).collection(Collection.ACCESS_LIST).doc(Document.SURVEY_ACCESS_LIST);
+  if (!beforeId && afterId) {
+    await accessListRef.set({ [afterId]: FieldValue.increment(1) }, { merge: true });
+  } else if (beforeId && afterId) {
+    await adminDb.runTransaction(async (transaction: Transaction) => {
+      const currCount = (await transaction.get(accessListRef)).data()?.[beforeId]
+      await transaction.update(accessListRef, {
+        [beforeId]: currCount === 1 ? FieldValue.delete() : FieldValue.increment(-1),
+        [afterId]: FieldValue.increment(1)
+      })
+    })
+  } else if (beforeId && !afterId) {
+    await adminDb.runTransaction(async (transaction: Transaction) => {
+      const currCount = (await transaction.get(accessListRef)).data()?.[beforeId]
+      await transaction.update(accessListRef, {
+        [beforeId]: currCount === 1 ? FieldValue.delete() : FieldValue.increment(-1)
+      })
+    })
+  }
+});

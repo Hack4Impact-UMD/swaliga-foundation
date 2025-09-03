@@ -5,6 +5,7 @@ export enum Collection {
   STUDENTS = "students",
   SURVEYS = "surveys",
   ASSIGNMENTS = "assignments",
+  ACCESS_LIST = "accessList",
   METADATA = "metadata",
 }
 
@@ -12,6 +13,7 @@ export enum Document {
   NEXT_STUDENT_ID = "nextStudentId",
   SURVEYS = "surveys",
   STUDENTS = "students",
+  SURVEY_ACCESS_LIST = "surveyAccessList"
 }
 
 export type FirestorePartial<T> = {
