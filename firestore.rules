@@ -6,30 +6,57 @@ service cloud.firestore {
       return request.auth != null && request.auth.token.role == "ADMIN"
     }
 
-    match /users/{userId} {
-      allow read: if isAdmin() || request.auth.uid == userId
+    function isStaff() {
+      return request.auth != null && request.auth.token.role == "STAFF"
+    }
+
+    function isEmployee() {
+      return isAdmin() || isStaff()
+    }
+
+    function isStudentId(id) {
+      return request.auth != null && request.auth.token.studentId == id
+    }
+
+    match /students/{studentId} {
+      allow read: if isEmployee() || isStudentId(studentId)
       allow create: if true
-      allow update: if isAdmin() || request.auth.uid == userId
+      allow update: if isEmployee() || isStudentId(studentId)
       allow delete: if false
     }
+
     match /surveys/{surveyId} {
-      allow read: if isAdmin() || request.auth.uid in resource.data.assignedUsers
-      allow create: if isAdmin()
-      allow update: if isAdmin() || request.auth.uid in resource.data.assignedUsers
-      allow delete: if isAdmin()
+      allow read: if isEmployee() || get(/databases/$(database)/documents/surveys/$(surveyId)/surveyAccessList/surveyAccessList).data.keys().hasAny([request.auth.token.studentId])
+      allow create: if isEmployee()
+      allow update: if isEmployee()
+      allow delete: if isEmployee()
+
+      match /assignments/{assignmentId} {
+        allow read: if isEmployee()
+        allow create: if isEmployee()
+        allow update: if isEmployee()
+        allow delete: if isEmployee() && resource.data.responseId == null
+      }
     }
-    match /responses/{responseId} {
-      allow read: if isAdmin() || request.auth.uid == resource.data.userId
-      allow create: if isAdmin() || request.auth.uid == resource.data.userId
-      allow update: if isAdmin() || request.auth.uid == resource.data.userId
-      allow delete: if false
+
+    match /{path=**}/assignments/{assignmentId} {
+        allow read: if isEmployee() || isStudentId(resource.data.studentId)
+        allow create: if isEmployee()
+        allow update: if isEmployee()
+        allow delete: if isEmployee() && resource.data.responseId == null
     }
-    match /metadata/adminRefreshToken {
-      allow read: if isAdmin()
+
+    match /adminData/{document=**} {
+      allow read: if isEmployee()
       allow write: if false
     }
-    match /metadata/nextUserId {
-      allow read, write: if true
+
+    match /metadata {
+      match /nextStudentId {
+        allow read: if isStudentId(null)
+        allow create: if isStudentId(null) && request.resource.data.nextStudentId == 1000000
+        allow update: if isStudentId(null) && request.resource.data.nextStudentId == resource.data.nextStudentId + 1
+      }
     }
   }
 }
