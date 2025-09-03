@@ -14,11 +14,11 @@ export default function RoleBasedPage(props: RoleBasedPageProps) {
   const auth = useAuth();
   const role: Role = auth.token?.claims.role as Role;
 
-  if (!auth.user && unauthenticatedPage) {
+  if (!auth.token && unauthenticatedPage) {
     return unauthenticatedPage instanceof Function
       ? unauthenticatedPage()
       : unauthenticatedPage;
-  } else if (!role && noRolePage) {
+  } else if (auth.token && !role && noRolePage) {
     return noRolePage instanceof Function ? noRolePage() : noRolePage;
   } else if (rolePages[role]) {
     return rolePages[role] instanceof Function

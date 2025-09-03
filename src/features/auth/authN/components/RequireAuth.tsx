@@ -34,8 +34,8 @@ export default function RequireAuth(props: RequireAuthProps) {
   const router = useRouter();
 
   if (
-    (allowUnauthenticated && !auth.user) ||
-    (allowNoRole && !auth.token?.claims.role) ||
+    (allowUnauthenticated && !auth.token) ||
+    (allowNoRole && auth.token && !auth.token?.claims.role) ||
     allowedRoles.includes(auth.token?.claims.role as Role)
   ) {
     return children;

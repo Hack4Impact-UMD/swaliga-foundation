@@ -20,13 +20,13 @@ export default function AvailabilityProvider(props: AvailabilityProviderProps) {
   const role = auth.token?.claims.role as Role;
 
   const [isRefreshTokenValid, setIsRefreshTokenValid] = useState<boolean>(
-    !role
+    !auth.token
   );
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!role) {
+    if (!auth.token) {
       setIsRefreshTokenValid(true);
       setIsLoading(false);
       return;
