@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./SurveysPage.module.css";
 import { SurveyID } from "@/types/survey-types";
 import Table, { Column } from "@/components/ui/table/Table";
@@ -17,6 +17,10 @@ export default function SurveysPage() {
   const { surveys, isLoading, isError } = useSurveys();
   const [selectedSurveyIds, setSelectedSurveyIds] = useState<string[]>([]);
   const numActiveSurveys = surveys.filter((survey) => survey.isActive).length;
+
+  useEffect(() => {
+    setSelectedSurveyIds(prev => prev.filter(id => surveys.some(survey => survey.id === id)))
+  }, [surveys]);
 
   const columns: Column<SurveyID>[] = [
     {
