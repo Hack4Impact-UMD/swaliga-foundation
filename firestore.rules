@@ -18,6 +18,11 @@ service cloud.firestore {
       return request.auth != null && request.auth.token.studentId == id
     }
 
+    function isOnSurveyAccessList(surveyId) {
+      let data = get(/databases/$(database)/documents/surveys/$(surveyId)/surveyAccessList/surveyAccessList).data;
+      return data != null && data.keys().hasAny([request.auth.token.studentId]);
+    }
+
     match /students/{studentId} {
       allow read: if isEmployee() || isStudentId(studentId)
       allow create: if true
@@ -26,7 +31,7 @@ service cloud.firestore {
     }
 
     match /surveys/{surveyId} {
-      allow read: if isEmployee() || get(/databases/$(database)/documents/surveys/$(surveyId)/surveyAccessList/surveyAccessList).data.keys().hasAny([request.auth.token.studentId])
+      allow read: if isEmployee() || isOnSurveyAccessList(surveyId)
       allow create: if isEmployee()
       allow update: if isEmployee()
       allow delete: if isEmployee()
