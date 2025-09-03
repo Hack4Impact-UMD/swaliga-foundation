@@ -2,12 +2,16 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isAuthed() {
+      return request.auth != null
+    }
+
     function isAdmin() {
-      return request.auth != null && request.auth.token.role == "ADMIN"
+      return isAuthed() && request.auth.token.role == "ADMIN"
     }
 
     function isStaff() {
-      return request.auth != null && request.auth.token.role == "STAFF"
+      return isAuthed() && request.auth.token.role == "STAFF"
     }
 
     function isEmployee() {
@@ -15,11 +19,11 @@ service cloud.firestore {
     }
     
     function isStudent() {
-      return request.auth != null && request.auth.token.role == "STUDENT"
+      return isAuthed() && request.auth.token.role == "STUDENT"
     }
 
     function isStudentId(id) {
-      return request.auth != null && request.auth.token.studentId == id
+      return isStudent() && request.auth.token.studentId == id
     }
 
     function isOnSurveyAccessList(surveyId) {
