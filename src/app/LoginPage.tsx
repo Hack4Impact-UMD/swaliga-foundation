@@ -98,9 +98,9 @@ export default function LoginPage() {
                 onChange={(ev) => handlePasswordChange(ev.target.value)}
               />
               {isPasswordVisible ? (
-                <MdVisibility onClick={togglePasswordVisibility} />
+                <MdVisibility className={styles.passwordButton} onClick={togglePasswordVisibility} />
               ) : (
-                <MdVisibilityOff onClick={togglePasswordVisibility} />
+                <MdVisibilityOff className={styles.passwordButton} onClick={togglePasswordVisibility} />
               )}
             </div>
             {!isLoginMode && (
