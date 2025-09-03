@@ -4,11 +4,11 @@ import styles from "./RespondToSurveyModal.module.css";
 import useStudents from "@/data/hooks/useStudents/useStudents";
 import { RiSurveyFill } from "react-icons/ri";
 
-interface ResponseSurveyModalProps {
+interface RespondToSurveyModalProps {
   survey: SurveyID;
 }
 
-export default function RespondSurveyModal(props: ResponseSurveyModalProps) {
+export default function RespondToSurveyModal(props: RespondToSurveyModalProps) {
   const { survey } = props;
 
   const studentId = useStudents().students[0].id;
