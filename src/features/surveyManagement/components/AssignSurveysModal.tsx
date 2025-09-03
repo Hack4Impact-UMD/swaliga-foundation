@@ -1,6 +1,6 @@
 import Modal from "@/components/ui/Modal";
 import { FaPlus, FaUndo } from "react-icons/fa";
-import styles from "./AssignStudentsModal.module.css";
+import styles from "./AssignSurveysModal.module.css";
 import { assignSurveys, unassignSurveys } from "../assignments";
 import { PendingAssignmentID, SurveyID } from "@/types/survey-types";
 import { useState } from "react";
