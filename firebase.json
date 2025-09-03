@@ -19,7 +19,8 @@
       ],
       "predeploy": [
         "cp .env.production functions/.env && npm --prefix \"$RESOURCE_DIR\" run build"
-      ]
+      ],
+      "postdeploy": ["rm functions/.env"]
     }
   ],
   "firestore": {
