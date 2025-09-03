@@ -5,7 +5,7 @@ export enum Collection {
   STUDENTS = "students",
   SURVEYS = "surveys",
   ASSIGNMENTS = "assignments",
-  ACCESS_LIST = "accessList",
+  SURVEY_ACCESS_LIST = "surveyAccessList",
   METADATA = "metadata",
 }
 

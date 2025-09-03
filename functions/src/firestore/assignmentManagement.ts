@@ -51,7 +51,7 @@ export const onAssignmentWritten = onDocumentWritten('/surveys/{surveyId}/assign
   const beforeId = event.data?.before.exists ? event.data?.before.data()?.studentId : undefined;
   const afterId = event.data?.after.exists ? event.data?.after.data()?.studentId : undefined;
 
-  const accessListRef = adminDb.collection(Collection.SURVEYS).doc(surveyId).collection(Collection.ACCESS_LIST).doc(Document.SURVEY_ACCESS_LIST);
+  const accessListRef = adminDb.collection(Collection.SURVEYS).doc(surveyId).collection(Collection.SURVEY_ACCESS_LIST).doc(Document.SURVEY_ACCESS_LIST);
   if (!beforeId && afterId) {
     await accessListRef.set({ [afterId]: FieldValue.increment(1) }, { merge: true });
   } else if (beforeId && afterId) {
