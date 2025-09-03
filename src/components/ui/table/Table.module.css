@@ -115,6 +115,7 @@
 
 .filterIcon {
   padding: 3px;
+  cursor: pointer;
 }
 
 .sortSpan {
