@@ -67,6 +67,7 @@ export const onSurveyDocDeleted = onDocumentDeleted('/surveys/{surveyId}', async
   const surveyId = event.params.surveyId;
   await Promise.all([
     adminDb.recursiveDelete(adminDb.collection(Collection.SURVEYS).doc(surveyId).collection(Collection.ASSIGNMENTS)),
+    adminDb.recursiveDelete(adminDb.collection(Collection.SURVEYS).doc(surveyId).collection(Collection.SURVEY_ACCESS_LIST)),
     updateAdminDataOnDocDeleted(
       adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS),
       surveyId
