@@ -1,9 +1,6 @@
 import Modal from "@/components/ui/Modal";
 import { SurveyID } from "@/types/survey-types";
 import styles from "./RespondToSurveyModal.module.css";
-import { FaEdit } from "react-icons/fa";
-import useAuth from "../../auth/authN/components/useAuth";
-import { Role } from "@/types/user-types";
 import useStudents from "@/data/hooks/useStudents/useStudents";
 import { RiSurveyFill } from "react-icons/ri";
 

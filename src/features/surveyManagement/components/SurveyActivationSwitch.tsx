@@ -9,7 +9,6 @@ import useSurveys from "@/data/hooks/useSurveys/useSurveys";
 import { getAccessTokenFromAuth } from "../../auth/authZ/googleAuthZ";
 import useAuth from "../../auth/authN/components/useAuth";
 import { activateSurvey, deactivateSurvey } from "../surveys";
-import { get } from "http";
 
 interface SurveyActivationSwitchProps {
   survey: SurveyID;

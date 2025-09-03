@@ -4,7 +4,6 @@ import styles from "./AssignStudentsModal.module.css";
 import { assignSurveys, unassignSurveys } from "../assignments";
 import { PendingAssignmentID, SurveyID } from "@/types/survey-types";
 import { useState } from "react";
-import useStudents from "@/data/hooks/useStudents/useStudents";
 import { getFullName, Student } from "@/types/user-types";
 import Select from "react-select";
 import { FaX } from "react-icons/fa6";
