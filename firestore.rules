@@ -60,8 +60,12 @@ service cloud.firestore {
 
     match /metadata {
       match /nextStudentId {
+        function getFirstStudentId() {
+          return 1000000;
+        }
+
         allow read: if isStudentId(null)
-        allow create: if isStudentId(null) && request.resource.data.nextStudentId == 1000000
+        allow create: if isStudentId(null) && request.resource.data.nextStudentId == getFirstStudentId()
         allow update: if isStudentId(null) && request.resource.data.nextStudentId == resource.data.nextStudentId + 1
       }
     }
