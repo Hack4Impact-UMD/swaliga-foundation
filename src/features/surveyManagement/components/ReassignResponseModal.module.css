@@ -40,3 +40,7 @@
 .success {
   color: rgb(76, 175, 80);
 }
+
+.icon {
+  cursor: pointer;
+}

@@ -76,7 +76,7 @@ export default function ReassignResponseModal(
 
   return (
     <Modal onClose={handleClose}>
-      <MdAssignmentInd />
+      <MdAssignmentInd className={styles.icon} />
       <div className={styles.modalContent}>
         <h1>Reassign Response</h1>
         {currStudent ? (

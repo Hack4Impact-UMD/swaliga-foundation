@@ -3,3 +3,7 @@
   height: 90vh;
   margin: 40px;
 }
+
+.icon {
+  cursor: pointer;
+}
