@@ -35,20 +35,13 @@ service cloud.firestore {
       allow create: if isEmployee()
       allow update: if isEmployee()
       allow delete: if isEmployee()
-
-      match /assignments/{assignmentId} {
-        allow read: if isEmployee()
-        allow create: if isEmployee()
-        allow update: if isEmployee()
-        allow delete: if isEmployee() && resource.data.responseId == null
-      }
     }
 
     match /{path=**}/assignments/{assignmentId} {
-        allow read: if isEmployee() || isStudentId(resource.data.studentId)
-        allow create: if isEmployee()
-        allow update: if isEmployee()
-        allow delete: if isEmployee() && resource.data.responseId == null
+      allow read: if isEmployee() || isStudentId(resource.data.studentId)
+      allow create: if isEmployee()
+      allow update: if isEmployee()
+      allow delete: if isEmployee() && resource.data.responseId == null
     }
 
     match /adminData/{document=**} {
