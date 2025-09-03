@@ -13,6 +13,10 @@ service cloud.firestore {
     function isEmployee() {
       return isAdmin() || isStaff()
     }
+    
+    function isStudent() {
+      return request.auth != null && request.auth.token.role == "STUDENT"
+    }
 
     function isStudentId(id) {
       return request.auth != null && request.auth.token.studentId == id
