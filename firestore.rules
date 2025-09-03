@@ -35,6 +35,10 @@ service cloud.firestore {
       allow create: if isEmployee()
       allow update: if isEmployee()
       allow delete: if isEmployee()
+
+      match /surveyAccessList/surveyAccessList {
+        allow read, write: if false
+      }
     }
 
     match /{path=**}/assignments/{assignmentId} {
