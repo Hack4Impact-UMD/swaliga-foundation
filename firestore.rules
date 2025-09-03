@@ -25,16 +25,14 @@ service cloud.firestore {
 
     match /students/{studentId} {
       allow read: if isEmployee() || isStudentId(studentId)
-      allow create: if true
+      allow create: if isStudent()
       allow update: if isEmployee() || isStudentId(studentId)
       allow delete: if false
     }
 
     match /surveys/{surveyId} {
       allow read: if isEmployee() || isOnSurveyAccessList(surveyId)
-      allow create: if isEmployee()
-      allow update: if isEmployee()
-      allow delete: if isEmployee()
+      allow write: if isEmployee()
 
       match /surveyAccessList/surveyAccessList {
         allow read, write: if false
@@ -43,8 +41,7 @@ service cloud.firestore {
 
     match /{path=**}/assignments/{assignmentId} {
       allow read: if isEmployee() || isStudentId(resource.data.studentId)
-      allow create: if isEmployee()
-      allow update: if isEmployee()
+      allow create, update: if isEmployee()
       allow delete: if isEmployee() && resource.data.responseId == null
     }
 
