@@ -12,6 +12,7 @@ interface useAssignmentsReturn {
   setAssignments: React.Dispatch<React.SetStateAction<AssignmentID[]>>;
   isLoading: boolean;
   isError: boolean;
+  refetch: () => void;
 }
 
 export default function useAssignments(
@@ -22,6 +23,9 @@ export default function useAssignments(
   const [assignments, setAssignments] = useState<AssignmentID[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
+  const [refetchToggle, setRefetchToggle] = useState<boolean>(false);
+
+  const refetch = () => setRefetchToggle((prev) => !prev);
 
   useEffect(() => {
     (studentId
@@ -31,7 +35,7 @@ export default function useAssignments(
       .then((assignments) => setAssignments(assignments))
       .catch(() => setIsError(true))
       .finally(() => setIsLoading(false));
-  }, [studentId, surveyId]);
+  }, [studentId, surveyId, refetchToggle]);
 
-  return { assignments, setAssignments, isLoading, isError };
+  return { assignments, setAssignments, isLoading, isError, refetch };
 }

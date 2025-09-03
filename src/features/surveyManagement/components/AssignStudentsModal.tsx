@@ -13,10 +13,11 @@ import MenuIcon from "@/components/ui/MenuIcon";
 interface AssignStudentsModalProps {
   survey: SurveyID;
   existingAssignments: PendingAssignmentID[];
+  onAssignmentsChanged?: (addedStudentIds: string[], removedStudentIds: string[]) => void;
 }
 
 export default function AssignStudentsModal(props: AssignStudentsModalProps) {
-  const { survey, existingAssignments } = props;
+  const { survey, existingAssignments, onAssignmentsChanged } = props;
 
   const [addedStudentIds, setAddedStudentIds] = useState<string[]>([]);
   const [removedStudentIds, setRemovedStudentIds] = useState<string[]>([]);
@@ -55,6 +56,7 @@ export default function AssignStudentsModal(props: AssignStudentsModalProps) {
         ),
       ]);
       setMessage("Survey assignments successfully updated!");
+      if (onAssignmentsChanged) onAssignmentsChanged(addedStudentIds, removedStudentIds)
     } catch (error) {
       setError("Failed to update survey assignments.");
     }

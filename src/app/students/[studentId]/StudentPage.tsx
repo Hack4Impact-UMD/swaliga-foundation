@@ -56,6 +56,7 @@ export default function StudentPage(props: StudentPageProps) {
     setAssignments,
     isLoading: isAssignmentsLoading,
     isError: isAssignmentsError,
+    refetch: refetchAssignments,
   } = useAssignments({
     studentId,
   });
@@ -275,6 +276,7 @@ export default function StudentPage(props: StudentPageProps) {
               <AssignSurveysModal
                 student={student}
                 existingAssignments={pendingAssignments}
+                onAssignmentsChanged={refetchAssignments}
               />
             )}
           </div>

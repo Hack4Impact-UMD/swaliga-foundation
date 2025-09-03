@@ -56,6 +56,7 @@ export default function SurveyPage(props: SurveyPageProps) {
     setAssignments,
     isLoading: isAssignmentsLoading,
     isError: isAssignmentsError,
+    refetch: refetchAssignments,
   } = useAssignments({ surveyId });
   const { pendingAssignments, surveyResponses } = useMemo(() => {
     let pendingAssignments: PendingAssignmentID[] = [];
@@ -296,6 +297,7 @@ export default function SurveyPage(props: SurveyPageProps) {
               <AssignStudentsModal
                 survey={survey}
                 existingAssignments={pendingAssignments}
+                onAssignmentsChanged={refetchAssignments}
               />
             </div>
           </div>
