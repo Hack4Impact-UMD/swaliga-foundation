@@ -6,6 +6,8 @@ import { Collection, Document } from "../../firestore/utils";
 import { db } from "@/config/firebaseConfig";
 import { SurveyID } from "@/types/survey-types";
 import { useSurveysDefault, useSurveysReturn } from "./useSurveys";
+import useAuth from "@/features/auth/authN/components/useAuth";
+import { Role } from "@/types/user-types";
 
 export const SurveysContext =
   createContext<useSurveysReturn>(useSurveysDefault);
@@ -19,7 +21,13 @@ export default function SurveysProvider({
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
 
+  const auth = useAuth();
+  const role = auth.token?.claims.role as Role;
+
   useEffect(() => {
+    if (role !== "ADMIN" && role !== "STAFF") {
+      return;
+    }
     setIsLoading(true);
     const unsubscribe = onSnapshot(
       collection(
@@ -48,7 +56,7 @@ export default function SurveysProvider({
       }
     );
     return () => unsubscribe();
-  }, []);
+  }, [role]);
 
   return (
     <SurveysContext.Provider
