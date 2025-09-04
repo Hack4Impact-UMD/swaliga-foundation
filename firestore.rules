@@ -26,6 +26,10 @@ service cloud.firestore {
       return isStudent() && request.auth.token.studentId == id
     }
 
+    function isStudentWithoutId() {
+      return isStudent() && !request.auth.token.keys().hasAny(['studentId'])
+    }
+
     function isOnSurveyAccessList(surveyId) {
       let data = get(/databases/$(database)/documents/surveys/$(surveyId)/surveyAccessList/surveyAccessList).data;
       return data != null && data.keys().hasAny([request.auth.token.studentId]);
@@ -49,7 +53,7 @@ service cloud.firestore {
 
     match /{path=**}/assignments/{assignmentId} {
       allow read: if isEmployee() || isStudentId(resource.data.studentId)
-      allow create, update: if isEmployee()
+      allow create, update: if isEmployee() || resource.data.studentEmail == request.auth.token.email
       allow delete: if isEmployee() && resource.data.responseId == null
     }
 
@@ -64,9 +68,9 @@ service cloud.firestore {
           return 1000000;
         }
 
-        allow read: if isStudentId(null)
-        allow create: if isStudentId(null) && request.resource.data.nextStudentId == getFirstStudentId()
-        allow update: if isStudentId(null) && request.resource.data.nextStudentId == resource.data.nextStudentId + 1
+        allow read: if isStudentWithoutId()
+        allow create: if isStudentWithoutId() && request.resource.data.nextStudentId == getFirstStudentId()
+        allow update: if isStudentWithoutId() && request.resource.data.nextStudentId == resource.data.nextStudentId + 1
       }
     }
   }
