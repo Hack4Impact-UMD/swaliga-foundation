@@ -84,7 +84,7 @@ function addIdQuestion_(survey: GoogleAppsScript.Forms.Form) {
     .addTextItem()
     .setTitle("Swaliga ID")
     .setHelpText(
-      "This is the ID number displayed on your profile page on the Swaliga Foundation survey portal. If you don't have an account, please create one at http://localhost:3000."
+      "This is the ID number displayed on your profile page on the Swaliga Foundation survey portal. If you don't have an account, please create one at https://swaliga-foundation.web.app"
     )
     .setRequired(true)
     .setValidation(
