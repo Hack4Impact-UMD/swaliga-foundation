@@ -2,6 +2,8 @@ import { GoogleTokens } from "@/types/auth-types";
 import { User } from "firebase/auth";
 import moment from "moment";
 import { AuthContextType } from "../authN/components/AuthProvider";
+import { httpsCallable } from "firebase/functions";
+import { functions } from "@/config/firebaseConfig";
 
 export async function getAccessToken(tokens: GoogleTokens, user: User, idToken: string): Promise<string> {
   if (tokens) {
@@ -11,20 +13,9 @@ export async function getAccessToken(tokens: GoogleTokens, user: User, idToken: 
     }
   }
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/auth/token`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${idToken}`,
-      "Content-Type": "application/json",
-      "Cache-Control": "no-cache",
-    }
-  });
-  if (!response.ok) {
-    throw new Error("Failed to refresh access token");
-  }
+  const newAccessToken = await httpsCallable(functions, 'refreshAccessToken')();
   await user.getIdTokenResult(true);
-  const newAccessToken = await response.json();
-  return newAccessToken;
+  return newAccessToken as unknown as string;
 }
 
 export async function getAccessTokenFromAuth(auth: AuthContextType) {

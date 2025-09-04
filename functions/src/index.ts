@@ -7,6 +7,9 @@ import * as emailFunctions from './email';
 exports.setRole = authFunctions.setRole;
 exports.onStudentAccountCreated = authFunctions.onStudentAccountCreated;
 exports.checkRefreshTokenValidity = authFunctions.checkRefreshTokenValidity;
+exports.startOAuth2Flow = authFunctions.startOAuth2Flow;
+exports.handleOAuth2Code = authFunctions.handleOAuth2Code;
+exports.refreshAccessToken = authFunctions.refreshAccessToken;
 
 exports.assignSurveys = assignmentManagementFunctions.assignSurveys;
 exports.onAssignmentWritten = assignmentManagementFunctions.onAssignmentWritten;

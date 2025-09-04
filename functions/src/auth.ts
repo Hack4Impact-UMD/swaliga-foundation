@@ -1,10 +1,13 @@
 import { adminAuth, adminDb } from '@/config/firebaseAdminConfig';
 import { Collection } from '@/data/firestore/utils';
-import { fetchAccessToken } from '@/features/auth/authZ/serverAuthZ';
-import { StudentCustomClaims, StudentDecodedIdTokenWithCustomClaims } from '@/types/auth-types';
+import { fetchAccessToken, isIdTokenValid } from '@/features/auth/authZ/serverAuthZ';
+import { AdminCustomClaims, DecodedIdTokenWithCustomClaims, GoogleTokens, StaffCustomClaims, StudentCustomClaims, StudentDecodedIdTokenWithCustomClaims } from '@/types/auth-types';
 import { SurveyResponseStudentEmailID } from '@/types/survey-types';
 import { FieldValue, Transaction } from 'firebase-admin/firestore';
-import { onCall } from "firebase-functions/v2/https";
+import { onCall, onRequest } from "firebase-functions/v2/https";
+import moment from 'moment';
+import { getFunctionsURL } from '@/config/utils';
+import { getUrlFromRequest } from './utils/utils';
 
 export const setRole = onCall(async (req) => {
   if (!req.auth) {
@@ -71,3 +74,125 @@ export const checkRefreshTokenValidity = onCall(async (req) => {
     return false;
   }
 })
+
+export const startOAuth2Flow = onRequest(async (req, res) => {
+  if (req.method !== 'GET') {
+    res.status(405).send('Method Not Allowed');
+    return;
+  }
+
+  const url = getUrlFromRequest(req);
+  const idToken = url.searchParams.get('idToken');
+  let decodedToken: DecodedIdTokenWithCustomClaims | false;
+  if (!(decodedToken = await isIdTokenValid(idToken))) {
+    res.status(401).send('Unauthorized');
+    return;
+  } else if (decodedToken.role !== "ADMIN") {
+    res.status(403).send('Forbidden');
+    return;
+  }
+
+  const redirectUri = encodeURIComponent(getFunctionsURL("handleOAuth2Code"));
+  const scopes: string = encodeURIComponent([
+    'https://www.googleapis.com/auth/script.external_request',
+    'https://www.googleapis.com/auth/script.scriptapp',
+    'https://www.googleapis.com/auth/forms',
+    'https://www.googleapis.com/auth/drive',
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://mail.google.com/'
+  ].join(' '));
+
+  const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=${scopes}&login_hint=${decodedToken.email}&access_type=offline&prompt=consent&state=${idToken}`;
+  res.status(303).redirect(authUrl);
+});
+
+export const handleOAuth2Code = onRequest(async (req, res) => {
+  if (req.method !== 'GET') {
+    res.status(405).send('Method Not Allowed');
+    return;
+  }
+
+  const url = getUrlFromRequest(req);
+
+  const idToken = url.searchParams.get('state');
+  let decodedToken: DecodedIdTokenWithCustomClaims | false;
+  if (!(decodedToken = await isIdTokenValid(idToken))) {
+    res.status(401).send('Unauthorized');
+    return;
+  } else if (decodedToken.role !== 'ADMIN') {
+    res.status(403).send('Forbidden');
+    return;
+  }
+
+  const code = url.searchParams.get('code');
+  if (!code) {
+    res.status(400).send('Bad Request');
+    return;
+  }
+
+  const response = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      code: code || "",
+      client_id: process.env.GOOGLE_CLIENT_ID || "",
+      client_secret: process.env.GOOGLE_CLIENT_SECRET || "",
+      redirect_uri: getFunctionsURL('handleOAuth2Code'),
+      grant_type: 'authorization_code',
+    }),
+  });
+  if (!response.ok) {
+    res.status(500).send('Internal Server Error');
+    return;
+  }
+  const tokens = await response.json();
+
+  const customClaims: AdminCustomClaims = {
+    role: decodedToken.role,
+    googleTokens: {
+      refreshToken: tokens.refresh_token,
+      accessToken: tokens.access_token,
+      expirationTime: moment().add(tokens.expires_in, 'seconds').toISOString(),
+    }
+  }
+  await adminAuth.setCustomUserClaims(decodedToken.uid, customClaims);
+  res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?refreshIdToken=true`);
+});
+
+export const refreshAccessToken = onCall(async (req) => {
+  if (!req.auth || (req.auth.token.role !== 'ADMIN' && req.auth.token.role !== 'STAFF')) {
+    throw new Error("Unauthorized");
+  }
+
+  if (req.auth.token.role === "ADMIN") {
+    var refreshToken: string | undefined = req.auth.token.googleTokens?.refreshToken;
+  } else {
+    const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
+    var refreshToken: string | undefined = adminUser.customClaims?.googleTokens?.refreshToken;
+  }
+  if (!refreshToken) {
+    throw new Error("No refresh token found");
+  }
+
+  let tokenData: GoogleTokens;
+  try {
+    tokenData = await fetchAccessToken(refreshToken);
+  } catch (error) {
+    throw new Error("Failed to refresh access token");
+  }
+
+  const customClaims: AdminCustomClaims | StaffCustomClaims =
+    req.auth.token.role === 'ADMIN' ?
+      {
+        role: req.auth.token.role,
+        googleTokens: tokenData
+      } satisfies AdminCustomClaims : {
+        role: req.auth.token.role,
+        googleTokens: {
+          accessToken: tokenData.accessToken,
+          expirationTime: tokenData.expirationTime
+        }
+      } satisfies StaffCustomClaims;
+  await adminAuth.setCustomUserClaims(req.auth.uid, customClaims);
+  return tokenData.accessToken;
+});

@@ -4,6 +4,7 @@ import useAuth from "@/features/auth/authN/components/useAuth";
 import { Role } from "@/types/user-types";
 import styles from "./InvalidRefreshTokenPage.module.css";
 import Link from "next/link";
+import { getFunctionsURL } from "@/config/utils";
 
 export default function InvalidRefreshTokenPage() {
   const auth = useAuth();
@@ -20,7 +21,9 @@ export default function InvalidRefreshTokenPage() {
               such as Forms and Drive to provide this website's full
               functionality. Please click{" "}
               <Link
-                href={`${process.env.NEXT_PUBLIC_DOMAIN}/api/auth/consent?idToken=${auth.token?.token}`}
+                href={`${getFunctionsURL("startOAuth2Flow")}?idToken=${
+                  auth.token?.token
+                }`}
               >
                 here
               </Link>{" "}
