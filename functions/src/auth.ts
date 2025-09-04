@@ -1,6 +1,5 @@
-import { adminAuth, adminDb } from '@/config/firebaseAdminConfig';
+import { adminAuth, adminDb } from './config/firebaseAdminConfig';
 import { Collection } from '@/data/firestore/utils';
-import { fetchAccessToken, isIdTokenValid } from '@/features/auth/authZ/serverAuthZ';
 import { AdminCustomClaims, DecodedIdTokenWithCustomClaims, GoogleTokens, StaffCustomClaims, StudentCustomClaims, StudentDecodedIdTokenWithCustomClaims } from '@/types/auth-types';
 import { SurveyResponseStudentEmailID } from '@/types/survey-types';
 import { FieldValue, Transaction } from 'firebase-admin/firestore';
@@ -196,3 +195,40 @@ export const refreshAccessToken = onCall(async (req) => {
   await adminAuth.setCustomUserClaims(req.auth.uid, customClaims);
   return tokenData.accessToken;
 });
+
+export async function isIdTokenValid(idToken: string | undefined | null): Promise<DecodedIdTokenWithCustomClaims | false> {
+  if (!idToken) {
+    return false;
+  }
+  try {
+    var decodedToken: DecodedIdTokenWithCustomClaims = await adminAuth.verifyIdToken(idToken);
+  } catch (error) {
+    return false;
+  }
+  return decodedToken;
+}
+
+export async function fetchAccessToken(refreshToken: string): Promise<GoogleTokens> {
+  const response = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Cache-Control': 'no-cache',
+    },
+    body: new URLSearchParams({
+      refresh_token: refreshToken,
+      client_id: process.env.GOOGLE_CLIENT_ID || "",
+      client_secret: process.env.GOOGLE_CLIENT_SECRET || "",
+      grant_type: 'refresh_token',
+    }),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to refresh access token');
+  }
+  const tokenData = await response.json();
+  return {
+    refreshToken,
+    accessToken: tokenData.access_token,
+    expirationTime: moment().add(tokenData.expires_in, 'seconds').toISOString()
+  }
+}

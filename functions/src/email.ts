@@ -1,5 +1,5 @@
-import { adminAuth } from "@/config/firebaseAdminConfig";
-import { fetchAccessToken } from "@/features/auth/authZ/serverAuthZ";
+import { adminAuth } from "./config/firebaseAdminConfig";
+import { fetchAccessToken } from "./auth";
 import { onCall } from "firebase-functions/https";
 import { createTransport, Transporter } from "nodemailer";
 import Mail from "nodemailer/lib/mailer";

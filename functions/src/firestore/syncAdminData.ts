@@ -1,4 +1,4 @@
-import { adminDb } from "@/config/firebaseAdminConfig";
+import { adminDb } from "../config/firebaseAdminConfig";
 import { Collection, Document } from "@/data/firestore/utils";
 import { FieldValue, Transaction } from "firebase-admin/firestore";
 import { onDocumentCreated, onDocumentDeleted, onDocumentUpdated } from "firebase-functions/firestore";

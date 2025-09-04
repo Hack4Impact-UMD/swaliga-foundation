@@ -1,11 +1,11 @@
 import { onSchedule, ScheduledEvent } from "firebase-functions/scheduler";
 import { addExistingSurvey, getUpdatedSurveyTitlesAndDescriptions } from "@/data/apps-script/calls"
-import { fetchAccessToken } from '@/features/auth/authZ/serverAuthZ';
+import { fetchAccessToken } from '../auth';
 import { GoogleFormResponse, GoogleFormResponseStudentId, isGoogleFormResponseStudentId, isGoogleFormResponseUnidentified } from "@/types/apps-script-types";
 import { SurveyResponseStudentEmail, SurveyResponseStudentId, SurveyResponseUnidentified } from "@/types/survey-types";
 import { onCall, onRequest } from "firebase-functions/https";
 import { Transaction } from "firebase-admin/firestore";
-import { adminAuth, adminDb } from "@/config/firebaseAdminConfig";
+import { adminAuth, adminDb } from "../config/firebaseAdminConfig";
 import { Collection, Document } from "@/data/firestore/utils";
 import { v4 as uuid } from "uuid";
 import moment from "moment";
