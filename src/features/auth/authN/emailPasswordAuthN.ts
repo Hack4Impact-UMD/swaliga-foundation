@@ -130,12 +130,9 @@ export async function checkCodeValidity(oobCode: string): Promise<void> {
 
 export async function verifyEmail(oobCode: string): Promise<void> {
   try {
-    console.log("Verifying email with code:", oobCode);
     await applyActionCode(auth, oobCode);
-    console.log("Email verification successful.");
   } catch (error: any) {
     const code = error.code;
-    console.log(code)
     switch (code) {
       case AuthErrorCodes.INVALID_OOB_CODE:
       case AuthErrorCodes.EXPIRED_OOB_CODE:
