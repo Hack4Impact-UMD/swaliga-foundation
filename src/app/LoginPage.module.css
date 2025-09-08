@@ -26,6 +26,15 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+@media screen and (max-width:768px) {
+  .login {
+    width: 100%;
+  }
+  .inverted_bg {
+    display: none;
+  }
+}
+
 .inverted_bg {
   width: 50%;
   height: 100%;
