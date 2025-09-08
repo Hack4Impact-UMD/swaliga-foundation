@@ -8,6 +8,8 @@ import styles from "./Navbar.module.css";
 import logo from "@/../public/logo.png";
 import { logOut } from "@/features/auth/authN/googleAuthN";
 import { MdLogout } from "react-icons/md";
+import { DropdownMenu } from "@/components/ui/DropdownMenu";
+import ProfileIcon from "../ui/ProfileIcon";
 
 const navbarLinks: { name: string; href: string; roles: Role[] }[] = [
   { name: "Students", href: "/students", roles: ["ADMIN", "STAFF"] },
@@ -50,11 +52,18 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* Logout Icon */}
       {auth.token && (
-        <div onClick={() => logOut()}>
-          <MdLogout className={styles.profile} size={40} title="Logout" />
-        </div>
+        <DropdownMenu.Root modal={false}>
+          <DropdownMenu.Trigger>
+            <ProfileIcon />
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content>
+            <DropdownMenu.Item className={styles.logoutItem}>
+              <span>Logout</span>
+              <MdLogout size={30} title="Logout" onClick={() => logOut()} />
+            </DropdownMenu.Item>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
       )}
     </nav>
   );

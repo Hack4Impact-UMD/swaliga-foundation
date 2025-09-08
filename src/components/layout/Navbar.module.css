@@ -39,12 +39,6 @@
   color: #cccccc;
 }
 
-.profile {
-  padding-right: 2rem;
-  color: #eeeeee;
-  cursor: pointer;
-}
-
-.profile:hover {
-  color: #cccccc;
+.logoutItem {
+  color: red;
 }
