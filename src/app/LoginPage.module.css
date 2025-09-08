@@ -3,7 +3,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: calc(100vh - 50px);
+  min-height: calc(100vh - 50px);
+  padding: 20px 0;
   background-image: url("../../public/background.png");
   background-size: 100% 100%;
 }
@@ -11,8 +12,8 @@
 .container {
   display: flex;
   flex-direction: row;
+  flex: 0 0 70vh;
   width: 70%;
-  height: 70%;
 }
 
 .login {
@@ -149,6 +150,7 @@
   justify-content: center;
   align-items: center;
   flex: 3;
+  flex-wrap: wrap;
   margin-bottom: 10px;
 }
 
