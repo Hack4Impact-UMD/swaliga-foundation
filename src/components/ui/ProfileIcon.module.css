@@ -1,0 +1,20 @@
+.profileIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  background-color: #d0d12a;
+  color: #295972;
+  font-weight: 700;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.profileIcon:hover {
+  background-color: #d3d375;
+}
+
+.profileImage {
+  border-radius: 50%;
+  cursor: pointer;
+}
