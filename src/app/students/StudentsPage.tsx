@@ -11,6 +11,7 @@ import Link from "next/link";
 import { FaFileExport } from "react-icons/fa";
 import { exportStudentSummariesToCSV } from "@/features/dataExporting/exportCSV";
 import MenuIcon from "@/components/ui/MenuIcon";
+import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 
 export default function StudentsPage() {
   const { students, isLoading, isError } = useStudents();
@@ -86,7 +87,7 @@ export default function StudentsPage() {
   ];
 
   return (
-    <div className={styles.page}>
+    <BlankBackgroundPage>
       <div className={styles.container}>
         <div className={styles.header}>
           <h1 className={styles.headerText}>Students</h1>
@@ -122,6 +123,6 @@ export default function StudentsPage() {
           isError={isError}
         />
       </div>
-    </div>
+    </BlankBackgroundPage>
   );
 }

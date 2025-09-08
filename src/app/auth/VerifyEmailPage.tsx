@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { verifyEmail } from "@/features/auth/authN/emailPasswordAuthN";
 import useAuth from "@/features/auth/authN/components/useAuth";
 import ErrorPage from "../error";
+import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 
 interface VerifyEmailPageProps {
   oobCode: string;
@@ -41,7 +42,7 @@ export default function VerifyEmailPage(props: VerifyEmailPageProps) {
   }
 
   return (
-    <div className={styles.page}>
+    <BlankBackgroundPage backgroundColor="#295972">
       <div className={styles.container}>
         <h1 className={styles.header}>
           {verified ? "Your email has been verified!" : "Verifying email..."}
@@ -53,6 +54,6 @@ export default function VerifyEmailPage(props: VerifyEmailPageProps) {
           </p>
         )}
       </div>
-    </div>
+    </BlankBackgroundPage>
   );
 }

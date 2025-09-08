@@ -10,7 +10,7 @@ import AvailabilityProvider from "@/features/auth/authZ/AvailabilityProvider";
 import SurveysProvider from "@/data/hooks/useSurveys/SurveysProvider";
 import StudentsProvider from "@/data/hooks/useStudents/StudentsProvider";
 import Footer from "@/components/layout/Footer";
-import Page from "@/components/layout/Page";
+import Page from "@/components/layout/pages/Page";
 
 const LoadingPage = dynamic(() => import("./loading"));
 

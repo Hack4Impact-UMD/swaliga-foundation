@@ -5,13 +5,14 @@ import { Role } from "@/types/user-types";
 import styles from "./InvalidRefreshTokenPage.module.css";
 import Link from "next/link";
 import { getFunctionsURL } from "@/config/utils";
+import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 
 export default function InvalidRefreshTokenPage() {
   const auth = useAuth();
   const role = auth.token?.claims.role as Role;
 
   return (
-    <div className={styles.page}>
+    <BlankBackgroundPage backgroundColor="#295972">
       <div className={styles.container}>
         <h3 className={styles.text}>
           {role === "ADMIN" ? (
@@ -34,6 +35,6 @@ export default function InvalidRefreshTokenPage() {
           )}
         </h3>
       </div>
-    </div>
+    </BlankBackgroundPage>
   );
 }

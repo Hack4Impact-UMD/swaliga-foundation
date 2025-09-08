@@ -9,6 +9,7 @@ import {
 } from "@/features/auth/authN/emailPasswordAuthN";
 import { signInWithGoogle } from "@/features/auth/authN/googleAuthN";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
+import ImageBackgroundPage from "@/components/layout/pages/ImageBackgroundPage";
 
 export default function LoginPage() {
   const [isLoginMode, setIsLoginMode] = useState<boolean>(true);
@@ -73,7 +74,7 @@ export default function LoginPage() {
   const togglePasswordVisibility = () => setIsPasswordVisible((prev) => !prev);
 
   return (
-    <div className={styles.page}>
+    <ImageBackgroundPage>
       <div className={styles.container}>
         <div className={styles.login}>
           <h1 className={styles.login_title}>
@@ -98,9 +99,15 @@ export default function LoginPage() {
                 onChange={(ev) => handlePasswordChange(ev.target.value)}
               />
               {isPasswordVisible ? (
-                <MdVisibility className={styles.passwordButton} onClick={togglePasswordVisibility} />
+                <MdVisibility
+                  className={styles.passwordButton}
+                  onClick={togglePasswordVisibility}
+                />
               ) : (
-                <MdVisibilityOff className={styles.passwordButton} onClick={togglePasswordVisibility} />
+                <MdVisibilityOff
+                  className={styles.passwordButton}
+                  onClick={togglePasswordVisibility}
+                />
               )}
             </div>
             {!isLoginMode && (
@@ -150,6 +157,6 @@ export default function LoginPage() {
         </div>
         <div className={styles.inverted_bg} />
       </div>
-    </div>
+    </ImageBackgroundPage>
   );
 }

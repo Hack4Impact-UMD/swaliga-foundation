@@ -2,6 +2,7 @@ import { sendVerificationEmail } from "@/features/auth/authN/emailPasswordAuthN"
 import styles from "./SendVerificationEmailPage.module.css";
 import { useState } from "react";
 import useAuth from "@/features/auth/authN/components/useAuth";
+import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 
 export default function SendVerificationEmailPage() {
   const [success, setSuccess] = useState<boolean>(false);
@@ -19,7 +20,7 @@ export default function SendVerificationEmailPage() {
   };
 
   return (
-    <div className={styles.page}>
+    <BlankBackgroundPage backgroundColor="#295972">
       <div className={styles.container}>
         <h2 className={styles.header}>We've sent you a verification email!</h2>
         <p className={styles.message}>
@@ -39,6 +40,6 @@ export default function SendVerificationEmailPage() {
             : error}
         </p>
       </div>
-    </div>
+    </BlankBackgroundPage>
   );
 }

@@ -32,6 +32,7 @@ import AssignSurveysModal from "@/features/surveyManagement/components/AssignSur
 import ErrorPage from "@/app/error";
 import MenuIcon from "@/components/ui/MenuIcon";
 import { exportFullStudentDataToCSV } from "@/features/dataExporting/exportCSV";
+import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 
 interface StudentPageProps {
   studentId: string;
@@ -233,7 +234,8 @@ export default function StudentPage(props: StudentPageProps) {
   ];
 
   return (
-    <div className={styles.page}>
+    <BlankBackgroundPage>
+      {" "}
       <div className={styles.container}>
         <div className={styles.headerContainer}>
           <h1 className={styles.header}>{getFullName(student.name)}</h1>
@@ -305,6 +307,6 @@ export default function StudentPage(props: StudentPageProps) {
           />
         </div>
       </div>
-    </div>
+    </BlankBackgroundPage>
   );
 }

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { resetPassword } from "@/features/auth/authN/emailPasswordAuthN";
 import Link from "next/link";
+import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 
 interface ResetPasswordPageProps {
   oobCode: string;
@@ -50,7 +51,7 @@ export default function ResetPasswordPage(props: ResetPasswordPageProps) {
   const togglePasswordVisibility = () => setIsPasswordVisible((prev) => !prev);
 
   return (
-    <div className={styles.page}>
+    <BlankBackgroundPage backgroundColor="#295972">
       <div className={styles.container}>
         <h1 className={styles.header}>Reset Password</h1>
         <div className={styles.fieldContainer}>
@@ -94,6 +95,6 @@ export default function ResetPasswordPage(props: ResetPasswordPageProps) {
           Submit
         </button>
       </div>
-    </div>
+    </BlankBackgroundPage>
   );
 }

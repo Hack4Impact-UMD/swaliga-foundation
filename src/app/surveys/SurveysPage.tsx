@@ -12,6 +12,7 @@ import DeleteSurveyModal from "@/features/surveyManagement/components/DeleteSurv
 import useSurveys from "@/data/hooks/useSurveys/useSurveys";
 import { MAX_TRIGGERS_PER_USER } from "@/constants/constants";
 import SurveyActivationSwitch from "@/features/surveyManagement/components/SurveyActivationSwitch";
+import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 
 export default function SurveysPage() {
   const { surveys, isLoading, isError } = useSurveys();
@@ -19,7 +20,9 @@ export default function SurveysPage() {
   const numActiveSurveys = surveys.filter((survey) => survey.isActive).length;
 
   useEffect(() => {
-    setSelectedSurveyIds(prev => prev.filter(id => surveys.some(survey => survey.id === id)))
+    setSelectedSurveyIds((prev) =>
+      prev.filter((id) => surveys.some((survey) => survey.id === id))
+    );
   }, [surveys]);
 
   const columns: Column<SurveyID>[] = [
@@ -88,7 +91,7 @@ export default function SurveysPage() {
   ];
 
   return (
-    <div className={styles.page}>
+    <BlankBackgroundPage>
       <div className={styles.container}>
         <div className={styles.header}>
           <h1 className={styles.headerText}>Surveys</h1>
@@ -125,6 +128,6 @@ export default function SurveysPage() {
           isError={isError}
         />
       </div>
-    </div>
+    </BlankBackgroundPage>
   );
 }

@@ -29,6 +29,7 @@ import ReassignResponseModal from "@/features/surveyManagement/components/Reassi
 import SurveyActivationSwitch from "@/features/surveyManagement/components/SurveyActivationSwitch";
 import ErrorPage from "@/app/error";
 import MenuIcon from "@/components/ui/MenuIcon";
+import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 
 interface SurveyPageProps {
   surveyId: string;
@@ -256,7 +257,7 @@ export default function SurveyPage(props: SurveyPageProps) {
   ];
 
   return (
-    <div className={styles.page}>
+    <BlankBackgroundPage>
       <div className={styles.container}>
         <div className={styles.header}>
           <h1 className={styles.surveyTitle}>{survey.name}</h1>
@@ -332,6 +333,6 @@ export default function SurveyPage(props: SurveyPageProps) {
           />
         </div>
       </div>
-    </div>
+    </BlankBackgroundPage>
   );
 }

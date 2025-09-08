@@ -5,6 +5,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { sendResetPasswordEmail } from "@/features/auth/authN/emailPasswordAuthN";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import ImageBackgroundPage from "@/components/layout/pages/ImageBackgroundPage";
 
 export default function SendResetPasswordEmailPage() {
   const [email, setEmail] = useState<string>("");
@@ -28,7 +29,8 @@ export default function SendResetPasswordEmailPage() {
   };
 
   return (
-    <div className={styles.page}>
+    <ImageBackgroundPage>
+      {" "}
       <div className={styles.container}>
         <div className={styles.formContainer}>
           <h1 className={styles.header}>Reset Password</h1>
@@ -63,6 +65,6 @@ export default function SendResetPasswordEmailPage() {
           </button>
         </div>
       </div>
-    </div>
+    </ImageBackgroundPage>
   );
 }
