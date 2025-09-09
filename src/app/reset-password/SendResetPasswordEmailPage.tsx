@@ -30,7 +30,6 @@ export default function SendResetPasswordEmailPage() {
 
   return (
     <ImageBackgroundPage>
-      {" "}
       <div className={styles.container}>
         <div className={styles.formContainer}>
           <h1 className={styles.header}>Reset Password</h1>
