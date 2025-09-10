@@ -31,16 +31,14 @@ export default function RootLayout({
       <body className={`${inter.className} ${styles.body}`}>
         <Suspense fallback={<LoadingPage />}>
           <AuthProvider>
+            <Navbar />
             <AvailabilityProvider>
               <SurveysProvider>
-                <StudentsProvider>
-                  <Navbar />
-                  {children}
-                  <Footer />
-                </StudentsProvider>
+                <StudentsProvider>{children}</StudentsProvider>
               </SurveysProvider>
             </AvailabilityProvider>
           </AuthProvider>
+          <Footer />
         </Suspense>
       </body>
     </html>
