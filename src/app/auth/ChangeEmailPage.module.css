@@ -1,0 +1,23 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: 70%;
+  background-color: #d0d12a;
+}
+
+.header {
+  font-family: "Poppins", sans-serif;
+  color: #295972;
+  font-weight: 700;
+}
+
+.message {
+  width: 90%;
+  font-family: "Poppins", sans-serif;
+  color: black;
+  font-weight: 400;
+  text-align: center;
+}

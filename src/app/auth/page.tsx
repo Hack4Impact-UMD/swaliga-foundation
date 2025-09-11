@@ -7,11 +7,16 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import ErrorPage from "../error";
 import LoadingPage from "../loading";
+import { applyActionCode } from "firebase/auth";
+import { auth } from "@/config/firebaseConfig";
 
 const VerifyEmailPage = dynamic(() => import("./VerifyEmailPage"), {
   loading: () => <LoadingPage />,
 });
 const ResetPasswordPage = dynamic(() => import("./ResetPasswordPage"), {
+  loading: () => <LoadingPage />,
+});
+const ChangeEmailPage = dynamic(() => import("./ChangeEmailPage"), {
   loading: () => <LoadingPage />,
 });
 
@@ -51,7 +56,7 @@ export default function AuthHandlerPage() {
   switch (mode) {
     case "verifyEmail":
       return (
-        <RequireAuth allowedRoles={[]} allowNoRole>
+        <RequireAuth allowedRoles={['STUDENT']} allowNoRole>
           <VerifyEmailPage oobCode={oobCode} />
         </RequireAuth>
       );
@@ -59,6 +64,13 @@ export default function AuthHandlerPage() {
       return (
         <RequireAuth allowedRoles={[]} allowUnauthenticated>
           <ResetPasswordPage oobCode={oobCode} />
+        </RequireAuth>
+      );
+    case "verifyAndChangeEmail":
+    case "recoverEmail":
+      return (
+        <RequireAuth allowedRoles={["STUDENT"]}>
+          <ChangeEmailPage oobCode={oobCode} />
         </RequireAuth>
       );
     default:

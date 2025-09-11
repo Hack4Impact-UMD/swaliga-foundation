@@ -11,7 +11,6 @@ import { MdLogout } from "react-icons/md";
 import { DropdownMenu } from "@/components/ui/DropdownMenu";
 import ProfileIcon from "../ui/ProfileIcon";
 import { FaEnvelope } from "react-icons/fa";
-import { log } from "console";
 
 const navbarLinks: { name: string; href: string; roles: Role[] }[] = [
   { name: "Students", href: "/students", roles: ["ADMIN", "STAFF"] },
@@ -60,7 +59,18 @@ export default function Navbar() {
             <ProfileIcon />
           </DropdownMenu.Trigger>
           <DropdownMenu.Content>
-            <DropdownMenu.Item className={styles.logoutItem} onClick={() => logOut()}>
+            {role === "STUDENT" && (
+              <Link href="/change-email">
+                <DropdownMenu.Item>
+                  <span>Change Email</span>
+                  <FaEnvelope size={30} title="Change Email" />
+                </DropdownMenu.Item>
+              </Link>
+            )}
+            <DropdownMenu.Item
+              className={styles.logoutItem}
+              onClick={() => logOut()}
+            >
               <span>Logout</span>
               <MdLogout size={30} title="Logout" />
             </DropdownMenu.Item>
