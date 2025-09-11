@@ -21,8 +21,9 @@ export default function VerifyEmailPage(props: VerifyEmailPageProps) {
 
   useEffect(() => {
     const handleVerifyEmail = async () => {
+      if (!auth.user) throw new Error("No authenticated user found.");
       await verifyEmail(oobCode);
-      await auth.user!.getIdToken(true);
+      await auth.user.getIdToken(true);
     };
 
     handleVerifyEmail()

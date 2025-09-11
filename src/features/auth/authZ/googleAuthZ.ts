@@ -19,9 +19,10 @@ export async function getAccessToken(tokens: GoogleTokens, user: User, idToken: 
 }
 
 export async function getAccessTokenFromAuth(auth: AuthContextType) {
+  if (!auth.user || !auth.token) throw new Error("No authenticated user found.");
   return getAccessToken(
     auth.token?.claims.googleTokens as GoogleTokens,
-    auth.user!,
-    auth.token!.token
+    auth.user,
+    auth.token.token
   );
 }

@@ -12,7 +12,8 @@ export default function SendVerificationEmailPage() {
 
   const handleSendVerificationEmail = async () => {
     try {
-      await sendVerificationEmail(auth.user!);
+      if (!auth.user) throw new Error("No authenticated user found.");
+      await sendVerificationEmail(auth.user);
       setSuccess(true);
     } catch (error: any) {
       setError(error.message);

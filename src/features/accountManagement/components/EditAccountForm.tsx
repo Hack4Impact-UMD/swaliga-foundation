@@ -405,6 +405,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       return;
     }
     try {
+      if (!auth.user) throw new Error("No authenticated user found.");
       const studentId = await runTransaction(db, async (transaction) => {
         if (mode === "CREATE") {
           const studentIdRef = doc(
@@ -565,7 +566,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       <div className={styles.row}>
         <TextField
           label="Email"
-          value={auth.user!.email || ""}
+          value={auth.user?.email || ""}
           required
           disabled
           icon={<FaEnvelope />}
