@@ -139,25 +139,30 @@ export default function StudentPage(props: StudentPageProps) {
     {
       name: "Survey Name",
       getValue: (assignment: PendingAssignmentID) =>
-        surveys.find((survey) => survey.id === assignment.surveyId)!.name,
+        surveys.find((survey) => survey.id === assignment.surveyId)?.name ||
+        "Unknown Survey",
       sortFunc: (a, b) =>
-        surveys
-          .find((survey) => survey.id === a.surveyId)!
-          .name.localeCompare(
-            surveys.find((survey) => survey.id === b.surveyId)!.name
-          ),
+        (
+          surveys.find((survey) => survey.id === a.surveyId)?.name ||
+          "Unknown Survey"
+        ).localeCompare(
+          surveys.find((survey) => survey.id === b.surveyId)?.name ||
+            "Unknown Survey"
+        ),
     },
     {
       name: "Description",
       getValue: (assignment: PendingAssignmentID) =>
-        surveys.find((survey) => survey.id === assignment.surveyId)!
-          .description,
+        surveys.find((survey) => survey.id === assignment.surveyId)
+          ?.description || "Unknown Description",
       sortFunc: (a, b) =>
-        surveys
-          .find((survey) => survey.id === a.surveyId)!
-          .description.localeCompare(
-            surveys.find((survey) => survey.id === b.surveyId)!.description
-          ),
+        (
+          surveys.find((survey) => survey.id === a.surveyId)?.description ||
+          "Unknown Description"
+        ).localeCompare(
+          surveys.find((survey) => survey.id === b.surveyId)?.description ||
+            "Unknown Description"
+        ),
     },
     {
       name: "Assignment Date",
@@ -170,13 +175,12 @@ export default function StudentPage(props: StudentPageProps) {
       ? [
           {
             name: "Respond",
-            getValue: (assignment: PendingAssignmentID) => (
-              <RespondToSurveyModal
-                survey={
-                  surveys.find((survey) => survey.id === assignment.surveyId)!
-                }
-              />
-            ),
+            getValue: (assignment: PendingAssignmentID) => {
+              const survey = surveys.find(
+                (survey) => survey.id === assignment.surveyId
+              );
+              return survey ? <RespondToSurveyModal survey={survey} /> : "N/A";
+            },
           },
         ]
       : []),
@@ -186,25 +190,30 @@ export default function StudentPage(props: StudentPageProps) {
     {
       name: "Survey Name",
       getValue: (assignment: SurveyResponseStudentIdID) =>
-        surveys.find((survey) => survey.id === assignment.surveyId)!.name,
+        surveys.find((survey) => survey.id === assignment.surveyId)?.name ||
+        "Unknown Survey",
       sortFunc: (a, b) =>
-        surveys
-          .find((survey) => survey.id === a.surveyId)!
-          .name.localeCompare(
-            surveys.find((survey) => survey.id === b.surveyId)!.name
-          ),
+        (
+          surveys.find((survey) => survey.id === a.surveyId)?.name ||
+          "Unknown Survey"
+        ).localeCompare(
+          surveys.find((survey) => survey.id === b.surveyId)?.name ||
+            "Unknown Survey"
+        ),
     },
     {
       name: "Description",
       getValue: (assignment: SurveyResponseStudentIdID) =>
-        surveys.find((survey) => survey.id === assignment.surveyId)!
-          .description,
+        surveys.find((survey) => survey.id === assignment.surveyId)
+          ?.description || "Unknown Description",
       sortFunc: (a, b) =>
-        surveys
-          .find((survey) => survey.id === a.surveyId)!
-          .description.localeCompare(
-            surveys.find((survey) => survey.id === b.surveyId)!.description
-          ),
+        (
+          surveys.find((survey) => survey.id === a.surveyId)?.description ||
+          "Unknown Description"
+        ).localeCompare(
+          surveys.find((survey) => survey.id === b.surveyId)?.description ||
+            "Unknown Description"
+        ),
     },
     {
       name: "Submission Date",
@@ -235,7 +244,6 @@ export default function StudentPage(props: StudentPageProps) {
 
   return (
     <BlankBackgroundPage>
-      {" "}
       <div className={styles.container}>
         <div className={styles.headerContainer}>
           <h1 className={styles.header}>{getFullName(student.name)}</h1>
