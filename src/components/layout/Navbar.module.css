@@ -42,3 +42,10 @@
 .logoutItem {
   color: red;
 }
+
+.changeEmail {
+  all: inherit;
+  padding: 0;
+  text-decoration: none;
+  color: black;
+}

@@ -60,12 +60,12 @@ export default function Navbar() {
           </DropdownMenu.Trigger>
           <DropdownMenu.Content>
             {role === "STUDENT" && (
-              <Link href="/change-email">
-                <DropdownMenu.Item>
+              <DropdownMenu.Item>
+                <Link href="/change-email" className={styles.changeEmail}>
                   <span>Change Email</span>
                   <FaEnvelope size={30} title="Change Email" />
-                </DropdownMenu.Item>
-              </Link>
+                </Link>
+              </DropdownMenu.Item>
             )}
             <DropdownMenu.Item
               className={styles.logoutItem}
