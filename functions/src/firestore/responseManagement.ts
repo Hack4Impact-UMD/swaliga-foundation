@@ -140,6 +140,10 @@ export const testHandleRecentSurveyTitlesAndDescriptionsUpdates = onRequest(asyn
 });
 
 export const addExistingSurveyAndResponses = onCall(async (req) => {
+  if (!req.auth || (req.auth.token.role !== 'ADMIN' && req.auth.token.role !== 'STAFF')) {
+    throw new Error("Unauthorized");
+  }
+
   const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
   const tokenData = await fetchAccessToken(adminUser.customClaims?.googleTokens?.refreshToken || '');
   return await adminDb.runTransaction(async (transaction: Transaction) => {

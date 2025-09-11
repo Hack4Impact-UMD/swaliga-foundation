@@ -8,6 +8,10 @@ import moment from "moment";
 import { v4 as uuid } from "uuid";
 
 export const assignSurveys = onCall(async (req) => {
+  if (!req.auth || (req.auth.token.role !== 'STAFF' && req.auth.token.role !== 'ADMIN')) {
+    throw new Error("Unauthorized");
+  }
+
   const { studentIds, surveyIds }: { studentIds: string[]; surveyIds: string[]; } = req.data;
   await adminDb.runTransaction(async (transaction: Transaction) => {
     const timestamp = moment();

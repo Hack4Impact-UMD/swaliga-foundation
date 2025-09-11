@@ -35,6 +35,10 @@ async function getTransporter() {
 
 
 export const sendEmail = onCall(async (req) => {
+  if (!req.auth || (req.auth.token.role !== 'ADMIN' && req.auth.token.role !== 'STAFF')) {
+    throw new Error("Unauthorized");
+  }
+
   try {
     const transporter = await getTransporter();
     const email: Mail.Options = req.data;
