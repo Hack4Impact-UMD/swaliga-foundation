@@ -13,6 +13,10 @@ function createNewSurvey(title: string, description: string): SurveyID {
   survey.setCustomClosedFormMessage('This survey is no longer accepting responses. If you believe this is an error, please ask an administrator to open the survey on the Swaliga Survey portal.');
   survey.setAcceptingResponses(false);
 
+  try {
+    DriveApp.getFileById(survey.getId()).setSharing(DriveApp.Access.DOMAIN_WITH_LINK, DriveApp.Permission.EDIT);
+  } catch (error) {}
+
   return {
     id: survey.getId(),
     name: title,
@@ -44,6 +48,10 @@ function addExistingSurvey(surveyId: string) {
   survey.setAcceptingResponses(true);
   survey.setCustomClosedFormMessage('This survey is no longer accepting responses. If you believe this is an error, please ask an administrator to open the survey on the Swaliga Survey portal.');
   survey.setAcceptingResponses(false);
+
+  try {
+    DriveApp.getFileById(survey.getId()).setSharing(DriveApp.Access.DOMAIN_WITH_LINK, DriveApp.Permission.EDIT);
+  } catch (error) {}
 
   return {
     survey: {
