@@ -1,0 +1,26 @@
+.trigger {
+  background-color: transparent;
+  outline: none;
+  border: none;
+}
+
+.content {
+  background-color: white;
+  padding: 5px;
+  margin: 5px;
+  border-radius: 5px;
+  color: black;
+  font-weight: 500;
+  animation-name: fadeIn;
+  animation-duration: 1s;
+  animation-timing-function: cubic-bezier(0.1, 0.8, 0.2, 0.95);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
