@@ -11,11 +11,10 @@ interface ModalProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export default function Modal(props: ModalProps) {
-  const { children, onClose, onClick, ...rest } = props;
+  const { children, onClose, ...rest } = props;
   const [trigger, content] = children;
 
   const [isOpen, setIsOpen] = useState(false);
-  console.log(isOpen);
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => {
@@ -25,13 +24,7 @@ export default function Modal(props: ModalProps) {
 
   return (
     <>
-      {cloneElement(trigger, {
-        ...rest,
-        onClick: (e: any) => {
-          if (onClick) onClick(e);
-          openModal();
-        },
-      })}
+      <div onClick={openModal} {...rest}>{trigger}</div>
       {isOpen && (
         <div className={styles.modalBackground} onClick={closeModal}>
           <dialog className={styles.modal} onClick={(e) => e.stopPropagation()}>
