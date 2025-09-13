@@ -3,28 +3,35 @@
 import Image from "next/image";
 import styles from "./Modal.module.css";
 import closeIcon from "@/../public/icons/close-icon.png";
-import { cloneElement, MouseEvent, useState } from "react";
+import React, { cloneElement, useState } from "react";
 
-interface ModalProps {
+interface ModalProps extends React.HTMLAttributes<HTMLDivElement> {
   children: [JSX.Element, React.ReactNode];
   onClose?: () => void;
 }
 
 export default function Modal(props: ModalProps) {
-  const { children, onClose } = props;
+  const { children, onClose, onClick, ...rest } = props;
   const [trigger, content] = children;
 
   const [isOpen, setIsOpen] = useState(false);
+  console.log(isOpen);
 
-  const openModal = (e: MouseEvent) => setIsOpen(true);
-  const closeModal = (e: MouseEvent) => {
+  const openModal = () => setIsOpen(true);
+  const closeModal = () => {
     setIsOpen(false);
     if (onClose) onClose();
   };
 
   return (
     <>
-      {cloneElement(trigger, { onClick: openModal })}
+      {cloneElement(trigger, {
+        ...rest,
+        onClick: (e: any) => {
+          if (onClick) onClick(e);
+          openModal();
+        },
+      })}
       {isOpen && (
         <div className={styles.modalBackground} onClick={closeModal}>
           <dialog className={styles.modal} onClick={(e) => e.stopPropagation()}>
