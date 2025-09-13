@@ -10,7 +10,7 @@ import AvailabilityProvider from "@/features/auth/authZ/AvailabilityProvider";
 import SurveysProvider from "@/data/hooks/useSurveys/SurveysProvider";
 import StudentsProvider from "@/data/hooks/useStudents/StudentsProvider";
 import Footer from "@/components/layout/Footer";
-import Page from "@/components/layout/pages/Page";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 const LoadingPage = dynamic(() => import("./loading"));
 
@@ -30,15 +30,17 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} ${styles.body}`}>
         <Suspense fallback={<LoadingPage />}>
-          <AuthProvider>
-            <Navbar />
-            <AvailabilityProvider>
-              <SurveysProvider>
-                <StudentsProvider>{children}</StudentsProvider>
-              </SurveysProvider>
-            </AvailabilityProvider>
-          </AuthProvider>
-          <Footer />
+          <Tooltip.Provider delayDuration={0}>
+            <AuthProvider>
+              <Navbar />
+              <AvailabilityProvider>
+                <SurveysProvider>
+                  <StudentsProvider>{children}</StudentsProvider>
+                </SurveysProvider>
+              </AvailabilityProvider>
+            </AuthProvider>
+            <Footer />
+          </Tooltip.Provider>
         </Suspense>
       </body>
     </html>
