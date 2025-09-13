@@ -64,12 +64,12 @@ service cloud.firestore {
 
     match /metadata {
       match /nextStudentId {
-        function getFirstStudentId() {
-          return 1000000;
+        function getFirstNextStudentId() {
+          return 1000001;
         }
 
         allow read: if isStudentWithoutId()
-        allow create: if isStudentWithoutId() && request.resource.data.nextStudentId == getFirstStudentId()
+        allow create: if isStudentWithoutId() && request.resource.data.nextStudentId == getFirstNextStudentId()
         allow update: if isStudentWithoutId() && request.resource.data.nextStudentId == resource.data.nextStudentId + 1
       }
     }
