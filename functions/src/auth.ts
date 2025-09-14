@@ -32,6 +32,13 @@ export const setRole = onCall(async (req) => {
   }
 })
 
+async function changeEmailAssignmentsToIdAssignments(email: string, studentId: string, transaction: Transaction) {
+  const docs = (await transaction.get(adminDb.collectionGroup(Collection.ASSIGNMENTS).where('studentEmail', '==', email))).docs.map(doc => ({ id: doc.id, surveyId: doc.ref.parent.parent!.id, ...doc.data() } as SurveyResponseStudentEmailID));
+  const surveysCollectionRef = adminDb.collection(Collection.SURVEYS);
+  const updates = { studentId, studentEmail: FieldValue.delete() }
+  docs.forEach(doc => transaction.update(surveysCollectionRef.doc(doc.surveyId).collection(Collection.ASSIGNMENTS).doc(doc.id), updates));
+}
+
 export const onStudentAccountCreated = onCall(async (req) => {
   if (!req.auth) {
     throw new Error("Unauthorized");
@@ -41,18 +48,25 @@ export const onStudentAccountCreated = onCall(async (req) => {
     throw new Error("Student account already exists for this user");
   }
 
-  await adminDb.runTransaction(async (transaction: Transaction) => {
-    const docs = (await transaction.get(adminDb.collectionGroup(Collection.ASSIGNMENTS).where('studentEmail', '==', req.auth!.token.email!))).docs.map(doc => ({ id: doc.id, surveyId: doc.ref.parent.parent!.id, ...doc.data() } as SurveyResponseStudentEmailID));
-    const surveysCollectionRef = adminDb.collection(Collection.SURVEYS);
-    const updates = { studentId: req.data, studentEmail: FieldValue.delete() }
-    docs.forEach(doc => transaction.update(surveysCollectionRef.doc(doc.surveyId).collection(Collection.ASSIGNMENTS).doc(doc.id), updates));
-  });
+  await adminDb.runTransaction(async (transaction: Transaction) => await changeEmailAssignmentsToIdAssignments(req.auth!.token.email!, req.data, transaction));
 
   const decodedToken = req.auth.token as StudentDecodedIdTokenWithCustomClaims
-  await adminAuth.setCustomUserClaims(req.auth?.uid, {
+  await adminAuth.setCustomUserClaims(req.auth.uid, {
     role: decodedToken.role,
     studentId: req.data,
   } satisfies StudentCustomClaims);
+});
+
+export const handleEmailChange = onCall(async (req) => {
+  if (!req.auth || req.auth.token.role !== 'STUDENT' || !req.auth.token.studentId) {
+    throw new Error("Unauthorized");
+  }
+  await adminDb.runTransaction(async (transaction: Transaction) => {
+    await Promise.all([
+      transaction.update(adminDb.collection(Collection.STUDENTS).doc(req.auth!.token.studentId), { email: req.data }),
+      changeEmailAssignmentsToIdAssignments(req.data, req.auth!.token.studentId, transaction)
+    ]);
+  });
 });
 
 export const checkRefreshTokenValidity = onCall(async (req) => {

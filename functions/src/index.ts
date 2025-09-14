@@ -6,6 +6,7 @@ import * as emailFunctions from './email';
 
 exports.setRole = authFunctions.setRole;
 exports.onStudentAccountCreated = authFunctions.onStudentAccountCreated;
+exports.handleEmailChange = authFunctions.handleEmailChange
 exports.checkRefreshTokenValidity = authFunctions.checkRefreshTokenValidity;
 exports.startOAuth2Flow = authFunctions.startOAuth2Flow;
 exports.handleOAuth2Code = authFunctions.handleOAuth2Code;

@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, AuthErrorCodes, sendEmailVerification, User, sendPasswordResetEmail, confirmPasswordReset, validatePassword, checkActionCode, applyActionCode } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, AuthErrorCodes, sendEmailVerification, User, sendPasswordResetEmail, confirmPasswordReset, validatePassword, checkActionCode, applyActionCode, ActionCodeInfo } from "firebase/auth";
 import { auth } from "@/config/firebaseConfig";
 
 export async function signUpUser(email: string, password: string): Promise<void> {
@@ -109,9 +109,9 @@ async function checkPasswordValidity(password: string): Promise<void> {
   }
 }
 
-export async function checkCodeValidity(oobCode: string): Promise<void> {
+export async function checkCodeValidity(oobCode: string): Promise<ActionCodeInfo> {
   try {
-    await checkActionCode(auth, oobCode);
+    return (await checkActionCode(auth, oobCode));
   } catch (error: any) {
     const code = error.code;
     switch (code) {

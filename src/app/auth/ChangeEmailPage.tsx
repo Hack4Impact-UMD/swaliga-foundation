@@ -3,17 +3,18 @@ import ErrorPage from "../error";
 import styles from "./ChangeEmailPage.module.css";
 import { useEffect, useState } from "react";
 import useAuth from "@/features/auth/authN/components/useAuth";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { applyActionCode, checkActionCode } from "firebase/auth";
-import { auth as firebaseAuth } from "@/config/firebaseConfig";
+import { ActionCodeInfo, applyActionCode } from "firebase/auth";
+import { auth as firebaseAuth, functions } from "@/config/firebaseConfig";
+import { httpsCallable } from "firebase/functions";
 
 interface ChangeEmailPageProps {
   oobCode: string;
+  actionCodeInfo?: ActionCodeInfo;
 }
 
 export default function ChangeEmailPage(props: ChangeEmailPageProps) {
-  const { oobCode } = props;
+  const { oobCode, actionCodeInfo } = props;
   const [success, setSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
@@ -22,6 +23,9 @@ export default function ChangeEmailPage(props: ChangeEmailPageProps) {
   useEffect(() => {
     const handleChangeEmail = async () => {
       await applyActionCode(firebaseAuth, oobCode);
+      if (actionCodeInfo?.data.email) {
+        await httpsCallable(functions, 'handleEmailChange')(actionCodeInfo.data.email);
+      }
       await auth.user!.getIdToken(true);
     };
 

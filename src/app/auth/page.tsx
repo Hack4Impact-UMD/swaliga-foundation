@@ -7,8 +7,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import ErrorPage from "../error";
 import LoadingPage from "../loading";
-import { applyActionCode } from "firebase/auth";
-import { auth } from "@/config/firebaseConfig";
+import { ActionCodeInfo } from "firebase/auth";
 
 const VerifyEmailPage = dynamic(() => import("./VerifyEmailPage"), {
   loading: () => <LoadingPage />,
@@ -30,13 +29,15 @@ export default function AuthHandlerPage() {
     );
   }
 
+  const [actionCodeInfo, setActionCodeInfo] = useState<ActionCodeInfo>();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
     setLoading(true);
     checkCodeValidity(oobCode)
-      .then(() => {
+      .then((result) => {
+        setActionCodeInfo(result);
         setLoading(false);
       })
       .catch((err) => {
@@ -56,7 +57,7 @@ export default function AuthHandlerPage() {
   switch (mode) {
     case "verifyEmail":
       return (
-        <RequireAuth allowedRoles={['STUDENT']} allowNoRole>
+        <RequireAuth allowedRoles={["STUDENT"]} allowNoRole>
           <VerifyEmailPage oobCode={oobCode} />
         </RequireAuth>
       );
@@ -70,7 +71,7 @@ export default function AuthHandlerPage() {
     case "recoverEmail":
       return (
         <RequireAuth allowedRoles={["STUDENT"]}>
-          <ChangeEmailPage oobCode={oobCode} />
+          <ChangeEmailPage oobCode={oobCode} actionCodeInfo={actionCodeInfo} />
         </RequireAuth>
       );
     default:
