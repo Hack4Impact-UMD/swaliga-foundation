@@ -14,6 +14,7 @@ export default function SendChangeEmailLinkPage() {
   const [status, setStatus] = useState<
     "IDLE" | "LOADING" | "SUCCESS" | "ERROR"
   >("IDLE");
+  const [error, setError] = useState<string>("");
 
   const router = useRouter();
   const auth = useAuth();
@@ -29,7 +30,10 @@ export default function SendChangeEmailLinkPage() {
     setStatus("LOADING");
     sendChangeEmailLink(newEmail)
       .then(() => setStatus("SUCCESS"))
-      .catch(() => setStatus("ERROR"));
+      .catch((error) => {
+        setStatus("ERROR");
+        setError(error.message);
+      });
   };
 
   return (
@@ -57,7 +61,7 @@ export default function SendChangeEmailLinkPage() {
             {status === "SUCCESS"
               ? `We've sent a confirmation link to ${newEmail}. Please check your inbox (and spam folder) to find the link. If you wish to undo this change, please follow the link in the recovery email that was sent to ${auth.user?.email}`
               : status === "ERROR"
-              ? "An error occurred while sending the confirmation link to your new email. Please try again."
+              ? error
               : ""}
           </p>
         </div>
