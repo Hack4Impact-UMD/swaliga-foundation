@@ -62,8 +62,7 @@ jobs:
         run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
       - name: Deploy to Firebase Hosting
-        run: firebase deploy --only hosting
+        run: firebase deploy --token ${{ secrets.FIREBASE_TOKEN }} --only hosting
         env:
           FIREBASE_CLI_EXPERIMENTS: webframeworks
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
