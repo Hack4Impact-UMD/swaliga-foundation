@@ -55,6 +55,9 @@ jobs:
           name: next-build
           path: .next
 
+      - name: Install Dependencies
+        run: npm ci
+
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
 
