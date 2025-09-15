@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "cp .env.production functions/.env && cp firebaseAdminCredentials.json functions/firebaseAdminCredentials.json && next build && rm functions/.env && rm functions/firebaseAdminCredentials.json",
     "start": "next start",
     "lint": "next lint",
-    "export": "next export"
+    "export": "next export",
+    "deploy": "npm run build && firebase deploy"
   },
   "workspaces": [
     "functions",
