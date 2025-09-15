@@ -65,4 +65,5 @@ jobs:
         run: firebase deploy --only hosting
         env:
           FIREBASE_CLI_EXPERIMENTS: webframeworks
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
