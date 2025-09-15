@@ -43,6 +43,7 @@ jobs:
         with:
           name: next-build
           path: /home/runner/work/swaliga-foundation/swaliga-foundation/.next
+          include-hidden-files: true
 
   deploy:
     name: Deploy to Production
