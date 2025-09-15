@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "(cp .env.production functions/.env || cp .env functions/.env) && cp firebaseAdminCredentials.json functions/firebaseAdminCredentials.json && next build && rm functions/.env && rm functions/firebaseAdminCredentials.json",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "export": "next export",
