@@ -8,8 +8,9 @@ permissions:
   contents: read
   pull-requests: write
 jobs:
-  build:
-    name: Build Next.js App
+  build_and_preview:
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+    name: Deploy Next.js App
     runs-on: ubuntu-latest
     env:
       FIREBASE_CLI_EXPERIMENTS: webframeworks
@@ -28,41 +29,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: "npm"
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Build Next.js app
-        run: npm run build
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: next-build
-          path: .
-
-  deploy:
-    name: Deploy to Production
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: next-build
-          path: .
-
+        
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
 
       - name: Setup Firebase Credentials
-        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_SWALIGA_FOUNDATION }}" > ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
       - name: Deploy to Firebase Hosting
-        run: firebase deploy --token ${{ secrets.FIREBASE_TOKEN }} --only hosting
-        env:
-          FIREBASE_CLI_EXPERIMENTS: webframeworks
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        run: firebase deploy --token ${{ secrets.FIREBASE_TOKEN }}
