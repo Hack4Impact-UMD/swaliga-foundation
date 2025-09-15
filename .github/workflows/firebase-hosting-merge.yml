@@ -68,4 +68,10 @@ jobs:
         run: firebase deploy --token ${{ secrets.FIREBASE_TOKEN }} --only hosting
         env:
           FIREBASE_CLI_EXPERIMENTS: webframeworks
+          NEXT_PUBLIC_DOMAIN: ${{ secrets.NEXT_PUBLIC_DOMAIN }}
+          NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID }}
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
