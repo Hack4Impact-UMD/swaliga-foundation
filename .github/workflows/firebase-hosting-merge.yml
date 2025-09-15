@@ -42,7 +42,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: next-build
-          path: ./.next
+          path: /home/runner/work/swaliga-foundation/swaliga-foundation/.next
 
   deploy:
     name: Deploy to Production
@@ -55,7 +55,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: next-build
-          path: ./.next
+          path: /home/runner/work/swaliga-foundation/swaliga-foundation/.next
 
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
