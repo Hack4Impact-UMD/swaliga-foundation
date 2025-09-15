@@ -35,6 +35,9 @@ jobs:
       - name: Build Next.js app
         run: npm run build
 
+      - name: list files
+        run: ls -R .
+
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
@@ -55,6 +58,4 @@ jobs:
           path: .next
 
       - name: Deploy to Firebase Hosting
-        run: |
-          npm install -g vercel
-          vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: firebase deploy
