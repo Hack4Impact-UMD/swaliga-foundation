@@ -35,6 +35,9 @@ jobs:
       - name: Build Next.js app
         run: npm run build
 
+      - name: Debug
+        run: pwd && ls -al
+
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
