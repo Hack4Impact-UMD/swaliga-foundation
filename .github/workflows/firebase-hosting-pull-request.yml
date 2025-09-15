@@ -12,6 +12,18 @@ jobs:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     steps:
+      - name: Make .env
+        run: |
+          touch .env
+          echo NEXT_PUBLIC_DOMAIN=${{ vars.NEXT_PUBLIC_DOMAIN }} > .env
+          echo NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }} > .env
+          echo GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }} > .env
+          echo GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} > .env
+          echo GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} > .env
+          echo NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID }} > .env
+          echo ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }} > .env
+          cat .env
+
       - uses: actions/checkout@v4
       - run: npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
