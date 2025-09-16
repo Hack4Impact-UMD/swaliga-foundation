@@ -7,7 +7,7 @@ on:
     branches:
       - main
 jobs:
-  build_and_deploy:
+  deploy_firebase:
     name: Deploy Next.js App
     runs-on: ubuntu-latest
     env:
@@ -41,8 +41,24 @@ jobs:
       - name: Deploy to Firebase Hosting
         run: firebase deploy --token ${{ secrets.FIREBASE_TOKEN }}
 
+  deploy_apps_script:
+    name: Deploy to Apps Script
+    runs-on: ubuntu-latest
+    env:
+      FIREBASE_CLI_EXPERIMENTS: webframeworks
+      NEXT_PUBLIC_DOMAIN: ${{ secrets.NEXT_PUBLIC_DOMAIN }}
+      NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID }}
+      ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+    steps:
       - name: Install CLASP
         run: npm install -g @google/clasp
+
+      - name: Setup GCP Credentials
+        run: echo '${{ secrets.GCP_SERVICE_ACCOUNT }}' > ${{ secrets.CLASP_APPLICATION_CREDENTIALS }}
 
       - name: Authenticate CLASP
         run: clasp login --creds ${{ secrets.GCP_SERVICE_ACCOUNT }}
