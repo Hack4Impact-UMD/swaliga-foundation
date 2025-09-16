@@ -58,13 +58,12 @@ jobs:
         run: npm install -g @google/clasp@2.5.0
 
       - name: Setup GCP Credentials
-        run: echo '${{ secrets.GCP_SERVICE_ACCOUNT }}' > ${{ secrets.CLASP_APPLICATION_CREDENTIALS }}
-
-      - name: Debug
-        run: rm -f .clasp.json ~/.clasprc.json ~/.clasprc.json.local
+        run: |
+          echo '${{ secrets.GCP_SERVICE_ACCOUNT }}' > ${{ secrets.CLASP_APPLICATION_CREDENTIALS }}
+          echo '${{ secrets.CLASP_CONFIG }}' > .clasp.json
 
       - name: Authenticate CLASP
-        run: clasp login --creds ${{ secrets.CLASP_APPLICATION_CREDENTIALS }} && clasp clone 14ukd8FP51BIhk9bBjaMJUMKU0rMoo22MPiLbTrskUUOLgEt3yPeF8anF
+        run: clasp login --creds ${{ secrets.CLASP_APPLICATION_CREDENTIALS }}
 
       - name: Deploy to CLASP
         run: |
