@@ -47,7 +47,7 @@ jobs:
         run: npm install -g @google/clasp
 
       - name: Authenticate CLASP
-        run: clasp login --creds ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        run: clasp login --creds ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
       - name: Deploy to CLASP
         run: |

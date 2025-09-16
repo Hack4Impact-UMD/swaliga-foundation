@@ -4,6 +4,7 @@
 .firebase
 
 firebaseAdminCredentials.json
+gcpAdminCredentials.json
 
 *-debug.log
 
