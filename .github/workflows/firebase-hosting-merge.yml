@@ -56,23 +56,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: cd into apps-script folder
+        run: cd apps-script
+
       - name: Install CLASP
         run: npm install -g @google/clasp@2.5.0
 
       - name: Setup GCP Credentials
-        run: |
-          echo '${{ secrets.GCP_SERVICE_ACCOUNT }}' > ${{ secrets.CLASP_APPLICATION_CREDENTIALS }}
-          echo '${{ secrets.CLASP_CONFIG }}' > .clasp.json
-
-      - name: Debug
-        run: pwd && ls -al
+        run: echo '${{ secrets.GCP_SERVICE_ACCOUNT }}' > ${{ secrets.CLASP_APPLICATION_CREDENTIALS }}
 
       - name: Authenticate CLASP
         run: clasp login --creds ${{ secrets.CLASP_APPLICATION_CREDENTIALS }}
 
       - name: Deploy to CLASP
         run: |
-          clasp push 
+          npm run deploy
           VERSION=$(clasp create-version 'Automated deployment $GITHUB_SHA' | grep -o '[0-9]\+' | tail -1)
           ACCESS_TOKEN=$(gcloud auth application-default print-access-token)
           curl -X DELETE -H "Authorization: Bearer $ACCESS_TOKEN" https://script.googleapis.com/v1/projects/14ukd8FP51BIhk9bBjaMJUMKU0rMoo22MPiLbTrskUUOLgEt3yPeF8anF/versions/$(($VERSION - 1))
