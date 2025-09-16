@@ -64,7 +64,7 @@ jobs:
         run: clasp -v
 
       - name: Authenticate CLASP
-        run: clasp clone 14ukd8FP51BIhk9bBjaMJUMKU0rMoo22MPiLbTrskUUOLgEt3yPeF8anF && clasp login --creds ${{ secrets.CLASP_APPLICATION_CREDENTIALS }}
+        run: clasp login --creds ${{ secrets.CLASP_APPLICATION_CREDENTIALS }} && clasp clone 14ukd8FP51BIhk9bBjaMJUMKU0rMoo22MPiLbTrskUUOLgEt3yPeF8anF
 
       - name: Deploy to CLASP
         run: |
