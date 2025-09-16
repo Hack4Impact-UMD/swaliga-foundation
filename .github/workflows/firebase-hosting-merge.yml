@@ -61,7 +61,7 @@ jobs:
         run: echo '${{ secrets.GCP_SERVICE_ACCOUNT }}' > ${{ secrets.CLASP_APPLICATION_CREDENTIALS }}
 
       - name: Debug
-        run: clasp -v
+        run: rm -f .clasp.json ~/.clasprc.json ~/.clasprc.json.local
 
       - name: Authenticate CLASP
         run: clasp login --creds ${{ secrets.CLASP_APPLICATION_CREDENTIALS }} && clasp clone 14ukd8FP51BIhk9bBjaMJUMKU0rMoo22MPiLbTrskUUOLgEt3yPeF8anF
