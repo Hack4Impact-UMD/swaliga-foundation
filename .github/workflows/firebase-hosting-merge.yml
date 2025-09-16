@@ -36,7 +36,7 @@ jobs:
         run: npm install -g firebase-tools
 
       - name: Setup Firebase Credentials
-        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_SWALIGA_FOUNDATION }}" > ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SWALIGA_FOUNDATION }}'' > ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
       - name: Deploy to Firebase Hosting
         run: firebase deploy --token ${{ secrets.FIREBASE_TOKEN }}
