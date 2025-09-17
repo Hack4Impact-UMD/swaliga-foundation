@@ -5,5 +5,6 @@
   "htmlExtensions": [".html"],
   "jsonExtensions": [".json"],
   "filePushOrder": [],
-  "skipSubdirectories": false
+  "skipSubdirectories": false,
+  "projectId": "swaliga-foundation"
 }
