@@ -69,7 +69,7 @@ jobs:
         run: |
           cd apps-script
           echo '${{ secrets.GCP_SERVICE_ACCOUNT }}' > ${{ secrets.CLASP_APPLICATION_CREDENTIALS }}
-          echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
+          echo '${{ secrets.CLASPRC_JSON }}' > .clasprc.json
 
       - name: Deploy to CLASP
         run: |
