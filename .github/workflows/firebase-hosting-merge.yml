@@ -77,7 +77,7 @@ jobs:
           cd apps-script
           npm ci
           npm run build
-          clasp login --creds ~/.clasprc.json
+          clasp login
           clasp push
           VERSION=$(clasp create-version 'Automated deployment $GITHUB_SHA' | grep -o '[0-9]\+' | tail -1)
           ACCESS_TOKEN=$(gcloud auth application-default print-access-token)
