@@ -8,7 +8,7 @@ on:
       - main
 jobs:
   deploy_firebase:
-    name: Deploy Next.js App
+    name: Deploy Next.js App to Firebase
     runs-on: ubuntu-latest
     env:
       FIREBASE_CLI_EXPERIMENTS: webframeworks
@@ -62,21 +62,22 @@ jobs:
           node-version: 20
           cache: "npm"
 
-      - name: Debug
-        run: pwd && ls -al
-
       - name: Install CLASP
         run: npm install -g @google/clasp@2.5.0
 
       - name: Setup GCP Credentials
         run: echo '${{ secrets.GCP_SERVICE_ACCOUNT }}' > ${{ secrets.CLASP_APPLICATION_CREDENTIALS }}
 
+      - name: Build apps-script folder
+        run: cd apps-script && npm run build
+
       - name: Authenticate CLASP
         run: cd apps-script && clasp login --creds ${{ secrets.CLASP_APPLICATION_CREDENTIALS }}
 
       - name: Deploy to CLASP
         run: |
-          npm run deploy
+          cd apps-script
+          clasp push
           VERSION=$(clasp create-version 'Automated deployment $GITHUB_SHA' | grep -o '[0-9]\+' | tail -1)
           ACCESS_TOKEN=$(gcloud auth application-default print-access-token)
           curl -X DELETE -H "Authorization: Bearer $ACCESS_TOKEN" https://script.googleapis.com/v1/projects/14ukd8FP51BIhk9bBjaMJUMKU0rMoo22MPiLbTrskUUOLgEt3yPeF8anF/versions/$(($VERSION - 1))
