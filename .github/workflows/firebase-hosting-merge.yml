@@ -72,7 +72,7 @@ jobs:
         run: cd apps-script && npm ci && npm run build
 
       - name: Authenticate CLASP
-        run: cd apps-script && clasp login --creds ${{ secrets.CLASP_APPLICATION_CREDENTIALS }} --no-localhost
+        run: cd apps-script && clasp login --creds ${{ secrets.CLASP_APPLICATION_CREDENTIALS }} --no-localhost && cat .clasprc.json && cat ~/.clasprc.json
 
       - name: Deploy to CLASP
         run: |
