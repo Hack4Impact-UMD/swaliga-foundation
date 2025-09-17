@@ -66,7 +66,7 @@ jobs:
         run: npm install -g @google/clasp@2.5.0
 
       - name: Setup GCP Credentials
-        run: echo '${{ secrets.GCP_SERVICE_ACCOUNT }}' > ${{ secrets.CLASP_APPLICATION_CREDENTIALS }}
+        run: cd apps-script && echo '${{ secrets.GCP_SERVICE_ACCOUNT }}' > ${{ secrets.CLASP_APPLICATION_CREDENTIALS }}
 
       - name: Build apps-script folder
         run: cd apps-script && npm ci && npm run build
