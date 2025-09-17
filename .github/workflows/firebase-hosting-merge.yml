@@ -69,8 +69,8 @@ jobs:
         run: |
           cd apps-script
           echo '${{ secrets.CLASP_DEPLOYMENT_SECRET }}' > claspDeploymentSecret.json
-          echo '${{ secrets.CLASPRC_JSON }}' > .clasprc.json
-          echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
+          echo '${{ secrets.LOCAL_CLASPRC_JSON }}' > .clasprc.json
+          echo '${{ secrets.GLOBAL_CLASPRC_JSON }}' > ~/.clasprc.json
 
       - name: Deploy to CLASP
         run: |
