@@ -76,9 +76,7 @@ jobs:
         run: |
           cd apps-script
           npm ci
-          npm run build
-          clasp login
-          clasp push
+          npm run deploy
           VERSION=$(clasp create-version 'Automated deployment $GITHUB_SHA' | grep -o '[0-9]\+' | tail -1)
           ACCESS_TOKEN=$(gcloud auth application-default print-access-token)
           curl -X DELETE -H "Authorization: Bearer $ACCESS_TOKEN" https://script.googleapis.com/v1/projects/14ukd8FP51BIhk9bBjaMJUMKU0rMoo22MPiLbTrskUUOLgEt3yPeF8anF/versions/$(($VERSION - 1))
