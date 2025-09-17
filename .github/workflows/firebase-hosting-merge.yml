@@ -69,7 +69,7 @@ jobs:
         run: echo '${{ secrets.GCP_SERVICE_ACCOUNT }}' > ${{ secrets.CLASP_APPLICATION_CREDENTIALS }}
 
       - name: Build apps-script folder
-        run: cd apps-script && npm run build
+        run: cd apps-script && npm ci && npm run build
 
       - name: Authenticate CLASP
         run: cd apps-script && clasp login --creds ${{ secrets.CLASP_APPLICATION_CREDENTIALS }}
