@@ -68,7 +68,6 @@ jobs:
       - name: Setup GCP Credentials
         run: |
           cd apps-script
-          echo '${{ secrets.CLASP_DEPLOYMENT_SECRET }}' > claspDeploymentSecret.json
           echo '${{ secrets.LOCAL_CLASPRC_JSON }}' > .clasprc.json
           echo '${{ secrets.GLOBAL_CLASPRC_JSON }}' > ~/.clasprc.json
 
@@ -77,7 +76,8 @@ jobs:
           cd apps-script
           npm ci
           npm run deploy
-          VERSION=$(clasp create-version 'Automated deployment $GITHUB_SHA' | grep -o '[0-9]\+' | tail -1)
+          VERSION=$(clasp create-version 'Automated deployment ${{ github.sha }}' | grep -o '[0-9]\+' | tail -1)
+          echo VERSION
           ACCESS_TOKEN=$(gcloud auth application-default print-access-token)
           curl -X DELETE -H "Authorization: Bearer $ACCESS_TOKEN" https://script.googleapis.com/v1/projects/14ukd8FP51BIhk9bBjaMJUMKU0rMoo22MPiLbTrskUUOLgEt3yPeF8anF/versions/$(($VERSION - 1))
-          clasp create-deployment --versionNumber $VERSION --description 'Automated deployment $GITHUB_SHA' --deploymentId ${{ secrets.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID }}
+          clasp create-deployment --versionNumber $VERSION --description 'Automated deployment ${{ github.sha }}' --deploymentId ${{ secrets.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID }}
