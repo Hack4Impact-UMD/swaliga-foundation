@@ -75,6 +75,7 @@ jobs:
         run: |
           cd apps-script
           npm ci
+          ls -al
           clasp list
           npm run deploy
           VERSION=$(clasp create-version 'Automated deployment $GITHUB_SHA' | grep -o '[0-9]\+' | tail -1)
