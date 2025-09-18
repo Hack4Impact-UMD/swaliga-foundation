@@ -1,5 +1,35 @@
 import { auth } from "@/config/firebaseConfig";
-import { applyActionCode, AuthErrorCodes, verifyBeforeUpdateEmail } from "firebase/auth";
+import { applyActionCode, AuthErrorCodes, EmailAuthProvider, GoogleAuthProvider, linkWithCredential, verifyBeforeUpdateEmail } from "firebase/auth";
+
+export async function linkEmailPasswordAccount(newEmail: string, newPassword: string, isNewEmailPrimary = true) {
+  try {
+    if (!auth.currentUser) throw new Error("No authenticated user found.");
+    const credential = EmailAuthProvider.credential(newEmail, newPassword);
+    await linkWithCredential(auth.currentUser, credential);
+  } catch (error) {
+    const code = (error as any).code;
+    switch (code) {
+      case AuthErrorCodes.INVALID_EMAIL:
+        throw new Error("Please enter a valid email.");
+
+    }
+  }
+}
+
+export async function linkGoogleAccount(newEmail: string, isNewEmailPrimary = true) {
+  try {
+    if (!auth.currentUser) throw new Error("No authenticated user found.");
+    const credential = GoogleAuthProvider.credential();
+    await linkWithCredential(auth.currentUser, credential);
+  } catch (error) {
+    const code = (error as any).code;
+    switch (code) {
+      case AuthErrorCodes.INVALID_EMAIL:
+        throw new Error("Please enter a valid email.");
+    }
+  }
+}
+
 
 export async function sendChangeEmailLink(newEmail: string) {
   try {
