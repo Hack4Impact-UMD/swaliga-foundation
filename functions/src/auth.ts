@@ -74,7 +74,12 @@ export const checkRefreshTokenValidity = onCall(async (req) => {
     throw new Error("Unauthorized");
   }
 
-  const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
+  try {
+    var adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
+  } catch (error) {
+    return false;
+  }
+  
   const refreshToken = adminUser.customClaims?.googleTokens?.refreshToken;
   if (!refreshToken) {
     return false;
