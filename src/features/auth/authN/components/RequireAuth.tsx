@@ -3,7 +3,7 @@
 import { Role } from "@/types/user-types";
 import useAuth from "./useAuth";
 import { useRouter } from "next/navigation";
-import LoadingPage from "@/app/loading";
+import ErrorPage from "@/app/error";
 
 interface RequireAuthProps {
   children: JSX.Element;
@@ -48,5 +48,5 @@ export default function RequireAuth(props: RequireAuthProps) {
   } else {
     router.push(defaultRedirects[role]);
   }
-  return <LoadingPage />;
+  return <ErrorPage error="We're unable to find the page you're looking for." />;
 }
