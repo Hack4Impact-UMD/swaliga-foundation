@@ -1,6 +1,6 @@
 import { sendVerificationEmail } from "@/features/auth/authN/emailPasswordAuthN";
 import styles from "./SendVerificationEmailPage.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useAuth from "@/features/auth/authN/components/useAuth";
 import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 
@@ -9,6 +9,10 @@ export default function SendVerificationEmailPage() {
   const [error, setError] = useState<string>("");
 
   const auth = useAuth();
+
+  useEffect(() => {
+    handleSendVerificationEmail();
+  }, []);
 
   const handleSendVerificationEmail = async () => {
     try {

@@ -19,7 +19,6 @@ export async function signUpUser(email: string, password: string): Promise<void>
         throw new Error("An unexpected error occurred. Please try again later.");
     }
   }
-  await sendVerificationEmail(userCredential.user);
 };
 
 export async function loginUser(email: string, password: string): Promise<void> {

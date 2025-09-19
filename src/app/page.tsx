@@ -17,17 +17,13 @@ const CreateAccountPage = dynamic(
 const LoginPage = dynamic(() => import("./LoginPage"), {
   loading: () => <LoadingPage />,
 });
-const SendVerificationEmailPage = dynamic(
-  () => import("./SendVerificationEmailPage"),
-  { loading: () => <LoadingPage /> }
-);
 
 export default function LoginPageWrapper() {
   const auth = useAuth();
   const studentId = auth.token?.claims.studentId as string;
 
   return (
-    <RequireAuth allowedRoles={["STUDENT"]} allowUnauthenticated allowNoRole>
+    <RequireAuth allowedRoles={["STUDENT"]} allowUnauthenticated>
       <RoleBasedPage
         rolePages={{
           STUDENT: () =>
@@ -38,7 +34,6 @@ export default function LoginPageWrapper() {
             ),
         }}
         unauthenticatedPage={<LoginPage />}
-        noRolePage={<SendVerificationEmailPage />}
       />
     </RequireAuth>
   );

@@ -6,6 +6,7 @@ import { auth, functions } from "@/config/firebaseConfig";
 import { httpsCallable } from "firebase/functions";
 import LoadingPage from "@/app/loading";
 import { useSearchParams } from "next/navigation";
+import SendVerificationEmailPage from "@/app/SendVerificationEmailPage";
 
 export interface AuthContextType {
   user: User | null;
@@ -61,6 +62,8 @@ export default function AuthProvider({
 
   if (loading) {
     return <LoadingPage />;
+  } else if (token && !token.claims.email_verified) {
+    return <SendVerificationEmailPage />;
   }
 
   return (
