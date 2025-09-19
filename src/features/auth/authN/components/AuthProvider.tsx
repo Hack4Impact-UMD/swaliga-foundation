@@ -5,8 +5,9 @@ import React, { createContext, useEffect, useState } from "react";
 import { auth, functions } from "@/config/firebaseConfig";
 import { httpsCallable } from "firebase/functions";
 import LoadingPage from "@/app/loading";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import SendVerificationEmailPage from "@/app/SendVerificationEmailPage";
+import Navbar from "@/components/layout/Navbar";
 
 export interface AuthContextType {
   user: User | null;
@@ -32,6 +33,8 @@ export default function AuthProvider({
 
   const searchParams = useSearchParams();
   const refreshIdToken = searchParams.get("refreshIdToken") === "true";
+
+  const pathname = usePathname();
 
   useEffect(() => {
     const unsubscribe = onIdTokenChanged(auth, async (newUser) => {
@@ -62,13 +65,18 @@ export default function AuthProvider({
 
   if (loading) {
     return <LoadingPage />;
-  } else if (token && !token.claims.email_verified) {
-    return <SendVerificationEmailPage />;
   }
 
   return (
     <AuthContext.Provider value={{ user, token, error }}>
-      {children}
+      {token && !token.claims.email_verified && pathname !== '/auth'? (
+        <>
+          <Navbar />
+          <SendVerificationEmailPage />
+        </>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 }
