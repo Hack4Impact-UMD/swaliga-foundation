@@ -52,26 +52,23 @@ export const assignSurveys = onCall(async (req) => {
 
 export const onAssignmentWritten = onDocumentWritten('/surveys/{surveyId}/assignments/{assignmentId}', async (event) => {
   const { surveyId } = event.params;
-  const beforeId = event.data?.before.exists ? event.data?.before.data()?.studentId : undefined;
-  const afterId = event.data?.after.exists ? event.data?.after.data()?.studentId : undefined;
+  const beforeId = event.data?.before.exists ? event.data?.before.data()?.studentId as string : undefined;
+  const afterId = event.data?.after.exists ? event.data?.after.data()?.studentId as string : undefined;
 
-  const accessListRef = adminDb.collection(Collection.SURVEYS).doc(surveyId).collection(Collection.SURVEY_ACCESS_LIST).doc(Document.SURVEY_ACCESS_LIST);
-  if (!beforeId && afterId) {
-    await accessListRef.set({ [afterId]: FieldValue.increment(1) }, { merge: true });
-  } else if (beforeId && afterId) {
+  const beforeRef = beforeId ? adminDb.collection(Collection.STUDENTS).doc(beforeId).collection(Collection.SURVEY_ACCESS_LIST).doc(Document.SURVEY_ACCESS_LIST) : undefined;
+  const afterRef = afterId ? adminDb.collection(Collection.STUDENTS).doc(afterId).collection(Collection.SURVEY_ACCESS_LIST).doc(Document.SURVEY_ACCESS_LIST) : undefined;
+  if (!beforeRef && afterRef) {
+    await afterRef.set({ [surveyId]: FieldValue.increment(1) }, { merge: true });
+  } else if (beforeRef && afterRef) {
     await adminDb.runTransaction(async (transaction: Transaction) => {
-      const currCount = (await transaction.get(accessListRef)).data()?.[beforeId]
-      await transaction.update(accessListRef, {
-        [beforeId]: currCount === 1 ? FieldValue.delete() : FieldValue.increment(-1),
-        [afterId]: FieldValue.increment(1)
-      })
+      const currCount = (await transaction.get(beforeRef)).data()?.[surveyId]
+      transaction.update(beforeRef, { [surveyId]: currCount === 1 ? FieldValue.delete() : FieldValue.increment(-1) });
+      transaction.update(afterRef, { [surveyId]: FieldValue.increment(1) });
     })
-  } else if (beforeId && !afterId) {
+  } else if (beforeRef && !afterRef) {
     await adminDb.runTransaction(async (transaction: Transaction) => {
-      const currCount = (await transaction.get(accessListRef)).data()?.[beforeId]
-      await transaction.update(accessListRef, {
-        [beforeId]: currCount === 1 ? FieldValue.delete() : FieldValue.increment(-1)
-      })
+      const currCount = (await transaction.get(beforeRef)).data()?.[surveyId];
+      await transaction.update(beforeRef, { [surveyId]: currCount === 1 ? FieldValue.delete() : FieldValue.increment(-1) });
     })
   }
 });
