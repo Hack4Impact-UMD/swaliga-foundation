@@ -3,6 +3,7 @@ import * as assignmentManagementFunctions from './firestore/assignmentManagement
 import * as responseManagementFunctions from './firestore/responseManagement';
 import * as syncAdminDataFunctions from './firestore/syncAdminData';
 import * as emailFunctions from './email';
+import { appsScriptCloudFunctions } from "./googleAppsScript";
 
 exports.setRole = authFunctions.setRole;
 exports.onStudentAccountCreated = authFunctions.onStudentAccountCreated;
@@ -25,3 +26,5 @@ exports.onStudentDocUpdated = syncAdminDataFunctions.onStudentDocUpdated;
 exports.onStudentDocDeleted = syncAdminDataFunctions.onStudentDocDeleted;
 
 exports.sendEmail = emailFunctions.sendEmail;
+
+exports.appsScriptEndpoint = appsScriptCloudFunctions.appsScriptEndpoint
