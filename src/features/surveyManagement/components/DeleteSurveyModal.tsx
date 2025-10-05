@@ -4,7 +4,6 @@ import { SurveyID } from "@/types/survey-types";
 import { useState } from "react";
 import { deleteSurvey, deleteSurveys } from "../surveys";
 import { FaTrash } from "react-icons/fa";
-import { getAccessTokenFromAuth } from "../../auth/authZ/googleAuthZ";
 import useAuth from "../../auth/authN/components/useAuth";
 import MenuIcon from "@/components/ui/MenuIcon";
 

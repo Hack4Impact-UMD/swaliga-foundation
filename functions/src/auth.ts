@@ -88,37 +88,6 @@ export const checkRefreshTokenValidity = onCall(async (req) => {
   }
 })
 
-export const startOAuth2Flow = onRequest(async (req, res) => {
-  if (req.method !== 'GET') {
-    res.status(405).send('Method Not Allowed');
-    return;
-  }
-
-  const url = getUrlFromRequest(req);
-  const idToken = url.searchParams.get('idToken');
-  let decodedToken: DecodedIdTokenWithCustomClaims | false;
-  if (!(decodedToken = await isIdTokenValid(idToken))) {
-    res.status(401).send('Unauthorized');
-    return;
-  } else if (decodedToken.role !== "ADMIN") {
-    res.status(403).send('Forbidden');
-    return;
-  }
-
-  const redirectUri = encodeURIComponent(getFunctionsURL("handleOAuth2Code"));
-  const scopes: string = encodeURIComponent([
-    'https://www.googleapis.com/auth/script.external_request',
-    'https://www.googleapis.com/auth/script.scriptapp',
-    'https://www.googleapis.com/auth/forms',
-    'https://www.googleapis.com/auth/drive',
-    'https://www.googleapis.com/auth/spreadsheets',
-    'https://mail.google.com/'
-  ].join(' '));
-
-  const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=${scopes}&login_hint=${decodedToken.email}&access_type=offline&prompt=consent&state=${idToken}`;
-  res.status(303).redirect(authUrl);
-});
-
 export const handleOAuth2Code = onRequest(async (req, res) => {
   if (req.method !== 'GET') {
     res.status(405).send('Method Not Allowed');
