@@ -1,12 +1,12 @@
 import { onCall } from "firebase-functions/https";
 import { createTransport, Transporter } from "nodemailer";
 import Mail from "nodemailer/lib/mailer";
-import { getOAuth2Client } from "./auth";
+import { getOAuth2ClientWithCredentials } from "./auth";
 
 let transporter: Promise<Transporter>;
 
 async function createTransporter() {
-  const oAuth2Client = await getOAuth2Client();
+  const oAuth2Client = await getOAuth2ClientWithCredentials();
   const transporter = createTransport({
     service: 'gmail',
     auth: {

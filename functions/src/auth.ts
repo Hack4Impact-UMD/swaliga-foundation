@@ -99,12 +99,7 @@ export const handleOAuth2Code = onRequest(async (req, res) => {
     return;
   }
 
-  const oAuth2Client = new OAuth2Client({
-    client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-    client_secret: process.env.GOOGLE_CLIENT_SECRET,
-    redirect_uris: [getFunctionsURL('handleOAuth2Code')],
-  })
-
+  const oAuth2Client = getOAuth2Client();
   let tokens: Credentials;
   try {
     tokens = (await oAuth2Client.getToken(code)).tokens;
@@ -158,12 +153,21 @@ export async function refreshAccessToken(oauth2Client: OAuth2Client): Promise<vo
   await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).doc(uid).set(tokens);
 }
 
-export async function getOAuth2Client(): Promise<OAuth2Client> {
+export function getOAuth2Client(): OAuth2Client {
+  return new OAuth2Client({
+    clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    redirectUri: getFunctionsURL("handleOAuth2Code")
+  });
+}
+
+export async function getOAuth2ClientWithCredentials(): Promise<OAuth2Client> {
   const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
   const uid = adminUser.uid;
   const credentials = (await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).doc(uid).get()).data() as Credentials;
+  const oAuth2Client = getOAuth2Client();
   if (moment(credentials.expiry_date).isBefore(moment())) {
-    await refreshAccessToken(new OAuth2Client({ credentials }));
+    await refreshAccessToken(oAuth2Client);
   }
-  return new OAuth2Client({ credentials });
+  return oAuth2Client;
 }
