@@ -6,6 +6,7 @@ import { FieldValue, Transaction } from 'firebase-admin/firestore';
 import { onCall, onRequest } from "firebase-functions/v2/https";
 import { getFunctionsURL } from '@/config/utils';
 import { Credentials, OAuth2Client, TokenPayload } from 'google-auth-library';
+import moment from 'moment';
 
 export const setRole = onCall(async (req) => {
   if (!req.auth) {
@@ -155,4 +156,14 @@ export async function refreshAccessToken(oauth2Client: OAuth2Client): Promise<vo
   const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
   const uid = adminUser.uid;
   await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).doc(uid).set(tokens);
+}
+
+export async function getOAuth2Client(): Promise<OAuth2Client> {
+  const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
+  const uid = adminUser.uid;
+  const credentials = (await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).doc(uid).get()).data() as Credentials;
+  if (moment(credentials.expiry_date).isBefore(moment())) {
+    await refreshAccessToken(new OAuth2Client({ credentials }));
+  }
+  return new OAuth2Client({ credentials });
 }
