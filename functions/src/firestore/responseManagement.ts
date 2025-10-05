@@ -1,6 +1,5 @@
 import { onSchedule, ScheduledEvent } from "firebase-functions/scheduler";
 import { addExistingSurvey, getUpdatedSurveyTitlesAndDescriptions } from "@/data/apps-script/calls"
-import { fetchAccessToken } from '../auth';
 import { GoogleFormResponse, GoogleFormResponseStudentId, isGoogleFormResponseStudentId, isGoogleFormResponseUnidentified } from "@/types/apps-script-types";
 import { SurveyResponseStudentEmail, SurveyResponseStudentId, SurveyResponseUnidentified } from "@/types/survey-types";
 import { onCall, onRequest } from "firebase-functions/https";
@@ -116,12 +115,9 @@ export const onFormSubmit = onRequest(async (req, res) => {
 
 const handleRecentSurveyTitlesAndDescriptionsUpdatesCallback = async (e: ScheduledEvent) => {
   const startTime = moment(e.scheduleTime).subtract(1, 'days').subtract(30, 'minutes').toISOString();
-  const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
-  const tokenData = await fetchAccessToken(adminUser.customClaims?.googleTokens?.refreshToken || '');
-
   await adminDb.runTransaction(async (transaction: Transaction) => {
     const surveyIds = await getAllSurveyIds(transaction);
-    const surveys = await getUpdatedSurveyTitlesAndDescriptions(tokenData.accessToken, surveyIds, startTime);
+    const surveys = await getUpdatedSurveyTitlesAndDescriptions(surveyIds, startTime);
     const surveysCollection = adminDb.collection(Collection.SURVEYS);
     surveys.forEach(survey => transaction.update(surveysCollection.doc(survey.id), {
       name: survey.name,
@@ -144,10 +140,8 @@ export const addExistingSurveyAndResponses = onCall(async (req) => {
     throw new Error("Unauthorized");
   }
 
-  const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
-  const tokenData = await fetchAccessToken(adminUser.customClaims?.googleTokens?.refreshToken || '');
   return await adminDb.runTransaction(async (transaction: Transaction) => {
-    const { survey, responses } = await addExistingSurvey(tokenData.accessToken, req.data);
+    const { survey, responses } = await addExistingSurvey(req.data);
     const { id, ...surveyData } = survey;
     await addResponsesToFirestore(responses, transaction);
     transaction.set(adminDb.collection(Collection.SURVEYS).doc(id), surveyData);

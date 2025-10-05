@@ -31,8 +31,8 @@ export default function DeleteSurveyModal(props: DeleteSurveyModalProps) {
       const surveyIds = surveys.map((survey) => survey.id);
       setMessage("This may take a minute...");
       surveys.length === 1
-        ? await deleteSurvey(await getAccessTokenFromAuth(auth), surveyIds[0])
-        : await deleteSurveys(await getAccessTokenFromAuth(auth), surveyIds);
+        ? await deleteSurvey(surveyIds[0])
+        : await deleteSurveys(surveyIds);
       setMessage(
         `${surveys.length} survey${
           surveys.length > 1 ? "s" : ""
