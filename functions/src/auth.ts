@@ -115,7 +115,7 @@ export const startOAuth2Flow = onRequest(async (req, res) => {
     'https://mail.google.com/'
   ].join(' '));
 
-  const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=${scopes}&login_hint=${decodedToken.email}&access_type=offline&prompt=consent&state=${idToken}`;
+  const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=${scopes}&login_hint=${decodedToken.email}&access_type=offline&prompt=consent&state=${idToken}`;
   res.status(303).redirect(authUrl);
 });
 
@@ -148,7 +148,7 @@ export const handleOAuth2Code = onRequest(async (req, res) => {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
       code: code || "",
-      client_id: process.env.GOOGLE_CLIENT_ID || "",
+      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
       client_secret: process.env.GOOGLE_CLIENT_SECRET || "",
       redirect_uri: getFunctionsURL('handleOAuth2Code'),
       grant_type: 'authorization_code',
@@ -231,7 +231,7 @@ export async function fetchAccessToken(refreshToken: string): Promise<GoogleToke
     },
     body: new URLSearchParams({
       refresh_token: refreshToken,
-      client_id: process.env.GOOGLE_CLIENT_ID || "",
+      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
       client_secret: process.env.GOOGLE_CLIENT_SECRET || "",
       grant_type: 'refresh_token',
     }),
