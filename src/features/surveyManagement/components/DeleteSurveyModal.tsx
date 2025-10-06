@@ -4,7 +4,6 @@ import { SurveyID } from "@/types/survey-types";
 import { useState } from "react";
 import { deleteSurvey, deleteSurveys } from "../surveys";
 import { FaTrash } from "react-icons/fa";
-import { getAccessTokenFromAuth } from "../../auth/authZ/googleAuthZ";
 import useAuth from "../../auth/authN/components/useAuth";
 import MenuIcon from "@/components/ui/MenuIcon";
 
@@ -31,8 +30,8 @@ export default function DeleteSurveyModal(props: DeleteSurveyModalProps) {
       const surveyIds = surveys.map((survey) => survey.id);
       setMessage("This may take a minute...");
       surveys.length === 1
-        ? await deleteSurvey(await getAccessTokenFromAuth(auth), surveyIds[0])
-        : await deleteSurveys(await getAccessTokenFromAuth(auth), surveyIds);
+        ? await deleteSurvey(surveyIds[0])
+        : await deleteSurveys(surveyIds);
       setMessage(
         `${surveys.length} survey${
           surveys.length > 1 ? "s" : ""

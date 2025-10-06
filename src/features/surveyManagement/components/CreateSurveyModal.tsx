@@ -5,7 +5,6 @@ import styles from "./CreateSurveyModal.module.css";
 import Modal from "../../../components/ui/Modal";
 import { createNewSurvey, addExistingSurvey } from "../surveys";
 import useAuth from "../../auth/authN/components/useAuth";
-import { getAccessTokenFromAuth } from "../../auth/authZ/googleAuthZ";
 import { FaCirclePlus } from "react-icons/fa6";
 import MenuIcon from "@/components/ui/MenuIcon";
 
@@ -24,8 +23,6 @@ export default function CreateSurveyModal(): JSX.Element {
   const [addError, setAddError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
-  const auth = useAuth();
-
   const clearErrors = () => {
     setCreateError("");
     setAddError("");
@@ -39,7 +36,6 @@ export default function CreateSurveyModal(): JSX.Element {
       }
       setMessage("This may take a minute...");
       const survey = await createNewSurvey(
-        await getAccessTokenFromAuth(auth),
         name,
         description
       );

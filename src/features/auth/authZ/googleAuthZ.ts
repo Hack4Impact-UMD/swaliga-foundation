@@ -1,28 +1,28 @@
-import { GoogleTokens } from "@/types/auth-types";
-import { User } from "firebase/auth";
-import moment from "moment";
-import { AuthContextType } from "../authN/components/AuthProvider";
-import { httpsCallable } from "firebase/functions";
-import { functions } from "@/config/firebaseConfig";
+import { auth } from "@/config/firebaseConfig";
+import { getFunctionsURL } from "@/config/utils";
 
-export async function getAccessToken(tokens: GoogleTokens, user: User, idToken: string): Promise<string> {
-  if (tokens) {
-    var { accessToken, expirationTime } = tokens;
-    if (accessToken && expirationTime && moment().isBefore(moment(expirationTime))) {
-      return accessToken;
-    }
-  }
+export function getOAuth2ConsentURL(): string {
+  const user = auth.currentUser;
+  const email = user?.email || undefined;
 
-  const newAccessToken = await httpsCallable(functions, 'refreshAccessToken')();
-  await user.getIdTokenResult(true);
-  return newAccessToken as unknown as string;
-}
+  const scopes = [
+    'https://www.googleapis.com/auth/script.external_request',
+    'https://www.googleapis.com/auth/script.scriptapp',
+    'https://www.googleapis.com/auth/forms',
+    'https://www.googleapis.com/auth/drive',
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://mail.google.com/'
+  ]
 
-export async function getAccessTokenFromAuth(auth: AuthContextType) {
-  if (!auth.user || !auth.token) throw new Error("No authenticated user found.");
-  return getAccessToken(
-    auth.token?.claims.googleTokens as GoogleTokens,
-    auth.user,
-    auth.token.token
-  );
+  const params = new URLSearchParams({
+    client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
+    redirect_uri: getFunctionsURL("handleOAuth2Code"),
+    response_type: "code",
+    scope: scopes.join(' '),
+    access_type: "offline",
+    prompt: "consent",
+    include_granted_scopes: "true",
+    login_hint: email || ""
+  });
+  return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
 }

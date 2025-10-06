@@ -1,12 +1,12 @@
 import { adminAuth, adminDb } from './config/firebaseAdminConfig';
-import { Collection } from '@/data/firestore/utils';
-import { AdminCustomClaims, DecodedIdTokenWithCustomClaims, GoogleTokens, StaffCustomClaims, StudentCustomClaims, StudentDecodedIdTokenWithCustomClaims } from '@/types/auth-types';
+import { Collection } from './types/serverTypes';
+import { StudentCustomClaims, StudentDecodedIdTokenWithCustomClaims } from '@/types/auth-types';
 import { SurveyResponseStudentEmailID } from '@/types/survey-types';
 import { FieldValue, Transaction } from 'firebase-admin/firestore';
 import { onCall, onRequest } from "firebase-functions/v2/https";
-import moment from 'moment';
 import { getFunctionsURL } from '@/config/utils';
-import { getUrlFromRequest } from './utils/utils';
+import { Credentials, OAuth2Client, TokenPayload } from 'google-auth-library';
+import moment from 'moment';
 
 export const setRole = onCall(async (req) => {
   if (!req.auth) {
@@ -81,168 +81,94 @@ export const checkRefreshTokenValidity = onCall(async (req) => {
   }
 
   try {
-    await fetchAccessToken(refreshToken);
     return true;
   } catch (error) {
     return false;
   }
 })
 
-export const startOAuth2Flow = onRequest(async (req, res) => {
-  if (req.method !== 'GET') {
-    res.status(405).send('Method Not Allowed');
-    return;
-  }
-
-  const url = getUrlFromRequest(req);
-  const idToken = url.searchParams.get('idToken');
-  let decodedToken: DecodedIdTokenWithCustomClaims | false;
-  if (!(decodedToken = await isIdTokenValid(idToken))) {
-    res.status(401).send('Unauthorized');
-    return;
-  } else if (decodedToken.role !== "ADMIN") {
-    res.status(403).send('Forbidden');
-    return;
-  }
-
-  const redirectUri = encodeURIComponent(getFunctionsURL("handleOAuth2Code"));
-  const scopes: string = encodeURIComponent([
-    'https://www.googleapis.com/auth/script.external_request',
-    'https://www.googleapis.com/auth/script.scriptapp',
-    'https://www.googleapis.com/auth/forms',
-    'https://www.googleapis.com/auth/drive',
-    'https://www.googleapis.com/auth/spreadsheets',
-    'https://mail.google.com/'
-  ].join(' '));
-
-  const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=${scopes}&login_hint=${decodedToken.email}&access_type=offline&prompt=consent&state=${idToken}`;
-  res.status(303).redirect(authUrl);
-});
-
 export const handleOAuth2Code = onRequest(async (req, res) => {
   if (req.method !== 'GET') {
-    res.status(405).send('Method Not Allowed');
+    res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}`);
     return;
   }
 
-  const url = getUrlFromRequest(req);
-
-  const idToken = url.searchParams.get('state');
-  let decodedToken: DecodedIdTokenWithCustomClaims | false;
-  if (!(decodedToken = await isIdTokenValid(idToken))) {
-    res.status(401).send('Unauthorized');
-    return;
-  } else if (decodedToken.role !== 'ADMIN') {
-    res.status(403).send('Forbidden');
-    return;
-  }
-
-  const code = url.searchParams.get('code');
+  const code = req.query.code as string;
   if (!code) {
-    res.status(400).send('Bad Request');
+    res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}`);
     return;
   }
 
-  const response = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      code: code || "",
-      client_id: process.env.GOOGLE_CLIENT_ID || "",
-      client_secret: process.env.GOOGLE_CLIENT_SECRET || "",
-      redirect_uri: getFunctionsURL('handleOAuth2Code'),
-      grant_type: 'authorization_code',
-    }),
-  });
-  if (!response.ok) {
-    res.status(500).send('Internal Server Error');
+  const oAuth2Client = getOAuth2Client();
+  let tokens: Credentials;
+  try {
+    tokens = (await oAuth2Client.getToken(code)).tokens;
+  } catch {
+    res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?error=true`);
     return;
   }
-  const tokens = await response.json();
 
-  const customClaims: AdminCustomClaims = {
-    role: decodedToken.role,
-    googleTokens: {
-      refreshToken: tokens.refresh_token,
-      accessToken: tokens.access_token,
-      expirationTime: moment().add(tokens.expires_in, 'seconds').toISOString(),
+  if (!tokens.id_token) {
+    res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?error=true`);
+    return;
+  }
+
+  let decodedIdToken: TokenPayload | undefined;
+  try {
+    decodedIdToken = (await oAuth2Client.verifyIdToken({ idToken: tokens.id_token })).getPayload();
+    if (!decodedIdToken || !decodedIdToken.email || !decodedIdToken.email_verified) {
+      res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?error=true`);
+      return;
     }
+  } catch {
+    res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?error=true`);
+    return;
   }
-  await adminAuth.setCustomUserClaims(decodedToken.uid, customClaims);
-  res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?refreshIdToken=true`);
+
+  const email = decodedIdToken.email;
+  if (email !== process.env.ADMIN_EMAIL) {
+    res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?error=true`);
+    return;
+  }
+
+  const adminUser = await adminAuth.getUserByEmail(email);
+  const uid = adminUser.uid;
+  await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).doc(uid).set(tokens);
+  res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?success=true`);
 });
 
-export const refreshAccessToken = onCall(async (req) => {
-  if (!req.auth || (req.auth.token.role !== 'ADMIN' && req.auth.token.role !== 'STAFF')) {
-    throw new Error("Unauthorized");
+export async function refreshAccessToken(oauth2Client: OAuth2Client): Promise<void> {
+  if (!oauth2Client.credentials.refresh_token) {
+    throw new Error("Refresh token not found");
   }
-
-  if (req.auth.token.role === "ADMIN") {
-    var refreshToken: string | undefined = req.auth.token.googleTokens?.refreshToken;
-  } else {
-    const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
-    var refreshToken: string | undefined = adminUser.customClaims?.googleTokens?.refreshToken;
-  }
-  if (!refreshToken) {
-    throw new Error("No refresh token found");
-  }
-
-  let tokenData: GoogleTokens;
+  let tokens: Credentials;
   try {
-    tokenData = await fetchAccessToken(refreshToken);
-  } catch (error) {
+    tokens = (await oauth2Client.refreshAccessToken()).credentials;
+  } catch {
     throw new Error("Failed to refresh access token");
   }
-
-  const customClaims: AdminCustomClaims | StaffCustomClaims =
-    req.auth.token.role === 'ADMIN' ?
-      {
-        role: req.auth.token.role,
-        googleTokens: tokenData
-      } satisfies AdminCustomClaims : {
-        role: req.auth.token.role,
-        googleTokens: {
-          accessToken: tokenData.accessToken,
-          expirationTime: tokenData.expirationTime
-        }
-      } satisfies StaffCustomClaims;
-  await adminAuth.setCustomUserClaims(req.auth.uid, customClaims);
-  return tokenData.accessToken;
-});
-
-export async function isIdTokenValid(idToken: string | undefined | null): Promise<DecodedIdTokenWithCustomClaims | false> {
-  if (!idToken) {
-    return false;
-  }
-  try {
-    var decodedToken: DecodedIdTokenWithCustomClaims = await adminAuth.verifyIdToken(idToken);
-  } catch (error) {
-    return false;
-  }
-  return decodedToken;
+  oauth2Client.setCredentials(tokens);
+  const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
+  const uid = adminUser.uid;
+  await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).doc(uid).set(tokens);
 }
 
-export async function fetchAccessToken(refreshToken: string): Promise<GoogleTokens> {
-  const response = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Cache-Control': 'no-cache',
-    },
-    body: new URLSearchParams({
-      refresh_token: refreshToken,
-      client_id: process.env.GOOGLE_CLIENT_ID || "",
-      client_secret: process.env.GOOGLE_CLIENT_SECRET || "",
-      grant_type: 'refresh_token',
-    }),
+export function getOAuth2Client(): OAuth2Client {
+  return new OAuth2Client({
+    clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    redirectUri: getFunctionsURL("handleOAuth2Code")
   });
-  if (!response.ok) {
-    throw new Error('Failed to refresh access token');
+}
+
+export async function getOAuth2ClientWithCredentials(): Promise<OAuth2Client> {
+  const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
+  const uid = adminUser.uid;
+  const credentials = (await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).doc(uid).get()).data() as Credentials;
+  const oAuth2Client = getOAuth2Client();
+  oAuth2Client.setCredentials(credentials);
+  if (moment(credentials.expiry_date).isBefore(moment())) {
+    await refreshAccessToken(oAuth2Client);
   }
-  const tokenData = await response.json();
-  return {
-    refreshToken,
-    accessToken: tokenData.access_token,
-    expirationTime: moment().add(tokenData.expires_in, 'seconds').toISOString()
-  }
+  return oAuth2Client;
 }

@@ -1,33 +1,28 @@
+import { auth, functions } from "@/config/firebaseConfig";
 import { GoogleFormResponse } from "@/types/apps-script-types";
 import { SurveyID } from "@/types/survey-types";
+import { Role } from "@/types/user-types";
+import { httpsCallable } from "firebase/functions";
 
-async function callAppsScript(accessToken: string, functionName: string, parameters?: any[]): Promise<any> {
-  const response = await fetch(
-    `https://script.googleapis.com/v1/scripts/${process.env.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID}:run`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        function: functionName,
-        parameters: parameters,
-      }),
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-        "Cache-Control": "no-cache",
-      },
-    }
-  );
-  const data = await response.json();
-  if (data.error) {
-    throw new Error("An unexpected error occurred. Please try again later.");
+async function callAppsScript(functionName: string, parameters?: any[]): Promise<any> {
+  const user = auth.currentUser;
+  if (!user) {
+    throw new Error("Unauthenticated");
   }
-  return data.response.result;
+
+  const decodedIdToken = await user.getIdTokenResult();
+  const role = decodedIdToken.claims.role as Role;
+  if (role !== "ADMIN" && role !== "STAFF") {
+    throw new Error("Unauthorized");
+  }
+
+  return await httpsCallable(functions, 'appsScriptEndpoint')({ functionName, parameters });
 }
 
-export async function createNewSurvey(accessToken: string, title: string, description: string): Promise<SurveyID> { return await callAppsScript(accessToken, 'createNewSurvey', [title, description]); }
-export async function addExistingSurvey(accessToken: string, surveyId: string): Promise<{ survey: SurveyID; responses: GoogleFormResponse[]; }> { return await callAppsScript(accessToken, 'addExistingSurvey', [surveyId]); }
-export async function activateSurvey(accessToken: string, surveyId: string): Promise<void> { return await callAppsScript(accessToken, 'activateSurvey', [surveyId]); }
-export async function deactivateSurvey(accessToken: string, surveyId: string): Promise<void> { return await callAppsScript(accessToken, 'deactivateSurvey', [surveyId]); }
-export async function deleteSurvey(accessToken: string, surveyId: string): Promise<void> { return await callAppsScript(accessToken, 'deleteSurvey', [surveyId]); }
-export async function deleteSurveys(accessToken: string, surveyIds: string[]): Promise<void> { return await callAppsScript(accessToken, 'deleteSurveys', [surveyIds]); }
-export async function getUpdatedSurveyTitlesAndDescriptions(accessToken: string, surveyIds: string[], startTime: string): Promise<Pick<SurveyID, 'id' | 'name' | 'description'>[]> { return await callAppsScript(accessToken, 'getUpdatedSurveyTitlesAndDescriptions', [surveyIds, startTime]); }
+export async function createNewSurvey(title: string, description: string): Promise<SurveyID> { return await callAppsScript('createNewSurvey', [title, description]); }
+export async function addExistingSurvey(surveyId: string): Promise<{ survey: SurveyID; responses: GoogleFormResponse[]; }> { return await callAppsScript('addExistingSurvey', [surveyId]); }
+export async function activateSurvey(surveyId: string): Promise<void> { return await callAppsScript('activateSurvey', [surveyId]); }
+export async function deactivateSurvey(surveyId: string): Promise<void> { return await callAppsScript('deactivateSurvey', [surveyId]); }
+export async function deleteSurvey(surveyId: string): Promise<void> { return await callAppsScript('deleteSurvey', [surveyId]); }
+export async function deleteSurveys(surveyIds: string[]): Promise<void> { return await callAppsScript('deleteSurveys', [surveyIds]); }
+export async function getUpdatedSurveyTitlesAndDescriptions(surveyIds: string[], startTime: string): Promise<Pick<SurveyID, 'id' | 'name' | 'description'>[]> { return await callAppsScript('getUpdatedSurveyTitlesAndDescriptions', [surveyIds, startTime]); }

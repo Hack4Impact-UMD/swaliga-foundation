@@ -6,7 +6,6 @@ import { Switch } from "radix-ui";
 import { MdError } from "react-icons/md";
 import { MAX_TRIGGERS_PER_USER } from "@/constants/constants";
 import useSurveys from "@/data/hooks/useSurveys/useSurveys";
-import { getAccessTokenFromAuth } from "../../auth/authZ/googleAuthZ";
 import useAuth from "../../auth/authN/components/useAuth";
 import { activateSurvey, deactivateSurvey } from "../surveys";
 
@@ -31,10 +30,7 @@ export default function SurveyActivationSwitch(
   const handleActivationToggle = async (checked: boolean) => {
     setIsLoading(true);
     setIsError(false);
-    (checked ? activateSurvey : deactivateSurvey)(
-      await getAccessTokenFromAuth(auth),
-      survey.id
-    )
+    (checked ? activateSurvey : deactivateSurvey)(survey.id)
       .then(() =>
         setSurveys((prev) =>
           prev.map((s) =>

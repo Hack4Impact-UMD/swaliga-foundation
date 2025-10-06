@@ -1,23 +1,21 @@
-import { adminAuth } from "./config/firebaseAdminConfig";
-import { fetchAccessToken } from "./auth";
 import { onCall } from "firebase-functions/https";
 import { createTransport, Transporter } from "nodemailer";
 import Mail from "nodemailer/lib/mailer";
+import { getOAuth2ClientWithCredentials } from "./auth";
 
 let transporter: Promise<Transporter>;
 
 async function createTransporter() {
-  const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL!);
-  const { refreshToken, accessToken } = await fetchAccessToken(adminUser.customClaims?.googleTokens?.refreshToken || '');
+  const oAuth2Client = await getOAuth2ClientWithCredentials();
   const transporter = createTransport({
     service: 'gmail',
     auth: {
       type: 'OAuth2',
       user: 'nitin.kanchinadam@gmail.com',
-      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      refreshToken,
-      accessToken
+      refreshToken: oAuth2Client.credentials.refresh_token || undefined,
+      accessToken: oAuth2Client.credentials.access_token || undefined
     },
     tls: process.env.NODE_ENV === 'development' ? { rejectUnauthorized: false } : undefined,
     logger: process.env.NODE_ENV === 'development' ? true : false,

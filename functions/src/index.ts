@@ -3,14 +3,13 @@ import * as assignmentManagementFunctions from './firestore/assignmentManagement
 import * as responseManagementFunctions from './firestore/responseManagement';
 import * as syncAdminDataFunctions from './firestore/syncAdminData';
 import * as emailFunctions from './email';
+import { appsScriptCloudFunctions } from "./googleAppsScript";
 
 exports.setRole = authFunctions.setRole;
 exports.onStudentAccountCreated = authFunctions.onStudentAccountCreated;
 exports.handleEmailChange = authFunctions.handleEmailChange
 exports.checkRefreshTokenValidity = authFunctions.checkRefreshTokenValidity;
-exports.startOAuth2Flow = authFunctions.startOAuth2Flow;
 exports.handleOAuth2Code = authFunctions.handleOAuth2Code;
-exports.refreshAccessToken = authFunctions.refreshAccessToken;
 
 exports.assignSurveys = assignmentManagementFunctions.assignSurveys;
 exports.onAssignmentWritten = assignmentManagementFunctions.onAssignmentWritten;
@@ -27,3 +26,5 @@ exports.onStudentDocUpdated = syncAdminDataFunctions.onStudentDocUpdated;
 exports.onStudentDocDeleted = syncAdminDataFunctions.onStudentDocDeleted;
 
 exports.sendEmail = emailFunctions.sendEmail;
+
+exports.appsScriptEndpoint = appsScriptCloudFunctions.appsScriptEndpoint

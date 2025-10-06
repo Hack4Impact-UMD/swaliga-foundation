@@ -73,5 +73,9 @@ service cloud.firestore {
         allow update: if isStudentWithoutId() && request.resource.data.nextStudentId == resource.data.nextStudentId + 1
       }
     }
+
+    match /googleOAuth2Tokens {
+      allow read, write: if false
+    }
   }
 }

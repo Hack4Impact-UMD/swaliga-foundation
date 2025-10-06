@@ -6,9 +6,9 @@ import { httpsCallable } from "firebase/functions";
 import { WriteBatch, writeBatch } from "firebase/firestore";
 import { Firestore } from "firebase-admin/firestore";
 
-export async function createNewSurvey(accessToken: string, name: string, description: string): Promise<SurveyID> {
+export async function createNewSurvey(name: string, description: string): Promise<SurveyID> {
   try {
-    var survey: SurveyID = await AppsScript.createNewSurvey(accessToken, name, description);
+    var survey: SurveyID = await AppsScript.createNewSurvey(name, description);
   } catch (error) {
     throw new Error('Failed to create new survey');
   }
@@ -17,7 +17,7 @@ export async function createNewSurvey(accessToken: string, name: string, descrip
   try {
     await FirestoreSurveys.createSurvey(id, surveyData);
   } catch (error) {
-    await AppsScript.deleteSurvey(accessToken, id);
+    await AppsScript.deleteSurvey(id);
     throw new Error('Failed to create new survey');
   }
   return survey;
@@ -42,9 +42,10 @@ export async function addExistingSurvey(surveyId: string): Promise<SurveyID> {
   }
 }
 
-export async function activateSurvey(accessToken: string, surveyId: string) {
+
+export async function activateSurvey(surveyId: string) {
   try {
-    await AppsScript.activateSurvey(accessToken, surveyId);
+    await AppsScript.activateSurvey(surveyId);
   } catch (error) {
     throw new Error("Failed to activate survey");
   }
@@ -52,14 +53,14 @@ export async function activateSurvey(accessToken: string, surveyId: string) {
   try {
     await FirestoreSurveys.updateSurvey(surveyId, { isActive: true });
   } catch (error) {
-    await AppsScript.deactivateSurvey(accessToken, surveyId);
+    await AppsScript.deactivateSurvey(surveyId);
     throw new Error("Failed to activate survey");
   }
 }
 
-export async function deactivateSurvey(accessToken: string, surveyId: string) {
+export async function deactivateSurvey(surveyId: string) {
   try {
-    await AppsScript.deactivateSurvey(accessToken, surveyId);
+    await AppsScript.deactivateSurvey(surveyId);
   } catch (error) {
     throw new Error("Failed to deactivate survey");
   }
@@ -67,12 +68,12 @@ export async function deactivateSurvey(accessToken: string, surveyId: string) {
   try {
     await FirestoreSurveys.updateSurvey(surveyId, { isActive: false });
   } catch (error) {
-    await AppsScript.activateSurvey(accessToken, surveyId);
+    await AppsScript.activateSurvey(surveyId);
     throw new Error("Failed to deactivate survey");
   }
 }
 
-export async function deleteSurvey(accessToken: string, surveyId: string) {
+export async function deleteSurvey(surveyId: string) {
   try {
     await FirestoreSurveys.deleteSurvey(surveyId);
   } catch (error) {
@@ -80,11 +81,11 @@ export async function deleteSurvey(accessToken: string, surveyId: string) {
   }
 
   try {
-    await AppsScript.deleteSurvey(accessToken, surveyId);
+    await AppsScript.deleteSurvey(surveyId);
   } catch (error) { }
 }
 
-export async function deleteSurveys(accessToken: string, surveyIds: string[]) {
+export async function deleteSurveys(surveyIds: string[]) {
   try {
     const batch: WriteBatch = writeBatch(db);
     surveyIds.forEach((surveyId: string) => FirestoreSurveys.deleteSurvey(surveyId, batch));
@@ -94,6 +95,6 @@ export async function deleteSurveys(accessToken: string, surveyIds: string[]) {
   }
 
   try {
-    await AppsScript.deleteSurveys(accessToken, surveyIds);
+    await AppsScript.deleteSurveys(surveyIds);
   } catch (error) { }
 }

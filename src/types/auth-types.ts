@@ -9,22 +9,8 @@ export interface StudentCustomClaims extends CustomClaims {
   role?: "STUDENT";
   studentId?: string;
 }
-
-export interface StaffCustomClaims extends CustomClaims {
-  role?: "STAFF";
-  googleTokens?: Omit<GoogleTokens, 'refreshToken'>;
-}
-
-export interface AdminCustomClaims extends CustomClaims {
-  role?: "ADMIN";
-  googleTokens?: GoogleTokens;
-}
-
-export type GoogleTokens = {
-  refreshToken: string;
-  accessToken: string;
-  expirationTime: string; // ISO-8601
-}
+export interface StaffCustomClaims extends CustomClaims { role: "STAFF" }
+export interface AdminCustomClaims extends CustomClaims { role: "ADMIN" }
 
 export type StudentDecodedIdTokenWithCustomClaims = DecodedIdToken & StudentCustomClaims;
 export type StaffDecodedIdTokenWithCustomClaims = DecodedIdToken & StaffCustomClaims;
