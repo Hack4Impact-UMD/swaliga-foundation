@@ -166,6 +166,7 @@ export async function getOAuth2ClientWithCredentials(): Promise<OAuth2Client> {
   const uid = adminUser.uid;
   const credentials = (await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).doc(uid).get()).data() as Credentials;
   const oAuth2Client = getOAuth2Client();
+  oAuth2Client.setCredentials(credentials);
   if (moment(credentials.expiry_date).isBefore(moment())) {
     await refreshAccessToken(oAuth2Client);
   }
