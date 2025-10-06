@@ -15,6 +15,6 @@ export function getOAuth2ConsentURL(): string {
     'https://mail.google.com/'
   ].join(' '));
 
-  const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&login_hint=${email}&access_type=offline&prompt=consent&include_granted_scopes=true`;
+  const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&access_type=offline&prompt=consent&include_granted_scopes=true${email ? `&login_hint=${email}` : ""}`;
   return authUrl;
 }
