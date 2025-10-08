@@ -1,5 +1,5 @@
 import { auth } from "@/config/firebaseConfig";
-import { applyActionCode, AuthErrorCodes, EmailAuthProvider, GoogleAuthProvider, linkWithCredential, verifyBeforeUpdateEmail } from "firebase/auth";
+import { applyActionCode, AuthErrorCodes, EmailAuthProvider, GoogleAuthProvider, linkWithCredential, linkWithPopup, verifyBeforeUpdateEmail } from "firebase/auth";
 
 export async function linkEmailPasswordAccount(newEmail: string, newPassword: string, isNewEmailPrimary = true) {
   try {
@@ -16,11 +16,10 @@ export async function linkEmailPasswordAccount(newEmail: string, newPassword: st
   }
 }
 
-export async function linkGoogleAccount(newEmail: string, isNewEmailPrimary = true) {
+export async function linkGoogleAccount(isNewEmailPrimary = true) {
   try {
     if (!auth.currentUser) throw new Error("No authenticated user found.");
-    const credential = GoogleAuthProvider.credential();
-    await linkWithCredential(auth.currentUser, credential);
+    await linkWithPopup(auth.currentUser, new GoogleAuthProvider());
   } catch (error) {
     const code = (error as any).code;
     switch (code) {
