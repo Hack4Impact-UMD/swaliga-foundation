@@ -16,7 +16,8 @@ async function callAppsScript(functionName: string, parameters?: any[]): Promise
     throw new Error("Unauthorized");
   }
 
-  return await httpsCallable(functions, 'appsScriptEndpoint')({ functionName, parameters });
+  const res = await (httpsCallable(functions, 'appsScriptEndpoint')({ functionName, parameters }));
+  return res.data;
 }
 
 export async function createNewSurvey(title: string, description: string): Promise<SurveyID> { return await callAppsScript('createNewSurvey', [title, description]); }
