@@ -12,9 +12,7 @@ export async function callAppsScript(oauth2Client: OAuth2Client, functionName: s
     }
   })).data;
 
-  if (!data.done) {
-    return;
-  } else if (data.error) {
+  if (!data.done || data.error) {
     throw new Error("An unexpected error occurred. Please try again later.");
   }
 
