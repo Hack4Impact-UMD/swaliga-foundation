@@ -4,7 +4,6 @@ import { SurveyID } from "@/types/survey-types";
 import { db, functions } from "@/config/firebaseConfig";
 import { httpsCallable } from "firebase/functions";
 import { WriteBatch, writeBatch } from "firebase/firestore";
-import { Firestore } from "firebase-admin/firestore";
 
 export async function createNewSurvey(name: string, description: string): Promise<SurveyID> {
   try {
