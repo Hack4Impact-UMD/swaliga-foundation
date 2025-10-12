@@ -28,6 +28,7 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.20",
     "@types/node": "22.7.4",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "18.3.10",
