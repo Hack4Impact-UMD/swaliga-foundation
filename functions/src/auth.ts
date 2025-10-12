@@ -50,7 +50,7 @@ export const onStudentAccountCreated = onCall(async (req) => {
 
   await adminDb.runTransaction(async (transaction: Transaction) => await changeEmailAssignmentsToIdAssignments(req.auth!.token.email!, req.data, transaction));
 
-  const decodedToken = req.auth.token as StudentDecodedIdTokenWithCustomClaims
+  const decodedToken = req.auth.token as unknown as StudentDecodedIdTokenWithCustomClaims
   await adminAuth.setCustomUserClaims(req.auth.uid, {
     role: decodedToken.role,
     studentId: req.data,

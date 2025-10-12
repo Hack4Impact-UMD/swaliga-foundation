@@ -1,4 +1,4 @@
-import { DecodedIdToken } from "firebase-admin/auth";
+import { IdTokenResult } from "firebase/auth";
 import { Role } from "./user-types";
 
 export interface CustomClaims {
@@ -12,7 +12,7 @@ export interface StudentCustomClaims extends CustomClaims {
 export interface StaffCustomClaims extends CustomClaims { role: "STAFF" }
 export interface AdminCustomClaims extends CustomClaims { role: "ADMIN" }
 
-export type StudentDecodedIdTokenWithCustomClaims = DecodedIdToken & StudentCustomClaims;
-export type StaffDecodedIdTokenWithCustomClaims = DecodedIdToken & StaffCustomClaims;
-export type AdminDecodedIdTokenWithCustomClaims = DecodedIdToken & AdminCustomClaims;
+export type StudentDecodedIdTokenWithCustomClaims = IdTokenResult & StudentCustomClaims;
+export type StaffDecodedIdTokenWithCustomClaims = IdTokenResult & StaffCustomClaims;
+export type AdminDecodedIdTokenWithCustomClaims = IdTokenResult & AdminCustomClaims;
 export type DecodedIdTokenWithCustomClaims = StudentDecodedIdTokenWithCustomClaims | StaffDecodedIdTokenWithCustomClaims | AdminDecodedIdTokenWithCustomClaims;
