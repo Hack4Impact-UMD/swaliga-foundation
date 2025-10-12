@@ -75,12 +75,10 @@ export const checkRefreshTokenValidity = onCall(async (req) => {
   }
 
   const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
-  const refreshToken = adminUser.customClaims?.googleTokens?.refreshToken;
-  if (!refreshToken) {
-    return false;
-  }
-
-  return true;
+  const uid = adminUser.uid;
+  const credentials = (await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).doc(uid).get()).data() as Credentials;
+  const refreshToken = credentials.refresh_token;
+  return !!refreshToken;
 })
 
 export const handleOAuth2Code = onRequest(async (req, res) => {
