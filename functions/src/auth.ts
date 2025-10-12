@@ -80,11 +80,7 @@ export const checkRefreshTokenValidity = onCall(async (req) => {
     return false;
   }
 
-  try {
-    return true;
-  } catch (error) {
-    return false;
-  }
+  return true;
 })
 
 export const handleOAuth2Code = onRequest(async (req, res) => {
