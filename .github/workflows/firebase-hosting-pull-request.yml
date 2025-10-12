@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: npm install
-      - run: cd functions && npm run 
+      - run: cd functions && npm run build
       
   build_apps_script:
     name: Build Apps Script
