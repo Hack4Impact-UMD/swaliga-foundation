@@ -1,13 +1,14 @@
 import { onSchedule, ScheduledEvent } from "firebase-functions/scheduler";
-import { addExistingSurvey, getUpdatedSurveyTitlesAndDescriptions } from "@/data/apps-script/calls"
+import { callAppsScript } from "../googleAppsScript";
 import { GoogleFormResponse, GoogleFormResponseStudentId, isGoogleFormResponseStudentId, isGoogleFormResponseUnidentified } from "@/types/apps-script-types";
-import { SurveyResponseStudentEmail, SurveyResponseStudentId, SurveyResponseUnidentified } from "@/types/survey-types";
+import { SurveyID, SurveyResponseStudentEmail, SurveyResponseStudentId, SurveyResponseUnidentified } from "@/types/survey-types";
 import { onCall, onRequest } from "firebase-functions/https";
 import { Transaction } from "firebase-admin/firestore";
 import { adminAuth, adminDb } from "../config/firebaseAdminConfig";
 import { Collection, Document } from "@/data/firestore/utils";
 import { v4 as uuid } from "uuid";
 import moment from "moment";
+import { getOAuth2ClientWithCredentials } from "../auth";
 
 async function getAllSurveyIds(transaction: Transaction): Promise<string[]> {
   const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS);
@@ -117,7 +118,7 @@ const handleRecentSurveyTitlesAndDescriptionsUpdatesCallback = async (e: Schedul
   const startTime = moment(e.scheduleTime).subtract(1, 'days').subtract(30, 'minutes').toISOString();
   await adminDb.runTransaction(async (transaction: Transaction) => {
     const surveyIds = await getAllSurveyIds(transaction);
-    const surveys = await getUpdatedSurveyTitlesAndDescriptions(surveyIds, startTime);
+    const surveys: SurveyID[] = await callAppsScript(await getOAuth2ClientWithCredentials(), 'getUpdatedSurveyTitlesAndDescriptions', [surveyIds, startTime])
     const surveysCollection = adminDb.collection(Collection.SURVEYS);
     surveys.forEach(survey => transaction.update(surveysCollection.doc(survey.id), {
       name: survey.name,
@@ -140,9 +141,10 @@ export const addExistingSurveyAndResponses = onCall(async (req) => {
     throw new Error("Unauthorized");
   }
 
+  const surveyId = req.data as string;
+  const { survey, responses } = await callAppsScript(await getOAuth2ClientWithCredentials(), 'addExistingSurvey', [surveyId]);
+  const { id, ...surveyData } = survey;
   return await adminDb.runTransaction(async (transaction: Transaction) => {
-    const { survey, responses } = await addExistingSurvey(req.data);
-    const { id, ...surveyData } = survey;
     await addResponsesToFirestore(responses, transaction);
     transaction.set(adminDb.collection(Collection.SURVEYS).doc(id), surveyData);
     return survey;
