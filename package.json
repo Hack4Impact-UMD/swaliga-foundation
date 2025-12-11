@@ -17,7 +17,7 @@
   "dependencies": {
     "firebase": "^12.2.1",
     "moment": "^2.30.1",
-    "next": "^14.2.29",
+    "next": "^14.2.34",
     "nodemailer": "^7.0.5",
     "radix-ui": "^1.4.3",
     "react-google-button": "^0.8.0",
@@ -28,10 +28,10 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.20",
     "@types/node": "22.7.4",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "18.3.10",
+    "autoprefixer": "^10.4.20",
     "esbuild": "^0.25.6",
     "eslint": "^9.27.0",
     "firebase-cli": "^1.2.0",
