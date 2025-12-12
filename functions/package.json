@@ -10,7 +10,7 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "18"
+    "node": "24"
   },
   "main": "lib/functions/src/index.js",
   "private": true,
