@@ -2,7 +2,7 @@ name: Deploy to Firebase Hosting on merge
 on:
   push:
     branches:
-      - main
+      - cicd/node-runtime
 jobs:
   deploy_firebase:
     name: Deploy Next.js App to Firebase
