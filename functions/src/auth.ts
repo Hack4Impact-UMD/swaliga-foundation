@@ -7,6 +7,7 @@ import { onCall, onRequest } from "firebase-functions/v2/https";
 import { getFunctionsURL } from '@/config/utils';
 import { Credentials, OAuth2Client, TokenPayload } from 'google-auth-library';
 import moment from 'moment';
+import { compare, genSalt, hash } from "bcrypt";
 
 export const setRole = onCall(async (req) => {
   if (!req.auth) {
@@ -170,3 +171,33 @@ export async function getOAuth2ClientWithCredentials(): Promise<OAuth2Client> {
   }
   return oAuth2Client;
 }
+
+export const signUpWithUsernamePassword = onRequest(async (req, res) => {
+  const { username, password } = JSON.parse(req.body);
+  const pwHash = await hash(password, 10);
+  const user = await adminAuth.createUser({
+    password,
+  })
+  await adminDb.collection("users").doc(user.uid).set({
+    username,
+    password: pwHash,
+    createdAt: FieldValue.serverTimestamp()
+  })
+  await adminDb.collection("usernames").doc(username).set({ uid: user.uid });
+  res.status(200).json({ status: 'success' });
+})
+
+export const loginWithUsernamePassword = onRequest(async (req, res): Promise<void> => {
+  const { username, password } = JSON.parse(req.body);
+  const usernameDoc = (await adminDb.collection("usernames").doc(username).get()).data();
+  if (usernameDoc) {
+    const uid = usernameDoc.uid;
+    const userDoc = (await adminDb.collection('users').doc(uid).get()).data();
+    const storedHash = userDoc!.password;
+    if (await compare(password, storedHash)) {
+      const token = await adminAuth.createCustomToken(uid);
+      res.status(200).json({ status: 'success', token });
+    }
+  }
+  res.status(400).json({ status: 'error', message: 'Invalid username or password' });
+})
