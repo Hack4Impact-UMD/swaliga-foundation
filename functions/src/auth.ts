@@ -206,10 +206,12 @@ export const loginWithUsernamePassword = onRequest(async (req, res): Promise<voi
   if (usernameDoc) {
     const uid = usernameDoc.uid;
     const userDoc = (await adminDb.collection(Collection.USERS).doc(uid).get()).data();
-    const storedHash = userDoc!.password;
-    if (await compare(password, storedHash)) {
-      const token = await adminAuth.createCustomToken(uid);
-      res.status(200).json({ status: 'success', token });
+    if (userDoc) {
+      const storedHash = userDoc!.password;
+      if (await compare(password, storedHash)) {
+        const token = await adminAuth.createCustomToken(uid);
+        res.status(200).json({ status: 'success', token });
+      }
     }
   }
   res.status(400).json({ status: 'error', message: 'Invalid username or password' });
