@@ -175,15 +175,27 @@ export async function getOAuth2ClientWithCredentials(): Promise<OAuth2Client> {
 export const signUpWithUsernamePassword = onRequest(async (req, res) => {
   const { username, password } = JSON.parse(req.body);
   const pwHash = await hash(password, 10);
-  const user = await adminAuth.createUser({
-    password,
-  })
-  await adminDb.collection("users").doc(user.uid).set({
-    username,
-    password: pwHash,
-    createdAt: FieldValue.serverTimestamp()
-  })
-  await adminDb.collection("usernames").doc(username).set({ uid: user.uid });
+
+  const uid = uuid();
+  await adminDb.runTransaction(async (transaction: Transaction) => {
+    try {
+      await adminAuth.createUser({
+        password,
+        uid
+      })
+      const usernameDoc = await transaction.get(adminDb.collection('usernames').doc(username));
+      if (usernameDoc.exists) {
+        throw new Error("Username already taken");
+      }
+      await Promise.all([
+        transaction.set(adminDb.collection('usernames').doc(username), { uid }),
+        transaction.set(adminDb.collection('users').doc(uid), { username, password: pwHash }),
+      ])
+    } catch (error) {
+      await adminAuth.deleteUser(uid);
+      throw error;
+    }
+  });
   res.status(200).json({ status: 'success' });
 })
 
