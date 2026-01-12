@@ -7,7 +7,8 @@ import { onCall, onRequest } from "firebase-functions/v2/https";
 import { getFunctionsURL } from '@/config/utils';
 import { Credentials, OAuth2Client, TokenPayload } from 'google-auth-library';
 import moment from 'moment';
-import { compare, genSalt, hash } from "bcrypt";
+import { compare, hash } from "bcrypt";
+import { v4 as uuid } from 'uuid';
 
 export const setRole = onCall(async (req) => {
   if (!req.auth) {
@@ -183,13 +184,13 @@ export const signUpWithUsernamePassword = onRequest(async (req, res) => {
         password,
         uid
       })
-      const usernameDoc = await transaction.get(adminDb.collection('usernames').doc(username));
+      const usernameDoc = await transaction.get(adminDb.collection(Collection.USERNAMES).doc(username));
       if (usernameDoc.exists) {
         throw new Error("Username already taken");
       }
       await Promise.all([
-        transaction.set(adminDb.collection('usernames').doc(username), { uid }),
-        transaction.set(adminDb.collection('users').doc(uid), { username, password: pwHash }),
+        transaction.set(adminDb.collection(Collection.USERNAMES).doc(username), { uid }),
+        transaction.set(adminDb.collection(Collection.USERS).doc(uid), { username, password: pwHash }),
       ])
     } catch (error) {
       await adminAuth.deleteUser(uid);
@@ -201,10 +202,10 @@ export const signUpWithUsernamePassword = onRequest(async (req, res) => {
 
 export const loginWithUsernamePassword = onRequest(async (req, res): Promise<void> => {
   const { username, password } = JSON.parse(req.body);
-  const usernameDoc = (await adminDb.collection("usernames").doc(username).get()).data();
+  const usernameDoc = (await adminDb.collection(Collection.USERNAMES).doc(username).get()).data();
   if (usernameDoc) {
     const uid = usernameDoc.uid;
-    const userDoc = (await adminDb.collection('users').doc(uid).get()).data();
+    const userDoc = (await adminDb.collection(Collection.USERS).doc(uid).get()).data();
     const storedHash = userDoc!.password;
     if (await compare(password, storedHash)) {
       const token = await adminAuth.createCustomToken(uid);
