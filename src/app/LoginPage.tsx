@@ -93,9 +93,9 @@ export default function LoginPage() {
           <div className={styles.email_pw_container}>
             <div className={styles.login_field_container}>
               <input
-                type="email"
+                type="text"
                 className={styles.login_field}
-                placeholder="Email"
+                placeholder="Email or Username"
                 value={email}
                 onChange={(ev) => handleEmailChange(ev.target.value)}
               />
