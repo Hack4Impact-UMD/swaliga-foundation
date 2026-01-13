@@ -3,7 +3,7 @@ import { getFunctionsURL } from "@/config/utils";
 import { signInWithCustomToken } from "firebase/auth";
 
 export async function signUpWithUsernamePassword(username: string, password: string) {
-  await fetch(getFunctionsURL('signUpUsernamePassword'), {
+  await fetch(getFunctionsURL('signUpWithUsernamePassword'), {
     method: "POST",
     body: JSON.stringify({
       username,
@@ -13,7 +13,7 @@ export async function signUpWithUsernamePassword(username: string, password: str
 }
 
 export async function loginWithUsernamePassword(username: string, password: string) {
-  const res = await fetch(getFunctionsURL("loginUsernamePassword"), {
+  const res = await fetch(getFunctionsURL("loginWithUsernamePassword"), {
     method: "POST",
     body: JSON.stringify({
       username,
