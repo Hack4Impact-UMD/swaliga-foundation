@@ -41,7 +41,7 @@ export default function AuthProvider({
           let newToken = await newUser.getIdTokenResult();
           if (refreshIdToken) {
             newToken = await newUser.getIdTokenResult(true);
-          } else if (newToken.claims.email_verified && !newToken.claims?.role) {
+          } else if ((newToken.claims.email_verified || newToken.signInProvider === 'custom') && !newToken.claims?.role) {
             await httpsCallable(functions, "setRole")();
             newToken = await newUser.getIdTokenResult(true);
           }
