@@ -17,14 +17,14 @@ export const setRole = onCall(async (req) => {
 
   const uid = req.auth?.uid;
   const email = req.auth?.token.email;
-  if (!email) {
+  if (!email && req.auth?.token.firebase.sign_in_provider !== "custom") {
     throw new Error("No email found");
   }
 
   try {
     if (email === process.env.ADMIN_EMAIL) {
       await adminAuth.setCustomUserClaims(uid, { role: "ADMIN" });
-    } else if (email.endsWith("@swaligafoundation.org")) {
+    } else if (email && email.endsWith("@swaligafoundation.org")) {
       await adminAuth.setCustomUserClaims(uid, { role: "STAFF" });
     } else {
       await adminAuth.setCustomUserClaims(uid, { role: "STUDENT" });
