@@ -197,7 +197,8 @@ export const signUpWithUsernamePassword = onRequest(async (req, res) => {
       throw error;
     }
   });
-  res.status(200).json({ status: 'success' });
+  const token = await adminAuth.createCustomToken(uid);
+  res.status(200).json({ status: 'success', token });
 })
 
 export const loginWithUsernamePassword = onRequest(async (req, res): Promise<void> => {
