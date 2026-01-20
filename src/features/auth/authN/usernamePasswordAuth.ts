@@ -26,7 +26,6 @@ export async function loginWithUsernamePassword(username: string, password: stri
     })
   });
   const body = await res.json();
-  console.log(body)
   if (!res.ok) {
     throw new Error(body.error);
   }
