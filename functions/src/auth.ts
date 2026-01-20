@@ -178,25 +178,31 @@ export const signUpWithUsernamePassword = onRequest(async (req, res) => {
   const pwHash = await hash(password, 10);
 
   const uid = uuid();
-  await adminDb.runTransaction(async (transaction: Transaction) => {
-    try {
-      await adminAuth.createUser({
-        password,
-        uid
-      })
-      const usernameDoc = await transaction.get(adminDb.collection(Collection.USERNAMES).doc(username));
-      if (usernameDoc.exists) {
-        throw new Error("Username already taken");
+  try {
+    await adminDb.runTransaction(async (transaction: Transaction) => {
+      try {
+        await adminAuth.createUser({
+          password,
+          uid
+        })
+        const usernameDoc = await transaction.get(adminDb.collection(Collection.USERNAMES).doc(username));
+        if (usernameDoc.exists) {
+          throw new Error("Username already taken");
+        }
+        await Promise.all([
+          transaction.set(adminDb.collection(Collection.USERNAMES).doc(username), { uid }),
+          transaction.set(adminDb.collection(Collection.USERS).doc(uid), { username, password: pwHash }),
+        ])
+      } catch (error) {
+        await adminAuth.deleteUser(uid);
+        throw error;
       }
-      await Promise.all([
-        transaction.set(adminDb.collection(Collection.USERNAMES).doc(username), { uid }),
-        transaction.set(adminDb.collection(Collection.USERS).doc(uid), { username, password: pwHash }),
-      ])
-    } catch (error) {
-      await adminAuth.deleteUser(uid);
-      throw error;
-    }
-  });
+    });
+  } catch (error: any) {
+    res.status(400).json({ status: 'error', error: error.message });
+    return;
+  }
+
   const token = await adminAuth.createCustomToken(uid);
   res.status(200).json({ status: 'success', token });
 })
@@ -215,5 +221,5 @@ export const loginWithUsernamePassword = onRequest(async (req, res): Promise<voi
       }
     }
   }
-  res.status(400).json({ status: 'error', message: 'Invalid username or password' });
+  res.status(400).json({ status: 'error', error: 'Invalid username or password' });
 })

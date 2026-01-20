@@ -10,8 +10,11 @@ export async function signUpWithUsernamePassword(username: string, password: str
       password
     })
   });
-  const { token } = await res.json();
-  await signInWithCustomToken(auth, token);
+  const body = await res.json();
+  if (!res.ok) {
+    throw new Error(body.error);
+  }
+  await signInWithCustomToken(auth, body.token);
 }
 
 export async function loginWithUsernamePassword(username: string, password: string) {
@@ -22,6 +25,10 @@ export async function loginWithUsernamePassword(username: string, password: stri
       password
     })
   });
-  const { token } = await res.json();
-  await signInWithCustomToken(auth, token);
+  const body = await res.json();
+  console.log(body)
+  if (!res.ok) {
+    throw new Error(body.error);
+  }
+  await signInWithCustomToken(auth, body.token);
 }
