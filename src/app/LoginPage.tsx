@@ -10,6 +10,8 @@ import {
 import { signInWithGoogle } from "@/features/auth/authN/googleAuthN";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import ImageBackgroundPage from "@/components/layout/pages/ImageBackgroundPage";
+import { loginWithUsernamePassword, signUpWithUsernamePassword } from "@/features/auth/authN/usernamePasswordAuth";
+import { isEmail } from "@/utils/utils";
 
 export default function LoginPage() {
   const [isLoginMode, setIsLoginMode] = useState<boolean>(true);
@@ -21,7 +23,11 @@ export default function LoginPage() {
 
   const handleEmailPasswordLogin = async () => {
     try {
-      await loginUser(email, password);
+      if (isEmail(email)) {
+        await loginUser(email, password);
+      } else {
+        await loginWithUsernamePassword(email, password);
+      }
     } catch (error: any) {
       setError(error.message);
     }
@@ -33,7 +39,11 @@ export default function LoginPage() {
       return;
     }
     try {
-      await signUpUser(email, password);
+      if (isEmail(email)) {
+        await signUpUser(email, password);
+      } else {
+        await signUpWithUsernamePassword(email, password);
+      }
     } catch (error: any) {
       setError(error.message);
     }
@@ -83,9 +93,9 @@ export default function LoginPage() {
           <div className={styles.email_pw_container}>
             <div className={styles.login_field_container}>
               <input
-                type="email"
+                type="text"
                 className={styles.login_field}
-                placeholder="Email"
+                placeholder="Email or Username"
                 value={email}
                 onChange={(ev) => handleEmailChange(ev.target.value)}
               />

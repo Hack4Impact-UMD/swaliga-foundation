@@ -7,6 +7,8 @@ import { onCall, onRequest } from "firebase-functions/v2/https";
 import { getFunctionsURL } from '@/config/utils';
 import { Credentials, OAuth2Client, TokenPayload } from 'google-auth-library';
 import moment from 'moment';
+import { compare, hash } from "bcrypt";
+import { v4 as uuid } from 'uuid';
 
 export const setRole = onCall(async (req) => {
   if (!req.auth) {
@@ -15,14 +17,14 @@ export const setRole = onCall(async (req) => {
 
   const uid = req.auth?.uid;
   const email = req.auth?.token.email;
-  if (!email) {
+  if (!email && req.auth?.token.firebase.sign_in_provider !== "custom") {
     throw new Error("No email found");
   }
 
   try {
     if (email === process.env.ADMIN_EMAIL) {
       await adminAuth.setCustomUserClaims(uid, { role: "ADMIN" });
-    } else if (email.endsWith("@swaligafoundation.org")) {
+    } else if (email && email.endsWith("@swaligafoundation.org")) {
       await adminAuth.setCustomUserClaims(uid, { role: "STAFF" });
     } else {
       await adminAuth.setCustomUserClaims(uid, { role: "STUDENT" });
@@ -170,3 +172,54 @@ export async function getOAuth2ClientWithCredentials(): Promise<OAuth2Client> {
   }
   return oAuth2Client;
 }
+
+export const signUpWithUsernamePassword = onRequest(async (req, res) => {
+  const { username, password } = JSON.parse(req.body);
+  const pwHash = await hash(password, 10);
+
+  const uid = uuid();
+  try {
+    await adminDb.runTransaction(async (transaction: Transaction) => {
+      try {
+        await adminAuth.createUser({
+          password,
+          uid
+        })
+        const usernameDoc = await transaction.get(adminDb.collection(Collection.USERNAMES).doc(username));
+        if (usernameDoc.exists) {
+          throw new Error("Username already taken");
+        }
+        await Promise.all([
+          transaction.set(adminDb.collection(Collection.USERNAMES).doc(username), { uid }),
+          transaction.set(adminDb.collection(Collection.USERS).doc(uid), { username, password: pwHash }),
+        ])
+      } catch (error) {
+        await adminAuth.deleteUser(uid);
+        throw error;
+      }
+    });
+  } catch (error: any) {
+    res.status(400).json({ status: 'error', error: error.message });
+    return;
+  }
+
+  const token = await adminAuth.createCustomToken(uid);
+  res.status(200).json({ status: 'success', token });
+})
+
+export const loginWithUsernamePassword = onRequest(async (req, res): Promise<void> => {
+  const { username, password } = JSON.parse(req.body);
+  const usernameDoc = (await adminDb.collection(Collection.USERNAMES).doc(username).get()).data();
+  if (usernameDoc) {
+    const uid = usernameDoc.uid;
+    const userDoc = (await adminDb.collection(Collection.USERS).doc(uid).get()).data();
+    if (userDoc) {
+      const storedHash = userDoc!.password;
+      if (await compare(password, storedHash)) {
+        const token = await adminAuth.createCustomToken(uid);
+        res.status(200).json({ status: 'success', token });
+      }
+    }
+  }
+  res.status(400).json({ status: 'error', error: 'Invalid username or password' });
+})

@@ -10,6 +10,8 @@ exports.onStudentAccountCreated = authFunctions.onStudentAccountCreated;
 exports.handleEmailChange = authFunctions.handleEmailChange
 exports.checkRefreshTokenValidity = authFunctions.checkRefreshTokenValidity;
 exports.handleOAuth2Code = authFunctions.handleOAuth2Code;
+exports.signUpWithUsernamePassword = authFunctions.signUpWithUsernamePassword;
+exports.loginWithUsernamePassword = authFunctions.loginWithUsernamePassword;
 
 exports.assignSurveys = assignmentManagementFunctions.assignSurveys;
 exports.onAssignmentWritten = assignmentManagementFunctions.onAssignmentWritten;
