@@ -21,20 +21,17 @@ export default function CreateSurveyModal(): JSX.Element {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [createError, setCreateError] = useState<string>("");
-  const [id, setId] = useState<string>("");
-  const [addError, setAddError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
-  const [openPicker] = useDrivePicker();
-  const [isDrivePickerOpen, setIsDrivePickerOpen] = useState<boolean>(false);
   const [drivePickerCredentials, setDrivePickerCredentials] = useState<{
     accessToken: string;
     scope: string;
     expiryDate: number;
   } | null>(null);
+  
+  const [openPicker] = useDrivePicker();
 
   const clearErrors = () => {
     setCreateError("");
-    setAddError("");
   };
 
   const handleCreateNewSurvey = async () => {
@@ -59,7 +56,6 @@ export default function CreateSurveyModal(): JSX.Element {
   const onClose = () => {
     setName("");
     setDescription("");
-    setId("");
     setMessage("");
     clearErrors();
   };
@@ -126,20 +122,10 @@ export default function CreateSurveyModal(): JSX.Element {
             <p className={styles.divider_text}>OR</p>
             <hr className={styles.divider_line} />
           </div>
-          {isDrivePickerOpen && drivePickerCredentials && (
-            <DrivePicker
-              client-id={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
-              scope={drivePickerCredentials.scope}
-              oauth-token={drivePickerCredentials.accessToken}
-              onCanceled={() => setDrivePickerCredentials(null)}
-              onPicked={() => setDrivePickerCredentials(null)}
-            ></DrivePicker>
-          )}
           <div className={styles.errorGroup}>
             <button className={styles.button} onClick={openDrivePicker}>
               Add an Existing Survey
             </button>
-            <p className={styles.error}>{addError}</p>
           </div>
         </div>
       )}
