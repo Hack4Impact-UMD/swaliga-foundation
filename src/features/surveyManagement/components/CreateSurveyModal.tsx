@@ -81,11 +81,12 @@ export default function CreateSurveyModal(): JSX.Element {
         } else if (data.action === "loaded") {
           return;
         }
-        await Promise.all(data.docs.map(doc => addExistingSurvey(doc.id)));
+        await Promise.allSettled(data.docs.map(doc => addExistingSurvey(doc.id)));
       },
       token: credentials.data.accessToken,
       viewId: "FORMS",
       customScopes: credentials.data.scope.split(" "),
+      multiselect: true
     });
   };
 
