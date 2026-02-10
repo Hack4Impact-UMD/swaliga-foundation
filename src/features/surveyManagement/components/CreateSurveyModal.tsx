@@ -9,6 +9,7 @@ import MenuIcon from "@/components/ui/MenuIcon";
 import { DrivePicker } from "@googleworkspace/drive-picker-react";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/config/firebaseConfig";
+import useDrivePicker from "react-google-drive-picker";
 
 enum CreateSurveyModalErrorMessages {
   SURVEY_NAME_REQUIRED = "Survey name is required.",
@@ -24,6 +25,7 @@ export default function CreateSurveyModal(): JSX.Element {
   const [id, setId] = useState<string>("");
   const [addError, setAddError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
+  const [openPicker] = useDrivePicker();
   const [isDrivePickerOpen, setIsDrivePickerOpen] = useState<boolean>(false);
   const [drivePickerCredentials, setDrivePickerCredentials] = useState<{
     accessToken: string;
@@ -82,17 +84,19 @@ export default function CreateSurveyModal(): JSX.Element {
     clearErrors();
   };
 
-  const toggleDrivePicker = async () => {
-    setIsDrivePickerOpen(!isDrivePickerOpen);
-    if (isDrivePickerOpen) {
-      setDrivePickerCredentials(null);
-      return;
-    }
+  const openDrivePicker = async () => {
     const credentials = (await httpsCallable(
       functions,
       "getAdminAccessToken",
     )()) as unknown as { accessToken: string; scope: string; expiryDate: number };
-    setDrivePickerCredentials(credentials);
+    openPicker({
+      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
+      developerKey: process.env.NEXT_PUBLIC_GOOGLE_DEVELOPER_KEY || "",
+      callbackFunction: () => {},
+      token: credentials.data.accessToken,
+      viewId: "FORMS",
+      customScopes: credentials.data.scope.split(' '),
+    })
   };
 
   return (
@@ -137,10 +141,12 @@ export default function CreateSurveyModal(): JSX.Element {
               client-id={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
               scope={drivePickerCredentials.scope}
               oauth-token={drivePickerCredentials.accessToken}
+              onCanceled={() => setDrivePickerCredentials(null)}
+              onPicked={() => setDrivePickerCredentials(null)}
             ></DrivePicker>
           )}
           <div className={styles.errorGroup}>
-            <button className={styles.button} onClick={toggleDrivePicker}>
+            <button className={styles.button} onClick={openDrivePicker}>
               Add an Existing Survey
             </button>
             <p className={styles.error}>{addError}</p>
