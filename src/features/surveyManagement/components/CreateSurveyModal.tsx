@@ -4,9 +4,11 @@ import React, { useState } from "react";
 import styles from "./CreateSurveyModal.module.css";
 import Modal from "../../../components/ui/Modal";
 import { createNewSurvey, addExistingSurvey } from "../surveys";
-import useAuth from "../../auth/authN/components/useAuth";
 import { FaCirclePlus } from "react-icons/fa6";
 import MenuIcon from "@/components/ui/MenuIcon";
+import { httpsCallable } from "firebase/functions";
+import { functions } from "@/config/firebaseConfig";
+import useDrivePicker from "react-google-drive-picker";
 
 enum CreateSurveyModalErrorMessages {
   SURVEY_NAME_REQUIRED = "Survey name is required.",
@@ -19,13 +21,17 @@ export default function CreateSurveyModal(): JSX.Element {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [createError, setCreateError] = useState<string>("");
-  const [id, setId] = useState<string>("");
-  const [addError, setAddError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
+  const [drivePickerCredentials, setDrivePickerCredentials] = useState<{
+    accessToken: string;
+    scope: string;
+    expiryDate: number;
+  } | null>(null);
+  
+  const [openPicker] = useDrivePicker();
 
   const clearErrors = () => {
     setCreateError("");
-    setAddError("");
   };
 
   const handleCreateNewSurvey = async () => {
@@ -35,36 +41,14 @@ export default function CreateSurveyModal(): JSX.Element {
         throw new Error(CreateSurveyModalErrorMessages.SURVEY_NAME_REQUIRED);
       }
       setMessage("This may take a minute...");
-      const survey = await createNewSurvey(
-        name,
-        description
-      );
+      const survey = await createNewSurvey(name, description);
       setMessage(`Survey "${survey.name}" created successfully!`);
     } catch (error: any) {
       setMessage("");
       setCreateError(
         error.message === CreateSurveyModalErrorMessages.SURVEY_NAME_REQUIRED
           ? CreateSurveyModalErrorMessages.SURVEY_NAME_REQUIRED
-          : CreateSurveyModalErrorMessages.CREATE_SURVEY_FAILED
-      );
-    }
-  };
-
-  const handleAddExistingSurvey = async () => {
-    try {
-      clearErrors();
-      if (!id) {
-        throw new Error(CreateSurveyModalErrorMessages.SURVEY_ID_REQUIRED);
-      }
-      setMessage("This may take a minute...");
-      const survey = await addExistingSurvey(id);
-      setMessage(`Survey "${survey.name}" added successfully!`);
-    } catch (error: any) {
-      setMessage("");
-      setAddError(
-        error.message === CreateSurveyModalErrorMessages.SURVEY_ID_REQUIRED
-          ? CreateSurveyModalErrorMessages.SURVEY_ID_REQUIRED
-          : CreateSurveyModalErrorMessages.ADD_SURVEY_FAILED
+          : CreateSurveyModalErrorMessages.CREATE_SURVEY_FAILED,
       );
     }
   };
@@ -72,9 +56,33 @@ export default function CreateSurveyModal(): JSX.Element {
   const onClose = () => {
     setName("");
     setDescription("");
-    setId("");
     setMessage("");
     clearErrors();
+  };
+
+  const openDrivePicker = async () => {
+    const credentials = (await httpsCallable(
+      functions,
+      "getAdminAccessToken",
+    )()) as unknown as {
+      data: { accessToken: string; scope: string; expiryDate: number };
+    };
+    openPicker({
+      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
+      developerKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "",
+      callbackFunction: async (data) => {
+        if (data.action === "cancel") {
+          return;
+        } else if (data.action === "loaded") {
+          return;
+        }
+        await Promise.allSettled(data.docs.map(doc => addExistingSurvey(doc.id)));
+      },
+      token: credentials.data.accessToken,
+      viewId: "FORMS",
+      customScopes: credentials.data.scope.split(" "),
+      multiselect: true
+    });
   };
 
   return (
@@ -114,28 +122,10 @@ export default function CreateSurveyModal(): JSX.Element {
             <p className={styles.divider_text}>OR</p>
             <hr className={styles.divider_line} />
           </div>
-          <h2 className={styles.title}>Add an Existing Survey</h2>
-          <p>
-            The id of a survey can be found in the URL of the survey's edit
-            link:
-          </p>
-          <p>
-            https://docs.google.com/forms/d/<strong>SURVEY_ID</strong>/edit
-          </p>
-          <div className={styles.centeredOval}>
-            <input
-              name="surveyId"
-              placeholder="Survey ID"
-              className={styles.inputField}
-              value={id}
-              onChange={(ev) => setId(ev.target.value)}
-            />
-          </div>
           <div className={styles.errorGroup}>
-            <button className={styles.button} onClick={handleAddExistingSurvey}>
-              Add Survey
+            <button className={styles.button} onClick={openDrivePicker}>
+              Add an Existing Survey
             </button>
-            <p className={styles.error}>{addError}</p>
           </div>
         </div>
       )}
