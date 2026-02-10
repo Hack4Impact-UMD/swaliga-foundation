@@ -6,7 +6,6 @@ import Modal from "../../../components/ui/Modal";
 import { createNewSurvey, addExistingSurvey } from "../surveys";
 import { FaCirclePlus } from "react-icons/fa6";
 import MenuIcon from "@/components/ui/MenuIcon";
-import { DrivePicker } from "@googleworkspace/drive-picker-react";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/config/firebaseConfig";
 import useDrivePicker from "react-google-drive-picker";
