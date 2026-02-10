@@ -88,15 +88,17 @@ export default function CreateSurveyModal(): JSX.Element {
     const credentials = (await httpsCallable(
       functions,
       "getAdminAccessToken",
-    )()) as unknown as { accessToken: string; scope: string; expiryDate: number };
+    )()) as unknown as {
+      data: { accessToken: string; scope: string; expiryDate: number };
+    };
     openPicker({
       clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
       developerKey: process.env.NEXT_PUBLIC_GOOGLE_DEVELOPER_KEY || "",
       callbackFunction: () => {},
       token: credentials.data.accessToken,
       viewId: "FORMS",
-      customScopes: credentials.data.scope.split(' '),
-    })
+      customScopes: credentials.data.scope.split(" "),
+    });
   };
 
   return (
