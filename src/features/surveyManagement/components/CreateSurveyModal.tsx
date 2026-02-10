@@ -57,25 +57,6 @@ export default function CreateSurveyModal(): JSX.Element {
     }
   };
 
-  const handleAddExistingSurvey = async () => {
-    try {
-      clearErrors();
-      if (!id) {
-        throw new Error(CreateSurveyModalErrorMessages.SURVEY_ID_REQUIRED);
-      }
-      setMessage("This may take a minute...");
-      const survey = await addExistingSurvey(id);
-      setMessage(`Survey "${survey.name}" added successfully!`);
-    } catch (error: any) {
-      setMessage("");
-      setAddError(
-        error.message === CreateSurveyModalErrorMessages.SURVEY_ID_REQUIRED
-          ? CreateSurveyModalErrorMessages.SURVEY_ID_REQUIRED
-          : CreateSurveyModalErrorMessages.ADD_SURVEY_FAILED,
-      );
-    }
-  };
-
   const onClose = () => {
     setName("");
     setDescription("");
