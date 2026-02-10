@@ -93,8 +93,15 @@ export default function CreateSurveyModal(): JSX.Element {
     };
     openPicker({
       clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
-      developerKey: process.env.NEXT_PUBLIC_GOOGLE_DEVELOPER_KEY || "",
-      callbackFunction: () => {},
+      developerKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "",
+      callbackFunction: async (data) => {
+        if (data.action === "cancel") {
+          return;
+        } else if (data.action === "loaded") {
+          return;
+        }
+        await Promise.all(data.docs.map(doc => addExistingSurvey(doc.id)));
+      },
       token: credentials.data.accessToken,
       viewId: "FORMS",
       customScopes: credentials.data.scope.split(" "),
