@@ -137,7 +137,7 @@ export const handleOAuth2Code = onRequest(async (req, res) => {
   res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?success=true`);
 });
 
-export async function refreshAccessToken(oauth2Client: OAuth2Client): Promise<void> {
+export async function refreshAccessToken(oauth2Client: OAuth2Client): Promise<Credentials> {
   if (!oauth2Client.credentials.refresh_token) {
     throw new Error("Refresh token not found");
   }
@@ -151,6 +151,7 @@ export async function refreshAccessToken(oauth2Client: OAuth2Client): Promise<vo
   const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
   const uid = adminUser.uid;
   await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).doc(uid).set(tokens);
+  return tokens;
 }
 
 export function getOAuth2Client(): OAuth2Client {
@@ -230,7 +231,10 @@ export const getAdminAccessToken = onCall(async (req) => {
   }
   const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
   const uid = adminUser.uid;
-  const credentials = (await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).doc(uid).get()).data() as Credentials;
+  let credentials = (await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).doc(uid).get()).data() as Credentials;
+  if (moment().isAfter(moment(credentials.expiry_date))) {
+    credentials = await refreshAccessToken(await getOAuth2ClientWithCredentials());
+  }
   return {
     accessToken: credentials.access_token,
     expiryDate: credentials.expiry_date,
