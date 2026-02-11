@@ -67,7 +67,6 @@ export const onSurveyDocDeleted = onDocumentDeleted('/surveys/{surveyId}', async
   const surveyId = event.params.surveyId;
   await Promise.all([
     adminDb.recursiveDelete(adminDb.collection(Collection.SURVEYS).doc(surveyId).collection(Collection.ASSIGNMENTS)),
-    adminDb.recursiveDelete(adminDb.collection(Collection.SURVEYS).doc(surveyId).collection(Collection.SURVEY_ACCESS_LIST)),
     updateAdminDataOnDocDeleted(
       adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS),
       surveyId
@@ -76,11 +75,14 @@ export const onSurveyDocDeleted = onDocumentDeleted('/surveys/{surveyId}', async
 });
 
 export const onStudentDocCreated = onDocumentCreated('/students/{studentId}', async (event) =>
-  await updateAdminDataOnDocCreated(
-    adminDb.collection(Collection.ADMIN_DATA).doc(Document.STUDENTS).collection(Collection.STUDENTS),
-    event.params.studentId,
-    event.data?.data()
-  )
+  await Promise.all([
+    updateAdminDataOnDocCreated(
+      adminDb.collection(Collection.ADMIN_DATA).doc(Document.STUDENTS).collection(Collection.STUDENTS),
+      event.params.studentId,
+      event.data?.data()
+    ),
+    adminDb.collection(Collection.STUDENTS).doc(event.params.studentId).collection(Collection.SURVEY_ACCESS_LIST).doc(Document.SURVEY_ACCESS_LIST).create({})
+  ])
 );
 
 export const onStudentDocUpdated = onDocumentUpdated('/students/{studentId}', async (event) =>
@@ -92,8 +94,11 @@ export const onStudentDocUpdated = onDocumentUpdated('/students/{studentId}', as
 );
 
 export const onStudentDocDeleted = onDocumentDeleted('/students/{studentId}', async (event) =>
-  await updateAdminDataOnDocDeleted(
-    adminDb.collection(Collection.ADMIN_DATA).doc(Document.STUDENTS).collection(Collection.STUDENTS),
-    event.params.studentId
-  )
+  await Promise.all([
+    updateAdminDataOnDocDeleted(
+      adminDb.collection(Collection.ADMIN_DATA).doc(Document.STUDENTS).collection(Collection.STUDENTS),
+      event.params.studentId
+    ),
+    adminDb.collection(Collection.STUDENTS).doc(event.params.studentId).collection(Collection.SURVEY_ACCESS_LIST).doc(Document.SURVEY_ACCESS_LIST).delete()
+  ])
 );
