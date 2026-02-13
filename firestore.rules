@@ -31,8 +31,8 @@ service cloud.firestore {
     }
 
     function isOnSurveyAccessList(surveyId) {
-      let data = get(/databases/$(database)/documents/surveys/$(surveyId)/surveyAccessList/surveyAccessList).data;
-      return data != null && data.keys().hasAny([request.auth.token.studentId]);
+      let data = get(/databases/$(database)/documents/students/$(request.auth.token.studentId)/surveyAccessList/surveyAccessList).data;
+      return data != null && data.keys().hasAny([surveyId]);
     }
 
     match /students/{studentId} {
