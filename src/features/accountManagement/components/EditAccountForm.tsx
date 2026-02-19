@@ -492,7 +492,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
         return studentData.id;
       });
       if (mode === "CREATE") {
-        await httpsCallable(functions, "onStudentAccountCreated")(studentId);
         await auth.user!.getIdToken(true);
       }
       setSuccess(

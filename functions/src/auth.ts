@@ -1,6 +1,5 @@
 import { adminAuth, adminDb } from './config/firebaseAdminConfig';
 import { Collection } from './types/serverTypes';
-import { StudentCustomClaims, StudentDecodedIdTokenWithCustomClaims } from '@/types/auth-types';
 import { SurveyResponseStudentEmailID } from '@/types/survey-types';
 import { FieldValue, Transaction } from 'firebase-admin/firestore';
 import { HttpsError, onCall, onRequest } from "firebase-functions/v2/https";
@@ -9,6 +8,7 @@ import { Credentials, OAuth2Client, TokenPayload } from 'google-auth-library';
 import moment from 'moment';
 import { compare, hash } from "bcrypt";
 import { UserRecord } from 'firebase-admin/auth';
+import { onDocumentWritten } from 'firebase-functions/firestore';
 
 export const setRole = onCall(async (req) => {
   if (!req.auth) {
@@ -41,25 +41,22 @@ async function changeEmailAssignmentsToIdAssignments(email: string, studentId: s
   docs.forEach(doc => transaction.update(surveysCollectionRef.doc(doc.surveyId).collection(Collection.ASSIGNMENTS).doc(doc.id), updates));
 }
 
-export const onStudentAccountCreated = onCall(async (req) => {
-  if (!req.auth) {
-    throw new Error("Unauthorized");
-  } else if (req.auth.token.role !== 'STUDENT') {
-    throw new Error("Only STUDENT role can create student accounts")
-  } else if (req.auth.token.studentId) {
-    throw new Error("Student account already exists for this user");
+export const onStudentAccountCreated = onDocumentWritten('/students/{studentId}', async (event) => {
+  const studentId = event.params.studentId;
+  const beforeData = event.data?.before?.data();
+  const afterData = event.data?.after?.data();
+
+  if (afterData && afterData.email !== beforeData?.email) {
+    await adminDb.runTransaction(async (transaction: Transaction) => await changeEmailAssignmentsToIdAssignments(afterData.email, studentId, transaction));
   }
 
-  const email = req.auth.token.email;
-  if (email) {
-    await adminDb.runTransaction(async (transaction: Transaction) => await changeEmailAssignmentsToIdAssignments(email, req.data, transaction));
+  if (!beforeData && afterData) {
+    const uid = afterData.uid;
+    await adminAuth.setCustomUserClaims(uid, {
+      role: "STUDENT",
+      studentId
+    });
   }
-
-  const decodedToken = req.auth.token as unknown as StudentDecodedIdTokenWithCustomClaims
-  await adminAuth.setCustomUserClaims(req.auth.uid, {
-    role: decodedToken.role,
-    studentId: req.data,
-  } satisfies StudentCustomClaims);
 });
 
 export const handleEmailChange = onCall(async (req) => {
