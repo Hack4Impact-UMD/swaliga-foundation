@@ -8,7 +8,7 @@ import { Credentials, OAuth2Client, TokenPayload } from 'google-auth-library';
 import moment from 'moment';
 import { compare, hash } from "bcrypt";
 import { UserRecord } from 'firebase-admin/auth';
-import { onDocumentWritten } from 'firebase-functions/firestore';
+import { onDocumentCreated, onDocumentWritten } from 'firebase-functions/firestore';
 
 export const setRole = onCall(async (req) => {
   if (!req.auth) {
@@ -41,7 +41,7 @@ async function changeEmailAssignmentsToIdAssignments(email: string, studentId: s
   docs.forEach(doc => transaction.update(surveysCollectionRef.doc(doc.surveyId).collection(Collection.ASSIGNMENTS).doc(doc.id), updates));
 }
 
-export const onStudentAccountCreated = onDocumentWritten('/students/{studentId}', async (event) => {
+export const onStudentAccountEmailChanged = onDocumentWritten('/students/{studentId}', async (event) => {
   const studentId = event.params.studentId;
   const beforeData = event.data?.before?.data();
   const afterData = event.data?.after?.data();
@@ -49,9 +49,13 @@ export const onStudentAccountCreated = onDocumentWritten('/students/{studentId}'
   if (afterData && afterData.email !== beforeData?.email) {
     await adminDb.runTransaction(async (transaction: Transaction) => await changeEmailAssignmentsToIdAssignments(afterData.email, studentId, transaction));
   }
+})
 
-  if (!beforeData && afterData) {
-    const uid = afterData.uid;
+export const onStudentAccountCreated = onDocumentCreated('/students/{studentId}', async (event) => {
+  const studentId = event.params.studentId;
+  const studentDoc = event.data?.data();
+  if (studentDoc) {
+    const uid = studentDoc.uid;
     await adminAuth.setCustomUserClaims(uid, {
       role: "STUDENT",
       studentId
