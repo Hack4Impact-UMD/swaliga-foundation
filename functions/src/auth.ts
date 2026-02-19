@@ -8,7 +8,7 @@ import { getFunctionsURL } from '@/config/utils';
 import { Credentials, OAuth2Client, TokenPayload } from 'google-auth-library';
 import moment from 'moment';
 import { compare, hash } from "bcrypt";
-import { v4 as uuid } from 'uuid';
+import { UserRecord } from 'firebase-admin/auth';
 
 export const setRole = onCall(async (req) => {
   if (!req.auth) {
@@ -181,33 +181,29 @@ export const signUpWithUsernamePassword = onRequest(async (req, res) => {
   const { username, password } = JSON.parse(req.body);
   const pwHash = await hash(password, 10);
 
-  const uid = uuid();
+  let user: UserRecord | null = null;
   try {
+    user = await adminAuth.createUser({ password });
+    const uid = user.uid;
     await adminDb.runTransaction(async (transaction: Transaction) => {
-      try {
-        await adminAuth.createUser({
-          password,
-          uid
-        })
-        const usernameDoc = await transaction.get(adminDb.collection(Collection.USERNAMES).doc(username));
-        if (usernameDoc.exists) {
-          throw new Error("Username already taken");
-        }
-        await Promise.all([
-          transaction.set(adminDb.collection(Collection.USERNAMES).doc(username), { uid }),
-          transaction.set(adminDb.collection(Collection.USERS).doc(uid), { username, password: pwHash }),
-        ])
-      } catch (error) {
-        await adminAuth.deleteUser(uid);
-        throw error;
+      const usernameDoc = await transaction.get(adminDb.collection(Collection.USERNAMES).doc(username));
+      if (usernameDoc.exists) {
+        throw new Error("Username already taken");
       }
+      await Promise.all([
+        transaction.set(adminDb.collection(Collection.USERNAMES).doc(username), { uid }),
+        transaction.set(adminDb.collection(Collection.USERS).doc(uid), { username, password: pwHash }),
+      ]);
     });
   } catch (error: any) {
+    if (user) {
+      await adminAuth.deleteUser(user.uid);
+    }
     res.status(400).json({ status: 'error', error: error.message });
     return;
   }
 
-  const token = await adminAuth.createCustomToken(uid);
+  const token = await adminAuth.createCustomToken(user.uid);
   res.status(200).json({ status: 'success', token });
 })
 
