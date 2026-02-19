@@ -567,7 +567,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
         <TextField
           label="Email"
           value={auth.user?.email || ""}
-          required
+          placeholder="No email was used to login to this account."
           disabled
           icon={<FaEnvelope />}
         />
