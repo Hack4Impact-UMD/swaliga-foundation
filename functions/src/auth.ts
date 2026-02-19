@@ -50,7 +50,10 @@ export const onStudentAccountCreated = onCall(async (req) => {
     throw new Error("Student account already exists for this user");
   }
 
-  await adminDb.runTransaction(async (transaction: Transaction) => await changeEmailAssignmentsToIdAssignments(req.auth!.token.email!, req.data, transaction));
+  const email = req.auth.token.email;
+  if (email) {
+    await adminDb.runTransaction(async (transaction: Transaction) => await changeEmailAssignmentsToIdAssignments(email, req.data, transaction));
+  }
 
   const decodedToken = req.auth.token as unknown as StudentDecodedIdTokenWithCustomClaims
   await adminAuth.setCustomUserClaims(req.auth.uid, {
