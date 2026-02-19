@@ -190,10 +190,8 @@ export const signUpWithUsernamePassword = onRequest(async (req, res) => {
       if (usernameDoc.exists) {
         throw new Error("Username already taken");
       }
-      await Promise.all([
-        transaction.set(adminDb.collection(Collection.USERNAMES).doc(username), { uid }),
-        transaction.set(adminDb.collection(Collection.USERS).doc(uid), { username, password: pwHash }),
-      ]);
+      transaction.set(adminDb.collection(Collection.USERNAMES).doc(username), { uid });
+      transaction.set(adminDb.collection(Collection.USERS).doc(uid), { username, password: pwHash });
     });
   } catch (error: any) {
     if (user) {
