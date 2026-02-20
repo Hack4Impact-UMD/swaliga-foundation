@@ -7,7 +7,6 @@ import { appsScriptCloudFunctions } from "./googleAppsScript";
 
 exports.setRole = authFunctions.setRole;
 exports.onStudentAccountCreated = authFunctions.onStudentAccountCreated;
-exports.onStudentAccountEmailChanged = authFunctions.onStudentAccountEmailChanged;
 exports.handleEmailChange = authFunctions.handleEmailChange
 exports.checkRefreshTokenValidity = authFunctions.checkRefreshTokenValidity;
 exports.handleOAuth2Code = authFunctions.handleOAuth2Code;
