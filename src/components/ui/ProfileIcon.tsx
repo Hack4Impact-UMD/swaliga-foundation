@@ -13,7 +13,7 @@ export default function ProfileIcon({ size = 35 }: ProfileIconProps) {
     ?.split(" ")
     .map((name) => name[0])
     .join("")
-    .toUpperCase();
+    .toUpperCase() ?? "G";
 
   return photoURL ? (
     <Image
