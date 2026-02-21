@@ -42,6 +42,8 @@ import {
   MIN_NUM_PARENTS_GUARDIANS,
 } from "@/constants/constants";
 import Spinner from "@/components/ui/Spinner";
+import { isDigit } from "@/utils/utils";
+
 type EditAccountFormProps =
   | {
       mode: "CREATE";
@@ -404,6 +406,17 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       setIsSubmitting(false);
       return;
     }
+    
+    let e164phoneNumber: string | undefined;
+    if (phone) {
+      e164phoneNumber = "+1";
+      for (let i = 0; i < phone.length; i++) {
+        if (isDigit(phone[i])) {
+          e164phoneNumber += phone;
+        }
+      }
+    }
+
     try {
       if (!auth.user) throw new Error("No authenticated user found.");
       const studentId = await runTransaction(db, async (transaction) => {
@@ -433,7 +446,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           },
           gender: gender === "Other" ? genderOtherText : gender,
           ...(auth.user?.email ? { email: auth.user.email } : {}),
-          ...(phone ? { phone } : {}),
+          phone: e164phoneNumber,
           uid: auth.user!.uid,
           role: "STUDENT",
           dateOfBirth,
