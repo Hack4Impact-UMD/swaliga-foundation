@@ -42,7 +42,7 @@ import {
   MIN_NUM_PARENTS_GUARDIANS,
 } from "@/constants/constants";
 import Spinner from "@/components/ui/Spinner";
-import { isDigit } from "@/utils/utils";
+import { toE164Phone } from "@/utils/utils";
 
 type EditAccountFormProps =
   | {
@@ -406,16 +406,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       setIsSubmitting(false);
       return;
     }
-    
-    let e164phoneNumber: string | undefined;
-    if (phone) {
-      e164phoneNumber = "+1";
-      for (let i = 0; i < phone.length; i++) {
-        if (isDigit(phone[i])) {
-          e164phoneNumber += phone;
-        }
-      }
-    }
 
     try {
       if (!auth.user) throw new Error("No authenticated user found.");
@@ -446,7 +436,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           },
           gender: gender === "Other" ? genderOtherText : gender,
           ...(auth.user?.email ? { email: auth.user.email } : {}),
-          phone: e164phoneNumber,
+          ...(phone ? { phone: toE164Phone(phone) } : {}),
           uid: auth.user!.uid,
           role: "STUDENT",
           dateOfBirth,
@@ -467,7 +457,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
                 ? guardianGenderOtherTexts[index]
                 : guardianGenders[index],
             email: guardianEmails[index].toLowerCase(),
-            ...(guardianPhones[index] ? { phone: guardianPhones[index] } : {}),
+            ...(guardianPhones[index] ? { phone: toE164Phone(guardianPhones[index]) } : {}),
             relationship:
               guardianRelationships[index] === "Other"
                 ? guardianRelationshipOtherTexts[index]
