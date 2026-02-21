@@ -432,7 +432,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
             lastName,
           },
           gender: gender === "Other" ? genderOtherText : gender,
-          email: auth.user!.email!,
+          email: auth.user?.email || undefined,
           ...(phone ? { phone } : {}),
           uid: auth.user!.uid,
           role: "STUDENT",
