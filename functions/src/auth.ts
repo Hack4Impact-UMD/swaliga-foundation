@@ -9,6 +9,8 @@ import { Credentials, OAuth2Client, TokenPayload } from 'google-auth-library';
 import moment from 'moment';
 import { compare, hash } from "bcrypt";
 import { UserRecord } from 'firebase-admin/auth';
+import { getFullName } from '@/types/user-types';
+import { Student } from '@/types/user-types';
 
 export const setRole = onCall(async (req) => {
   if (!req.auth) {
@@ -50,16 +52,24 @@ export const onStudentAccountCreated = onCall(async (req) => {
     throw new Error("Student account already exists for this user");
   }
 
-  const email = req.auth.token.email;
-  if (email) {
-    await adminDb.runTransaction(async (transaction: Transaction) => await changeEmailAssignmentsToIdAssignments(email, req.data, transaction));
+  const studentQuery = await adminDb.collection(Collection.STUDENTS).where("uid", "==", req.auth.uid).limit(1).get();
+  if (studentQuery.docs.length === 0) {
+    throw new HttpsError("not-found", "User not found");
   }
+  const student = studentQuery.docs[0].data() as Student;
 
   const decodedToken = req.auth.token as unknown as StudentDecodedIdTokenWithCustomClaims
-  await adminAuth.setCustomUserClaims(req.auth.uid, {
-    role: decodedToken.role,
-    studentId: req.data,
-  } satisfies StudentCustomClaims);
+  await Promise.all([
+    adminAuth.updateUser(req.auth.uid, {
+      displayName: getFullName(student.name),
+      email: student.email ?? undefined,
+      phoneNumber: student.phone
+    }),
+    adminAuth.setCustomUserClaims(req.auth.uid, {
+      role: decodedToken.role,
+      studentId: req.data,
+    } satisfies StudentCustomClaims)
+  ])
 });
 
 export const handleEmailChange = onCall(async (req) => {
