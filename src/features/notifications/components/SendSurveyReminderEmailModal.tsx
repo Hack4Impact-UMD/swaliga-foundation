@@ -45,7 +45,7 @@ export default function SendSurveyReminderEmailModal(
         functions,
         "sendEmail"
       )({
-        bcc: receivingStudents.map((student) => student.email),
+        bcc: receivingStudents.map((student) => student.email).filter(email => typeof email === "string"),
         subject: `Reminder to Complete Survey "${survey.name}"`,
         html: emailTemplate,
       } satisfies Mail.Options);

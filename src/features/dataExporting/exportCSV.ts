@@ -27,7 +27,7 @@ function getStudentSummaryRow(student: Student, maxNumGuardians: number): string
   return [
     student.id,
     getFullName(student.name),
-    student.email,
+    student.email || "N/A",
     student.phone || "N/A",
     student.gender,
     `"${student.ethnicity.join(', ')}"`,
