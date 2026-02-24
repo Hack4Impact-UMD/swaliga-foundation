@@ -593,7 +593,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           placeholder="YYYY/MM/DD"
           value={joinedSwaligaDate}
           onChange={(e) => setJoinedSwaligaDate(formatDate(e.target.value))}
-          required
           icon={<FaCalendar />}
         />
       </div>
@@ -656,7 +655,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="Address Line 1"
           value={addressLine1}
           onChange={(e) => setAddressLine1(e.target.value)}
-          required
           icon={<FaHouse />}
           maxLength={100}
         />
@@ -675,7 +673,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="City"
           value={city}
           onChange={(e) => setCity(e.target.value)}
-          required
           icon={<FaCity />}
           maxLength={50}
         />
@@ -683,7 +680,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="State"
           value={state}
           onChange={(e) => setState(e.target.value)}
-          required
           icon={<FaLandmark />}
           maxLength={50}
         />
@@ -691,7 +687,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="Country"
           value={country}
           onChange={(e) => setCountry(e.target.value)}
-          required
           icon={<FaFlag />}
           maxLength={50}
         />
@@ -699,7 +694,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="Zip Code"
           value={zipCode}
           onChange={(e) => setZipCode(formatZipCode(e.target.value))}
-          required
           icon={<FaMapPin />}
         />
       </div>
@@ -718,7 +712,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="Graduation Year"
           value={gradYear}
           onChange={(e) => setGradYear(formatYear(e.target.value))}
-          required
           icon={<FaGraduationCap />}
         />
         <TextField
@@ -732,7 +725,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
               setGPA(e.target.value);
             }
           }}
-          required
           icon={<FaGraduationCap />}
         />
       </div>
@@ -760,7 +752,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="School City"
           value={schoolCity}
           onChange={(e) => setSchoolCity(e.target.value)}
-          required
           icon={<FaCity />}
           maxLength={50}
         />
@@ -768,7 +759,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="School State"
           value={schoolState}
           onChange={(e) => setSchoolState(e.target.value)}
-          required
           icon={<FaLandmark />}
           maxLength={50}
         />
@@ -776,7 +766,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="School Country"
           value={schoolCountry}
           onChange={(e) => setSchoolCountry(e.target.value)}
-          required
           icon={<FaFlag />}
           maxLength={50}
         />
@@ -784,7 +773,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="School Zip Code"
           value={schoolZipCode}
           onChange={(e) => setSchoolZipCode(formatZipCode(e.target.value))}
-          required
           icon={<FaMapPin />}
         />
       </div>
@@ -853,7 +841,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
                   prev.map((email, i) => (i === index ? e.target.value : email))
                 )
               }
-              required
               icon={<FaEnvelope />}
               maxLength={320}
             />
