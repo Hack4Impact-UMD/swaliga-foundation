@@ -36,7 +36,12 @@ export default function StudentsPage() {
     {
       name: "Email",
       getValue: (student: Student) => student.email,
-      sortFunc: (a, b) => a.email.localeCompare(b.email),
+      sortFunc: (a, b) => {
+        if (!a.email && !b.email) return 0;
+        else if (!a.email) return 1;
+        else if (!b.email) return -1;
+        return a.email.localeCompare(b.email)
+      },
     },
     {
       name: "Address",
@@ -69,7 +74,7 @@ export default function StudentsPage() {
     },
     {
       name: "Email",
-      getValue: (student: Student) => student.email,
+      getValue: (student: Student) => student.email ?? "N/A",
     },
     {
       name: "Address",

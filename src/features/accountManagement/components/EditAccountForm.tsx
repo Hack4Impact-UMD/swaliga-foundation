@@ -34,14 +34,20 @@ import moment from "moment";
 import { doc, runTransaction } from "firebase/firestore";
 import { db, functions } from "@/config/firebaseConfig";
 import { Collection, Document } from "@/data/firestore/utils";
-import { createStudent, updateStudent } from "@/data/firestore/students";
-import { httpsCallable } from "firebase/functions";
+import {
+  createStudent,
+  deleteStudent,
+  updateStudent,
+} from "@/data/firestore/students";
+import { FunctionsError, httpsCallable } from "firebase/functions";
 import {
   FIRST_STUDENT_ID,
   MAX_NUM_PARENTS_GUARDIANS,
   MIN_NUM_PARENTS_GUARDIANS,
 } from "@/constants/constants";
 import Spinner from "@/components/ui/Spinner";
+import { toE164Phone } from "@/utils/utils";
+
 type EditAccountFormProps =
   | {
       mode: "CREATE";
@@ -57,20 +63,20 @@ export default function EditAccountForm(props: EditAccountFormProps) {
 
   // student info fields
   const [firstName, setFirstName] = useState<string>(
-    mode === "EDIT" ? student.name.firstName : ""
+    mode === "EDIT" ? student.name.firstName : "",
   );
   const [middleName, setMiddleName] = useState<string>(
-    mode === "EDIT" ? student.name.middleName || "" : ""
+    mode === "EDIT" ? student.name.middleName || "" : "",
   );
   const [lastName, setLastName] = useState<string>(
-    mode === "EDIT" ? student.name.lastName : ""
+    mode === "EDIT" ? student.name.lastName : "",
   );
   const [gender, setGender] = useState<Gender>(
     mode === "EDIT"
       ? genderValues.includes(student.gender)
         ? student.gender
         : "Other"
-      : genderValues[0]
+      : genderValues[0],
   );
   const [genderOtherText, setGenderOtherText] = useState<string>(() => {
     if (mode === "CREATE") {
@@ -84,73 +90,73 @@ export default function EditAccountForm(props: EditAccountFormProps) {
     return "";
   });
   const [phone, setPhone] = useState<string>(
-    mode === "EDIT" ? student.phone || "" : ""
+    mode === "EDIT" ? student.phone || "" : "",
   );
   const [dateOfBirth, setDateOfBirth] = useState<string>(
-    mode === "EDIT" ? moment(student.dateOfBirth).format("YYYY/MM/DD") : ""
+    mode === "EDIT" ? moment(student.dateOfBirth).format("YYYY/MM/DD") : "",
   );
   const [joinedSwaligaDate, setJoinedSwaligaDate] = useState<string>(
     mode === "EDIT"
       ? moment(student.joinedSwaligaDate).format("YYYY/MM/DD")
-      : ""
+      : "",
   );
   const [ethnicity, setEthnicity] = useState<Ethnicity[]>(
     mode === "EDIT"
       ? student.ethnicity.map((ethnicity) =>
-          ethnicityValues.includes(ethnicity) ? ethnicity : "Other"
+          ethnicityValues.includes(ethnicity) ? ethnicity : "Other",
         )
-      : []
+      : [],
   );
   const [ethnicityOtherText, setEthnicityOtherText] = useState<string>(
     mode === "EDIT"
       ? student.ethnicity.filter(
-          (ethnicity) => !ethnicityValues.includes(ethnicity)
+          (ethnicity) => !ethnicityValues.includes(ethnicity),
         )[0] || ""
-      : ""
+      : "",
   );
 
   // student address fields
   const [addressLine1, setAddressLine1] = useState<string>(
-    mode === "EDIT" ? student.address.addressLine1 : ""
+    mode === "EDIT" ? student.address.addressLine1 : "",
   );
   const [addressLine2, setAddressLine2] = useState<string>(
-    mode === "EDIT" ? student.address.addressLine2 || "" : ""
+    mode === "EDIT" ? student.address.addressLine2 || "" : "",
   );
   const [city, setCity] = useState<string>(
-    mode === "EDIT" ? student.address.city : ""
+    mode === "EDIT" ? student.address.city : "",
   );
   const [state, setState] = useState<string>(
-    mode === "EDIT" ? student.address.state : ""
+    mode === "EDIT" ? student.address.state : "",
   );
   const [country, setCountry] = useState<string>(
-    mode === "EDIT" ? student.address.country : ""
+    mode === "EDIT" ? student.address.country : "",
   );
   const [zipCode, setZipCode] = useState<string>(
-    mode === "EDIT" ? String(student.address.zipCode) : ""
+    mode === "EDIT" ? String(student.address.zipCode) : "",
   );
 
   // guardian fields
   const [guardianFirstNames, setGuardianFirstNames] = useState<string[]>(
     mode === "EDIT"
       ? student.guardians.map((g) => g.name.firstName)
-      : Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
+      : Array(MIN_NUM_PARENTS_GUARDIANS).fill(""),
   );
   const [guardianMiddleNames, setGuardianMiddleNames] = useState<string[]>(
     mode === "EDIT"
       ? student.guardians.map((g) => g.name.middleName || "")
-      : Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
+      : Array(MIN_NUM_PARENTS_GUARDIANS).fill(""),
   );
   const [guardianLastNames, setGuardianLastNames] = useState<string[]>(
     mode === "EDIT"
       ? student.guardians.map((g) => g.name.lastName)
-      : Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
+      : Array(MIN_NUM_PARENTS_GUARDIANS).fill(""),
   );
   const [guardianGenders, setGuardianGenders] = useState<Gender[]>(
     mode === "EDIT"
       ? student.guardians.map((g) =>
-          genderValues.includes(g.gender) ? g.gender : "Other"
+          genderValues.includes(g.gender) ? g.gender : "Other",
         )
-      : Array(MIN_NUM_PARENTS_GUARDIANS).fill(genderValues[0])
+      : Array(MIN_NUM_PARENTS_GUARDIANS).fill(genderValues[0]),
   );
   const [guardianGenderOtherTexts, setGuardianGenderOtherTexts] = useState<
     string[]
@@ -159,19 +165,19 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       ? student.guardians.map((g) =>
           genderValues.includes(g.gender) && g.gender !== "Other"
             ? ""
-            : g.gender
+            : g.gender,
         )
-      : Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
+      : Array(MIN_NUM_PARENTS_GUARDIANS).fill(""),
   );
   const [guardianEmails, setGuardianEmails] = useState<string[]>(
     mode === "EDIT"
       ? student.guardians.map((g) => g.email)
-      : Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
+      : Array(MIN_NUM_PARENTS_GUARDIANS).fill(""),
   );
   const [guardianPhones, setGuardianPhones] = useState<string[]>(
     mode === "EDIT"
       ? student.guardians.map((g) => g.phone || "")
-      : Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
+      : Array(MIN_NUM_PARENTS_GUARDIANS).fill(""),
   );
   const [guardianRelationships, setGuardianRelationships] = useState<
     GuardianRelationship[]
@@ -180,9 +186,9 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       ? student.guardians.map((g) =>
           guardianRelationshipValues.includes(g.relationship)
             ? g.relationship
-            : "Other"
+            : "Other",
         )
-      : Array(MIN_NUM_PARENTS_GUARDIANS).fill(guardianRelationshipValues[0])
+      : Array(MIN_NUM_PARENTS_GUARDIANS).fill(guardianRelationshipValues[0]),
   );
   const [guardianRelationshipOtherTexts, setGuardianRelationshipOtherTexts] =
     useState<string[]>(
@@ -191,38 +197,38 @@ export default function EditAccountForm(props: EditAccountFormProps) {
             guardianRelationshipValues.includes(g.relationship) &&
             g.relationship !== "Other"
               ? ""
-              : g.relationship
+              : g.relationship,
           )
-        : Array(MIN_NUM_PARENTS_GUARDIANS).fill("")
+        : Array(MIN_NUM_PARENTS_GUARDIANS).fill(""),
     );
 
   // school fields
   const [schoolName, setSchoolName] = useState<string>(
-    mode === "EDIT" ? student.school.name : ""
+    mode === "EDIT" ? student.school.name : "",
   );
   const [gradYear, setGradYear] = useState<string>(
-    mode === "EDIT" ? String(student.school.gradYear) : ""
+    mode === "EDIT" ? String(student.school.gradYear) : "",
   );
   const [gpa, setGPA] = useState<string>(
-    mode === "EDIT" ? String(student.school.gpa) : ""
+    mode === "EDIT" ? String(student.school.gpa) : "",
   );
   const [schoolAddressLine1, setSchoolAddressLine1] = useState<string>(
-    mode === "EDIT" ? student.school.address.addressLine1 : ""
+    mode === "EDIT" ? student.school.address.addressLine1 : "",
   );
   const [schoolAddressLine2, setSchoolAddressLine2] = useState<string>(
-    mode === "EDIT" ? student.school.address.addressLine2 || "" : ""
+    mode === "EDIT" ? student.school.address.addressLine2 || "" : "",
   );
   const [schoolCity, setSchoolCity] = useState<string>(
-    mode === "EDIT" ? student.school.address.city : ""
+    mode === "EDIT" ? student.school.address.city : "",
   );
   const [schoolState, setSchoolState] = useState<string>(
-    mode === "EDIT" ? student.school.address.state : ""
+    mode === "EDIT" ? student.school.address.state : "",
   );
   const [schoolCountry, setSchoolCountry] = useState<string>(
-    mode === "EDIT" ? student.school.address.country : ""
+    mode === "EDIT" ? student.school.address.country : "",
   );
   const [schoolZipCode, setSchoolZipCode] = useState<string>(
-    mode === "EDIT" ? String(student.school.address.zipCode) : ""
+    mode === "EDIT" ? String(student.school.address.zipCode) : "",
   );
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -301,7 +307,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
     setGuardianPhones((prev) => prev.filter((_, i) => i !== index));
     setGuardianRelationships((prev) => prev.filter((_, i) => i !== index));
     setGuardianRelationshipOtherTexts((prev) =>
-      prev.filter((_, i) => i !== index)
+      prev.filter((_, i) => i !== index),
     );
   };
 
@@ -335,7 +341,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           guardianEmails[i] &&
           (guardianGenders[i] !== "Other" || guardianGenderOtherTexts[i]) &&
           (guardianRelationships[i] !== "Other" ||
-            guardianRelationshipOtherTexts[i])
+            guardianRelationshipOtherTexts[i]),
       )
     ) {
       errors.push("At least 1 required field is empty.");
@@ -344,7 +350,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
     const phoneRegex = /^\(\d{3}\)\s\d{3}-\d{4}$/;
     if (phone && !phoneRegex.test(phone)) {
       errors.push(
-        "The Phone field should either be empty or contain a valid phone number in the format (XXX)-XXX-XXXX."
+        "The Phone field should either be empty or contain a valid phone number in the format (XXX)-XXX-XXXX.",
       );
     }
 
@@ -356,7 +362,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
     const joinedSwaligaDateMoment = moment(joinedSwaligaDate, "YYYY/MM/DD");
     if (!joinedSwaligaDateMoment.isValid()) {
       errors.push(
-        "Valid date for when you joined the Swaliga Foundation must be in the format YYYY/MM/DD."
+        "Valid date for when you joined the Swaliga Foundation must be in the format YYYY/MM/DD.",
       );
     }
 
@@ -388,7 +394,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       !guardianPhones.every((phone) => phone === "" || phoneRegex.test(phone))
     ) {
       errors.push(
-        "At least 1 parent/guardian phone number is invalid. Either omit the phone number of provide a valid phone number in the format (XXX)-XXX-XXXX."
+        "At least 1 parent/guardian phone number is invalid. Either omit the phone number of provide a valid phone number in the format (XXX)-XXX-XXXX.",
       );
     }
 
@@ -404,99 +410,82 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       setIsSubmitting(false);
       return;
     }
+
+    let studentId: string | null = null;
     try {
       if (!auth.user) throw new Error("No authenticated user found.");
-      const studentId = await runTransaction(db, async (transaction) => {
-        if (mode === "CREATE") {
-          const studentIdRef = doc(
-            db,
-            Collection.METADATA,
-            Document.NEXT_STUDENT_ID
-          );
-          var studentId = `${
-            (await transaction.get(studentIdRef)).data()?.nextStudentId ||
-            FIRST_STUDENT_ID
-          }`;
-          await transaction.set(studentIdRef, {
-            nextStudentId: Number(studentId) + 1,
-          });
-        } else {
-          var studentId = student.id;
-        }
-
-        const studentData: Student = {
-          id: studentId,
+      const studentData: Omit<Student, 'id'> = {
+        name: {
+          firstName,
+          ...(middleName.trim() ? { middleName: middleName.trim() } : {}),
+          lastName,
+        },
+        gender: gender === "Other" ? genderOtherText : gender,
+        ...(auth.user?.email ? { email: auth.user.email } : {}),
+        ...(phone ? { phone: toE164Phone(phone) } : {}),
+        uid: auth.user!.uid,
+        role: "STUDENT",
+        dateOfBirth,
+        joinedSwaligaDate,
+        ethnicity: ethnicity.map((eth) =>
+          eth === "Other" ? ethnicityOtherText : eth,
+        ),
+        guardians: guardianFirstNames.map((_, index) => ({
           name: {
-            firstName,
-            ...(middleName.trim() ? { middleName: middleName.trim() } : {}),
-            lastName,
-          },
-          gender: gender === "Other" ? genderOtherText : gender,
-          email: auth.user!.email!,
-          ...(phone ? { phone } : {}),
-          uid: auth.user!.uid,
-          role: "STUDENT",
-          dateOfBirth,
-          joinedSwaligaDate,
-          ethnicity: ethnicity.map((eth) =>
-            eth === "Other" ? ethnicityOtherText : eth
-          ),
-          guardians: guardianFirstNames.map((_, index) => ({
-            name: {
-              firstName: guardianFirstNames[index],
-              ...(guardianMiddleNames[index].trim()
-                ? { middleName: guardianMiddleNames[index].trim() }
-                : {}),
-              lastName: guardianLastNames[index],
-            },
-            gender:
-              guardianGenders[index] === "Other"
-                ? guardianGenderOtherTexts[index]
-                : guardianGenders[index],
-            email: guardianEmails[index].toLowerCase(),
-            ...(guardianPhones[index] ? { phone: guardianPhones[index] } : {}),
-            relationship:
-              guardianRelationships[index] === "Other"
-                ? guardianRelationshipOtherTexts[index]
-                : guardianRelationships[index],
-          })),
-          address: {
-            addressLine1,
-            ...(addressLine2.trim()
-              ? { addressLine2: addressLine2.trim() }
+            firstName: guardianFirstNames[index],
+            ...(guardianMiddleNames[index].trim()
+              ? { middleName: guardianMiddleNames[index].trim() }
               : {}),
-            city,
-            state,
-            country,
-            zipCode: Number(zipCode),
+            lastName: guardianLastNames[index],
           },
-          school: {
-            name: schoolName,
-            address: {
-              addressLine1: schoolAddressLine1,
-              ...(schoolAddressLine2.trim()
-                ? { addressLine2: schoolAddressLine2.trim() }
-                : {}),
-              city: schoolCity,
-              state: schoolState,
-              country: schoolCountry,
-              zipCode: Number(schoolZipCode),
-            },
-            gradYear: Number(gradYear),
-            gpa: parseFloat(gpa),
+          gender:
+            guardianGenders[index] === "Other"
+              ? guardianGenderOtherTexts[index]
+              : guardianGenders[index],
+          email: guardianEmails[index].toLowerCase(),
+          ...(guardianPhones[index]
+            ? { phone: toE164Phone(guardianPhones[index]) }
+            : {}),
+          relationship:
+            guardianRelationships[index] === "Other"
+              ? guardianRelationshipOtherTexts[index]
+              : guardianRelationships[index],
+        })),
+        address: {
+          addressLine1,
+          ...(addressLine2.trim() ? { addressLine2: addressLine2.trim() } : {}),
+          city,
+          state,
+          country,
+          zipCode: Number(zipCode),
+        },
+        school: {
+          name: schoolName,
+          address: {
+            addressLine1: schoolAddressLine1,
+            ...(schoolAddressLine2.trim()
+              ? { addressLine2: schoolAddressLine2.trim() }
+              : {}),
+            city: schoolCity,
+            state: schoolState,
+            country: schoolCountry,
+            zipCode: Number(schoolZipCode),
           },
-        };
-        mode === "EDIT"
-          ? await updateStudent(student.id, studentData, transaction)
-          : await createStudent(studentData, transaction);
-        return studentData.id;
-      });
-      if (mode === "CREATE") {
-        await httpsCallable(functions, "onStudentAccountCreated")(studentId);
-        await auth.user!.getIdToken(true);
+          gradYear: Number(gradYear),
+          gpa: parseFloat(gpa),
+        },
+      };
+      
+      switch (mode) {
+        case "CREATE":
+          await httpsCallable(functions, "createStudent")(studentData);
+          await auth.user!.getIdToken(true);
+          break;
+        case "EDIT":
+          await updateStudent(student.id, { id: student.id, ...studentData });
       }
       setSuccess(
-        `Account ${mode === "CREATE" ? "created" : "updated"} successfully!`
+        `Account ${mode === "CREATE" ? "created" : "updated"} successfully!`,
       );
       setIsSubmitting(false);
     } catch (error) {
@@ -567,7 +556,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
         <TextField
           label="Email"
           value={auth.user?.email || ""}
-          required
+          placeholder="No email was used to login to this account."
           disabled
           icon={<FaEnvelope />}
         />
@@ -813,7 +802,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
               value={guardianFirstNames[index]}
               onChange={(e) =>
                 setGuardianFirstNames((prev) =>
-                  prev.map((name, i) => (i === index ? e.target.value : name))
+                  prev.map((name, i) => (i === index ? e.target.value : name)),
                 )
               }
               required
@@ -825,7 +814,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
               value={guardianMiddleNames[index]}
               onChange={(e) =>
                 setGuardianMiddleNames((prev) =>
-                  prev.map((name, i) => (i === index ? e.target.value : name))
+                  prev.map((name, i) => (i === index ? e.target.value : name)),
                 )
               }
               icon={<FaAddressCard />}
@@ -836,7 +825,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
               value={guardianLastNames[index]}
               onChange={(e) =>
                 setGuardianLastNames((prev) =>
-                  prev.map((name, i) => (i === index ? e.target.value : name))
+                  prev.map((name, i) => (i === index ? e.target.value : name)),
                 )
               }
               required
@@ -850,7 +839,9 @@ export default function EditAccountForm(props: EditAccountFormProps) {
               value={guardianEmails[index]}
               onChange={(e) =>
                 setGuardianEmails((prev) =>
-                  prev.map((email, i) => (i === index ? e.target.value : email))
+                  prev.map((email, i) =>
+                    i === index ? e.target.value : email,
+                  ),
                 )
               }
               required
@@ -864,8 +855,8 @@ export default function EditAccountForm(props: EditAccountFormProps) {
               onChange={(e) =>
                 setGuardianPhones((prev) =>
                   prev.map((phone, i) =>
-                    i === index ? formatPhone(e.target.value) : phone
-                  )
+                    i === index ? formatPhone(e.target.value) : phone,
+                  ),
                 )
               }
               icon={<FaPhone />}
@@ -879,14 +870,14 @@ export default function EditAccountForm(props: EditAccountFormProps) {
               onChange={(e) =>
                 setGuardianGenders((prev) =>
                   prev.map((gender, i) =>
-                    i === index ? (e.target.value as Gender) : gender
-                  )
+                    i === index ? (e.target.value as Gender) : gender,
+                  ),
                 )
               }
               otherText={guardianGenderOtherTexts[index]}
               onOtherTextChange={(e) =>
                 setGuardianGenderOtherTexts((prev) =>
-                  prev.map((text, i) => (i === index ? e.target.value : text))
+                  prev.map((text, i) => (i === index ? e.target.value : text)),
                 )
               }
               icon={<FaVenusMars />}
@@ -901,14 +892,14 @@ export default function EditAccountForm(props: EditAccountFormProps) {
                   prev.map((relationship, i) =>
                     i === index
                       ? (e.target.value as GuardianRelationship)
-                      : relationship
-                  )
+                      : relationship,
+                  ),
                 )
               }
               otherText={guardianRelationshipOtherTexts[index]}
               onOtherTextChange={(e) =>
                 setGuardianRelationshipOtherTexts((prev) =>
-                  prev.map((text, i) => (i === index ? e.target.value : text))
+                  prev.map((text, i) => (i === index ? e.target.value : text)),
                 )
               }
               icon={<RiParentFill />}
