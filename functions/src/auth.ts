@@ -1,5 +1,6 @@
 import { adminAuth, adminDb } from './config/firebaseAdminConfig';
 import { Collection } from './types/serverTypes';
+import { Document } from '@/data/firestore/utils';
 import { StudentCustomClaims, StudentDecodedIdTokenWithCustomClaims } from '@/types/auth-types';
 import { SurveyResponseStudentEmailID } from '@/types/survey-types';
 import { FieldValue, Transaction } from 'firebase-admin/firestore';
@@ -11,6 +12,7 @@ import { compare, hash } from "bcrypt";
 import { UserRecord } from 'firebase-admin/auth';
 import { getFullName } from '@/types/user-types';
 import { Student } from '@/types/user-types';
+import { FIRST_STUDENT_ID } from '@/constants/constants';
 
 export const setRole = onCall(async (req) => {
   if (!req.auth) {
@@ -43,33 +45,39 @@ async function changeEmailAssignmentsToIdAssignments(email: string, studentId: s
   docs.forEach(doc => transaction.update(surveysCollectionRef.doc(doc.surveyId).collection(Collection.ASSIGNMENTS).doc(doc.id), updates));
 }
 
-export const onStudentAccountCreated = onCall(async (req) => {
+export const createStudent = onCall(async (req) => {
   if (!req.auth) {
     throw new Error("Unauthorized");
   } else if (req.auth.token.role !== 'STUDENT') {
     throw new Error("Only STUDENT role can create student accounts")
-  } else if (req.auth.token.studentId) {
-    throw new Error("Student account already exists for this user");
   }
 
-  const studentQuery = await adminDb.collection(Collection.STUDENTS).where("uid", "==", req.auth.uid).limit(1).get();
-  if (studentQuery.docs.length === 0) {
-    throw new HttpsError("not-found", "User not found");
-  }
-  const student = studentQuery.docs[0].data() as Student;
+  const studentDto: Omit<Student, 'id'> = req.data;
+  const studentId = await adminDb.runTransaction(async (transaction: Transaction) => {
+    const nextStudentId: number = (await transaction.get(adminDb.collection(Collection.METADATA).doc(Document.NEXT_STUDENT_ID))).data()?.nextStudentId ?? FIRST_STUDENT_ID;
+    const student: Student = { id: String(nextStudentId), ...studentDto };
+    transaction.set(adminDb.collection(Collection.STUDENTS).doc(String(nextStudentId)), student);
+    transaction.set(adminDb.collection(Collection.METADATA).doc(Document.NEXT_STUDENT_ID), { nextStudentId: nextStudentId + 1 }, { merge: true });
+    return nextStudentId;
+  });
 
-  const decodedToken = req.auth.token as unknown as StudentDecodedIdTokenWithCustomClaims
-  await Promise.all([
-    adminAuth.updateUser(req.auth.uid, {
-      displayName: getFullName(student.name),
-      email: student.email ?? undefined,
-      phoneNumber: student.phone
-    }),
-    adminAuth.setCustomUserClaims(req.auth.uid, {
-      role: decodedToken.role,
-      studentId: req.data,
-    } satisfies StudentCustomClaims)
-  ])
+  try {
+    const student: Student = { ...studentDto, id: String(studentId) };
+    const decodedToken = req.auth.token as unknown as StudentDecodedIdTokenWithCustomClaims
+    await Promise.all([
+      adminAuth.updateUser(req.auth.uid, {
+        displayName: getFullName(student.name),
+        email: student.email ?? undefined,
+        phoneNumber: student.phone
+      }),
+      adminAuth.setCustomUserClaims(req.auth.uid, {
+        role: decodedToken.role,
+        studentId: student.id,
+      } satisfies StudentCustomClaims)
+    ])
+  } catch {
+    adminDb.collection(Collection.STUDENTS).doc(String(studentId)).delete();
+  }
 });
 
 export const handleEmailChange = onCall(async (req) => {
