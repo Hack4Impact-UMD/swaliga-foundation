@@ -61,23 +61,46 @@ export const createStudent = onCall(async (req) => {
     return nextStudentId;
   });
 
-  try {
-    const student: Student = { ...studentDto, id: String(studentId) };
-    const decodedToken = req.auth.token as unknown as StudentDecodedIdTokenWithCustomClaims
-    await Promise.all([
+  const student: Student = { id: String(studentId), ...studentDto };
+  const decodedToken = req.auth.token as unknown as StudentDecodedIdTokenWithCustomClaims;
+  const oldUser = await adminAuth.getUser(req.auth.uid);
+  const [userResponse, claimsResponse] = await Promise.allSettled([
+    adminAuth.updateUser(req.auth.uid, {
+      displayName: getFullName(student.name),
+      email: student.email ?? undefined,
+      phoneNumber: student.phone
+    }),
+    adminAuth.setCustomUserClaims(req.auth.uid, {
+      role: decodedToken.role,
+      studentId: student.id
+    } satisfies StudentCustomClaims)
+  ])
+
+  const status = userResponse.status === "fulfilled" && claimsResponse.status === "fulfilled" ? 'fulfilled' : 'rejected';
+
+  if (status === "fulfilled") { return; }
+
+  const rollbackPromises: Promise<unknown>[] = [adminDb.collection(Collection.STUDENTS).doc(String(studentId)).delete()];
+  if (userResponse.status === "fulfilled") {
+    rollbackPromises.push(
       adminAuth.updateUser(req.auth.uid, {
-        displayName: getFullName(student.name),
-        email: student.email ?? undefined,
-        phoneNumber: student.phone
-      }),
+        displayName: oldUser.displayName,
+        email: oldUser.email,
+        phoneNumber: oldUser.phoneNumber
+      })
+    )
+  }
+  if (claimsResponse.status === "fulfilled") {
+    rollbackPromises.push(
       adminAuth.setCustomUserClaims(req.auth.uid, {
         role: decodedToken.role,
-        studentId: student.id,
-      } satisfies StudentCustomClaims)
-    ])
-  } catch {
-    adminDb.collection(Collection.STUDENTS).doc(String(studentId)).delete();
+        studentId: decodedToken.studentId
+      })
+    )
   }
+
+  await Promise.all(rollbackPromises);
+  throw new HttpsError("internal", "Unable to complete student creation process");
 });
 
 export const handleEmailChange = onCall(async (req) => {
