@@ -733,7 +733,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="School Address Line 1"
           value={schoolAddressLine1}
           onChange={(e) => setSchoolAddressLine1(e.target.value)}
-          required
           icon={<FaHouse />}
           maxLength={100}
         />
