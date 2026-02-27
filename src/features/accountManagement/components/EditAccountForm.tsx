@@ -579,7 +579,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
         <TextField
           label="Email"
           value={auth.user?.email || ""}
-          required
           disabled
           icon={<FaEnvelope />}
         />
