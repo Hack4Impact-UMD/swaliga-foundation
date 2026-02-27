@@ -420,7 +420,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
 
     try {
       if (!auth.user) throw new Error("No authenticated user found.");
-      const studentData: Omit<Student, 'id'> = {
+      const studentDTO: Omit<Student, 'id'> = {
         name: {
           firstName,
           ...(middleName.trim() ? { middleName: middleName.trim() } : {}),
@@ -448,7 +448,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
             guardianGenders[index] === "Other"
               ? guardianGenderOtherTexts[index]
               : guardianGenders[index],
-          email: guardianEmails[index].toLowerCase(),
+          ...(guardianEmails[index] ? { email: guardianEmails[index].toLowerCase() } : {}),
           ...(guardianPhones[index]
             ? { phone: toE164Phone(guardianPhones[index]) }
             : {}),
@@ -457,39 +457,43 @@ export default function EditAccountForm(props: EditAccountFormProps) {
               ? guardianRelationshipOtherTexts[index]
               : guardianRelationships[index],
         })),
-        address: {
-          addressLine1,
-          ...(addressLine2.trim() ? { addressLine2: addressLine2.trim() } : {}),
-          city,
-          state,
-          country,
-          zipCode: Number(zipCode),
-        },
+        ...(addressLine1 ?
+          { address: { 
+            addressLine1,
+            ...(addressLine2.trim() ? { addressLine2: addressLine2.trim() } : {}),
+            city,
+            state,
+            country,
+            zipCode: Number(zipCode)
+          }} : {}),
         school: {
           name: schoolName,
-          address: {
-            addressLine1: schoolAddressLine1,
-            ...(schoolAddressLine2.trim()
+          ...(schoolAddressLine1 ? {
+            address: {
+              addressLine1: schoolAddressLine1,
+                ...(schoolAddressLine2.trim()
               ? { addressLine2: schoolAddressLine2.trim() }
               : {}),
             city: schoolCity,
             state: schoolState,
             country: schoolCountry,
             zipCode: Number(schoolZipCode),
-          },
+
+            }
+          } : {}),
           grade: Number(grade),
-          gradYear: Number(gradYear),
-          gpa: parseFloat(gpa),
+          ...(gradYear ? { gradYear: Number(gradYear) } : {}),
+          ...(gpa ? { gpa: parseFloat(gpa) } : {}),
         },
       };
 
       switch (mode) {
         case "CREATE":
-          await httpsCallable(functions, "createStudent")(studentData);
+          await httpsCallable(functions, "createStudent")(studentDTO);
           await auth.user!.getIdToken(true);
           break;
         case "EDIT":
-          await updateStudent(student.id, { id: student.id, ...studentData });
+          await updateStudent(student.id, { id: student.id, ...studentDTO });
       }
       setSuccess(
         `Account ${mode === "CREATE" ? "created" : "updated"} successfully!`,
