@@ -105,7 +105,7 @@ export default function SurveyPage(props: SurveyPageProps) {
       const student = students.find(
         (student) => student.id === assignment.studentId
       );
-      return student ? student.email : "N/A";
+      return student && student.email ? student.email : "N/A";
     } else if (isSurveyResponseStudentEmailID(assignment)) {
       return assignment.studentEmail;
     }

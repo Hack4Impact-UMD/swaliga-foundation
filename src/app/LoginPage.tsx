@@ -10,7 +10,7 @@ import {
 import { signInWithGoogle } from "@/features/auth/authN/googleAuthN";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import ImageBackgroundPage from "@/components/layout/pages/ImageBackgroundPage";
-import { loginWithUsernamePassword, signUpWithUsernamePassword } from "@/features/auth/authN/usernamePasswordAuth";
+import { loginWithUsernamePassword, signUpWithUsernamePassword } from "@/features/auth/authN/usernamePasswordAuthN";
 import { isEmail } from "@/utils/utils";
 
 export default function LoginPage() {

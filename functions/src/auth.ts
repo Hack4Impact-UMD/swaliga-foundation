@@ -1,5 +1,6 @@
 import { adminAuth, adminDb } from './config/firebaseAdminConfig';
 import { Collection } from './types/serverTypes';
+import { Document } from '@/data/firestore/utils';
 import { StudentCustomClaims, StudentDecodedIdTokenWithCustomClaims } from '@/types/auth-types';
 import { SurveyResponseStudentEmailID } from '@/types/survey-types';
 import { FieldValue, Transaction } from 'firebase-admin/firestore';
@@ -8,7 +9,10 @@ import { getFunctionsURL } from '@/config/utils';
 import { Credentials, OAuth2Client, TokenPayload } from 'google-auth-library';
 import moment from 'moment';
 import { compare, hash } from "bcrypt";
-import { v4 as uuid } from 'uuid';
+import { UserRecord } from 'firebase-admin/auth';
+import { getFullName } from '@/types/user-types';
+import { Student } from '@/types/user-types';
+import { FIRST_STUDENT_ID } from '@/constants/constants';
 
 export const setRole = onCall(async (req) => {
   if (!req.auth) {
@@ -41,22 +45,62 @@ async function changeEmailAssignmentsToIdAssignments(email: string, studentId: s
   docs.forEach(doc => transaction.update(surveysCollectionRef.doc(doc.surveyId).collection(Collection.ASSIGNMENTS).doc(doc.id), updates));
 }
 
-export const onStudentAccountCreated = onCall(async (req) => {
+export const createStudent = onCall(async (req) => {
   if (!req.auth) {
     throw new Error("Unauthorized");
   } else if (req.auth.token.role !== 'STUDENT') {
     throw new Error("Only STUDENT role can create student accounts")
-  } else if (req.auth.token.studentId) {
-    throw new Error("Student account already exists for this user");
   }
 
-  await adminDb.runTransaction(async (transaction: Transaction) => await changeEmailAssignmentsToIdAssignments(req.auth!.token.email!, req.data, transaction));
+  const studentDto: Omit<Student, 'id'> = req.data;
+  const studentId = await adminDb.runTransaction(async (transaction: Transaction) => {
+    const nextStudentId: number = (await transaction.get(adminDb.collection(Collection.METADATA).doc(Document.NEXT_STUDENT_ID))).data()?.nextStudentId ?? FIRST_STUDENT_ID;
+    const student: Student = { id: String(nextStudentId), ...studentDto };
+    transaction.set(adminDb.collection(Collection.STUDENTS).doc(String(nextStudentId)), student);
+    transaction.set(adminDb.collection(Collection.METADATA).doc(Document.NEXT_STUDENT_ID), { nextStudentId: nextStudentId + 1 }, { merge: true });
+    return nextStudentId;
+  });
 
-  const decodedToken = req.auth.token as unknown as StudentDecodedIdTokenWithCustomClaims
-  await adminAuth.setCustomUserClaims(req.auth.uid, {
-    role: decodedToken.role,
-    studentId: req.data,
-  } satisfies StudentCustomClaims);
+  const student: Student = { id: String(studentId), ...studentDto };
+  const decodedToken = req.auth.token as unknown as StudentDecodedIdTokenWithCustomClaims;
+  const oldUser = await adminAuth.getUser(req.auth.uid);
+  const [userResponse, claimsResponse] = await Promise.allSettled([
+    adminAuth.updateUser(req.auth.uid, {
+      displayName: getFullName(student.name),
+      email: student.email ?? undefined,
+      phoneNumber: student.phone
+    }),
+    adminAuth.setCustomUserClaims(req.auth.uid, {
+      role: decodedToken.role,
+      studentId: student.id
+    } satisfies StudentCustomClaims)
+  ])
+
+  const status = userResponse.status === "fulfilled" && claimsResponse.status === "fulfilled" ? 'fulfilled' : 'rejected';
+
+  if (status === "fulfilled") { return; }
+
+  const rollbackPromises: Promise<unknown>[] = [adminDb.collection(Collection.STUDENTS).doc(String(studentId)).delete()];
+  if (userResponse.status === "fulfilled") {
+    rollbackPromises.push(
+      adminAuth.updateUser(req.auth.uid, {
+        displayName: oldUser.displayName,
+        email: oldUser.email,
+        phoneNumber: oldUser.phoneNumber
+      })
+    )
+  }
+  if (claimsResponse.status === "fulfilled") {
+    rollbackPromises.push(
+      adminAuth.setCustomUserClaims(req.auth.uid, {
+        role: decodedToken.role,
+        studentId: decodedToken.studentId
+      })
+    )
+  }
+
+  await Promise.all(rollbackPromises);
+  throw new HttpsError("internal", "Unable to complete student creation process");
 });
 
 export const handleEmailChange = onCall(async (req) => {
@@ -178,33 +222,27 @@ export const signUpWithUsernamePassword = onRequest(async (req, res) => {
   const { username, password } = JSON.parse(req.body);
   const pwHash = await hash(password, 10);
 
-  const uid = uuid();
+  let user: UserRecord | null = null;
   try {
+    user = await adminAuth.createUser({ password });
+    const uid = user.uid;
     await adminDb.runTransaction(async (transaction: Transaction) => {
-      try {
-        await adminAuth.createUser({
-          password,
-          uid
-        })
-        const usernameDoc = await transaction.get(adminDb.collection(Collection.USERNAMES).doc(username));
-        if (usernameDoc.exists) {
-          throw new Error("Username already taken");
-        }
-        await Promise.all([
-          transaction.set(adminDb.collection(Collection.USERNAMES).doc(username), { uid }),
-          transaction.set(adminDb.collection(Collection.USERS).doc(uid), { username, password: pwHash }),
-        ])
-      } catch (error) {
-        await adminAuth.deleteUser(uid);
-        throw error;
+      const usernameDoc = await transaction.get(adminDb.collection(Collection.USERNAMES).doc(username));
+      if (usernameDoc.exists) {
+        throw new Error("Username already taken");
       }
+      transaction.set(adminDb.collection(Collection.USERNAMES).doc(username), { uid });
+      transaction.set(adminDb.collection(Collection.USERS).doc(uid), { username, password: pwHash });
     });
   } catch (error: any) {
+    if (user) {
+      await adminAuth.deleteUser(user.uid);
+    }
     res.status(400).json({ status: 'error', error: error.message });
     return;
   }
 
-  const token = await adminAuth.createCustomToken(uid);
+  const token = await adminAuth.createCustomToken(user.uid);
   res.status(200).json({ status: 'success', token });
 })
 

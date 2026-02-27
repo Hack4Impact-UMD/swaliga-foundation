@@ -1,7 +1,6 @@
 export interface Person {
   name: Name;
   gender: Gender;
-  email: string;
   phone?: string;
 }
 
@@ -24,6 +23,7 @@ export interface User extends Person {
 export interface Student extends User {
   id: string;
   role: "STUDENT";
+  email?: string;
   dateOfBirth: string; // ISO-8601
   joinedSwaligaDate: string; // ISO-8601
   ethnicity: Ethnicity[];
@@ -39,10 +39,12 @@ export interface Student extends User {
 }
 
 export interface Admin extends User {
+  email: string;
   role: "ADMIN";
 }
 
 export interface Guardian extends Person {
+  email: string;
   relationship: GuardianRelationship;
 }
 export type GuardianRelationship =
