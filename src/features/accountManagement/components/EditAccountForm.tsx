@@ -117,22 +117,22 @@ export default function EditAccountForm(props: EditAccountFormProps) {
 
   // student address fields
   const [addressLine1, setAddressLine1] = useState<string>(
-    mode === "EDIT" ? student.address.addressLine1 : "",
+    mode === "EDIT" ? student.address?.addressLine1 ?? "" : "",
   );
   const [addressLine2, setAddressLine2] = useState<string>(
-    mode === "EDIT" ? student.address.addressLine2 || "" : "",
+    mode === "EDIT" ? student.address?.addressLine2 ?? "" : "",
   );
   const [city, setCity] = useState<string>(
-    mode === "EDIT" ? student.address.city : "",
+    mode === "EDIT" ? student.address?.city ?? "" : "",
   );
   const [state, setState] = useState<string>(
-    mode === "EDIT" ? student.address.state : "",
+    mode === "EDIT" ? student.address?.state ?? "" : "",
   );
   const [country, setCountry] = useState<string>(
-    mode === "EDIT" ? student.address.country : "",
+    mode === "EDIT" ? student.address?.country ?? "" : "",
   );
   const [zipCode, setZipCode] = useState<string>(
-    mode === "EDIT" ? String(student.address.zipCode) : "",
+    mode === "EDIT" ? String(student.address?.zipCode) ?? "" : "",
   );
 
   // guardian fields
@@ -216,22 +216,22 @@ export default function EditAccountForm(props: EditAccountFormProps) {
     mode === "EDIT" ? String(student.school.gpa) : "",
   );
   const [schoolAddressLine1, setSchoolAddressLine1] = useState<string>(
-    mode === "EDIT" ? student.school.address.addressLine1 : "",
+    mode === "EDIT" ? student.school.address?.addressLine1 ?? "" : "",
   );
   const [schoolAddressLine2, setSchoolAddressLine2] = useState<string>(
-    mode === "EDIT" ? student.school.address.addressLine2 || "" : "",
+    mode === "EDIT" ? student.school.address?.addressLine2 ?? "" : "",
   );
   const [schoolCity, setSchoolCity] = useState<string>(
-    mode === "EDIT" ? student.school.address.city : "",
+    mode === "EDIT" ? student.school.address?.city ?? "" : "",
   );
   const [schoolState, setSchoolState] = useState<string>(
-    mode === "EDIT" ? student.school.address.state : "",
+    mode === "EDIT" ? student.school.address?.state ?? "" : "",
   );
   const [schoolCountry, setSchoolCountry] = useState<string>(
-    mode === "EDIT" ? student.school.address.country : "",
+    mode === "EDIT" ? student.school.address?.country ?? "" : "",
   );
   const [schoolZipCode, setSchoolZipCode] = useState<string>(
-    mode === "EDIT" ? String(student.school.address.zipCode) : "",
+    mode === "EDIT" ? String(student.school.address?.zipCode) ?? "" : "",
   );
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -432,7 +432,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
         uid: auth.user!.uid,
         role: "STUDENT",
         dateOfBirth,
-        joinedSwaligaDate,
+        ...(joinedSwaligaDate ? { joinedSwaligaDate } : {}),
         ethnicity: ethnicity.map((eth) =>
           eth === "Other" ? ethnicityOtherText : eth,
         ),
@@ -482,7 +482,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           gpa: parseFloat(gpa),
         },
       };
-      
+
       switch (mode) {
         case "CREATE":
           await httpsCallable(functions, "createStudent")(studentData);
