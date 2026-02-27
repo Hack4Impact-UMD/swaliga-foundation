@@ -42,6 +42,7 @@ import {
   MIN_NUM_PARENTS_GUARDIANS,
 } from "@/constants/constants";
 import Spinner from "@/components/ui/Spinner";
+
 type EditAccountFormProps =
   | {
       mode: "CREATE";
@@ -200,6 +201,9 @@ export default function EditAccountForm(props: EditAccountFormProps) {
   const [schoolName, setSchoolName] = useState<string>(
     mode === "EDIT" ? student.school.name : ""
   );
+  const [grade, setGrade] = useState<string>(
+    mode === "EDIT" ? String(student.school.grade) : ""
+  )
   const [gradYear, setGradYear] = useState<string>(
     mode === "EDIT" ? String(student.school.gradYear) : ""
   );
@@ -266,6 +270,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
     guardianRelationships,
     guardianRelationshipOtherTexts,
     schoolName,
+    grade,
     gradYear,
     gpa,
     schoolAddressLine1,
@@ -321,6 +326,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       !country ||
       !zipCode ||
       !schoolName ||
+      !grade ||
       !gradYear ||
       !gpa ||
       !schoolAddressLine1 ||
@@ -363,6 +369,11 @@ export default function EditAccountForm(props: EditAccountFormProps) {
     const zipCodeRegex = /^\d{5}$/;
     if (!zipCodeRegex.test(zipCode)) {
       errors.push("Zip Code must be a 5 digit number.");
+    }
+
+    const numGrade = Number(grade);
+    if (Number.isNaN(grade) || numGrade < 1 || numGrade > 12) {
+      errors.push("Grade must be a number between 1 and 12.");
     }
 
     const numGradYear = Number(gradYear);
@@ -482,6 +493,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
               country: schoolCountry,
               zipCode: Number(schoolZipCode),
             },
+            grade: Number(grade),
             gradYear: Number(gradYear),
             gpa: parseFloat(gpa),
           },
@@ -707,6 +719,17 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           required
           icon={<FaSchool />}
           maxLength={100}
+        />
+        <TextField
+          label="Grade"
+          value={grade}
+          onChange={(e) => {
+            if (e.target.value === "" || e.target.value.match(/^([1-9]|10|11|12)$/)) {
+              setGrade(e.target.value);
+            }
+          }}
+          required
+          icon={<FaGraduationCap />}
         />
         <TextField
           label="Graduation Year"

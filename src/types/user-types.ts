@@ -32,6 +32,7 @@ export interface Student extends User {
   school: {
     name: string;
     address: Address;
+    grade: number;
     gradYear: number;
     gpa: number;
   }
