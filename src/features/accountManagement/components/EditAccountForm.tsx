@@ -350,7 +350,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
     const phoneRegex = /^\(\d{3}\)\s\d{3}-\d{4}$/;
     if (phone && !phoneRegex.test(phone)) {
       errors.push(
-        "The Phone field should either be empty or contain a valid phone number in the format (XXX)-XXX-XXXX."
+        "The Phone field should either be empty or contain a valid phone number in the format (XXX) XXX-XXXX."
       );
     }
 
