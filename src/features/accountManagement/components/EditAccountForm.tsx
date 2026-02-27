@@ -481,6 +481,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
             country: schoolCountry,
             zipCode: Number(schoolZipCode),
           },
+          grade: Number(grade),
           gradYear: Number(gradYear),
           gpa: parseFloat(gpa),
         },
