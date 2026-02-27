@@ -321,29 +321,15 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       !firstName ||
       !lastName ||
       !dateOfBirth ||
-      !joinedSwaligaDate ||
       (gender === "Other" && !genderOtherText) ||
       ethnicity.length === 0 ||
       (ethnicity.includes("Other") && !ethnicityOtherText) ||
-      !addressLine1 ||
-      !city ||
-      !state ||
-      !country ||
-      !zipCode ||
       !schoolName ||
       !grade ||
-      !gradYear ||
-      !gpa ||
-      !schoolAddressLine1 ||
-      !schoolCity ||
-      !schoolState ||
-      !schoolCountry ||
-      !schoolZipCode ||
       !guardianFirstNames.every(
         (_, i) =>
           guardianFirstNames[i] &&
           guardianLastNames[i] &&
-          guardianEmails[i] &&
           (guardianGenders[i] !== "Other" || guardianGenderOtherTexts[i]) &&
           (guardianRelationships[i] !== "Other" ||
             guardianRelationshipOtherTexts[i]),
@@ -359,20 +345,25 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       );
     }
 
-    const dateOfBirthMoment = moment(dateOfBirth, "YYYY/MM/DD");
-    if (!dateOfBirthMoment.isValid()) {
+    const dateRegex = /^\d{4}\/\d{2}\/\d{2}$/;
+    if (!dateRegex.test(dateOfBirth)) {
       errors.push("Valid date of birth must be in the format YYYY/MM/DD.");
     }
 
-    const joinedSwaligaDateMoment = moment(joinedSwaligaDate, "YYYY/MM/DD");
-    if (!joinedSwaligaDateMoment.isValid()) {
+    if (joinedSwaligaDate && !dateRegex.test(joinedSwaligaDate)) {
       errors.push(
-        "Valid date for when you joined the Swaliga Foundation must be in the format YYYY/MM/DD.",
+        "Valid date for when you joined the Swaliga Foundation must either be empty or in the format YYYY/MM/DD."
       );
     }
 
+    const allAddressFieldsFilled = addressLine1 && city && state && country && zipCode;
+    const oneAddressFieldFilled = addressLine1 || addressLine2 || city || state || country || zipCode;
+    if (oneAddressFieldFilled && !allAddressFieldsFilled) {
+      errors.push("All address fields except \"Address Line 2\" must either be empty or filled.")
+    }
+
     const zipCodeRegex = /^\d{5}$/;
-    if (!zipCodeRegex.test(zipCode)) {
+    if (zipCode && !zipCodeRegex.test(zipCode)) {
       errors.push("Zip Code must be a 5 digit number.");
     }
 
@@ -382,26 +373,32 @@ export default function EditAccountForm(props: EditAccountFormProps) {
     }
 
     const numGradYear = Number(gradYear);
-    if (Number.isNaN(numGradYear) || numGradYear < 1900) {
+    if (gradYear && (Number.isNaN(numGradYear) || numGradYear < 1900)) {
       errors.push("Graduation Year must be a valid year after 1900.");
     }
 
     const numGPA = parseFloat(gpa);
-    if (Number.isNaN(numGPA) || numGPA < 0.0 || numGPA > 5.0) {
+    if (gpa && (Number.isNaN(numGPA) || numGPA < 0.0 || numGPA > 5.0)) {
       errors.push("GPA must be a number between 0.0 and 5.0.");
     }
 
-    if (!zipCodeRegex.test(schoolZipCode)) {
+    const allSchoolAddressFieldsFilled = schoolAddressLine1 && schoolCity && schoolState && schoolCountry && schoolZipCode;
+    const oneSchoolAddressFieldFilled = schoolAddressLine1 || schoolAddressLine2 || schoolCity || schoolState || schoolCountry || schoolZipCode;
+    if (oneSchoolAddressFieldFilled && !allSchoolAddressFieldsFilled) {
+      errors.push("All school address fields except \"School Address Line 2\" must either be empty or filled.")
+    }
+
+    if (schoolZipCode && !zipCodeRegex.test(schoolZipCode)) {
       errors.push("School Zip Code must be a 5 digit number.");
     }
 
     const emailRegex = /^.+@.+\..{2,}$/;
-    if (!guardianEmails.every((email) => emailRegex.test(email))) {
-      errors.push("At least 1 parent/guardian email address is invalid.");
+    if (!guardianEmails.every((email) => !email || emailRegex.test(email))) {
+      errors.push("At least 1 parent/guardian email address is invalid. Either omit the email address or provide a valid email address.");
     }
 
     if (
-      !guardianPhones.every((phone) => phone === "" || phoneRegex.test(phone))
+      !guardianPhones.every((phone) => !phone || phoneRegex.test(phone))
     ) {
       errors.push(
         "At least 1 parent/guardian phone number is invalid. Either omit the phone number of provide a valid phone number in the format (XXX)-XXX-XXXX.",
@@ -421,7 +418,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       return;
     }
 
-    let studentId: string | null = null;
     try {
       if (!auth.user) throw new Error("No authenticated user found.");
       const studentData: Omit<Student, 'id'> = {
