@@ -25,15 +25,16 @@ export interface Student extends User {
   role: "STUDENT";
   email?: string;
   dateOfBirth: string; // ISO-8601
-  joinedSwaligaDate: string; // ISO-8601
+  joinedSwaligaDate?: string; // ISO-8601
   ethnicity: Ethnicity[];
   guardians: Guardian[];
-  address: Address;
+  address?: Address;
   school: {
     name: string;
-    address: Address;
-    gradYear: number;
-    gpa: number;
+    address?: Address;
+    grade: number;
+    gradYear?: number;
+    gpa?: number;
   }
 }
 
@@ -43,7 +44,7 @@ export interface Admin extends User {
 }
 
 export interface Guardian extends Person {
-  email: string;
+  email?: string;
   relationship: GuardianRelationship;
 }
 export type GuardianRelationship =
@@ -61,7 +62,8 @@ export interface Address {
   country: string;
   zipCode: number;
 }
-export function getFullAddress(address: Address): string {
+export function getFullAddress(address: Address | undefined): string {
+  if (!address) return "N/A";
   const { addressLine1, addressLine2, city, state, country, zipCode } = address;
   return `${addressLine1}${addressLine2 ? `, ${addressLine2}` : ""}, ${city}, ${state}, ${country} ${zipCode}`;
 }

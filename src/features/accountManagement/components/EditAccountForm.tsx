@@ -31,17 +31,10 @@ import { FaHouse } from "react-icons/fa6";
 import TextField from "./TextField";
 import Select from "./Select";
 import moment from "moment";
-import { doc, runTransaction } from "firebase/firestore";
-import { db, functions } from "@/config/firebaseConfig";
-import { Collection, Document } from "@/data/firestore/utils";
+import { functions } from "@/config/firebaseConfig";
+import { updateStudent } from "@/data/firestore/students";
+import { httpsCallable } from "firebase/functions";
 import {
-  createStudent,
-  deleteStudent,
-  updateStudent,
-} from "@/data/firestore/students";
-import { FunctionsError, httpsCallable } from "firebase/functions";
-import {
-  FIRST_STUDENT_ID,
   MAX_NUM_PARENTS_GUARDIANS,
   MIN_NUM_PARENTS_GUARDIANS,
 } from "@/constants/constants";
@@ -66,7 +59,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
     mode === "EDIT" ? student.name.firstName : "",
   );
   const [middleName, setMiddleName] = useState<string>(
-    mode === "EDIT" ? student.name.middleName || "" : "",
+    mode === "EDIT" && student.name.middleName ? student.name.middleName : "",
   );
   const [lastName, setLastName] = useState<string>(
     mode === "EDIT" ? student.name.lastName : "",
@@ -90,13 +83,13 @@ export default function EditAccountForm(props: EditAccountFormProps) {
     return "";
   });
   const [phone, setPhone] = useState<string>(
-    mode === "EDIT" ? student.phone || "" : "",
+    mode === "EDIT" && student.phone ? student.phone : "",
   );
   const [dateOfBirth, setDateOfBirth] = useState<string>(
     mode === "EDIT" ? moment(student.dateOfBirth).format("YYYY/MM/DD") : "",
   );
   const [joinedSwaligaDate, setJoinedSwaligaDate] = useState<string>(
-    mode === "EDIT"
+    mode === "EDIT" && student.joinedSwaligaDate
       ? moment(student.joinedSwaligaDate).format("YYYY/MM/DD")
       : "",
   );
@@ -117,22 +110,24 @@ export default function EditAccountForm(props: EditAccountFormProps) {
 
   // student address fields
   const [addressLine1, setAddressLine1] = useState<string>(
-    mode === "EDIT" ? student.address.addressLine1 : "",
+    mode === "EDIT" && student.address ? student.address.addressLine1 : "",
   );
   const [addressLine2, setAddressLine2] = useState<string>(
-    mode === "EDIT" ? student.address.addressLine2 || "" : "",
+    mode === "EDIT" && student.address && student.address.addressLine2
+      ? student.address.addressLine2
+      : "",
   );
   const [city, setCity] = useState<string>(
-    mode === "EDIT" ? student.address.city : "",
+    mode === "EDIT" && student.address ? student.address.city : "",
   );
   const [state, setState] = useState<string>(
-    mode === "EDIT" ? student.address.state : "",
+    mode === "EDIT" && student.address ? student.address.state : "",
   );
   const [country, setCountry] = useState<string>(
-    mode === "EDIT" ? student.address.country : "",
+    mode === "EDIT" && student.address ? student.address.country : "",
   );
   const [zipCode, setZipCode] = useState<string>(
-    mode === "EDIT" ? String(student.address.zipCode) : "",
+    mode === "EDIT" && student.address ? String(student.address.zipCode) : "",
   );
 
   // guardian fields
@@ -171,7 +166,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
   );
   const [guardianEmails, setGuardianEmails] = useState<string[]>(
     mode === "EDIT"
-      ? student.guardians.map((g) => g.email)
+      ? student.guardians.map((g) => g.email || "")
       : Array(MIN_NUM_PARENTS_GUARDIANS).fill(""),
   );
   const [guardianPhones, setGuardianPhones] = useState<string[]>(
@@ -206,29 +201,48 @@ export default function EditAccountForm(props: EditAccountFormProps) {
   const [schoolName, setSchoolName] = useState<string>(
     mode === "EDIT" ? student.school.name : "",
   );
+  const [grade, setGrade] = useState<string>(
+    mode === "EDIT" ? String(student.school.grade) : "",
+  );
   const [gradYear, setGradYear] = useState<string>(
-    mode === "EDIT" ? String(student.school.gradYear) : "",
+    mode === "EDIT" && student.school.gradYear
+      ? String(student.school.gradYear)
+      : "",
   );
   const [gpa, setGPA] = useState<string>(
-    mode === "EDIT" ? String(student.school.gpa) : "",
+    mode === "EDIT" && student.school.gpa ? String(student.school.gpa) : "",
   );
   const [schoolAddressLine1, setSchoolAddressLine1] = useState<string>(
-    mode === "EDIT" ? student.school.address.addressLine1 : "",
+    mode === "EDIT" && student.school.address
+      ? student.school.address.addressLine1
+      : "",
   );
   const [schoolAddressLine2, setSchoolAddressLine2] = useState<string>(
-    mode === "EDIT" ? student.school.address.addressLine2 || "" : "",
+    mode === "EDIT" &&
+      student.school.address &&
+      student.school.address.addressLine2
+      ? student.school.address.addressLine2
+      : "",
   );
   const [schoolCity, setSchoolCity] = useState<string>(
-    mode === "EDIT" ? student.school.address.city : "",
+    mode === "EDIT" && student.school.address
+      ? student.school.address.city
+      : "",
   );
   const [schoolState, setSchoolState] = useState<string>(
-    mode === "EDIT" ? student.school.address.state : "",
+    mode === "EDIT" && student.school.address
+      ? student.school.address.state
+      : "",
   );
   const [schoolCountry, setSchoolCountry] = useState<string>(
-    mode === "EDIT" ? student.school.address.country : "",
+    mode === "EDIT" && student.school.address
+      ? student.school.address.country
+      : "",
   );
   const [schoolZipCode, setSchoolZipCode] = useState<string>(
-    mode === "EDIT" ? String(student.school.address.zipCode) : "",
+    mode === "EDIT" && student.school.address
+      ? String(student.school.address.zipCode)
+      : "",
   );
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -272,6 +286,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
     guardianRelationships,
     guardianRelationshipOtherTexts,
     schoolName,
+    grade,
     gradYear,
     gpa,
     schoolAddressLine1,
@@ -317,28 +332,15 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       !firstName ||
       !lastName ||
       !dateOfBirth ||
-      !joinedSwaligaDate ||
       (gender === "Other" && !genderOtherText) ||
       ethnicity.length === 0 ||
       (ethnicity.includes("Other") && !ethnicityOtherText) ||
-      !addressLine1 ||
-      !city ||
-      !state ||
-      !country ||
-      !zipCode ||
       !schoolName ||
-      !gradYear ||
-      !gpa ||
-      !schoolAddressLine1 ||
-      !schoolCity ||
-      !schoolState ||
-      !schoolCountry ||
-      !schoolZipCode ||
+      !grade ||
       !guardianFirstNames.every(
         (_, i) =>
           guardianFirstNames[i] &&
           guardianLastNames[i] &&
-          guardianEmails[i] &&
           (guardianGenders[i] !== "Other" || guardianGenderOtherTexts[i]) &&
           (guardianRelationships[i] !== "Other" ||
             guardianRelationshipOtherTexts[i]),
@@ -350,49 +352,82 @@ export default function EditAccountForm(props: EditAccountFormProps) {
     const phoneRegex = /^\(\d{3}\)\s\d{3}-\d{4}$/;
     if (phone && !phoneRegex.test(phone)) {
       errors.push(
-        "The Phone field should either be empty or contain a valid phone number in the format (XXX)-XXX-XXXX.",
+        "The Phone field should either be empty or contain a valid phone number in the format (XXX) XXX-XXXX.",
       );
     }
 
-    const dateOfBirthMoment = moment(dateOfBirth, "YYYY/MM/DD");
-    if (!dateOfBirthMoment.isValid()) {
+    const dateRegex = /^\d{4}\/\d{2}\/\d{2}$/;
+    if (!dateRegex.test(dateOfBirth)) {
       errors.push("Valid date of birth must be in the format YYYY/MM/DD.");
     }
 
-    const joinedSwaligaDateMoment = moment(joinedSwaligaDate, "YYYY/MM/DD");
-    if (!joinedSwaligaDateMoment.isValid()) {
+    if (joinedSwaligaDate && !dateRegex.test(joinedSwaligaDate)) {
       errors.push(
-        "Valid date for when you joined the Swaliga Foundation must be in the format YYYY/MM/DD.",
+        "Valid date for when you joined the Swaliga Foundation must either be empty or in the format YYYY/MM/DD.",
+      );
+    }
+
+    const allAddressFieldsFilled =
+      addressLine1 && city && state && country && zipCode;
+    const oneAddressFieldFilled =
+      addressLine1 || addressLine2 || city || state || country || zipCode;
+    if (oneAddressFieldFilled && !allAddressFieldsFilled) {
+      errors.push(
+        'All address fields except "Address Line 2" must either be empty or filled.',
       );
     }
 
     const zipCodeRegex = /^\d{5}$/;
-    if (!zipCodeRegex.test(zipCode)) {
+    if (zipCode && !zipCodeRegex.test(zipCode)) {
       errors.push("Zip Code must be a 5 digit number.");
     }
 
+    const numGrade = Number(grade);
+    if (Number.isNaN(grade) || numGrade < 1 || numGrade > 12) {
+      errors.push("Grade must be a number between 1 and 12.");
+    }
+
     const numGradYear = Number(gradYear);
-    if (Number.isNaN(numGradYear) || numGradYear < 1900) {
+    if (gradYear && (Number.isNaN(numGradYear) || numGradYear < 1900)) {
       errors.push("Graduation Year must be a valid year after 1900.");
     }
 
     const numGPA = parseFloat(gpa);
-    if (Number.isNaN(numGPA) || numGPA < 0.0 || numGPA > 5.0) {
+    if (gpa && (Number.isNaN(numGPA) || numGPA < 0.0 || numGPA > 5.0)) {
       errors.push("GPA must be a number between 0.0 and 5.0.");
     }
 
-    if (!zipCodeRegex.test(schoolZipCode)) {
+    const allSchoolAddressFieldsFilled =
+      schoolAddressLine1 &&
+      schoolCity &&
+      schoolState &&
+      schoolCountry &&
+      schoolZipCode;
+    const oneSchoolAddressFieldFilled =
+      schoolAddressLine1 ||
+      schoolAddressLine2 ||
+      schoolCity ||
+      schoolState ||
+      schoolCountry ||
+      schoolZipCode;
+    if (oneSchoolAddressFieldFilled && !allSchoolAddressFieldsFilled) {
+      errors.push(
+        'All school address fields except "School Address Line 2" must either be empty or filled.',
+      );
+    }
+
+    if (schoolZipCode && !zipCodeRegex.test(schoolZipCode)) {
       errors.push("School Zip Code must be a 5 digit number.");
     }
 
     const emailRegex = /^.+@.+\..{2,}$/;
-    if (!guardianEmails.every((email) => emailRegex.test(email))) {
-      errors.push("At least 1 parent/guardian email address is invalid.");
+    if (!guardianEmails.every((email) => !email || emailRegex.test(email))) {
+      errors.push(
+        "At least 1 parent/guardian email address is invalid. Either omit the email address or provide a valid email address.",
+      );
     }
 
-    if (
-      !guardianPhones.every((phone) => phone === "" || phoneRegex.test(phone))
-    ) {
+    if (!guardianPhones.every((phone) => !phone || phoneRegex.test(phone))) {
       errors.push(
         "At least 1 parent/guardian phone number is invalid. Either omit the phone number of provide a valid phone number in the format (XXX)-XXX-XXXX.",
       );
@@ -411,10 +446,9 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       return;
     }
 
-    let studentId: string | null = null;
     try {
       if (!auth.user) throw new Error("No authenticated user found.");
-      const studentData: Omit<Student, 'id'> = {
+      const studentDTO: Omit<Student, "id"> = {
         name: {
           firstName,
           ...(middleName.trim() ? { middleName: middleName.trim() } : {}),
@@ -426,7 +460,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
         uid: auth.user!.uid,
         role: "STUDENT",
         dateOfBirth,
-        joinedSwaligaDate,
+        ...(joinedSwaligaDate ? { joinedSwaligaDate } : {}),
         ethnicity: ethnicity.map((eth) =>
           eth === "Other" ? ethnicityOtherText : eth,
         ),
@@ -442,7 +476,9 @@ export default function EditAccountForm(props: EditAccountFormProps) {
             guardianGenders[index] === "Other"
               ? guardianGenderOtherTexts[index]
               : guardianGenders[index],
-          email: guardianEmails[index].toLowerCase(),
+          ...(guardianEmails[index]
+            ? { email: guardianEmails[index].toLowerCase() }
+            : {}),
           ...(guardianPhones[index]
             ? { phone: toE164Phone(guardianPhones[index]) }
             : {}),
@@ -451,38 +487,49 @@ export default function EditAccountForm(props: EditAccountFormProps) {
               ? guardianRelationshipOtherTexts[index]
               : guardianRelationships[index],
         })),
-        address: {
-          addressLine1,
-          ...(addressLine2.trim() ? { addressLine2: addressLine2.trim() } : {}),
-          city,
-          state,
-          country,
-          zipCode: Number(zipCode),
-        },
+        ...(addressLine1
+          ? {
+              address: {
+                addressLine1,
+                ...(addressLine2.trim()
+                  ? { addressLine2: addressLine2.trim() }
+                  : {}),
+                city,
+                state,
+                country,
+                zipCode: Number(zipCode),
+              },
+            }
+          : {}),
         school: {
           name: schoolName,
-          address: {
-            addressLine1: schoolAddressLine1,
-            ...(schoolAddressLine2.trim()
-              ? { addressLine2: schoolAddressLine2.trim() }
-              : {}),
-            city: schoolCity,
-            state: schoolState,
-            country: schoolCountry,
-            zipCode: Number(schoolZipCode),
-          },
-          gradYear: Number(gradYear),
-          gpa: parseFloat(gpa),
+          ...(schoolAddressLine1
+            ? {
+                address: {
+                  addressLine1: schoolAddressLine1,
+                  ...(schoolAddressLine2.trim()
+                    ? { addressLine2: schoolAddressLine2.trim() }
+                    : {}),
+                  city: schoolCity,
+                  state: schoolState,
+                  country: schoolCountry,
+                  zipCode: Number(schoolZipCode),
+                },
+              }
+            : {}),
+          grade: Number(grade),
+          ...(gradYear ? { gradYear: Number(gradYear) } : {}),
+          ...(gpa ? { gpa: parseFloat(gpa) } : {}),
         },
       };
-      
+
       switch (mode) {
         case "CREATE":
-          await httpsCallable(functions, "createStudent")(studentData);
+          await httpsCallable(functions, "createStudent")(studentDTO);
           await auth.user!.getIdToken(true);
           break;
         case "EDIT":
-          await updateStudent(student.id, { id: student.id, ...studentData });
+          await updateStudent(student.id, { id: student.id, ...studentDTO });
       }
       setSuccess(
         `Account ${mode === "CREATE" ? "created" : "updated"} successfully!`,
@@ -582,7 +629,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           placeholder="YYYY/MM/DD"
           value={joinedSwaligaDate}
           onChange={(e) => setJoinedSwaligaDate(formatDate(e.target.value))}
-          required
           icon={<FaCalendar />}
         />
       </div>
@@ -645,7 +691,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="Address Line 1"
           value={addressLine1}
           onChange={(e) => setAddressLine1(e.target.value)}
-          required
           icon={<FaHouse />}
           maxLength={100}
         />
@@ -664,7 +709,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="City"
           value={city}
           onChange={(e) => setCity(e.target.value)}
-          required
           icon={<FaCity />}
           maxLength={50}
         />
@@ -672,7 +716,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="State"
           value={state}
           onChange={(e) => setState(e.target.value)}
-          required
           icon={<FaLandmark />}
           maxLength={50}
         />
@@ -680,7 +723,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="Country"
           value={country}
           onChange={(e) => setCountry(e.target.value)}
-          required
           icon={<FaFlag />}
           maxLength={50}
         />
@@ -688,7 +730,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="Zip Code"
           value={zipCode}
           onChange={(e) => setZipCode(formatZipCode(e.target.value))}
-          required
           icon={<FaMapPin />}
         />
       </div>
@@ -704,10 +745,23 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           maxLength={100}
         />
         <TextField
+          label="Grade"
+          value={grade}
+          onChange={(e) => {
+            if (
+              e.target.value === "" ||
+              e.target.value.match(/^([1-9]|10|11|12)$/)
+            ) {
+              setGrade(e.target.value);
+            }
+          }}
+          required
+          icon={<FaGraduationCap />}
+        />
+        <TextField
           label="Graduation Year"
           value={gradYear}
           onChange={(e) => setGradYear(formatYear(e.target.value))}
-          required
           icon={<FaGraduationCap />}
         />
         <TextField
@@ -721,7 +775,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
               setGPA(e.target.value);
             }
           }}
-          required
           icon={<FaGraduationCap />}
         />
       </div>
@@ -730,7 +783,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="School Address Line 1"
           value={schoolAddressLine1}
           onChange={(e) => setSchoolAddressLine1(e.target.value)}
-          required
           icon={<FaHouse />}
           maxLength={100}
         />
@@ -749,7 +801,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="School City"
           value={schoolCity}
           onChange={(e) => setSchoolCity(e.target.value)}
-          required
           icon={<FaCity />}
           maxLength={50}
         />
@@ -757,7 +808,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="School State"
           value={schoolState}
           onChange={(e) => setSchoolState(e.target.value)}
-          required
           icon={<FaLandmark />}
           maxLength={50}
         />
@@ -765,7 +815,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="School Country"
           value={schoolCountry}
           onChange={(e) => setSchoolCountry(e.target.value)}
-          required
           icon={<FaFlag />}
           maxLength={50}
         />
@@ -773,7 +822,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           label="School Zip Code"
           value={schoolZipCode}
           onChange={(e) => setSchoolZipCode(formatZipCode(e.target.value))}
-          required
           icon={<FaMapPin />}
         />
       </div>
@@ -844,7 +892,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
                   ),
                 )
               }
-              required
               icon={<FaEnvelope />}
               maxLength={320}
             />
