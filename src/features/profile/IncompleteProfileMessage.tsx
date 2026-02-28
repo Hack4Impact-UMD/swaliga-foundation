@@ -1,9 +1,12 @@
 "use client";
 
 import useProfile from "./useProfile";
+import styles from "./IncompleteProfileMessage.module.css";
+import { FaX } from "react-icons/fa6";
 
 export default function IncompleteProfileMessage() {
   const { student } = useProfile();
+  console.log(student);
 
   if (!student) {
     return <></>;
@@ -45,9 +48,13 @@ export default function IncompleteProfileMessage() {
   }
 
   return (
-    <p>
-      Please complete your profile when you are able to. You are currently
-      missing the following fields: {missingFields.join(", ")}
-    </p>
+    <div className={styles.container}>
+      <p className={styles.incompleteProfileMessage}>
+        Please complete your profile when you are able to get this information.
+        You are currently missing the following fields:{" "}
+        {missingFields.join(", ")}
+      </p>
+      <FaX className={styles.closeIcon} />
+    </div>
   );
 }
