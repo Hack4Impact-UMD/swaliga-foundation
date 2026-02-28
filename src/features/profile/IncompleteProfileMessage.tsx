@@ -3,10 +3,12 @@
 import useProfile from "./useProfile";
 import styles from "./IncompleteProfileMessage.module.css";
 import { FaX } from "react-icons/fa6";
+import { useState } from "react";
 
 export default function IncompleteProfileMessage() {
+  const [isVisible, setIsVisible] = useState<boolean>(true);
+
   const { student } = useProfile();
-  console.log(student);
 
   if (!student) {
     return <></>;
@@ -20,7 +22,7 @@ export default function IncompleteProfileMessage() {
     !student.school.address ||
     student.guardians.some((guardian) => !guardian.email || !guardian.phone);
 
-  if (!isProfileIncomplete) {
+  if (!isProfileIncomplete || !isVisible) {
     return <></>;
   }
 
@@ -54,7 +56,7 @@ export default function IncompleteProfileMessage() {
         You are currently missing the following fields:{" "}
         {missingFields.join(", ")}
       </p>
-      <FaX className={styles.closeIcon} />
+      <FaX className={styles.closeIcon} onClick={() => setIsVisible(false)} />
     </div>
   );
 }
