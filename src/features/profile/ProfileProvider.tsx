@@ -24,7 +24,7 @@ export default function ProfileProvider({
   children: JSX.Element | JSX.Element[];
 }): JSX.Element {
   const [student, setStudent] = useState<Student | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
   const auth = useAuth();
@@ -32,7 +32,6 @@ export default function ProfileProvider({
 
   useEffect(() => {
     if (!studentId) {
-      setIsLoading(false);
       return;
     }
     setIsLoading(true);
