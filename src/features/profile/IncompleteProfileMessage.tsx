@@ -37,10 +37,10 @@ export default function IncompleteProfileMessage() {
   if (!student.school.address) {
     missingFields.push("School Address");
   }
-  if (!student.guardians.some((guardian) => !guardian.email)) {
+  if (student.guardians.some((guardian) => !guardian.email)) {
     missingFields.push("at least 1 Guardian Email");
   }
-  if (!student.guardians.some((guardian) => !guardian.phone)) {
+  if (student.guardians.some((guardian) => !guardian.phone)) {
     missingFields.push("at least 1 Guardian Phone Number");
   }
 
