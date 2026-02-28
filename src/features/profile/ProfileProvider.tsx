@@ -28,23 +28,30 @@ export default function ProfileProvider({
   const [error, setError] = useState<string>("");
 
   const auth = useAuth();
-  const studentId = auth.token?.claims.studentId as string | undefined
+  const studentId = auth.token?.claims.studentId as string | undefined;
 
   useEffect(() => {
-    if (!studentId) { return; }
+    if (!studentId) {
+      setIsLoading(false);
+      return;
+    }
     setIsLoading(true);
 
-    const fetchStudent = async () => await getStudentById(studentId)
-    
-    fetchStudent().then((data) => {
-      setStudent(data);
-      setIsLoading(false);
-      setError("");
-    }).catch((err) => {
-      setIsLoading(false);
-      setError("We were unable to fetch your profile. Please try again later.");
-    })
-  }, []);
+    const fetchStudent = async () => await getStudentById(studentId);
+
+    fetchStudent()
+      .then((data) => {
+        setStudent(data);
+        setIsLoading(false);
+        setError("");
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        setError(
+          "We were unable to fetch your profile. Please try again later.",
+        );
+      });
+  }, [studentId]);
 
   if (isLoading) {
     return <LoadingPage />;
