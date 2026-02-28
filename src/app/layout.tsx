@@ -11,7 +11,6 @@ import SurveysProvider from "@/data/hooks/useSurveys/SurveysProvider";
 import StudentsProvider from "@/data/hooks/useStudents/StudentsProvider";
 import Footer from "@/components/layout/Footer";
 import { Tooltip } from "@/components/ui/Tooltip";
-import ProfileProvider from "@/features/profile/ProfileProvider";
 import IncompleteProfileMessage from "@/features/profile/IncompleteProfileMessage";
 
 const LoadingPage = dynamic(() => import("./loading"));
@@ -36,12 +35,12 @@ export default function RootLayout({
             <AuthProvider>
               <Navbar />
               <AvailabilityProvider>
-                <ProfileProvider>
-                  <IncompleteProfileMessage />
-                  <SurveysProvider>
-                    <StudentsProvider>{children}</StudentsProvider>
-                  </SurveysProvider>
-                </ProfileProvider>
+                <SurveysProvider>
+                  <StudentsProvider>
+                    <IncompleteProfileMessage />
+                    {children}
+                  </StudentsProvider>
+                </SurveysProvider>
               </AvailabilityProvider>
             </AuthProvider>
             <Footer />

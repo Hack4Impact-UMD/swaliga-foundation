@@ -1,6 +1,6 @@
 "use client";
 
-import useProfile from "./useProfile";
+import useStudents from "@/data/hooks/useStudents/useStudents";
 import styles from "./IncompleteProfileMessage.module.css";
 import { FaX } from "react-icons/fa6";
 import { useState } from "react";
@@ -8,12 +8,13 @@ import { useState } from "react";
 export default function IncompleteProfileMessage() {
   const [isVisible, setIsVisible] = useState<boolean>(true);
 
-  const { student } = useProfile();
+  const { students } = useStudents();
 
-  if (!student) {
+  if (!students[0]) {
     return <></>;
   }
 
+  const student = students[0];
   const isProfileIncomplete =
     !student.joinedSwaligaDate ||
     !student.address ||
