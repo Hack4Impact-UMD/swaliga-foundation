@@ -4,13 +4,15 @@ import useStudents from "@/data/hooks/useStudents/useStudents";
 import styles from "./IncompleteProfileMessage.module.css";
 import { FaX } from "react-icons/fa6";
 import { useState } from "react";
+import useAuth from "../auth/authN/components/useAuth";
 
 export default function IncompleteProfileMessage() {
   const [isVisible, setIsVisible] = useState<boolean>(true);
 
+  const auth = useAuth();
   const { students } = useStudents();
 
-  if (!students[0]) {
+  if (auth.token?.claims.role !== 'STUDENT' || !students[0]) {
     return <></>;
   }
 
