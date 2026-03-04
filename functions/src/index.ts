@@ -35,5 +35,5 @@ exports.appsScriptEndpoint = appsScriptCloudFunctions.appsScriptEndpoint
 
 exports.getClientId = onRequest(async (_, res) => {
   res.set("Access-Control-Allow-Origin", "*");
-  res.status(200).json({ clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID });
+  res.status(200).json({ clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID, env: process.env });
 })
