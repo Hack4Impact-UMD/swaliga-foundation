@@ -4,6 +4,7 @@ import * as responseManagementFunctions from './firestore/responseManagement';
 import * as syncAdminDataFunctions from './firestore/syncAdminData';
 import * as emailFunctions from './email';
 import { appsScriptCloudFunctions } from "./googleAppsScript";
+import { onRequest } from "firebase-functions/https";
 
 exports.setRole = authFunctions.setRole;
 exports.createStudent = authFunctions.createStudent;
@@ -31,3 +32,7 @@ exports.onStudentDocDeleted = syncAdminDataFunctions.onStudentDocDeleted;
 exports.sendEmail = emailFunctions.sendEmail;
 
 exports.appsScriptEndpoint = appsScriptCloudFunctions.appsScriptEndpoint
+
+exports.getClientId = onRequest(async (_, res) => {
+  res.status(200).json({ clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID });
+})
