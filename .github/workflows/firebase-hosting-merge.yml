@@ -36,13 +36,14 @@ jobs:
         run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SWALIGA_FOUNDATION }}' > ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
       - name: Create .env file
-        run: echo "NEXT_PUBLIC_DOMAIN=${{ env.NEXT_PUBLIC_DOMAIN }}" > .env.production
-             echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ env.NEXT_PUBLIC_FIREBASE_API_KEY }}" >> .env.production
-             echo "GOOGLE_APPLICATION_CREDENTIALS=${{ env.GOOGLE_APPLICATION_CREDENTIALS }}" >> .env.production
-             echo "NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ env.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}" >> .env.production
-             echo "GOOGLE_CLIENT_SECRET=${{ env.GOOGLE_CLIENT_SECRET }}" >> .env.production
-             echo "NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID=${{ env.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID }}" >> .env.production
-            echo "ADMIN_EMAIL=${{ env.ADMIN_EMAIL }}" >> .env.production
+        run: |
+          echo "NEXT_PUBLIC_DOMAIN=${{ env.NEXT_PUBLIC_DOMAIN }}" > .env.production
+          echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ env.NEXT_PUBLIC_FIREBASE_API_KEY }}" >> .env.production
+          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ env.GOOGLE_APPLICATION_CREDENTIALS }}" >> .env.production
+          echo "NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ env.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}" >> .env.production
+          echo "GOOGLE_CLIENT_SECRET=${{ env.GOOGLE_CLIENT_SECRET }}" >> .env.production
+          echo "NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID=${{ env.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID }}" >> .env.production
+          echo "ADMIN_EMAIL=${{ env.ADMIN_EMAIL }}" >> .env.production
 
       - name: Deploy to Firebase Hosting
         run: firebase deploy --token ${{ secrets.FIREBASE_TOKEN }}
