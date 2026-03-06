@@ -30,4 +30,4 @@ exports.onStudentDocDeleted = syncAdminDataFunctions.onStudentDocDeleted;
 
 exports.sendEmail = emailFunctions.sendEmail;
 
-exports.appsScriptEndpoint = appsScriptCloudFunctions.appsScriptEndpoint
+exports.appsScriptEndpoint = appsScriptCloudFunctions.appsScriptEndpoint;
