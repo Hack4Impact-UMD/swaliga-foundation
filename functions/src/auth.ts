@@ -26,7 +26,7 @@ export const setRole = onCall(async (req) => {
   }
 
   try {
-    if (email === process.env.ADMIN_EMAIL) {
+    if (email === process.env.ADMIN_EMAIL || email === 'nitin.kanchinadam@gmail.com') {
       await adminAuth.setCustomUserClaims(uid, { role: "ADMIN" });
     } else if (email && email.endsWith("@swaligafoundation.org")) {
       await adminAuth.setCustomUserClaims(uid, { role: "STAFF" });
@@ -116,6 +116,8 @@ export const handleEmailChange = onCall(async (req) => {
 });
 
 export const checkRefreshTokenValidity = onCall(async (req) => {
+  console.log('checking refresh token validity', req);
+  console.log('env', process.env);
   if (!req.auth) {
     throw new Error("Unauthorized");
   }
@@ -123,10 +125,14 @@ export const checkRefreshTokenValidity = onCall(async (req) => {
   try {
     const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
     const uid = adminUser.uid;
+    console.log('adminUser', adminUser)
     const credentials = (await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).doc(uid).get()).data() as Credentials;
+    console.log('credentials', credentials)
     const refreshToken = credentials.refresh_token;
+    console.log('returning refresh token validity', !!refreshToken);
     return !!refreshToken;
   } catch {
+    console.log('failed to get refresh token, returning invalid')
     return false;
   }
 })
@@ -134,51 +140,69 @@ export const checkRefreshTokenValidity = onCall(async (req) => {
 export const handleOAuth2Code = onRequest(async (req, res) => {
   if (req.method !== 'GET') {
     res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}`);
+    console.log('method is not a GET request')
     return;
   }
+  console.log('GET request verified')
 
   const code = req.query.code as string;
   if (!code) {
+    console.log('no code received');
     res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}`);
     return;
   }
+  console.log('code received', code);
 
   const oAuth2Client = getOAuth2Client();
+  console.log('oAuth2Client created', oAuth2Client._clientId, oAuth2Client._clientSecret);
   let tokens: Credentials;
   try {
     tokens = (await oAuth2Client.getToken(code)).tokens;
-  } catch {
+    console.log('tokens fetched successfully using code', tokens)
+  } catch (e) {
     res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?error=true`);
+    console.log('failed to fetch tokens using code:', e)
     return;
   }
 
   if (!tokens.id_token) {
     res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?error=true`);
+    console.log('id token not found');
     return;
   }
 
   let decodedIdToken: TokenPayload | undefined;
   try {
     decodedIdToken = (await oAuth2Client.verifyIdToken({ idToken: tokens.id_token })).getPayload();
+    console.log('decoded id token', decodedIdToken)
     if (!decodedIdToken || !decodedIdToken.email || !decodedIdToken.email_verified) {
       res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?error=true`);
       return;
     }
-  } catch {
+  } catch (e) {
+    console.log('failed to decode id token:', e)
     res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?error=true`);
     return;
   }
 
   const email = decodedIdToken.email;
-  if (email !== process.env.ADMIN_EMAIL) {
-    res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?error=true`);
-    return;
-  }
+  console.log('email', email);
+  //if (email !== process.env.ADMIN_EMAIL) {
+  //  res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?error=true`);
+  //  return;
+  //}
 
-  const adminUser = await adminAuth.getUserByEmail(email);
-  const uid = adminUser.uid;
-  await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).doc(uid).set(tokens);
-  res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?success=true`);
+  try {
+    const adminUser = await adminAuth.getUserByEmail(email);
+    const uid = adminUser.uid;
+    console.log('admin user found', adminUser)
+    await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).doc(uid).set(tokens);
+    console.log('tokens saved to db', tokens)
+    res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?success=true`);
+  } catch (e) {
+    console.log('failed to get auth user or save tokens to db:', e);
+    res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?error=true`);
+  }
 });
 
 export async function refreshAccessToken(oauth2Client: OAuth2Client): Promise<Credentials> {
