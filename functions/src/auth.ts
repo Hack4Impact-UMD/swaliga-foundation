@@ -131,8 +131,8 @@ export const checkRefreshTokenValidity = onCall(async (req) => {
     const refreshToken = credentials.refresh_token;
     console.log('returning refresh token validity', !!refreshToken);
     return !!refreshToken;
-  } catch {
-    console.log('failed to get refresh token, returning invalid')
+  } catch (e) {
+    console.log('failed to get refresh token, returning invalid', e)
     return false;
   }
 })
