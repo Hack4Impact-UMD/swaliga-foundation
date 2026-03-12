@@ -4,6 +4,10 @@ import * as responseManagementFunctions from './firestore/responseManagement';
 import * as syncAdminDataFunctions from './firestore/syncAdminData';
 import * as emailFunctions from './email';
 import { appsScriptCloudFunctions } from "./googleAppsScript";
+import { onRequest } from "firebase-functions/https";
+import { adminDb } from "./config/firebaseAdminConfig";
+import { Collection } from "./types/serverTypes";
+import { Credentials } from "google-auth-library";
 
 exports.setRole = authFunctions.setRole;
 exports.createStudent = authFunctions.createStudent;
@@ -31,3 +35,10 @@ exports.onStudentDocDeleted = syncAdminDataFunctions.onStudentDocDeleted;
 exports.sendEmail = emailFunctions.sendEmail;
 
 exports.appsScriptEndpoint = appsScriptCloudFunctions.appsScriptEndpoint;
+
+exports.testFirestore = onRequest(async (req) => {
+  console.log('env', process.env)
+  console.log('testing firestore admin sdk');
+  const credentials = (await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).get()).docs.map(doc => doc.data()) as Credentials[];
+  console.log('credentials', credentials);
+})
