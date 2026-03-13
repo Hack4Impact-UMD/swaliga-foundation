@@ -4,10 +4,6 @@ import * as responseManagementFunctions from './firestore/responseManagement';
 import * as syncAdminDataFunctions from './firestore/syncAdminData';
 import * as emailFunctions from './email';
 import { appsScriptCloudFunctions } from "./googleAppsScript";
-import { onRequest } from "firebase-functions/https";
-import { adminDb } from "./config/firebaseAdminConfig";
-import { Collection } from "./types/serverTypes";
-import { Credentials } from "google-auth-library";
 
 exports.setRole = authFunctions.setRole;
 exports.createStudent = authFunctions.createStudent;
