@@ -35,10 +35,3 @@ exports.onStudentDocDeleted = syncAdminDataFunctions.onStudentDocDeleted;
 exports.sendEmail = emailFunctions.sendEmail;
 
 exports.appsScriptEndpoint = appsScriptCloudFunctions.appsScriptEndpoint;
-
-exports.testFirestore = onRequest(async (req) => {
-  console.log('env', process.env)
-  console.log('testing firestore admin sdk');
-  const credentials = (await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).get()).docs.map(doc => doc.data()) as Credentials[];
-  console.log('credentials', credentials);
-})
