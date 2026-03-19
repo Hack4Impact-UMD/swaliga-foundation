@@ -137,16 +137,20 @@ export const testHandleRecentSurveyTitlesAndDescriptionsUpdates = onRequest(asyn
 });
 
 export const addExistingSurveyAndResponses = onCall(async (req) => {
+  console.log(`addExistingSurveyAndResponses called by user with uid "${req.auth?.uid}" and role "${req.auth?.token.role}"`);
   if (!req.auth || (req.auth.token.role !== 'ADMIN' && req.auth.token.role !== 'STAFF')) {
     throw new Error("Unauthorized");
   }
 
   const surveyId = req.data as string;
+  console.log(`adding existing survey with id "${surveyId}"`)
   const { survey, responses } = await callAppsScript(await getOAuth2ClientWithCredentials(), 'addExistingSurvey', [surveyId]);
   const { id, ...surveyData } = survey;
   return await adminDb.runTransaction(async (transaction: Transaction) => {
     await addResponsesToFirestore(responses, transaction);
+    console.log(`added responses for existing survey with id "${surveyId}" to Firestore`);
     transaction.set(adminDb.collection(Collection.SURVEYS).doc(id), surveyData);
+    console.log(`added survey with id "${id}" to Firestore`);
     return survey;
   })
 });
