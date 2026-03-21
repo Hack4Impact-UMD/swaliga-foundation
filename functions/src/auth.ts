@@ -126,7 +126,7 @@ export const checkRefreshTokenValidity = onCall(async (req) => {
     const credentials = (await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).doc(uid).get()).data() as Credentials;
     const refreshToken = credentials.refresh_token;
     return !!refreshToken;
-  } catch {
+  } catch (e) {
     return false;
   }
 })
@@ -147,7 +147,7 @@ export const handleOAuth2Code = onRequest(async (req, res) => {
   let tokens: Credentials;
   try {
     tokens = (await oAuth2Client.getToken(code)).tokens;
-  } catch {
+  } catch (e) {
     res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?error=true`);
     return;
   }
@@ -164,7 +164,7 @@ export const handleOAuth2Code = onRequest(async (req, res) => {
       res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?error=true`);
       return;
     }
-  } catch {
+  } catch (e) {
     res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?error=true`);
     return;
   }
@@ -175,10 +175,14 @@ export const handleOAuth2Code = onRequest(async (req, res) => {
     return;
   }
 
-  const adminUser = await adminAuth.getUserByEmail(email);
-  const uid = adminUser.uid;
-  await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).doc(uid).set(tokens);
-  res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?success=true`);
+  try {
+    const adminUser = await adminAuth.getUserByEmail(email);
+    const uid = adminUser.uid;
+    await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).doc(uid).set(tokens);
+    res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?success=true`);
+  } catch (e) {
+    res.status(303).redirect(`${process.env.NEXT_PUBLIC_DOMAIN}?error=true`);
+  }
 });
 
 export async function refreshAccessToken(oauth2Client: OAuth2Client): Promise<Credentials> {
