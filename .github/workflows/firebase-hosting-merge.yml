@@ -33,7 +33,7 @@ jobs:
         run: npm install -g firebase-tools
 
       - name: Setup Firebase Credentials
-        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' | base64 -d > ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
       - name: Create .env file
         run: |
