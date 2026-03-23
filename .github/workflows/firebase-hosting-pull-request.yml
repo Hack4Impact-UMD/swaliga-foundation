@@ -19,7 +19,8 @@ jobs:
       ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
     steps:
       - uses: actions/checkout@v4
-      - run: npm install
+      - run: npm install npm@latest -g
+      - run: npm ci
       - run: npm run build
 
   build_cloud_functions:
@@ -36,7 +37,8 @@ jobs:
       ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
     steps:
       - uses: actions/checkout@v4
-      - run: npm install
+      - run: npm install npm@latest -g
+      - run: npm ci
       - run: cd functions && npm run build
       
   build_apps_script:
@@ -53,5 +55,6 @@ jobs:
       ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
     steps:
       - uses: actions/checkout@v4
-      - run: npm install
+      - run: npm install npm@latest -g
+      - run: npm ci
       - run: cd apps-script && npm run build

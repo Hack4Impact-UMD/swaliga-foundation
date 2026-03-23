@@ -26,7 +26,9 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm install npm@latest -g
+          npm ci
 
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
@@ -63,6 +65,11 @@ jobs:
           node-version: 20
           cache: "npm"
 
+      - name: Install dependencies
+        run: |
+          npm install npm@latest -g
+          npm ci
+
       - name: Install CLASP
         run: npm install -g @google/clasp
 
@@ -75,7 +82,6 @@ jobs:
       - name: Deploy to CLASP
         run: |
           cd apps-script
-          npm ci
           npm run deploy
           VERSION=$(clasp create-version 'Automated deployment ${{ github.sha }}' | grep -o '[0-9]\+' | tail -1)
           clasp create-deployment --versionNumber $VERSION --description 'Automated deployment ${{ github.sha }}' --deploymentId ${{ secrets.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID }}
