@@ -43,7 +43,9 @@ jobs:
           echo "ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}" >> .env.production
 
       - name: Deploy to Firebase Hosting
-        run: firebase deploy --token ${{ secrets.FIREBASE_TOKEN }}
+        run: |
+          firebase experiments:disable pintags
+          firebase deploy --token ${{ secrets.FIREBASE_TOKEN }}
 
   deploy_apps_script:
     name: Deploy to Apps Script
