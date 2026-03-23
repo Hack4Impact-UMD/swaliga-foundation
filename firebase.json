@@ -22,10 +22,10 @@
         "*.local"
       ],
       "predeploy": [
-        "cp .env.production functions/.env && cp firebaseAdminCredentials.json functions/firebaseAdminCredentials.json && npm --prefix \"$RESOURCE_DIR\" run build"
+        "cp .env.production functions/.env && npm --prefix \"$RESOURCE_DIR\" run build"
       ],
       "postdeploy": [
-        "rm functions/.env && rm functions/firebaseAdminCredentials.json"
+        "rm functions/.env"
       ]
     }
   ],
