@@ -80,7 +80,7 @@ jobs:
           echo "NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID }}" >> .env.production
           echo "ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}" >> .env.production
 
-      - name: Deploy to Firebase Hosting
+      - name: Deploy Cloud Functions
         run: |
           firebase experiments:disable pintags
           cd functions
@@ -115,7 +115,7 @@ jobs:
           echo '${{ secrets.LOCAL_CLASPRC_JSON }}' > .clasprc.json
           echo '${{ secrets.GLOBAL_CLASPRC_JSON }}' > ~/.clasprc.json
 
-      - name: Deploy to CLASP
+      - name: Deploy to Apps Script Project
         run: |
           cd apps-script
           npm run deploy
