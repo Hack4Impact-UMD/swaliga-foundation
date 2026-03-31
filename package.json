@@ -12,7 +12,8 @@
     "deploy": "npm run build && firebase deploy"
   },
   "engines": {
-    "npm": ">=11.12.0"
+    "node": "24.14.1",
+    "npm": "11.12.1"
   },
   "workspaces": [
     "functions",

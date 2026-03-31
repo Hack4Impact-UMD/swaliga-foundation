@@ -4,6 +4,10 @@
     "build": "rm -rf dist && esbuild src/*.ts --bundle --outdir=dist --format=esm --global-name=globalThis --target=es6 && rm -rf dist/*.d.js && cp src/appsscript.json dist/appsscript.json",
     "deploy": "npm run build && clasp push --force"
   },
+  "engines": {
+    "node": "24.14.1",
+    "npm": "11.12.1"
+  },
   "devDependencies": {
     "@types/google-apps-script": "^2.0.0",
     "esbuild": "^0.25.6",

@@ -4,6 +4,7 @@ import { GoogleApis } from "googleapis";
 import { getOAuth2ClientWithCredentials } from "./auth";
 
 export async function callAppsScript(oauth2Client: OAuth2Client, functionName: string, parameters?: any[]): Promise<any> {
+  console.log(`Calling Apps Script function "${functionName}" with parameters ${JSON.stringify(parameters)}`);
   const data = (await new GoogleApis({ auth: oauth2Client }).script('v1').scripts.run({
     scriptId: process.env.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID,
     requestBody: {
@@ -11,6 +12,7 @@ export async function callAppsScript(oauth2Client: OAuth2Client, functionName: s
       parameters
     }
   })).data;
+  console.log(`Apps Script function "${functionName}" returned ${JSON.stringify(data)}`);
 
   if (!data.done || data.error) {
     throw new Error("An unexpected error occurred. Please try again later.");

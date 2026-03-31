@@ -10,14 +10,15 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "22"
+    "node": "22.22.0",
+    "npm": "11.12.1"
   },
   "main": "lib/functions/src/index.js",
   "private": true,
   "dependencies": {
     "bcrypt": "^6.0.0",
     "firebase-admin": "^13.4.0",
-    "firebase-functions": "^6.4.0",
+    "firebase-functions": "^7.2.2",
     "google-auth-library": "^10.4.0",
     "googleapis": "^161.0.0",
     "moment": "^2.30.1",

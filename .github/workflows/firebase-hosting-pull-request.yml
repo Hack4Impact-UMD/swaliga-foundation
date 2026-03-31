@@ -21,9 +21,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 24.14.1
           cache: "npm"
-      - run: npm install npm@latest -g
+      - run: npm install npm@11.12.1 -g
       - run: npm ci
       - run: npm run build
 
@@ -43,9 +43,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 24.14.1
           cache: "npm"
-      - run: npm install npm@latest -g
+      - run: npm install npm@11.12.1 -g
       - run: npm ci
       - run: cd functions && npm run build
       
@@ -65,8 +65,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 24.14.1
           cache: "npm"
-      - run: npm install npm@latest -g
+      - run: npm install npm@11.12.1 -g
       - run: npm ci
       - run: cd apps-script && npm run build
