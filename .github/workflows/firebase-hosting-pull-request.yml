@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 24
           cache: "npm"
-      - run: npm install npm@latest -g
+      - run: npm install npm@11.12.1 -g
       - run: npm ci
       - run: npm run build
 
@@ -45,7 +45,7 @@ jobs:
         with:
           node-version: 24
           cache: "npm"
-      - run: npm install npm@latest -g
+      - run: npm install npm@11.12.1 -g
       - run: npm ci
       - run: cd functions && npm run build
       
@@ -67,6 +67,6 @@ jobs:
         with:
           node-version: 24
           cache: "npm"
-      - run: npm install npm@latest -g
+      - run: npm install npm@11.12.1 -g
       - run: npm ci
       - run: cd apps-script && npm run build
