@@ -211,7 +211,6 @@ export function getOAuth2Client(): OAuth2Client {
 }
 
 export async function getOAuth2ClientWithCredentials(): Promise<OAuth2Client> {
-  console.log("getting OAuth2Client with credentials");
   const adminUser = await adminAuth.getUserByEmail(process.env.ADMIN_EMAIL || "");
   const uid = adminUser.uid;
   const credentials = (await adminDb.collection(Collection.GOOGLE_OAUTH2_TOKENS).doc(uid).get()).data() as Credentials;
@@ -219,7 +218,6 @@ export async function getOAuth2ClientWithCredentials(): Promise<OAuth2Client> {
   oAuth2Client.setCredentials(credentials);
   if (moment(credentials.expiry_date).isBefore(moment())) {
     await refreshAccessToken(oAuth2Client);
-    console.log("refreshed OAuth2Client with credentials")
   }
   return oAuth2Client;
 }
