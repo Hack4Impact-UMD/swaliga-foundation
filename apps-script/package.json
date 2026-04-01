@@ -5,7 +5,7 @@
     "deploy": "npm run build && clasp push --force"
   },
   "engines": {
-    "node": "24.14.1",
+    "node": "24",
     "npm": "11.12.1"
   },
   "devDependencies": {
