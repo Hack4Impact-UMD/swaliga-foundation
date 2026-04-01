@@ -2,7 +2,7 @@ name: Deploy to Firebase Hosting on merge
 on:
   push:
     branches:
-      - main
+      - bugfix/node-deployment-error
 jobs:
   deploy_next_app:
     name: Deploy Next.js App to Firebase Hosting
