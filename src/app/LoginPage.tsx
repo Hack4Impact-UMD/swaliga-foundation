@@ -53,7 +53,7 @@ export default function LoginPage() {
     try {
       await signInWithGoogle();
     } catch (error: any) {
-      setError(error.message);
+      setError("Failed to log in with Google. Please try again later.");
     }
   };
 
