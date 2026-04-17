@@ -2,7 +2,7 @@ name: Deploy to Firebase Hosting on merge
 on:
   push:
     branches:
-      - bugfix/service-account-permission-error
+      - bugfix/username-password-auth-error
 jobs:
   deploy_next_app:
     name: Deploy Next.js App to Firebase Hosting
