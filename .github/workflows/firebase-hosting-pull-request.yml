@@ -47,6 +47,9 @@ jobs:
           cache: "npm"
       - run: npm install npm@11.12.1 -g
       - run: npm ci
+      - run: |
+          cd functions
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > firebaseAdminCredentials.json
       - run: cd functions && npm run build
       
   build_apps_script:
