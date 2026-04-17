@@ -4,7 +4,9 @@ import { getFirestore } from "firebase-admin/firestore";
 import { getFunctions } from "firebase-admin/functions";
 
 if (!admin.apps.length) {
-  admin.initializeApp();
+  admin.initializeApp({
+    credential: admin.credential.cert('./firebaseAdminCredentials.json'),
+  });
 }
 
 const adminApp = admin.app();
