@@ -263,6 +263,7 @@ export const loginWithUsernamePassword = onRequest(async (req, res): Promise<voi
       if (await compare(password, storedHash)) {
         const token = await adminAuth.createCustomToken(uid);
         res.status(200).json({ status: 'success', token });
+        return;
       }
     }
   }
