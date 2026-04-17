@@ -224,7 +224,7 @@ export async function getOAuth2ClientWithCredentials(): Promise<OAuth2Client> {
   return oAuth2Client;
 }
 
-export const signUpWithUsernamePassword = onRequest(async (req, res) => {
+export const signUpWithUsernamePassword = onRequest({ cors: true }, async (req, res) => {
   const { username, password } = JSON.parse(req.body);
   const pwHash = await hash(password, 10);
 
@@ -252,7 +252,7 @@ export const signUpWithUsernamePassword = onRequest(async (req, res) => {
   res.status(200).json({ status: 'success', token });
 })
 
-export const loginWithUsernamePassword = onRequest(async (req, res): Promise<void> => {
+export const loginWithUsernamePassword = onRequest({ cors: true }, async (req, res): Promise<void> => {
   const { username, password } = JSON.parse(req.body);
   const usernameDoc = (await adminDb.collection(Collection.USERNAMES).doc(username).get()).data();
   if (usernameDoc) {
