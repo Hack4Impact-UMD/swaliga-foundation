@@ -29,7 +29,7 @@ export default function LoginPage() {
         await loginWithUsernamePassword(email, password);
       }
     } catch (error: any) {
-      setError(error.message);
+      setError("Failed to log in. Please try again later.");
     }
   };
 
@@ -45,7 +45,7 @@ export default function LoginPage() {
         await signUpWithUsernamePassword(email, password);
       }
     } catch (error: any) {
-      setError(error.message);
+      setError("Failed to sign up. Please try again later.");
     }
   };
 
@@ -53,7 +53,7 @@ export default function LoginPage() {
     try {
       await signInWithGoogle();
     } catch (error: any) {
-      setError(error.message);
+      setError("Failed to log in with Google. Please try again later.");
     }
   };
 

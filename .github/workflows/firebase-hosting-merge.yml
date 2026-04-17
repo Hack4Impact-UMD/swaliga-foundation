@@ -84,6 +84,11 @@ jobs:
           echo "NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID }}" >> .env.production
           echo "ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}" >> .env.production
 
+      - name: Setup Firebase Service Account
+        run: |
+          cd functions
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > firebaseAdminCredentials.json
+
       - name: Deploy Cloud Functions
         run: |
           firebase experiments:disable pintags
