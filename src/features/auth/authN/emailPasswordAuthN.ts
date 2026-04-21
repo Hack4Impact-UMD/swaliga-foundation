@@ -87,7 +87,7 @@ export async function resetPassword(oobCode: string, newPassword: string): Promi
   }
 }
 
-async function checkPasswordValidity(password: string): Promise<void> {
+export async function checkPasswordValidity(password: string): Promise<void> {
   // Skip validation when not in prod environment since Firebase Auth Emulator does not support password validation
   if (process.env.NODE_ENV !== "production") { return; }
   let validation;
