@@ -42,9 +42,13 @@ export default function LoginPage() {
       if (isEmail(email)) {
         await signUpUser(email, password);
       } else {
-        await signUpWithUsernamePassword(email, password);
+        await signUpWithUsernamePassword(email.trim().toLowerCase(), password);
       }
     } catch (error: any) {
+      if (error.message.startsWith("Username") || error.message.startsWith("Password")) {
+        setError(error.message);
+        return;
+      }
       setError("Failed to sign up. Please try again later.");
     }
   };

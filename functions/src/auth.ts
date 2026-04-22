@@ -235,7 +235,7 @@ export const signUpWithUsernamePassword = onRequest({ cors: true }, async (req, 
     await adminDb.runTransaction(async (transaction: Transaction) => {
       const usernameDoc = await transaction.get(adminDb.collection(Collection.USERNAMES).doc(username));
       if (usernameDoc.exists) {
-        throw new Error("Username already taken");
+        throw new HttpsError("already-exists", "Username already taken");
       }
       transaction.set(adminDb.collection(Collection.USERNAMES).doc(username), { uid });
       transaction.set(adminDb.collection(Collection.USERS).doc(uid), { username, password: pwHash });
