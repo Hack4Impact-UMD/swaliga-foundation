@@ -15,7 +15,7 @@ function createNewSurvey(title: string, description: string): SurveyID {
 
   try {
     DriveApp.getFileById(survey.getId()).setSharing(DriveApp.Access.DOMAIN_WITH_LINK, DriveApp.Permission.EDIT);
-  } catch (error) {}
+  } catch (error) { }
 
   return {
     id: survey.getId(),
@@ -51,7 +51,7 @@ function addExistingSurvey(surveyId: string) {
 
   try {
     DriveApp.getFileById(survey.getId()).setSharing(DriveApp.Access.DOMAIN_WITH_LINK, DriveApp.Permission.EDIT);
-  } catch (error) {}
+  } catch (error) { }
 
   return {
     survey: {
@@ -151,5 +151,17 @@ function deleteSurveys(surveyIds: string[]) {
   surveyIds.forEach((surveyId) => deleteSurvey(surveyId));
 }
 globalThis.deleteSurveys = deleteSurveys;
+
+function updateSurveyTitle(surveyId: string, newTitle: string) {
+  const survey = FormApp.openById(surveyId);
+  survey.setTitle(newTitle);
+}
+globalThis.updateSurveyTitle = updateSurveyTitle;
+
+function updateSurveyDescription(surveyId: string, newDescription: string) {
+  const survey = FormApp.openById(surveyId);
+  survey.setDescription(newDescription);
+}
+globalThis.updateSurveyDescription = updateSurveyDescription;
 
 export { };

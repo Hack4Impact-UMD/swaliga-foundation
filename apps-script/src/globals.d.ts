@@ -20,6 +20,8 @@ declare global {
   var getUpdatedSurveyTitlesAndDescriptions: (surveyIds: string[], startTime: string) => Pick<SurveyID, 'id' | 'name' | 'description'>[];
   var deleteSurvey: (surveyId: string) => void;
   var deleteSurveys: (surveyIds: string[]) => void;
+  var updateSurveyTitle: (surveyId: string, newTitle: string) => void;
+  var updateSurveyDescription: (surveyId: string, newDescription: string) => void;
 }
 
 export { };

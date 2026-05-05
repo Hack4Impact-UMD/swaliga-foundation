@@ -27,3 +27,5 @@ export async function deactivateSurvey(surveyId: string): Promise<void> { return
 export async function deleteSurvey(surveyId: string): Promise<void> { return await callAppsScript('deleteSurvey', [surveyId]); }
 export async function deleteSurveys(surveyIds: string[]): Promise<void> { return await callAppsScript('deleteSurveys', [surveyIds]); }
 export async function getUpdatedSurveyTitlesAndDescriptions(surveyIds: string[], startTime: string): Promise<Pick<SurveyID, 'id' | 'name' | 'description'>[]> { return await callAppsScript('getUpdatedSurveyTitlesAndDescriptions', [surveyIds, startTime]); }
+export async function updateSurveyTitle(surveyId: string, newTitle: string): Promise<void> { return await callAppsScript('updateSurveyTitle', [surveyId, newTitle]); }
+export async function updateSurveyDescription(surveyId: string, newDescription: string): Promise<void> { return await callAppsScript('updateSurveyDescription', [surveyId, newDescription]); }
