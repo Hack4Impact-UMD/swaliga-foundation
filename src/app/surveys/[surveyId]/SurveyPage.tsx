@@ -32,6 +32,7 @@ import MenuIcon from "@/components/ui/MenuIcon";
 import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 import { MdCheck, MdEdit } from "react-icons/md";
 import TextField from "@/features/accountManagement/components/TextField";
+import { updateSurvey } from "@/data/firestore/surveys";
 
 interface SurveyPageProps {
   surveyId: string;
@@ -283,12 +284,18 @@ export default function SurveyPage(props: SurveyPageProps) {
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                 />
-                <MdCheck onClick={() => setIsEditingTitle(false)} />
+                <MdCheck onClick={async () => {
+                  await updateSurvey(survey.id, { name: newTitle });
+                  setIsEditingTitle(false);
+                }} />
               </>
             ) : (
               <>
                 <div>{survey.name}</div>
-                <MdEdit onClick={() => setIsEditingTitle(true)} />
+                <MdEdit onClick={async () => {
+                  await updateSurvey(survey.id, { name: newTitle });
+                  setIsEditingTitle(true);
+                }} />
               </>
             )}
           </h1>
