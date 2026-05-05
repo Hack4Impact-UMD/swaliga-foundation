@@ -34,6 +34,7 @@ import { MdCheck, MdEdit } from "react-icons/md";
 import TextField from "@/features/accountManagement/components/TextField";
 import { updateSurvey } from "@/data/firestore/surveys";
 import { appsScriptCloudFunctions } from "../../../../functions/src/googleAppsScript";
+import { updateSurveyDescription, updateSurveyTitle } from "@/data/apps-script/calls";
 
 interface SurveyPageProps {
   surveyId: string;
@@ -286,7 +287,10 @@ export default function SurveyPage(props: SurveyPageProps) {
                   onChange={(e) => setNewTitle(e.target.value)}
                 />
                 <MdCheck onClick={async () => {
-                  await updateSurvey(survey.id, { name: newTitle });
+                  await Promise.all([
+                    updateSurvey(survey.id, { name: newTitle }),
+                    updateSurveyTitle(survey.id, newTitle),
+                  ])
                   setIsEditingTitle(false);
                 }} />
               </>
@@ -307,7 +311,10 @@ export default function SurveyPage(props: SurveyPageProps) {
                 />
                 <MdCheck
                   onClick={async () => {
-                    await updateSurvey(survey.id, { description: newDescription});
+                    await Promise.all([
+                      updateSurvey(survey.id, { description: newDescription }),
+                      updateSurveyDescription(survey.id, newDescription),
+                    ])
                     setIsEditingDescription(false);
                   }}
                 />
