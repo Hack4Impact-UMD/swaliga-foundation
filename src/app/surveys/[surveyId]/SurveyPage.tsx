@@ -33,6 +33,7 @@ import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 import { MdCheck, MdEdit } from "react-icons/md";
 import TextField from "@/features/accountManagement/components/TextField";
 import { updateSurvey } from "@/data/firestore/surveys";
+import { appsScriptCloudFunctions } from "../../../../functions/src/googleAppsScript";
 
 interface SurveyPageProps {
   surveyId: string;
@@ -292,10 +293,7 @@ export default function SurveyPage(props: SurveyPageProps) {
             ) : (
               <>
                 <div>{survey.name}</div>
-                <MdEdit onClick={async () => {
-                  await updateSurvey(survey.id, { name: newTitle });
-                  setIsEditingTitle(true);
-                }} />
+                <MdEdit onClick={async () => setIsEditingTitle(true)} />
               </>
             )}
           </h1>
@@ -308,7 +306,10 @@ export default function SurveyPage(props: SurveyPageProps) {
                   onChange={(e) => setNewDescription(e.target.value)}
                 />
                 <MdCheck
-                  onClick={() => setIsEditingDescription(false)}
+                  onClick={async () => {
+                    await updateSurvey(survey.id, { description: newDescription});
+                    setIsEditingDescription(false);
+                  }}
                 />
               </>
             ) : (
