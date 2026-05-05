@@ -283,12 +283,12 @@ export default function SurveyPage(props: SurveyPageProps) {
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                 />
-                <MdCheck onClick={() => setIsEditingTitle((prev) => !prev)} />
+                <MdCheck onClick={() => setIsEditingTitle(false)} />
               </>
             ) : (
               <>
                 <div>{survey.name}</div>
-                <MdEdit onClick={() => setIsEditingTitle((prev) => !prev)} />
+                <MdEdit onClick={() => setIsEditingTitle(true)} />
               </>
             )}
           </h1>
@@ -301,14 +301,14 @@ export default function SurveyPage(props: SurveyPageProps) {
                   onChange={(e) => setNewDescription(e.target.value)}
                 />
                 <MdCheck
-                  onClick={() => setIsEditingDescription((prev) => !prev)}
+                  onClick={() => setIsEditingDescription(false)}
                 />
               </>
             ) : (
               <>
                 <div>{survey.description}</div>
                 <MdEdit
-                  onClick={() => setIsEditingDescription((prev) => !prev)}
+                  onClick={() => setIsEditingDescription(true)}
                 />
               </>
             )}
