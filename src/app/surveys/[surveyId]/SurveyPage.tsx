@@ -304,11 +304,7 @@ export default function SurveyPage(props: SurveyPageProps) {
           <h2 className={styles.surveyDescription}>
             {isEditingDescription ? (
               <>
-                <TextField
-                  label="Survey Description"
-                  value={newDescription}
-                  onChange={(e) => setNewDescription(e.target.value)}
-                />
+                <textarea value={newDescription} onChange={(e) => setNewDescription(e.target.value)} />
                 <MdCheck
                   onClick={async () => {
                     await Promise.all([
