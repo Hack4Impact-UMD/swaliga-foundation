@@ -10,6 +10,10 @@
   padding: 2.5%;
 }
 
+.pointer {
+  cursor: pointer;
+}
+
 .header {
   display: flex;
   flex-direction: column;
@@ -19,6 +23,8 @@
 }
 
 .surveyTitle {
+  display: flex;
+  flex-direction: row;
   font-family: "Poppins", sans-serif;
   color: #d0d12a;
   font-size: 40px;
@@ -27,6 +33,8 @@
 }
 
 .surveyDescription {
+  display: flex;
+  flex-direction: row;
   font-family: "Poppins", sans-serif;
   color: #dedeb2;
   font-size: 20px;

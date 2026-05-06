@@ -11,7 +11,7 @@ import {
   SurveyResponseStudentIdID,
   SurveyResponseUnidentifiedID,
 } from "@/types/survey-types";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styles from "./SurveyPage.module.css";
 import LoadingPage from "@/app/loading";
 import Link from "next/link";
@@ -30,6 +30,14 @@ import SurveyActivationSwitch from "@/features/surveyManagement/components/Surve
 import ErrorPage from "@/app/error";
 import MenuIcon from "@/components/ui/MenuIcon";
 import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
+import { MdCheck, MdEdit } from "react-icons/md";
+import TextField from "@/features/accountManagement/components/TextField";
+import { updateSurvey } from "@/data/firestore/surveys";
+import { appsScriptCloudFunctions } from "../../../../functions/src/googleAppsScript";
+import {
+  updateSurveyDescription,
+  updateSurveyTitle,
+} from "@/data/apps-script/calls";
 
 interface SurveyPageProps {
   surveyId: string;
@@ -52,6 +60,19 @@ export default function SurveyPage(props: SurveyPageProps) {
 
   const [selectedPendingAssignmentIds, setSelectedPendingAssignmentIds] =
     useState<string[]>([]);
+  const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
+  const [newTitle, setNewTitle] = useState<string>(survey?.name || "");
+  const [isEditingDescription, setIsEditingDescription] =
+    useState<boolean>(false);
+  const [newDescription, setNewDescription] = useState<string>(
+    survey?.description || "",
+  );
+
+  useEffect(() => {
+    setNewTitle(survey?.name || "");
+    setNewDescription(survey?.description || "");
+  }, [survey]);
+
   const {
     assignments,
     setAssignments,
@@ -65,13 +86,13 @@ export default function SurveyPage(props: SurveyPageProps) {
     assignments.forEach((assignment) =>
       isPendingAssignmentID(assignment)
         ? pendingAssignments.push(assignment)
-        : surveyResponses.push(assignment)
+        : surveyResponses.push(assignment),
     );
     pendingAssignments = pendingAssignments.sort((a, b) =>
-      a.assignedAt.localeCompare(b.assignedAt)
+      a.assignedAt.localeCompare(b.assignedAt),
     );
     surveyResponses = surveyResponses.sort((a, b) =>
-      b.submittedAt.localeCompare(a.submittedAt)
+      b.submittedAt.localeCompare(a.submittedAt),
     );
     return { pendingAssignments, surveyResponses };
   }, [assignments]);
@@ -90,7 +111,7 @@ export default function SurveyPage(props: SurveyPageProps) {
       isSurveyResponseStudentIdID(assignment)
     ) {
       const student = students.find(
-        (student) => student.id === assignment.studentId
+        (student) => student.id === assignment.studentId,
       );
       return student ? getFullName(student.name) : "N/A";
     }
@@ -103,7 +124,7 @@ export default function SurveyPage(props: SurveyPageProps) {
       isPendingAssignmentID(assignment)
     ) {
       const student = students.find(
-        (student) => student.id === assignment.studentId
+        (student) => student.id === assignment.studentId,
       );
       return student && student.email ? student.email : "N/A";
     } else if (isSurveyResponseStudentEmailID(assignment)) {
@@ -118,7 +139,7 @@ export default function SurveyPage(props: SurveyPageProps) {
       getValue: getStudentNameFromAssignment,
       sortFunc: (a, b) =>
         getStudentNameFromAssignment(a).localeCompare(
-          getStudentNameFromAssignment(b)
+          getStudentNameFromAssignment(b),
         ),
     },
     {
@@ -145,7 +166,7 @@ export default function SurveyPage(props: SurveyPageProps) {
       sortFunc: (a, b) => {
         if (isSurveyResponseStudentIdID(a) && isSurveyResponseStudentIdID(b)) {
           return getStudentNameFromAssignment(a).localeCompare(
-            getStudentNameFromAssignment(b)
+            getStudentNameFromAssignment(b),
           );
         } else if (isSurveyResponseStudentIdID(a)) {
           return -1;
@@ -226,7 +247,7 @@ export default function SurveyPage(props: SurveyPageProps) {
                       } satisfies SurveyResponseUnidentifiedID);
                 }
                 return a;
-              })
+              }),
             )
           }
         />
@@ -260,8 +281,63 @@ export default function SurveyPage(props: SurveyPageProps) {
     <BlankBackgroundPage>
       <div className={styles.container}>
         <div className={styles.header}>
-          <h1 className={styles.surveyTitle}>{survey.name}</h1>
-          <h2 className={styles.surveyDescription}>{survey.description}</h2>
+          <h1 className={styles.surveyTitle}>
+            {isEditingTitle ? (
+              <>
+                <TextField
+                  label="Survey Title"
+                  value={newTitle}
+                  onChange={(e) => setNewTitle(e.target.value)}
+                />
+                <MdCheck
+                  className={styles.pointer}
+                  onClick={async () => {
+                    await Promise.all([
+                      updateSurvey(survey.id, { name: newTitle }),
+                      updateSurveyTitle(survey.id, newTitle),
+                    ]);
+                    setIsEditingTitle(false);
+                  }}
+                />
+              </>
+            ) : (
+              <>
+                <div>{survey.name}</div>
+                <MdEdit
+                  className={styles.pointer}
+                  onClick={async () => setIsEditingTitle(true)}
+                />
+              </>
+            )}
+          </h1>
+          <h2 className={styles.surveyDescription}>
+            {isEditingDescription ? (
+              <>
+                <textarea
+                  value={newDescription}
+                  onChange={(e) => setNewDescription(e.target.value)}
+                />
+                <MdCheck
+                  className={styles.pointer}
+                  onClick={async () => {
+                    await Promise.all([
+                      updateSurvey(survey.id, { description: newDescription }),
+                      updateSurveyDescription(survey.id, newDescription),
+                    ]);
+                    setIsEditingDescription(false);
+                  }}
+                />
+              </>
+            ) : (
+              <>
+                <div>{survey.description}</div>
+                <MdEdit
+                  className={styles.pointer}
+                  onClick={() => setIsEditingDescription(true)}
+                />
+              </>
+            )}
+          </h2>
           <div className={styles.surveyOptionMenu}>
             <Link
               href={`https://docs.google.com/forms/d/${survey.id}/edit`}
@@ -291,7 +367,7 @@ export default function SurveyPage(props: SurveyPageProps) {
                 <SendSurveyReminderEmailModal
                   survey={survey}
                   assignments={pendingAssignments.filter((assignment) =>
-                    selectedPendingAssignmentIds.includes(assignment.id)
+                    selectedPendingAssignmentIds.includes(assignment.id),
                   )}
                 />
               )}
