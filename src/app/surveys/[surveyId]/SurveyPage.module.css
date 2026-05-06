@@ -10,6 +10,10 @@
   padding: 2.5%;
 }
 
+.pointer {
+  cursor: pointer;
+}
+
 .header {
   display: flex;
   flex-direction: column;
