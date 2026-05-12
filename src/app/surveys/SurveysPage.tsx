@@ -29,9 +29,7 @@ export default function SurveysPage() {
     {
       name: "Name",
       getValue: (survey: SurveyID) => (
-        <Link href={`/surveys/${survey.id}`}>
-          <p className={styles.linkText}>{survey.name}</p>
-        </Link>
+        <p>{survey.name}</p>
       ),
       sortFunc: (a, b) => a.name.localeCompare(b.name),
     },
@@ -52,7 +50,7 @@ export default function SurveysPage() {
       ),
     },
     {
-      name: "View Survey",
+      name: "View Google Form",
       getValue: (survey: SurveyID) => (
         <Link href={survey.responderUri} target="_blank">
           <FaEye className={styles.linkIcon} size={20} />
@@ -77,6 +75,14 @@ export default function SurveysPage() {
       ),
       sortFunc: (a, b) => (a.isActive === b.isActive ? 0 : a.isActive ? -1 : 1),
     },
+    {
+      name: "View Survey",
+      getValue: (survey: SurveyID) => (
+        <Link href={`/surveys/${survey.id}`}>
+          <p className={styles.linkText}>View Survey</p>
+        </Link>
+      ),
+    }
   ];
 
   const filterConditions: FilterCondition<SurveyID>[] = [
