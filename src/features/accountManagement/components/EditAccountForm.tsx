@@ -455,7 +455,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           lastName,
         },
         gender: gender === "Other" ? genderOtherText : gender,
-        ...(auth.user?.email ? { email: auth.user.email } : {}),
+        ...(mode === "CREATE" && auth.user?.email ? { email: auth.user.email } : {}),
         ...(phone ? { phone: toE164Phone(phone) } : {}),
         uid: auth.user!.uid,
         role: "STUDENT",
@@ -602,7 +602,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       <div className={styles.row}>
         <TextField
           label="Email"
-          value={auth.user?.email || ""}
+          value={mode === "EDIT" ? (student.email ?? "") : (auth.user?.email ?? "")}
           placeholder="No email was used to login to this account."
           disabled
           icon={<FaEnvelope />}
