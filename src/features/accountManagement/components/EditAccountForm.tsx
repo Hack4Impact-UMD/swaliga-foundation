@@ -455,7 +455,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           lastName,
         },
         gender: gender === "Other" ? genderOtherText : gender,
-        ...(auth.user?.email ? { email: auth.user.email } : {}),
+        ...(mode === "CREATE" && auth.user?.email ? { email: auth.user.email } : {}),
         ...(phone ? { phone: toE164Phone(phone) } : {}),
         uid: auth.user!.uid,
         role: "STUDENT",
