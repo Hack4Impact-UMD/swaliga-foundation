@@ -602,7 +602,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       <div className={styles.row}>
         <TextField
           label="Email"
-          value={mode === "EDIT" ? (student.email ?? "") : ""}
+          value={mode === "EDIT" ? (student.email ?? "") : (auth.user?.email ?? "")}
           placeholder="No email was used to login to this account."
           disabled
           icon={<FaEnvelope />}
