@@ -448,6 +448,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
 
     try {
       if (!auth.user) throw new Error("No authenticated user found.");
+      // @ts-expect-error - UID should not be updated when admin users are editing a student's account
       const studentDTO: Omit<Student, "id"> = {
         name: {
           firstName,
@@ -457,7 +458,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
         gender: gender === "Other" ? genderOtherText : gender,
         ...(mode === "CREATE" && auth.user?.email ? { email: auth.user.email } : {}),
         ...(phone ? { phone: toE164Phone(phone) } : {}),
-        uid: auth.user!.uid,
+        ...(mode === "CREATE" ? { uid: auth.user!.uid } : {}),
         role: "STUDENT",
         dateOfBirth,
         ...(joinedSwaligaDate ? { joinedSwaligaDate } : {}),
