@@ -1,3 +1,24 @@
+const ROLES = ["ADMIN", "STAFF", "STUDENT", "PARENT"] as const;
+type Role = (typeof ROLES)[number];
+
+
+export interface User {
+  name: Name;
+  gender: Gender;
+  phone?: string;
+
+  role: Role;
+  uid: string;
+}
+
+
+
+
+
+
+
+
+
 export interface Person {
   name: Name;
   gender: Gender;
@@ -92,5 +113,3 @@ export const ethnicityValues = [
   "Latin",
   "Other"
 ]
-
-export type Role = "ADMIN" | "STAFF" | "STUDENT";
