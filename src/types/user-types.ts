@@ -1,10 +1,24 @@
 import { z } from "zod";
 
-const RoleSchema = z.eum(["ADMIN", "STAFF", "STUDENT", "PARENT"]);
+const ROLES = ["ADMIN", "STAFF", "STUDENT", "PARENT"];
+const RoleSchema = z.enum(ROLES);
 type Role = z.infer<typeof RoleSchema>
 
+const NameSchema = z.object({
+  firstName: z.string().min(1),
+  middleName: z.string().min(1).optional(),
+  preferredName: z.string().min(1).optional(),
+  lastName: z.string().min(1),
+});
+type Name = z.infer<typeof NameSchema>;
+
+const GENDERS = ["Male", "Female", "Non-Binary", "Other"]
+const GenderSchema = z.enum(GENDERS);
+type Gender = z.infer<typeof GenderSchema>;
+
 const BaseUserSchema = z.object({
-  name: 
+  name: NameSchema,
+  gender: GenderSchema
 });
 
 export interface User {
@@ -29,15 +43,6 @@ export interface Person {
   gender: Gender;
   phone?: string;
 }
-
-
-const NameSchema = z.object({
-  firstName: z.string().min(1),
-  middleName: z.string().min(1).optional(),
-  preferredName: z.string().min(1).optional(),
-  lastName: z.string().min(1),
-});
-type Name = z.infer<typeof NameSchema>;
 
 export function getFullName(name: Name): string {
   const { firstName, middleName, lastName } = name;
