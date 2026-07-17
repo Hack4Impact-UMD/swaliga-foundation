@@ -16,22 +16,26 @@ const GENDERS = ["Male", "Female", "Non-Binary", "Other"]
 const GenderSchema = z.enum(GENDERS);
 type Gender = z.infer<typeof GenderSchema>;
 
+const ETHNICITIES = [
+  "Black or African American",
+  "Indigenous",
+  "Asian",
+  "White",
+  "Multiracial",
+  "Latin",
+  "Other"
+]
+const EthniitySchema = z.enum(ETHNICITIES);
+type Ethnicity = z.infer<typeof EthnicitySchema>;
+
 const BaseUserSchema = z.object({
   name: NameSchema,
-  gender: GenderSchema
+  gender: GenderSchema,
+  phone: z.e164().optional(),
+  role: RoleSchema,
+  uid: z.string();
 });
-
-export interface User {
-  name: Name;
-  gender: Gender;
-  phone?: string;
-
-  role: Role;
-  uid: string;
-}
-
-
-
+type BaseUser = z.infer<typeof BaseUserSchema>;
 
 
 
