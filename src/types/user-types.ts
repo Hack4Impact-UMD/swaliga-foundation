@@ -25,8 +25,18 @@ const ETHNICITIES = [
   "Latin",
   "Other"
 ]
-const EthniitySchema = z.enum(ETHNICITIES);
+const EthnicitySchema = z.enum(ETHNICITIES);
 type Ethnicity = z.infer<typeof EthnicitySchema>;
+
+const AddressSchema = z.object({
+  addressLine1: z.string().min(1),
+  addressLine2: z.string().min(1).optional(),
+  city: z.string().min(1),
+  state: z.string().min(1),
+  country: z.string().min(1),
+  zipCode: z.number().min(10000).max(99999)
+});
+type Address = z.infer<typeof AddressSchema>;
 
 const BaseUserSchema = z.object({
   name: NameSchema,
@@ -37,7 +47,7 @@ const BaseUserSchema = z.object({
 });
 type BaseUser = z.infer<typeof BaseUserSchema>;
 
-
+const StudentSchema = z.
 
 
 
@@ -81,14 +91,6 @@ export type GuardianRelationship =
   | (string & {});
 export const guardianRelationshipValues = ["Father", "Mother", "Legal Guardian", "Other"];
 
-export interface Address {
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  state: string;
-  country: string;
-  zipCode: number;
-}
 export function getFullAddress(address: Address | undefined): string {
   if (!address) return "N/A";
   const { addressLine1, addressLine2, city, state, country, zipCode } = address;
