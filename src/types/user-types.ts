@@ -41,22 +41,11 @@ type BaseUser = z.infer<typeof BaseUserSchema>;
 
 
 
-
-export interface Person {
-  name: Name;
-  gender: Gender;
-  phone?: string;
-}
-
 export function getFullName(name: Name): string {
   const { firstName, middleName, lastName } = name;
   return `${firstName} ${middleName ? `${middleName} ` : ""}${lastName}`
 }
 
-export interface User extends Person {
-  uid: string;
-  role: Role;
-}
 
 export interface Student extends User {
   id: string;
