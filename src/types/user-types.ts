@@ -1,6 +1,7 @@
-const ROLES = ["ADMIN", "STAFF", "STUDENT", "PARENT"] as const;
-type Role = (typeof ROLES)[number];
+import { z } from "zod";
 
+const RoleSchema = z.eum(["ADMIN", "STAFF", "STUDENT", "PARENT"]);
+type Role = z.infer<typeof RoleSchema>
 
 export interface User {
   name: Name;
