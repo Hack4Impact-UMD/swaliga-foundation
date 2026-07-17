@@ -33,7 +33,7 @@ const BaseUserSchema = z.object({
   gender: GenderSchema,
   phone: z.e164().optional(),
   role: RoleSchema,
-  uid: z.string();
+  uid: z.string().optional();
 });
 type BaseUser = z.infer<typeof BaseUserSchema>;
 
