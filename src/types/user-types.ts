@@ -3,6 +3,10 @@ import { z } from "zod";
 const RoleSchema = z.eum(["ADMIN", "STAFF", "STUDENT", "PARENT"]);
 type Role = z.infer<typeof RoleSchema>
 
+const BaseUserSchema = z.object({
+  name: 
+});
+
 export interface User {
   name: Name;
   gender: Gender;
@@ -26,11 +30,14 @@ export interface Person {
   phone?: string;
 }
 
-export interface Name {
-  firstName: string;
-  middleName?: string;
-  lastName: string;
-}
+
+const NameSchema = z.object({
+  firstName: z.string().min(1),
+  middleName: z.string().min(1).optional(),
+  preferredName: z.string().min(1).optional(),
+  lastName: z.string().min(1),
+});
+type Name = z.infer<typeof NameSchema>;
 
 export function getFullName(name: Name): string {
   const { firstName, middleName, lastName } = name;
