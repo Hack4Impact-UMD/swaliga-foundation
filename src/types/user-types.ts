@@ -73,10 +73,17 @@ export function getFullName(name: Name): string {
   return `${firstName} ${middleName ? `${middleName} ` : ""}${lastName}`
 }
 
-export interface Admin extends User {
-  email: string;
-  role: "ADMIN";
-}
+const StaffSchema = BaseUserSchema.safeExtend({
+  email: z.email(),
+  role: z.literal("STAFF")
+});
+type Staff = z.infer<typeof StaffSchema>;
+
+const AdminSchema = BaseUserSchema.safeExtend({
+  email: z.email(),
+  role: z.literal("ADMIN")
+});
+type Admin = z.infer<typeof AdminSchema>;
 
 export interface Guardian extends Person {
   email?: string;
