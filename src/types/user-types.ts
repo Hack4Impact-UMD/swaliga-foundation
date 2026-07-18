@@ -1,7 +1,7 @@
 import moment from "moment";
 import { z } from "zod";
 
-const ROLES = ["ADMIN", "STAFF", "STUDENT", "PARENT"];
+const ROLES = ["ADMIN", "STAFF", "STUDENT"];
 const RoleSchema = z.enum(ROLES);
 type Role = z.infer<typeof RoleSchema>
 
