@@ -1,3 +1,4 @@
+import moment from "moment";
 import { z } from "zod";
 
 const ROLES = ["ADMIN", "STAFF", "STUDENT", "PARENT"];
@@ -43,12 +44,28 @@ const BaseUserSchema = z.object({
   gender: GenderSchema,
   phone: z.e164().optional(),
   role: RoleSchema,
-  uid: z.string().optional();
+  uid: z.string().optional()
 });
 type BaseUser = z.infer<typeof BaseUserSchema>;
 
-const StudentSchema = z.
-
+const StudentSchema = BaseUserSchema.safeExtend({
+  id: z.number().min(1000000),
+  role: z.literal("STUDENT"),
+  email: z.email().optional(),
+  dateOfBirth: z.preprocess((val) => ),
+  joinedSwaligaDate: z.preprocess((val) =>).optional(),
+  ethnicity: z.array(EthnicitySchema),
+  guardians: z.array(GuardianSchema),
+  address: AddressSchema.optional(),
+  school: z.object({
+    name: z.string().min(1),
+    address: AddressSchema.optional(),
+    grade: z.number().min(1).max(12),
+    gradYear: z.number().min(1900).max(2100).optional(),
+    gpa: z.number().min(0).max(5).optional()
+  })
+});
+type Student = z.infer<typeof StudentSchema>;
 
 
 export function getFullName(name: Name): string {
