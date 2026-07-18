@@ -73,25 +73,6 @@ export function getFullName(name: Name): string {
   return `${firstName} ${middleName ? `${middleName} ` : ""}${lastName}`
 }
 
-
-export interface Student extends User {
-  id: string;
-  role: "STUDENT";
-  email?: string;
-  dateOfBirth: string; // ISO-8601
-  joinedSwaligaDate?: string; // ISO-8601
-  ethnicity: Ethnicity[];
-  guardians: Guardian[];
-  address?: Address;
-  school: {
-    name: string;
-    address?: Address;
-    grade: number;
-    gradYear?: number;
-    gpa?: number;
-  }
-}
-
 export interface Admin extends User {
   email: string;
   role: "ADMIN";
