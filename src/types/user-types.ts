@@ -1,4 +1,4 @@
-import moment from "moment";
+import moment, { isMoment } from "moment";
 import { z } from "zod";
 
 const ROLES = ["ADMIN", "STAFF", "STUDENT"];
@@ -39,10 +39,25 @@ const AddressSchema = z.object({
 });
 type Address = z.infer<typeof AddressSchema>;
 
-const BaseUserSchema = z.object({
+const PersonSchema = z.object({
   name: NameSchema,
   gender: GenderSchema,
   phone: z.e164().optional(),
+  email: z.email().optional(),
+});
+type Person = z.infer<typeof PersonSchema>;
+
+const GUARDIAN_RELATIONSHIPS = ["Father", "Mother", "Legal Guardian", "Other"];
+const GuardianRelationshipSchema = z.enum(GUARDIAN_RELATIONSHIPS);
+type GuardianRelationship = z.infer<typeof GuardianRelationshipSchema>;
+
+const GuardianSchema = PersonSchema.safeExtend({
+  email: z.email(),
+  relationship: GuardianRelationshipSchema
+});
+type Guardian = z.infer<typeof GuardianSchema>;
+
+const BaseUserSchema = PersonSchema.safeExtend({
   role: RoleSchema,
   uid: z.string().optional()
 });
@@ -51,7 +66,6 @@ type BaseUser = z.infer<typeof BaseUserSchema>;
 const StudentSchema = BaseUserSchema.safeExtend({
   id: z.number().min(1000000),
   role: z.literal("STUDENT"),
-  email: z.email().optional(),
   dateOfBirth: z.preprocess((val) => isMoment(val) ? val.toDate() : val, z.date()),
   joinedSwaligaDate: z.preprocess((val) => isMoment(val) ? val.toDate() : val, z.date()).optional(),
   ethnicity: z.array(EthnicitySchema),
@@ -66,7 +80,6 @@ const StudentSchema = BaseUserSchema.safeExtend({
   })
 });
 type Student = z.infer<typeof StudentSchema>;
-
 
 export function getFullName(name: Name): string {
   const { firstName, middleName, lastName } = name;
@@ -84,17 +97,6 @@ const AdminSchema = BaseUserSchema.safeExtend({
   role: z.literal("ADMIN")
 });
 type Admin = z.infer<typeof AdminSchema>;
-
-export interface Guardian extends Person {
-  email?: string;
-  relationship: GuardianRelationship;
-}
-export type GuardianRelationship =
-  | "Father"
-  | "Mother"
-  | "Legal Guardian"
-  | (string & {});
-export const guardianRelationshipValues = ["Father", "Mother", "Legal Guardian", "Other"];
 
 export function getFullAddress(address: Address | undefined): string {
   if (!address) return "N/A";
