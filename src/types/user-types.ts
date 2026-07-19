@@ -1,7 +1,7 @@
-import moment, { isMoment } from "moment";
+import { isMoment } from "moment";
 import { z } from "zod";
 
-const ROLES = ["ADMIN", "STAFF", "STUDENT"];
+const ROLES = ["ADMIN", "STAFF", "STUDENT"] as const;
 const RoleSchema = z.enum(ROLES);
 type Role = z.infer<typeof RoleSchema>
 
@@ -13,8 +13,8 @@ const NameSchema = z.object({
 });
 type Name = z.infer<typeof NameSchema>;
 
-const GENDERS = ["Male", "Female", "Non-Binary", "Other"]
-const GenderSchema = z.enum(GENDERS);
+const GENDERS = ["Male", "Female", "Non-Binary", "Other"] as const;
+const GenderSchema = z.union([z.enum(GENDERS), z.string().transform((x) => x as string & {})]);
 type Gender = z.infer<typeof GenderSchema>;
 
 const ETHNICITIES = [
@@ -25,8 +25,8 @@ const ETHNICITIES = [
   "Multiracial",
   "Latin",
   "Other"
-]
-const EthnicitySchema = z.enum(ETHNICITIES);
+] as const;
+const EthnicitySchema = z.union([z.enum(ETHNICITIES), z.string().transform((x) => x as string & {})]);
 type Ethnicity = z.infer<typeof EthnicitySchema>;
 
 const AddressSchema = z.object({
@@ -47,8 +47,8 @@ const PersonSchema = z.object({
 });
 type Person = z.infer<typeof PersonSchema>;
 
-const GUARDIAN_RELATIONSHIPS = ["Father", "Mother", "Legal Guardian", "Other"];
-const GuardianRelationshipSchema = z.enum(GUARDIAN_RELATIONSHIPS);
+const GUARDIAN_RELATIONSHIPS = ["Father", "Mother", "Legal Guardian", "Other"] as const;
+const GuardianRelationshipSchema = z.union([z.enum(GUARDIAN_RELATIONSHIPS), z.string().transform((x) => x as string & {})]);
 type GuardianRelationship = z.infer<typeof GuardianRelationshipSchema>;
 
 const GuardianSchema = PersonSchema.safeExtend({
@@ -103,28 +103,3 @@ export function getFullAddress(address: Address | undefined): string {
   const { addressLine1, addressLine2, city, state, country, zipCode } = address;
   return `${addressLine1}${addressLine2 ? `, ${addressLine2}` : ""}, ${city}, ${state}, ${country} ${zipCode}`;
 }
-
-export type Gender =
-  | "Male"
-  | "Female"
-  | "Non-Binary"
-  | (string & {});
-export const genderValues = ["Male", "Female", "Non-Binary", "Other"];
-
-export type Ethnicity =
-  | "Black or African American"
-  | "Indigenous"
-  | "Asian"
-  | "White"
-  | "Multiracial"
-  | "Latin"
-  | (string & {});
-export const ethnicityValues = [
-  "Black or African American",
-  "Indigenous",
-  "Asian",
-  "White",
-  "Multiracial",
-  "Latin",
-  "Other"
-]
