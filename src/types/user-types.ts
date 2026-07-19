@@ -96,6 +96,9 @@ export const AdminSchema = BaseUserSchema.safeExtend({
 });
 export type Admin = z.infer<typeof AdminSchema>;
 
+export const UserSchema = z.union([AdminSchema, StaffSchema, StudentSchema]);
+export type User = z.infer<typeof UserSchema>;
+
 export function getFullAddress(address: Address | undefined): string {
   if (!address) return "N/A";
   const { addressLine1, addressLine2, city, state, country, zipCode } = address;
