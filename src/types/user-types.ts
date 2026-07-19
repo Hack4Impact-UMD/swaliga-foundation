@@ -13,7 +13,7 @@ const NameSchema = z.object({
 });
 type Name = z.infer<typeof NameSchema>;
 
-const GENDERS = ["Male", "Female", "Non-Binary", "Other"] as const;
+const GENDERS = ["Male", "Female", "Non-Binary"] as const;
 const GenderSchema = z.union([z.enum(GENDERS), z.string().transform((x) => x as string & {})]);
 type Gender = z.infer<typeof GenderSchema>;
 
@@ -24,7 +24,6 @@ const ETHNICITIES = [
   "White",
   "Multiracial",
   "Latin",
-  "Other"
 ] as const;
 const EthnicitySchema = z.union([z.enum(ETHNICITIES), z.string().transform((x) => x as string & {})]);
 type Ethnicity = z.infer<typeof EthnicitySchema>;
@@ -47,7 +46,7 @@ const PersonSchema = z.object({
 });
 type Person = z.infer<typeof PersonSchema>;
 
-const GUARDIAN_RELATIONSHIPS = ["Father", "Mother", "Legal Guardian", "Other"] as const;
+const GUARDIAN_RELATIONSHIPS = ["Father", "Mother", "Legal Guardian"] as const;
 const GuardianRelationshipSchema = z.union([z.enum(GUARDIAN_RELATIONSHIPS), z.string().transform((x) => x as string & {})]);
 type GuardianRelationship = z.infer<typeof GuardianRelationshipSchema>;
 
