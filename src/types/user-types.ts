@@ -1,23 +1,23 @@
 import { isMoment } from "moment";
 import { z } from "zod";
 
-const ROLES = ["ADMIN", "STAFF", "STUDENT"] as const;
-const RoleSchema = z.enum(ROLES);
-type Role = z.infer<typeof RoleSchema>
+export const ROLES = ["ADMIN", "STAFF", "STUDENT"] as const;
+export const RoleSchema = z.enum(ROLES);
+export type Role = z.infer<typeof RoleSchema>
 
-const NameSchema = z.object({
+export const NameSchema = z.object({
   firstName: z.string().min(1),
   middleName: z.string().min(1).optional(),
   preferredName: z.string().min(1).optional(),
   lastName: z.string().min(1),
 });
-type Name = z.infer<typeof NameSchema>;
+export type Name = z.infer<typeof NameSchema>;
 
-const GENDERS = ["Male", "Female", "Non-Binary"] as const;
-const GenderSchema = z.union([z.enum(GENDERS), z.string().transform((x) => x as string & {})]);
-type Gender = z.infer<typeof GenderSchema>;
+export const GENDERS = ["Male", "Female", "Non-Binary"] as const;
+export const GenderSchema = z.union([z.enum(GENDERS), z.string().transform((x) => x as string & {})]);
+export type Gender = z.infer<typeof GenderSchema>;
 
-const ETHNICITIES = [
+export const ETHNICITIES = [
   "Black or African American",
   "Indigenous",
   "Asian",
@@ -25,10 +25,10 @@ const ETHNICITIES = [
   "Multiracial",
   "Latin",
 ] as const;
-const EthnicitySchema = z.union([z.enum(ETHNICITIES), z.string().transform((x) => x as string & {})]);
-type Ethnicity = z.infer<typeof EthnicitySchema>;
+export const EthnicitySchema = z.union([z.enum(ETHNICITIES), z.string().transform((x) => x as string & {})]);
+export type Ethnicity = z.infer<typeof EthnicitySchema>;
 
-const AddressSchema = z.object({
+export const AddressSchema = z.object({
   addressLine1: z.string().min(1),
   addressLine2: z.string().min(1).optional(),
   city: z.string().min(1),
@@ -36,33 +36,33 @@ const AddressSchema = z.object({
   country: z.string().min(1),
   zipCode: z.number().min(10000).max(99999)
 });
-type Address = z.infer<typeof AddressSchema>;
+export type Address = z.infer<typeof AddressSchema>;
 
-const PersonSchema = z.object({
+export const PersonSchema = z.object({
   name: NameSchema,
   gender: GenderSchema,
   phone: z.e164().optional(),
   email: z.email().optional(),
 });
-type Person = z.infer<typeof PersonSchema>;
+export type Person = z.infer<typeof PersonSchema>;
 
-const GUARDIAN_RELATIONSHIPS = ["Father", "Mother", "Legal Guardian"] as const;
-const GuardianRelationshipSchema = z.union([z.enum(GUARDIAN_RELATIONSHIPS), z.string().transform((x) => x as string & {})]);
-type GuardianRelationship = z.infer<typeof GuardianRelationshipSchema>;
+export const GUARDIAN_RELATIONSHIPS = ["Father", "Mother", "Legal Guardian"] as const;
+export const GuardianRelationshipSchema = z.union([z.enum(GUARDIAN_RELATIONSHIPS), z.string().transform((x) => x as string & {})]);
+export type GuardianRelationship = z.infer<typeof GuardianRelationshipSchema>;
 
-const GuardianSchema = PersonSchema.safeExtend({
+export const GuardianSchema = PersonSchema.safeExtend({
   email: z.email(),
   relationship: GuardianRelationshipSchema
 });
-type Guardian = z.infer<typeof GuardianSchema>;
+export type Guardian = z.infer<typeof GuardianSchema>;
 
-const BaseUserSchema = PersonSchema.safeExtend({
+export const BaseUserSchema = PersonSchema.safeExtend({
   role: RoleSchema,
   uid: z.string().optional()
 });
-type BaseUser = z.infer<typeof BaseUserSchema>;
+export type BaseUser = z.infer<typeof BaseUserSchema>;
 
-const StudentSchema = BaseUserSchema.safeExtend({
+export const StudentSchema = BaseUserSchema.safeExtend({
   id: z.number().min(1000000),
   role: z.literal("STUDENT"),
   dateOfBirth: z.preprocess((val) => isMoment(val) ? val.toDate() : val, z.date()),
@@ -78,24 +78,24 @@ const StudentSchema = BaseUserSchema.safeExtend({
     gpa: z.number().min(0).max(5).optional()
   })
 });
-type Student = z.infer<typeof StudentSchema>;
+export type Student = z.infer<typeof StudentSchema>;
 
 export function getFullName(name: Name): string {
   const { firstName, middleName, lastName } = name;
   return `${firstName} ${middleName ? `${middleName} ` : ""}${lastName}`
 }
 
-const StaffSchema = BaseUserSchema.safeExtend({
+export const StaffSchema = BaseUserSchema.safeExtend({
   email: z.email(),
   role: z.literal("STAFF")
 });
-type Staff = z.infer<typeof StaffSchema>;
+export type Staff = z.infer<typeof StaffSchema>;
 
-const AdminSchema = BaseUserSchema.safeExtend({
+export const AdminSchema = BaseUserSchema.safeExtend({
   email: z.email(),
   role: z.literal("ADMIN")
 });
-type Admin = z.infer<typeof AdminSchema>;
+export type Admin = z.infer<typeof AdminSchema>;
 
 export function getFullAddress(address: Address | undefined): string {
   if (!address) return "N/A";
