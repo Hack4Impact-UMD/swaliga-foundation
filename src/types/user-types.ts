@@ -14,7 +14,7 @@ export const NameSchema = z.object({
 export type Name = z.infer<typeof NameSchema>;
 
 export const GENDERS = ["Male", "Female", "Non-Binary"] as const;
-export const GenderSchema = z.union([z.enum(GENDERS), z.string().transform((x) => x as string & {})]);
+export const GenderSchema = z.union([z.enum(GENDERS), z.string() as z.ZodType<string & {}>]);
 export type Gender = z.infer<typeof GenderSchema>;
 
 export const ETHNICITIES = [
@@ -25,7 +25,7 @@ export const ETHNICITIES = [
   "Multiracial",
   "Latin",
 ] as const;
-export const EthnicitySchema = z.union([z.enum(ETHNICITIES), z.string().transform((x) => x as string & {})]);
+export const EthnicitySchema = z.union([z.enum(ETHNICITIES), z.string() as z.ZodType<string & {}>]);
 export type Ethnicity = z.infer<typeof EthnicitySchema>;
 
 export const AddressSchema = z.object({
@@ -47,7 +47,7 @@ export const PersonSchema = z.object({
 export type Person = z.infer<typeof PersonSchema>;
 
 export const GUARDIAN_RELATIONSHIPS = ["Father", "Mother", "Legal Guardian"] as const;
-export const GuardianRelationshipSchema = z.union([z.enum(GUARDIAN_RELATIONSHIPS), z.string().transform((x) => x as string & {})]);
+export const GuardianRelationshipSchema = z.union([z.enum(GUARDIAN_RELATIONSHIPS), z.string() as z.ZodType<string & {}>]);
 export type GuardianRelationship = z.infer<typeof GuardianRelationshipSchema>;
 
 export const GuardianSchema = PersonSchema.safeExtend({
