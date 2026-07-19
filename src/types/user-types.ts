@@ -51,7 +51,6 @@ export const GuardianRelationshipSchema = z.union([z.enum(GUARDIAN_RELATIONSHIPS
 export type GuardianRelationship = z.infer<typeof GuardianRelationshipSchema>;
 
 export const GuardianSchema = PersonSchema.safeExtend({
-  email: z.email(),
   relationship: GuardianRelationshipSchema
 });
 export type Guardian = z.infer<typeof GuardianSchema>;
@@ -63,7 +62,7 @@ export const BaseUserSchema = PersonSchema.safeExtend({
 export type BaseUser = z.infer<typeof BaseUserSchema>;
 
 export const StudentSchema = BaseUserSchema.safeExtend({
-  id: z.number().min(1000000),
+  id: z.coerce.number().min(1000000),
   role: z.literal("STUDENT"),
   dateOfBirth: z.preprocess((val) => isMoment(val) ? val.toDate() : val, z.date()),
   joinedSwaligaDate: z.preprocess((val) => isMoment(val) ? val.toDate() : val, z.date()).optional(),
