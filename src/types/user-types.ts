@@ -36,6 +36,7 @@ export interface Student extends User {
     gradYear?: number;
     gpa?: number;
   }
+  isArchived: boolean;
 }
 
 export interface Admin extends User {
