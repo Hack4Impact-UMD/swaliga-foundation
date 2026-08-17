@@ -1,16 +1,30 @@
 import { IdTokenResult } from "firebase/auth";
-import { Role } from "./user-types";
+import { ROLES } from "./user-types";
+import { z } from "zod";
 
-export interface CustomClaims {
-  role?: Role,
-}
+const BaseCustomClaimsSchema = z.object({
+  role: z.enum(ROLES)
+});
 
-export interface StudentCustomClaims extends CustomClaims {
-  role?: "STUDENT";
-  studentId?: string;
-}
-export interface StaffCustomClaims extends CustomClaims { role: "STAFF" }
-export interface AdminCustomClaims extends CustomClaims { role: "ADMIN" }
+const StudentCustomClaimsSchema = BaseCustomClaimsSchema.extend({
+  role: z.literal("STUDENT"),
+  studentId: z.coerce.number().min(1000000).transform((val) => val.toString())
+})
+type StudentCustomClaims = z.infer<typeof StudentCustomClaimsSchema>;
+
+const StaffCustomClaimsSchema = BaseCustomClaimsSchema.extend({
+  role: z.literal("STAFF")
+})
+type StaffCustomClaims = z.infer<typeof StaffCustomClaimsSchema>;
+
+const AdminCustomClaimsSchema = BaseCustomClaimsSchema.extend({
+  role: z.literal("ADMIN")
+})
+type AdminCustomClaims = z.infer<typeof AdminCustomClaimsSchema>;
+
+const CustomClaimsSchema = z.union([StudentCustomClaimsSchema, StaffCustomClaimsSchema, AdminCustomClaimsSchema]);
+export type CustomClaims = z.infer<typeof CustomClaimsSchema>;
+
 
 export type StudentDecodedIdTokenWithCustomClaims = IdTokenResult & StudentCustomClaims;
 export type StaffDecodedIdTokenWithCustomClaims = IdTokenResult & StaffCustomClaims;
