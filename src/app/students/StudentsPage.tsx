@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import styles from "./StudentsPage.module.css";
 import Table, { Column } from "@/components/ui/table/Table";
 import { FilterCondition } from "@/components/ui/table/Filter";
@@ -16,6 +16,7 @@ import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 export default function StudentsPage() {
   const { students, isLoading, isError } = useStudents();
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
+  const [showArchivedStudents, setShowArchivedStudents] = useState<boolean>(false);
 
   const columns: Column<Student>[] = [
     {
@@ -91,6 +92,8 @@ export default function StudentsPage() {
     },
   ];
 
+  const filteredStudents = useMemo(() => students.filter(student => student.isArchived === showArchivedStudents), [showArchivedStudents]);
+
   return (
     <BlankBackgroundPage>
       <div className={styles.container}>
@@ -110,10 +113,11 @@ export default function StudentsPage() {
                 }
               />
             )}
+            <img src="" onClick={() => }/>
           </div>
         </div>
         <Table<Student>
-          items={students}
+          items={filteredStudents}
           columns={columns}
           selectOptions={{
             selectedItemIds: selectedStudentIds,
