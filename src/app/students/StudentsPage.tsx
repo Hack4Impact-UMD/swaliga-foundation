@@ -113,7 +113,7 @@ export default function StudentsPage() {
                 }
               />
             )}
-            <img src="" onClick={() => }/>
+            <img src="" onClick={() => setShowArchivedStudents(prev => !prev)}/>
           </div>
         </div>
         <Table<Student>
