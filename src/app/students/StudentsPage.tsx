@@ -12,6 +12,7 @@ import { FaFileExport } from "react-icons/fa";
 import { exportStudentSummariesToCSV } from "@/features/dataExporting/exportCSV";
 import MenuIcon from "@/components/ui/MenuIcon";
 import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
+import { MdArchive, MdUnarchive } from "react-icons/md";
 
 export default function StudentsPage() {
   const { students, isLoading, isError } = useStudents();
@@ -62,6 +63,11 @@ export default function StudentsPage() {
       getValue: (student: Student) => student.school.name,
       sortFunc: (a, b) => a.school.name.localeCompare(b.school.name),
     },
+    {
+      name: showArchivedStudents ? "Unarchive" : "Archive",
+      getValue: showArchivedStudents ? (() => <MdUnarchive />) : (() => <MdArchive />),
+      sortFunc: (a, b) => a.isArchived === b.isArchived ? 0 : a.isArchived ? 1 : -1
+    }
   ];
 
   const filterConditions: FilterCondition<Student>[] = [
