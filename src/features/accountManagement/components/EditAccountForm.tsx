@@ -529,7 +529,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           ...(gradYear ? { gradYear: Number(gradYear) } : {}),
           ...(gpa ? { gpa: parseFloat(gpa) } : {}),
         },
-        isArchived: role === "ADMIN" && mode === "EDIT" ? isArchived : false,
       };
 
       switch (mode) {

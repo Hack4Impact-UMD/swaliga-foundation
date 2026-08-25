@@ -35,7 +35,7 @@ export interface Student extends User {
     grade: number;
     gradYear?: number;
     gpa?: number;
-  };
+  }
   isArchived: boolean;
 }
 
