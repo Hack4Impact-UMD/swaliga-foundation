@@ -827,12 +827,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           icon={<FaMapPin />}
         />
       </div>
-      <div className={styles.row}>
-        <div>
-          <label>Graduated/No longer with Swaliga?</label>
-          <input type="checkbox" name="isArchived" onChange={(e) => setIsArchived(e.target.checked)} />
-        </div>
-      </div>
 
       <label className={styles.sectionHeader}>
         Parent/Guardian Information
