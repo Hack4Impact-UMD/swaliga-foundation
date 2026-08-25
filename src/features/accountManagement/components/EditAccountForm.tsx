@@ -10,7 +10,6 @@ import {
   GuardianRelationship,
   guardianRelationshipValues,
   Student,
-  Role,
 } from "@/types/user-types";
 import useAuth from "@/features/auth/authN/components/useAuth";
 import {
@@ -245,9 +244,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       ? String(student.school.address.zipCode)
       : "",
   );
-  const [isArchived, setIsArchived] = useState<boolean>(
-    mode === "EDIT" ? student.isArchived : false,
-  );
+  const [isArchived, setIsArchived] = useState<boolean>(mode === "EDIT" ? student.isArchived : false);
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formErrors, setFormErrors] = useState<string[]>([]);
@@ -255,7 +252,6 @@ export default function EditAccountForm(props: EditAccountFormProps) {
   const [success, setSuccess] = useState<string>("");
 
   const auth = useAuth();
-  const role = auth.token?.claims.role as Role;
 
   useEffect(() => {
     if (error) {
@@ -461,9 +457,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           lastName,
         },
         gender: gender === "Other" ? genderOtherText : gender,
-        ...(mode === "CREATE" && auth.user?.email
-          ? { email: auth.user.email }
-          : {}),
+        ...(mode === "CREATE" && auth.user?.email ? { email: auth.user.email } : {}),
         ...(phone ? { phone: toE164Phone(phone) } : {}),
         ...(mode === "CREATE" ? { uid: auth.user!.uid } : {}),
         role: "STUDENT",
@@ -610,9 +604,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       <div className={styles.row}>
         <TextField
           label="Email"
-          value={
-            mode === "EDIT" ? (student.email ?? "") : (auth.user?.email ?? "")
-          }
+          value={mode === "EDIT" ? (student.email ?? "") : (auth.user?.email ?? "")}
           placeholder="No email was used to login to this account."
           disabled
           icon={<FaEnvelope />}
@@ -835,18 +827,12 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           icon={<FaMapPin />}
         />
       </div>
-      {role === "ADMIN" && mode === "EDIT" && (
-        <div className={styles.row}>
-          <div>
-            <label>Graduated/No longer with Swaliga?</label>
-            <input
-              type="checkbox"
-              name="isArchived"
-              onChange={(e) => setIsArchived(e.target.checked)}
-            />
-          </div>
+      <div className={styles.row}>
+        <div>
+          <label>Graduated/No longer with Swaliga?</label>
+          <input type="checkbox" name="isArchived" onChange={(e) => setIsArchived(e.target.checked)} />
         </div>
-      )}
+      </div>
 
       <label className={styles.sectionHeader}>
         Parent/Guardian Information
