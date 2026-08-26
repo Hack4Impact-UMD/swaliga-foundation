@@ -13,16 +13,18 @@ import { exportStudentSummariesToCSV } from "@/features/dataExporting/exportCSV"
 import MenuIcon from "@/components/ui/MenuIcon";
 import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 import { MdArchive, MdUnarchive } from "react-icons/md";
+import { updateStudent } from "@/data/firestore/students";
 
 export default function StudentsPage() {
   const { students, isLoading, isError } = useStudents();
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
-  const [showArchivedStudents, setShowArchivedStudents] = useState<boolean>(false);
+  const [showArchivedStudents, setShowArchivedStudents] =
+    useState<boolean>(false);
 
   const toggleArchivedStudents = () => {
     setShowArchivedStudents((prev) => !prev);
     setSelectedStudentIds([]);
-  }
+  };
 
   const columns: Column<Student>[] = [
     {
@@ -47,7 +49,7 @@ export default function StudentsPage() {
         if (!a.email && !b.email) return 0;
         else if (!a.email) return 1;
         else if (!b.email) return -1;
-        return a.email.localeCompare(b.email)
+        return a.email.localeCompare(b.email);
       },
     },
     {
@@ -70,9 +72,24 @@ export default function StudentsPage() {
     },
     {
       name: showArchivedStudents ? "Unarchive" : "Archive",
-      getValue: showArchivedStudents ? (() => <MdUnarchive />) : (() => <MdArchive />),
-      sortFunc: (a, b) => a.isArchived === b.isArchived ? 0 : a.isArchived ? 1 : -1
-    }
+      getValue: showArchivedStudents
+        ? (student: Student) => (
+            <MdUnarchive
+              onClick={async () =>
+                updateStudent(student.id, { isArchived: false })
+              }
+            />
+          )
+        : (student: Student) => (
+            <MdArchive
+              onClick={async () =>
+                updateStudent(student.id, { isArchived: true })
+              }
+            />
+          ),
+      sortFunc: (a, b) =>
+        a.isArchived === b.isArchived ? 0 : a.isArchived ? 1 : -1,
+    },
   ];
 
   const filterConditions: FilterCondition<Student>[] = [
@@ -103,7 +120,11 @@ export default function StudentsPage() {
     },
   ];
 
-  const filteredStudents = useMemo(() => students.filter(student => student.isArchived === showArchivedStudents), [students, showArchivedStudents]);
+  const filteredStudents = useMemo(
+    () =>
+      students.filter((student) => student.isArchived === showArchivedStudents),
+    [students, showArchivedStudents],
+  );
 
   return (
     <BlankBackgroundPage>
@@ -118,13 +139,25 @@ export default function StudentsPage() {
                 onClick={() =>
                   exportStudentSummariesToCSV(
                     students.filter((student) =>
-                      selectedStudentIds.includes(student.id)
-                    )
+                      selectedStudentIds.includes(student.id),
+                    ),
                   )
                 }
               />
             )}
-            {showArchivedStudents ? <MenuIcon icon={MdUnarchive} title="Show Active Students" onClick={toggleArchivedStudents} /> : <MenuIcon icon={MdArchive} title="Show Archived Students" onClick={toggleArchivedStudents} />}
+            {showArchivedStudents ? (
+              <MenuIcon
+                icon={MdUnarchive}
+                title="Show Active Students"
+                onClick={toggleArchivedStudents}
+              />
+            ) : (
+              <MenuIcon
+                icon={MdArchive}
+                title="Show Archived Students"
+                onClick={toggleArchivedStudents}
+              />
+            )}
           </div>
         </div>
         <Table<Student>
