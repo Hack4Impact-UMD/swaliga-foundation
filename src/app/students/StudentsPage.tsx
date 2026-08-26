@@ -19,6 +19,11 @@ export default function StudentsPage() {
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
   const [showArchivedStudents, setShowArchivedStudents] = useState<boolean>(false);
 
+  const toggleArchivedStudents = () => {
+    setShowArchivedStudents((prev) => !prev);
+    setSelectedStudentIds([]);
+  }
+
   const columns: Column<Student>[] = [
     {
       name: "Name",
@@ -98,7 +103,7 @@ export default function StudentsPage() {
     },
   ];
 
-  const filteredStudents = useMemo(() => students.filter(student => student.isArchived === showArchivedStudents), [showArchivedStudents]);
+  const filteredStudents = useMemo(() => students.filter(student => student.isArchived === showArchivedStudents), [students, showArchivedStudents]);
 
   return (
     <BlankBackgroundPage>
@@ -119,7 +124,7 @@ export default function StudentsPage() {
                 }
               />
             )}
-            <img src="" onClick={() => setShowArchivedStudents(prev => !prev)}/>
+            {showArchivedStudents ? <MenuIcon icon={MdUnarchive} title="Show Active Students" onClick={toggleArchivedStudents} /> : <MenuIcon icon={MdArchive} title="Show Archived Students" onClick={toggleArchivedStudents} />}
           </div>
         </div>
         <Table<Student>
