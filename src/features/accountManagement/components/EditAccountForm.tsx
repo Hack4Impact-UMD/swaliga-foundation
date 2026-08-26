@@ -523,6 +523,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           ...(gradYear ? { gradYear: Number(gradYear) } : {}),
           ...(gpa ? { gpa: parseFloat(gpa) } : {}),
         },
+        ...(mode === "CREATE" ? { isArchived: false } : {}),
       };
 
       switch (mode) {
