@@ -38,7 +38,7 @@ service cloud.firestore {
     match /students/{studentId} {
       allow read: if isEmployee() || isStudentId(studentId)
       allow create: if isStudent()
-      allow update: if (isEmployee() && (resource.data.isArchived == false || ('isArchived' in request.resource.data && request.resource.data.isArchived == true))) || (isStudentId(studentId) && resource.data.isArchived == true)
+      allow update: if (isEmployee() && (resource.data.isArchived == false || ('isArchived' in request.resource.data && request.resource.data.isArchived == false))) || (isStudentId(studentId) && resource.data.isArchived == true)
       allow delete: if false
     }
 
