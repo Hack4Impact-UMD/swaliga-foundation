@@ -244,6 +244,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       ? String(student.school.address.zipCode)
       : "",
   );
+  const [isArchived, setIsArchived] = useState<boolean>(mode === "EDIT" ? student.isArchived : false);
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formErrors, setFormErrors] = useState<string[]>([]);
@@ -522,6 +523,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           ...(gradYear ? { gradYear: Number(gradYear) } : {}),
           ...(gpa ? { gpa: parseFloat(gpa) } : {}),
         },
+        ...(mode === "CREATE" ? { isArchived: false } : {}),
       };
 
       switch (mode) {
