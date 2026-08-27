@@ -80,7 +80,7 @@ export default function AssignStudentsModal(props: AssignStudentsModalProps) {
           <h2>Assign New Students</h2>
           <Select
             className={styles.select}
-            options={currUnassignedStudents.map((student) => ({
+            options={currUnassignedStudents.filter(student => !student.isArchived).map((student) => ({
               value: student.id,
               label: `${getFullName(student.name)} (${student.email})`,
             }))}
