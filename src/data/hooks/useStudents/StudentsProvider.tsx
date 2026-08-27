@@ -6,7 +6,18 @@ import { collection, doc, onSnapshot } from "firebase/firestore";
 import { Collection, Document } from "../../firestore/utils";
 import { db } from "@/config/firebaseConfig";
 import useAuth from "@/features/auth/authN/components/useAuth";
-import { useStudentsDefault, useStudentsReturn } from "./useStudents";
+
+export interface useStudentsReturn {
+  students: Student[];
+  isLoading: boolean;
+  isError: boolean;
+}
+
+export const useStudentsDefault: useStudentsReturn = {
+  students: [],
+  isLoading: false,
+  isError: false,
+};
 
 export const StudentsContext =
   createContext<useStudentsReturn>(useStudentsDefault);
@@ -37,7 +48,7 @@ export default function StudentsProvider({
             doc(
               db,
               Collection.STUDENTS,
-              auth.token?.claims.studentId as string
+              auth.token?.claims.studentId as string,
             ),
             (doc) => {
               setStudents([doc.data() as Student]);
@@ -46,14 +57,14 @@ export default function StudentsProvider({
             () => {
               setIsLoading(false);
               setIsError(true);
-            }
+            },
           )
         : onSnapshot(
             collection(
               db,
               Collection.ADMIN_DATA,
               Document.STUDENTS,
-              Collection.STUDENTS
+              Collection.STUDENTS,
             ),
             (snapshot) => {
               const newStudents: Student[] = [];
@@ -64,19 +75,19 @@ export default function StudentsProvider({
               }
               setStudents(
                 newStudents.sort((a: Student, b: Student) =>
-                  getFullName(a.name).localeCompare(getFullName(b.name))
-                )
+                  getFullName(a.name).localeCompare(getFullName(b.name)),
+                ),
               );
               setIsLoading(false);
             },
             () => {
               setIsLoading(false);
               setIsError(true);
-            }
+            },
           );
     return () => unsubscribe();
   }, [role, auth.token?.claims.studentId]);
-
+  console.log("STUDENTS", students);
   return (
     <StudentsContext.Provider value={{ students, isLoading, isError }}>
       {children}

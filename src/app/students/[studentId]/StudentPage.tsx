@@ -33,6 +33,8 @@ import ErrorPage from "@/app/error";
 import MenuIcon from "@/components/ui/MenuIcon";
 import { exportFullStudentDataToCSV } from "@/features/dataExporting/exportCSV";
 import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
+import { MdArchive, MdUnarchive } from "react-icons/md";
+import { updateStudent } from "@/data/firestore/students";
 
 interface StudentPageProps {
   studentId: string;
@@ -67,13 +69,13 @@ export default function StudentPage(props: StudentPageProps) {
     assignments.forEach((assignment) =>
       isPendingAssignmentID(assignment)
         ? pendingAssignments.push(assignment)
-        : surveyResponses.push(assignment as SurveyResponseStudentIdID)
+        : surveyResponses.push(assignment as SurveyResponseStudentIdID),
     );
     pendingAssignments = pendingAssignments.sort((a, b) =>
-      a.assignedAt.localeCompare(b.assignedAt)
+      a.assignedAt.localeCompare(b.assignedAt),
     );
     surveyResponses = surveyResponses.sort((a, b) =>
-      b.submittedAt.localeCompare(a.submittedAt)
+      b.submittedAt.localeCompare(a.submittedAt),
     );
     return { pendingAssignments, surveyResponses };
   }, [assignments]);
@@ -147,7 +149,7 @@ export default function StudentPage(props: StudentPageProps) {
           "Unknown Survey"
         ).localeCompare(
           surveys.find((survey) => survey.id === b.surveyId)?.name ||
-            "Unknown Survey"
+            "Unknown Survey",
         ),
     },
     {
@@ -161,7 +163,7 @@ export default function StudentPage(props: StudentPageProps) {
           "Unknown Description"
         ).localeCompare(
           surveys.find((survey) => survey.id === b.surveyId)?.description ||
-            "Unknown Description"
+            "Unknown Description",
         ),
     },
     {
@@ -177,7 +179,7 @@ export default function StudentPage(props: StudentPageProps) {
             name: "Respond",
             getValue: (assignment: PendingAssignmentID) => {
               const survey = surveys.find(
-                (survey) => survey.id === assignment.surveyId
+                (survey) => survey.id === assignment.surveyId,
               );
               return survey ? <RespondToSurveyModal survey={survey} /> : "N/A";
             },
@@ -198,7 +200,7 @@ export default function StudentPage(props: StudentPageProps) {
           "Unknown Survey"
         ).localeCompare(
           surveys.find((survey) => survey.id === b.surveyId)?.name ||
-            "Unknown Survey"
+            "Unknown Survey",
         ),
     },
     {
@@ -212,7 +214,7 @@ export default function StudentPage(props: StudentPageProps) {
           "Unknown Description"
         ).localeCompare(
           surveys.find((survey) => survey.id === b.surveyId)?.description ||
-            "Unknown Description"
+            "Unknown Description",
         ),
     },
     {
@@ -232,7 +234,7 @@ export default function StudentPage(props: StudentPageProps) {
                 currStudent={student}
                 onReassign={() =>
                   setAssignments((prev) =>
-                    prev.filter((a) => a.id !== assignment.id)
+                    prev.filter((a) => a.id !== assignment.id),
                   )
                 }
               />
@@ -259,12 +261,29 @@ export default function StudentPage(props: StudentPageProps) {
                     surveyName:
                       surveys.find((survey) => survey.id === response.surveyId)
                         ?.name || "Unknown Survey",
-                  }))
+                  })),
                 )
               }
             />
           )}
-          <EditAccountModal student={student} />
+          {student.isArchived ? (
+            <MenuIcon
+              icon={MdUnarchive}
+              title="Unarchive"
+              onClick={async () =>
+                updateStudent(student.id, { isArchived: false })
+              }
+            />
+          ) : (
+            <MenuIcon
+              icon={MdArchive}
+              title="Archive"
+              onClick={async () =>
+                updateStudent(student.id, { isArchived: true })
+              }
+            />
+          )}
+          {!student.isArchived && <EditAccountModal student={student} />}
         </div>
         <div className={styles.infoFieldsContainer}>
           {studentInfo.map((info) => (

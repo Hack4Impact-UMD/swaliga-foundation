@@ -75,7 +75,8 @@ export const StudentSchema = BaseUserSchema.safeExtend({
     grade: z.number().min(1).max(12),
     gradYear: z.number().min(1900).max(2100).optional(),
     gpa: z.number().min(0).max(5).optional()
-  })
+  }),
+  isArchived: z.boolean()
 });
 export type Student = z.infer<typeof StudentSchema>;
 
