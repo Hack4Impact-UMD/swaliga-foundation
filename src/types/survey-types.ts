@@ -2,9 +2,8 @@ import z from "zod";
 import { ID, IDSchema } from "./utils";
 
 export const SurveySchema = z.object({
-  id: z.string().min(1),
   name: z.string().min(1),
-  description: z.string().min(1).optional(),
+  description: z.string().min(1),
   responderUri: z.url(),
   linkedSheetId: z.string().min(1).optional(),
   idQuestionEntryNumber: z.number(),
@@ -16,13 +15,13 @@ export const SurveyIDSchema = z.intersection(SurveySchema, IDSchema);
 export type SurveyID = z.infer<typeof SurveyIDSchema>;
 
 export const PendingAssignmentSchema = z.object({
-  studentId: z.coerce.number().min(1000000),
+  studentId: z.string(),
   assignedAt: z.iso.datetime(),
   responseId: z.null()
 });
 export type PendingAssignment = z.infer<typeof PendingAssignmentSchema>;
 
-export const PendingAssignmentIDSchema = z.intersection(PendingAssignmentSchema, IDSchema);
+export const PendingAssignmentIDSchema = z.intersection(PendingAssignmentSchema, z.intersection(IDSchema, z.object({ surveyId: z.string().min(1) })));
 export type PendingAssignmentID = z.infer<typeof PendingAssignmentIDSchema>;
 
 export const SurveyResponseUnidentifiedSchema = z.object({

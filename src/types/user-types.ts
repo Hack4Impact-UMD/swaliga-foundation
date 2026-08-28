@@ -1,4 +1,3 @@
-import { isMoment } from "moment";
 import { z } from "zod";
 
 export const ROLES = ["ADMIN", "STAFF", "STUDENT"] as const;
@@ -62,10 +61,10 @@ export const BaseUserSchema = PersonSchema.safeExtend({
 export type BaseUser = z.infer<typeof BaseUserSchema>;
 
 export const StudentSchema = BaseUserSchema.safeExtend({
-  id: z.coerce.number().min(1000000),
+  id: z.string(),
   role: z.literal("STUDENT"),
-  dateOfBirth: z.preprocess((val) => isMoment(val) ? val.toDate() : val, z.date()),
-  joinedSwaligaDate: z.preprocess((val) => isMoment(val) ? val.toDate() : val, z.date()).optional(),
+  dateOfBirth: z.iso.datetime(),
+  joinedSwaligaDate: z.iso.datetime().optional(),
   ethnicity: z.array(EthnicitySchema),
   guardians: z.array(GuardianSchema),
   address: AddressSchema.optional(),

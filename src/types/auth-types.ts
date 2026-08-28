@@ -10,17 +10,17 @@ const StudentCustomClaimsSchema = BaseCustomClaimsSchema.extend({
   role: z.literal("STUDENT"),
   studentId: z.coerce.number().min(1000000).transform((val) => val.toString())
 })
-type StudentCustomClaims = z.infer<typeof StudentCustomClaimsSchema>;
+export type StudentCustomClaims = z.infer<typeof StudentCustomClaimsSchema>;
 
 const StaffCustomClaimsSchema = BaseCustomClaimsSchema.extend({
   role: z.literal("STAFF")
 })
-type StaffCustomClaims = z.infer<typeof StaffCustomClaimsSchema>;
+export type StaffCustomClaims = z.infer<typeof StaffCustomClaimsSchema>;
 
 const AdminCustomClaimsSchema = BaseCustomClaimsSchema.extend({
   role: z.literal("ADMIN")
 })
-type AdminCustomClaims = z.infer<typeof AdminCustomClaimsSchema>;
+export type AdminCustomClaims = z.infer<typeof AdminCustomClaimsSchema>;
 
 const CustomClaimsSchema = z.union([StudentCustomClaimsSchema, StaffCustomClaimsSchema, AdminCustomClaimsSchema]);
 export type CustomClaims = z.infer<typeof CustomClaimsSchema>;
