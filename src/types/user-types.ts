@@ -12,11 +12,19 @@ export const NameSchema = z.object({
 });
 export type Name = z.infer<typeof NameSchema>;
 
-export const GENDERS = ["Male", "Female", "Non-Binary"] as const;
-export const GenderSchema = z.union([z.enum(GENDERS), z.string() as z.ZodType<string & {}>]);
+export const PRESET_GENDERS = ["Male", "Female", "Non-Binary"] as const;
+export const PresetGenderSchema = z.enum(PRESET_GENDERS);
+export type PresetGender = z.infer<typeof PresetGenderSchema>;
+
+export const GenderSchema = z.union([PresetGenderSchema, z.string() as z.ZodType<string & {}>]);
 export type Gender = z.infer<typeof GenderSchema>;
 
-export const ETHNICITIES = [
+export function isPresetGender(gender: Gender): gender is PresetGender {
+  // @ts-ignore
+  return PRESET_GENDERS.includes(gender);
+}
+
+export const PRESET_ETHNICITIES = [
   "Black or African American",
   "Indigenous",
   "Asian",
@@ -24,8 +32,16 @@ export const ETHNICITIES = [
   "Multiracial",
   "Latin",
 ] as const;
-export const EthnicitySchema = z.union([z.enum(ETHNICITIES), z.string() as z.ZodType<string & {}>]);
+export const PresetEthnicitySchema = z.enum(PRESET_ETHNICITIES);
+export type PresetEthnicity = z.infer<typeof PresetEthnicitySchema>;
+
+export const EthnicitySchema = z.union([PresetEthnicitySchema, z.string() as z.ZodType<string & {}>]);
 export type Ethnicity = z.infer<typeof EthnicitySchema>;
+
+export function isPresetEthnicity(ethnicity: Ethnicity): ethnicity is PresetEthnicity {
+  // @ts-ignore
+  return PRESET_ETHNICITIES.includes(ethnicity);
+}
 
 export const AddressSchema = z.object({
   addressLine1: z.string().min(1),
@@ -45,9 +61,17 @@ export const PersonSchema = z.object({
 });
 export type Person = z.infer<typeof PersonSchema>;
 
-export const GUARDIAN_RELATIONSHIPS = ["Father", "Mother", "Legal Guardian"] as const;
-export const GuardianRelationshipSchema = z.union([z.enum(GUARDIAN_RELATIONSHIPS), z.string() as z.ZodType<string & {}>]);
+export const PRESET_GUARDIAN_RELATIONSHIPS = ["Father", "Mother", "Legal Guardian"] as const;
+export const PresetGuardianRelationshipSchema = z.enum(PRESET_GUARDIAN_RELATIONSHIPS);
+export type PresetGuardianRelationship = z.infer<typeof PresetGuardianRelationshipSchema>;
+
+export const GuardianRelationshipSchema = z.union([PresetGuardianRelationshipSchema, z.string() as z.ZodType<string & {}>]);
 export type GuardianRelationship = z.infer<typeof GuardianRelationshipSchema>;
+export function isPresetGuardianRelationship(relationship: GuardianRelationship): relationship is PresetGuardianRelationship {
+  // @ts-ignore
+  return PRESET_GUARDIAN_RELATIONSHIPS.includes(relationship);
+}
+
 
 export const GuardianSchema = PersonSchema.safeExtend({
   relationship: GuardianRelationshipSchema
