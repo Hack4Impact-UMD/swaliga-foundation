@@ -1,5 +1,5 @@
 import z from "zod";
-import { ID, IDSchema } from "./utils";
+import { IDSchema } from "./utils";
 
 export const SurveySchema = z.object({
   name: z.string().min(1),

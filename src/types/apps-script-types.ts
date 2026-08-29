@@ -1,5 +1,5 @@
 import z from "zod";
-import { SurveyResponseStudentIdID, SurveyResponseStudentEmailID, SurveyResponseUnidentifiedID, SurveyResponseUnidentifiedIDSchema, SurveyResponseStudentIdIDSchema, SurveyResponseStudentEmailIDSchema } from "./survey-types";
+import { SurveyResponseUnidentifiedIDSchema, SurveyResponseStudentIdIDSchema, SurveyResponseStudentEmailIDSchema } from "./survey-types";
 
 export const GoogleFormResponseUnidentifiedSchema = SurveyResponseUnidentifiedIDSchema.omit({ id: true }).extend({ studentEmail: z.literal("") });
 export type GoogleFormResponseUnidentified = z.infer<typeof GoogleFormResponseUnidentifiedSchema>;
