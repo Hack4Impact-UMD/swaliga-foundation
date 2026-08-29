@@ -72,7 +72,6 @@ export function isPresetGuardianRelationship(relationship: GuardianRelationship)
   return PRESET_GUARDIAN_RELATIONSHIPS.includes(relationship);
 }
 
-
 export const GuardianSchema = PersonSchema.safeExtend({
   relationship: GuardianRelationshipSchema
 });
@@ -85,7 +84,7 @@ export const BaseUserSchema = PersonSchema.safeExtend({
 export type BaseUser = z.infer<typeof BaseUserSchema>;
 
 export const StudentSchema = BaseUserSchema.safeExtend({
-  id: z.string(),
+  id: z.coerce.number().min(1000000).transform((val) => val.toString()),
   role: z.literal("STUDENT"),
   dateOfBirth: z.iso.datetime(),
   joinedSwaligaDate: z.iso.datetime().optional(),
