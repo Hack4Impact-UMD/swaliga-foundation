@@ -3,13 +3,16 @@
 import React, { useEffect, useState } from "react";
 import styles from "./EditAccountForm.module.css";
 import {
-  ethnicityValues,
+  PRESET_ETHNICITIES,
   Ethnicity,
   Gender,
-  genderValues,
+  PRESET_GENDERS,
   GuardianRelationship,
-  guardianRelationshipValues,
+  PRESET_GUARDIAN_RELATIONSHIPS,
   Student,
+  isPresetGender,
+  isPresetEthnicity,
+  isPresetGuardianRelationship,
 } from "@/types/user-types";
 import useAuth from "@/features/auth/authN/components/useAuth";
 import {
@@ -66,21 +69,16 @@ export default function EditAccountForm(props: EditAccountFormProps) {
   );
   const [gender, setGender] = useState<Gender>(
     mode === "EDIT"
-      ? genderValues.includes(student.gender)
+      ? isPresetGender(student.gender)
         ? student.gender
         : "Other"
-      : genderValues[0],
+      : PRESET_GENDERS[0],
   );
   const [genderOtherText, setGenderOtherText] = useState<string>(() => {
-    if (mode === "CREATE") {
+    if (mode === "CREATE" || isPresetGender(student.gender)) {
       return "";
     }
-
-    const isOtherGender = !genderValues.includes(student.gender);
-    if (isOtherGender || gender === "Other") {
-      return student.gender;
-    }
-    return "";
+    return student.gender;
   });
   const [phone, setPhone] = useState<string>(
     mode === "EDIT" && student.phone ? student.phone : "",
@@ -95,15 +93,14 @@ export default function EditAccountForm(props: EditAccountFormProps) {
   );
   const [ethnicity, setEthnicity] = useState<Ethnicity[]>(
     mode === "EDIT"
-      ? student.ethnicity.map((ethnicity) =>
-          ethnicityValues.includes(ethnicity) ? ethnicity : "Other",
+      ? student.ethnicity.map((ethnicity) => isPresetEthnicity(ethnicity) ? ethnicity : "Other",
         )
       : [],
   );
   const [ethnicityOtherText, setEthnicityOtherText] = useState<string>(
     mode === "EDIT"
       ? student.ethnicity.filter(
-          (ethnicity) => !ethnicityValues.includes(ethnicity),
+          (ethnicity) => !isPresetEthnicity(ethnicity),
         )[0] || ""
       : "",
   );
@@ -149,16 +146,16 @@ export default function EditAccountForm(props: EditAccountFormProps) {
   const [guardianGenders, setGuardianGenders] = useState<Gender[]>(
     mode === "EDIT"
       ? student.guardians.map((g) =>
-          genderValues.includes(g.gender) ? g.gender : "Other",
+          isPresetGender(g.gender) ? g.gender : "Other",
         )
-      : Array(MIN_NUM_PARENTS_GUARDIANS).fill(genderValues[0]),
+      : Array(MIN_NUM_PARENTS_GUARDIANS).fill(PRESET_GENDERS[0]),
   );
   const [guardianGenderOtherTexts, setGuardianGenderOtherTexts] = useState<
     string[]
   >(
     mode === "EDIT"
       ? student.guardians.map((g) =>
-          genderValues.includes(g.gender) && g.gender !== "Other"
+          isPresetGender(g.gender)
             ? ""
             : g.gender,
         )
@@ -179,18 +176,17 @@ export default function EditAccountForm(props: EditAccountFormProps) {
   >(
     mode === "EDIT"
       ? student.guardians.map((g) =>
-          guardianRelationshipValues.includes(g.relationship)
+          isPresetGuardianRelationship(g.relationship)
             ? g.relationship
             : "Other",
         )
-      : Array(MIN_NUM_PARENTS_GUARDIANS).fill(guardianRelationshipValues[0]),
+      : Array(MIN_NUM_PARENTS_GUARDIANS).fill(PRESET_GUARDIAN_RELATIONSHIPS[0]),
   );
   const [guardianRelationshipOtherTexts, setGuardianRelationshipOtherTexts] =
     useState<string[]>(
       mode === "EDIT"
         ? student.guardians.map((g) =>
-            guardianRelationshipValues.includes(g.relationship) &&
-            g.relationship !== "Other"
+            isPresetGuardianRelationship(g.relationship)
               ? ""
               : g.relationship,
           )
@@ -302,13 +298,13 @@ export default function EditAccountForm(props: EditAccountFormProps) {
     setGuardianFirstNames((prev) => [...prev, ""]);
     setGuardianMiddleNames((prev) => [...prev, ""]);
     setGuardianLastNames((prev) => [...prev, ""]);
-    setGuardianGenders((prev) => [...prev, genderValues[0]]);
+    setGuardianGenders((prev) => [...prev, PRESET_GENDERS[0]]);
     setGuardianGenderOtherTexts((prev) => [...prev, ""]);
     setGuardianEmails((prev) => [...prev, ""]);
     setGuardianPhones((prev) => [...prev, ""]);
     setGuardianRelationships((prev) => [
       ...prev,
-      guardianRelationshipValues[0],
+      PRESET_GUARDIAN_RELATIONSHIPS[0],
     ]);
     setGuardianRelationshipOtherTexts((prev) => [...prev, ""]);
   };
@@ -638,7 +634,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       <div className={styles.row}>
         <Select
           label="Gender"
-          values={genderValues}
+          values={[...PRESET_GENDERS, "Other"]}
           selectedValue={gender}
           onChange={(e) => setGender(e.target.value)}
           otherText={genderOtherText}
@@ -653,7 +649,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
       </label>
       <div className={styles.row}>
         <div className={styles.checkboxContainer}>
-          {ethnicityValues.map((eth) => (
+          {[...PRESET_ETHNICITIES, "Other"].map((eth) => (
             <div className={styles.checkboxGroup}>
               <input
                 type="checkbox"
@@ -915,7 +911,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
           <div className={styles.row}>
             <Select
               label="Gender"
-              values={genderValues}
+              values={[...PRESET_GENDERS, "Other"]}
               selectedValue={guardianGenders[index]}
               onChange={(e) =>
                 setGuardianGenders((prev) =>
@@ -935,7 +931,7 @@ export default function EditAccountForm(props: EditAccountFormProps) {
             />
             <Select
               label="Guardian Relationship"
-              values={guardianRelationshipValues}
+              values={[...PRESET_GUARDIAN_RELATIONSHIPS, "Other"]}
               selectedValue={guardianRelationships[index]}
               onChange={(e) =>
                 setGuardianRelationships((prev) =>

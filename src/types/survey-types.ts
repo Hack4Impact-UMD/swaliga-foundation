@@ -1,37 +1,72 @@
-import { ID } from "./utils";
+import z from "zod";
+import { IDSchema } from "./utils";
 
-export interface Survey {
-  name: string;
-  description: string;
-  responderUri: string;
-  linkedSheetId: string;
-  idQuestionEntryNumber: string;
-  isActive: boolean;
-}
-export interface SurveyID extends Survey, ID { }
+export const SurveySchema = z.object({
+  name: z.string().min(1),
+  description: z.string().min(1),
+  responderUri: z.url(),
+  linkedSheetId: z.string().min(1).optional(),
+  idQuestionEntryNumber: z.number(),
+  isActive: z.boolean()
+})
+export type Survey = z.infer<typeof SurveySchema>;
 
-export type Assignment = PendingAssignment | SurveyResponse;
-export type AssignmentID = PendingAssignmentID | SurveyResponseID;
+export const SurveyIDSchema = z.intersection(SurveySchema, IDSchema);
+export type SurveyID = z.infer<typeof SurveyIDSchema>;
 
-export type SurveyResponse = SurveyResponseUnidentified | SurveyResponseStudentId | SurveyResponseStudentEmail;
-export type SurveyResponseID = SurveyResponseUnidentifiedID | SurveyResponseStudentIdID | SurveyResponseStudentEmailID;
+export const PendingAssignmentSchema = z.object({
+  studentId: z.string(),
+  assignedAt: z.iso.datetime(),
+  responseId: z.null()
+});
+export type PendingAssignment = z.infer<typeof PendingAssignmentSchema>;
 
-export interface PendingAssignment {
-  studentId: string;
-  assignedAt: string; // ISO-8601
-  responseId: null;
-}
-export interface PendingAssignmentID extends PendingAssignment, ID { surveyId: string; }
+export const PendingAssignmentIDSchema = z.intersection(PendingAssignmentSchema, z.intersection(IDSchema, z.object({ surveyId: z.string().min(1) })));
+export type PendingAssignmentID = z.infer<typeof PendingAssignmentIDSchema>;
 
-export interface SurveyResponseUnidentified {
-  responseId: string;
-  submittedAt: string; // ISO-8601
-}
-export interface SurveyResponseUnidentifiedID extends SurveyResponseUnidentified, ID { surveyId: string; }
-export interface SurveyResponseStudentId extends SurveyResponseUnidentified { studentId: string; assignedAt?: string; /* ISO-8601 */ }
-export interface SurveyResponseStudentIdID extends SurveyResponseStudentId, ID { surveyId: string; }
-export interface SurveyResponseStudentEmail extends SurveyResponseUnidentified { studentEmail: string; }
-export interface SurveyResponseStudentEmailID extends SurveyResponseStudentEmail, ID { surveyId: string; }
+export const SurveyResponseUnidentifiedSchema = z.strictObject({
+  responseId: z.string().min(1),
+  submittedAt: z.iso.datetime()
+});
+export type SurveyResponseUnidentified = z.infer<typeof SurveyResponseUnidentifiedSchema>;
+
+export const SurveyResponseUnidentifiedIDSchema = SurveyResponseUnidentifiedSchema.extend(IDSchema.shape).extend({
+  surveyId: z.string().min(1)
+});
+export type SurveyResponseUnidentifiedID = z.infer<typeof SurveyResponseUnidentifiedIDSchema>;
+
+export const SurveyResponseStudentIdSchema = SurveyResponseUnidentifiedSchema.safeExtend({
+  studentId: z.coerce.number().min(1000000).transform((val) => val.toString()),
+  assignedAt: z.iso.datetime().optional()
+});
+export type SurveyResponseStudentId = z.infer<typeof SurveyResponseStudentIdSchema>;
+
+export const SurveyResponseStudentIdIDSchema = SurveyResponseStudentIdSchema.extend(IDSchema.shape).extend({
+  surveyId: z.string().min(1)
+});
+export type SurveyResponseStudentIdID = z.infer<typeof SurveyResponseStudentIdIDSchema>;
+
+export const SurveyResponseStudentEmailSchema = SurveyResponseUnidentifiedSchema.extend({
+  studentEmail: z.email()
+});
+export type SurveyResponseStudentEmail = z.infer<typeof SurveyResponseStudentEmailSchema>;
+
+export const SurveyResponseStudentEmailIDSchema = SurveyResponseStudentEmailSchema.extend(IDSchema.shape).extend({
+  surveyId: z.string().min(1)
+});
+export type SurveyResponseStudentEmailID = z.infer<typeof SurveyResponseStudentEmailIDSchema>;
+
+export const SurveyResponseSchema = z.union([SurveyResponseUnidentifiedSchema, SurveyResponseStudentIdSchema, SurveyResponseStudentEmailSchema]);
+export type SurveyResponse = z.infer<typeof SurveyResponseSchema>;
+
+export const SurveyResponseIDSchema = z.union([SurveyResponseUnidentifiedIDSchema, SurveyResponseStudentIdIDSchema, SurveyResponseStudentEmailIDSchema]);
+export type SurveyResponseID = z.infer<typeof SurveyResponseIDSchema>;
+
+export const AssignmentSchema = z.union([PendingAssignmentSchema, SurveyResponseSchema]);
+export type Assignment = z.infer<typeof AssignmentSchema>;
+
+export const AssignmentIDSchema = z.union([PendingAssignmentIDSchema, SurveyResponseIDSchema]);
+export type AssignmentID = z.infer<typeof AssignmentIDSchema>;
 
 export function isPendingAssignmentID(assignment: AssignmentID): assignment is PendingAssignmentID { return assignment.responseId === null; }
 export function isSurveyResponseID(assignment: AssignmentID): assignment is SurveyResponseID { return assignment.responseId !== null; }
