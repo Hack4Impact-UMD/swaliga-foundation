@@ -24,7 +24,7 @@ export type PendingAssignment = z.infer<typeof PendingAssignmentSchema>;
 export const PendingAssignmentIDSchema = z.intersection(PendingAssignmentSchema, z.intersection(IDSchema, z.object({ surveyId: z.string().min(1) })));
 export type PendingAssignmentID = z.infer<typeof PendingAssignmentIDSchema>;
 
-export const SurveyResponseUnidentifiedSchema = z.object({
+export const SurveyResponseUnidentifiedSchema = z.strictObject({
   responseId: z.string().min(1),
   submittedAt: z.iso.datetime()
 });
