@@ -1,5 +1,6 @@
 import z from "zod";
 import { AddressSchema } from "./user-types";
+import { isMoment } from "moment";
 
 const ClubSchema = z.object({
   id: z.uuid(),
@@ -17,11 +18,10 @@ const ProgramSchema = z.object({
   clubId: z.uuid(),
   name: z.string().min(1),
   ageGroup: AgeGroupSchema,
-  startDate: z.preprocess(z => ),
-  endDate: z.preprocess(z => ),
+  startDate: z.preprocess(obj => isMoment(obj) ? obj.toDate() : obj, z.date()),
+  endDate: z.preprocess(obj => isMoment(obj) ? obj.toDate() : obj, z.date()),
   studentIds: z.array(z.number()),
   teacherIds: z.array(z.number()),
   staffIds: z.array(z.number()),
 });
 export type Program = z.infer<typeof ProgramSchema>;
-
