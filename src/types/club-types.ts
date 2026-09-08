@@ -9,6 +9,11 @@ export const ClubSchema = z.object({
 });
 export type Club = z.infer<typeof ClubSchema>;
 
+export const ClubDocSchema = ClubSchema.omit({
+  id: true
+});
+export type ClubDoc = z.infer<typeof ClubDocSchema>;
+
 export const AGE_GROUPS = ["Varsity", "Junior Varsity"] as const;
 export const AgeGroupSchema = z.enum(AGE_GROUPS);
 export type AgeGroup = z.infer<typeof AgeGroupSchema>;
@@ -25,3 +30,9 @@ export const ProgramSchema = z.object({
   staffIds: z.array(z.number()),
 });
 export type Program = z.infer<typeof ProgramSchema>;
+
+export const ProgramDocSchema = ProgramSchema.omit({
+  id: true,
+  clubId: true
+});
+export type ProgramDoc = z.infer<typeof ProgramDocSchema>;
