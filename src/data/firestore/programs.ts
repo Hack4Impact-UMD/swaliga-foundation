@@ -30,7 +30,7 @@ export async function setProgram(program: ProgramDoc, clubId: string, instance?:
     await (instance ? instance.set(programRef, program) : setDoc(programRef, program));
     return programId;
   } catch (error) {
-    throw new Error("Failed to create program");
+    throw new Error("Failed to set program");
   }
 }
 

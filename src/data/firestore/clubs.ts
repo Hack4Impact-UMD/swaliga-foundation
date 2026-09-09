@@ -30,7 +30,7 @@ export async function setClub(club: ClubDoc, instance?: Transaction | WriteBatch
     await (instance ? instance.set(clubRef, club) : setDoc(clubRef, club));
     return clubId;
   } catch (error) {
-    throw new Error("Failed to create club");
+    throw new Error("Failed to set club");
   }
 }
 
