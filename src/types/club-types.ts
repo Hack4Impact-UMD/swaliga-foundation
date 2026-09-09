@@ -3,14 +3,14 @@ import { AddressSchema } from "./user-types";
 import { isMoment } from "moment";
 
 export const ClubSchema = z.object({
-  id: z.uuid(),
+  clubId: z.uuid(),
   name: z.string().min(1),
   address: AddressSchema,
 });
 export type Club = z.infer<typeof ClubSchema>;
 
 export const ClubDocSchema = ClubSchema.omit({
-  id: true
+  clubId: true
 });
 export type ClubDoc = z.infer<typeof ClubDocSchema>;
 
@@ -19,7 +19,7 @@ export const AgeGroupSchema = z.enum(AGE_GROUPS);
 export type AgeGroup = z.infer<typeof AgeGroupSchema>;
 
 export const ProgramSchema = z.object({
-  id: z.uuid(),
+  programId: z.uuid(),
   clubId: z.uuid(),
   name: z.string().min(1),
   ageGroup: AgeGroupSchema,
@@ -32,7 +32,7 @@ export const ProgramSchema = z.object({
 export type Program = z.infer<typeof ProgramSchema>;
 
 export const ProgramDocSchema = ProgramSchema.omit({
-  id: true,
+  programId: true,
   clubId: true
 });
 export type ProgramDoc = z.infer<typeof ProgramDocSchema>;
