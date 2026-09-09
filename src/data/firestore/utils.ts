@@ -1,15 +1,16 @@
 import { FieldValue } from "firebase/firestore";
 
-export enum Collection {
+export const enum Collection {
   ADMIN_DATA = "adminData",
   STUDENTS = "students",
   SURVEYS = "surveys",
   ASSIGNMENTS = "assignments",
   SURVEY_ACCESS_LIST = "surveyAccessList",
   METADATA = "metadata",
+  CLUBS = "clubs"
 }
 
-export enum Document {
+export const enum Document {
   NEXT_STUDENT_ID = "nextStudentId",
   SURVEYS = "surveys",
   STUDENTS = "students",
