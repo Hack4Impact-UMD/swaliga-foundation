@@ -7,7 +7,8 @@ export const enum Collection {
   ASSIGNMENTS = "assignments",
   SURVEY_ACCESS_LIST = "surveyAccessList",
   METADATA = "metadata",
-  CLUBS = "clubs"
+  CLUBS = "clubs",
+  PROGRAMS = "programs"
 }
 
 export const enum Document {
