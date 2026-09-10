@@ -20,8 +20,8 @@ export async function getClubById(clubId: string, transaction?: Transaction): Pr
     throw new Error("Club not found");
   }
   return {
-    clubId: clubDoc.id,
     ...clubDoc.data() as ClubDoc,
+    clubId
   }
 }
 

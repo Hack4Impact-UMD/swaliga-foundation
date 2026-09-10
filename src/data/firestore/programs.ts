@@ -20,9 +20,9 @@ export async function getProgramById(programId: string, clubId: string, transact
     throw new Error("Program not found");
   }
   return {
-    programId: programDoc.id,
-    clubId: programDoc.ref.parent.parent!.id,
-    ...programDoc.data() as ProgramDoc
+    ...programDoc.data() as ProgramDoc,
+    programId,
+    clubId,
   }
 }
 
