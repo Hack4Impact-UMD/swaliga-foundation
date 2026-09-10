@@ -25,9 +25,9 @@ export const ProgramSchema = z.object({
   ageGroup: AgeGroupSchema,
   startDate: z.preprocess(obj => isMoment(obj) ? obj.toDate() : obj, z.date()),
   endDate: z.preprocess(obj => isMoment(obj) ? obj.toDate() : obj, z.date()),
-  studentIds: z.array(z.number()),
-  teacherIds: z.array(z.number()),
-  staffIds: z.array(z.number()),
+  studentIds: z.array(z.coerce.number().min(1000000).transform((val) => val.toString())),
+  teacherIds: z.array(z.string()),
+  staffIds: z.array(z.string()),
 });
 export type Program = z.infer<typeof ProgramSchema>;
 
