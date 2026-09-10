@@ -20,6 +20,9 @@
     "apps-script"
   ],
   "dependencies": {
+    "@tanstack/react-form": "^1.33.5",
+    "@tanstack/react-query": "^5.102.8",
+    "@tanstack/react-table": "^9.2.4",
     "firebase": "^12.2.1",
     "moment": "^2.30.1",
     "next": "^14.2.35",

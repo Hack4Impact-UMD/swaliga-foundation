@@ -12,6 +12,7 @@ import StudentsProvider from "@/data/hooks/useStudents/StudentsProvider";
 import Footer from "@/components/layout/Footer";
 import { Tooltip } from "@/components/ui/Tooltip";
 import IncompleteProfileMessage from "@/features/profile/IncompleteProfileMessage";
+import QueryClientProviderWrapper from "@/components/QueryClientProviderWrapper";
 
 const LoadingPage = dynamic(() => import("./loading"));
 
@@ -30,22 +31,24 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} ${styles.body}`}>
-        <Suspense fallback={<LoadingPage />}>
-          <Tooltip.Provider delayDuration={0}>
-            <AuthProvider>
-              <Navbar />
-              <AvailabilityProvider>
-                <SurveysProvider>
-                  <StudentsProvider>
-                    <IncompleteProfileMessage />
-                    {children}
-                  </StudentsProvider>
-                </SurveysProvider>
-              </AvailabilityProvider>
-            </AuthProvider>
-            <Footer />
-          </Tooltip.Provider>
-        </Suspense>
+        <QueryClientProviderWrapper>
+          <Suspense fallback={<LoadingPage />}>
+            <Tooltip.Provider delayDuration={0}>
+              <AuthProvider>
+                <Navbar />
+                <AvailabilityProvider>
+                  <SurveysProvider>
+                    <StudentsProvider>
+                      <IncompleteProfileMessage />
+                      {children}
+                    </StudentsProvider>
+                  </SurveysProvider>
+                </AvailabilityProvider>
+              </AuthProvider>
+              <Footer />
+            </Tooltip.Provider>
+          </Suspense>
+        </QueryClientProviderWrapper>
       </body>
     </html>
   );
