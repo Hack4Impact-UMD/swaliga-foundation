@@ -7,6 +7,8 @@ export enum Collection {
   ASSIGNMENTS = "assignments",
   SURVEY_ACCESS_LIST = "surveyAccessList",
   METADATA = "metadata",
+  CLUBS = "clubs",
+  PROGRAMS = "programs"
 }
 
 export enum Document {

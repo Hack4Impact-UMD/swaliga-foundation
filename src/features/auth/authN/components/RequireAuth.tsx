@@ -16,6 +16,7 @@ const defaultRedirects: Record<Role | "NO_ROLE" | "UNAUTHENTICATED", string> = {
   UNAUTHENTICATED: "/",
   NO_ROLE: "/",
   STUDENT: "/",
+  TEACHER: "/students",
   STAFF: "/students",
   ADMIN: "/students",
 };

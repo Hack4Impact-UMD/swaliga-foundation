@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const ROLES = ["ADMIN", "STAFF", "STUDENT"] as const;
+export const ROLES = ["ADMIN", "STAFF", "TEACHER", "STUDENT"] as const;
 export const RoleSchema = z.enum(ROLES);
 export type Role = z.infer<typeof RoleSchema>
 
@@ -106,6 +106,13 @@ export function getFullName(name: Name): string {
   const { firstName, middleName, lastName } = name;
   return `${firstName} ${middleName ? `${middleName} ` : ""}${lastName}`
 }
+
+export const TeacherSchema = BaseUserSchema.safeExtend({
+  email: z.email(),
+  role: z.literal("TEACHER"),
+  programIds: z.array(z.uuid())
+});
+export type Teacher = z.infer<typeof TeacherSchema>;
 
 export const StaffSchema = BaseUserSchema.safeExtend({
   email: z.email(),
