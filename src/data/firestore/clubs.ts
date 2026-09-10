@@ -23,7 +23,7 @@ export async function getClubById(clubId: string, transaction?: Transaction): Pr
     clubId: clubDoc.id,
     ...clubDoc.data() as ClubDoc,
   }
-]}
+}
 
 export async function setClub(club: ClubDoc, instance?: Transaction | WriteBatch): Promise<string> {
   const clubId = v4();
