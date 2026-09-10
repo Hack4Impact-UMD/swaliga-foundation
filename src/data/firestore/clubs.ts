@@ -19,8 +19,11 @@ export async function getClubById(clubId: string, transaction?: Transaction): Pr
   if (!clubDoc.exists()) {
     throw new Error("Club not found");
   }
-  return clubDoc.data() as Club;
-}
+  return {
+    clubId: clubDoc.id,
+    ...clubDoc.data() as ClubDoc,
+  }
+]}
 
 export async function setClub(club: ClubDoc, instance?: Transaction | WriteBatch): Promise<string> {
   const clubId = v4();

@@ -19,7 +19,11 @@ export async function getProgramById(programId: string, clubId: string, transact
   if (!programDoc.exists()) {
     throw new Error("Program not found");
   }
-  return programDoc.data() as Program;
+  return {
+    programId: programDoc.id,
+    clubId: programDoc.ref.parent.parent!.id,
+    ...programDoc.data() as ProgramDoc
+  }
 }
 
 export async function setProgram(program: ProgramDoc, clubId: string, instance?: Transaction | WriteBatch): Promise<string> {
