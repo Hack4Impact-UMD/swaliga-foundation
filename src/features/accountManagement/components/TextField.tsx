@@ -1,4 +1,4 @@
-import { ChangeEvent, cloneElement } from "react";
+import { ChangeEvent, cloneElement, type JSX } from "react";
 import styles from "./TextField.module.css";
 import Label from "./Label";
 

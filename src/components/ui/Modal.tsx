@@ -3,7 +3,7 @@
 import Image from "next/image";
 import styles from "./Modal.module.css";
 import closeIcon from "@/../public/icons/close-icon.png";
-import React, { cloneElement, useState } from "react";
+import React, { cloneElement, useState, type JSX } from "react";
 
 interface ModalProps extends React.HTMLAttributes<HTMLDivElement> {
   children: [JSX.Element, React.ReactNode];

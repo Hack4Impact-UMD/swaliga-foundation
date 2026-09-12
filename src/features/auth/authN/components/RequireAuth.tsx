@@ -1,9 +1,10 @@
-"use client";
-
+"use client";;
 import { Role } from "@/types/user-types";
 import useAuth from "./useAuth";
 import { useRouter } from "next/navigation";
 import LoadingPage from "@/app/loading";
+
+import type { JSX } from "react";
 
 interface RequireAuthProps {
   children: JSX.Element;
