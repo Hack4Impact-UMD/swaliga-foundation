@@ -12,13 +12,6 @@ export interface useSurveysReturn {
   isError: boolean;
 }
 
-export const useSurveysDefault: useSurveysReturn = {
-  surveys: [],
-  setSurveys: () => { },
-  isLoading: false,
-  isError: false,
-}
-
 export default function useSurveys(surveyIds: string[] = []): useSurveysReturn {
   const auth = useAuth();
   const role = auth.token?.claims.role as Role;
