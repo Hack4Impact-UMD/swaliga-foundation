@@ -4,7 +4,7 @@ import { isMoment } from "moment";
 
 export const ClubSchema = z.object({
   clubId: z.uuid(),
-  name: z.string().min(1),
+  name: z.string().min(1).max(100),
   address: AddressSchema,
 });
 export type Club = z.infer<typeof ClubSchema>;
