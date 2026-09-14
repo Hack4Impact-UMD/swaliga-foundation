@@ -6,11 +6,12 @@ const SurveyPage = dynamic(() => import("./SurveyPage"), {
   loading: () => <LoadingPage />,
 });
 
-export default function SurveyPageWrapper({
-  params,
-}: {
-  params: { surveyId: string };
-}) {
+export default async function SurveyPageWrapper(
+  props: {
+    params: Promise<{ surveyId: string }>;
+  }
+) {
+  const params = await props.params;
   const { surveyId } = params;
   return (
     <RequireAuth allowedRoles={["ADMIN", "STAFF"]}>

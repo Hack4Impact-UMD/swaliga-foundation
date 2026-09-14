@@ -6,11 +6,12 @@ const StudentPage = dynamic(() => import("./StudentPage"), {
   loading: () => <LoadingPage />,
 });
 
-export default function StudentPageWrapper({
-  params,
-}: {
-  params: { studentId: string };
-}) {
+export default async function StudentPageWrapper(
+  props: {
+    params: Promise<{ studentId: string }>;
+  }
+) {
+  const params = await props.params;
   return (
     <RequireAuth allowedRoles={["ADMIN", "STAFF", "STUDENT"]}>
       <StudentPage studentId={params.studentId} />

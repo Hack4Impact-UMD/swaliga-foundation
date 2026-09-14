@@ -1,4 +1,4 @@
-import { ChangeEvent, cloneElement } from "react";
+import { ChangeEvent, cloneElement, type JSX } from "react";
 import styles from "./Select.module.css";
 import Label from "./Label";
 

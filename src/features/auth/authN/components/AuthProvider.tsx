@@ -1,7 +1,7 @@
 "use client";
 
 import { onIdTokenChanged, User, IdTokenResult } from "firebase/auth";
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState, type JSX } from "react";
 import { auth, functions } from "@/config/firebaseConfig";
 import { httpsCallable } from "firebase/functions";
 import LoadingPage from "@/app/loading";

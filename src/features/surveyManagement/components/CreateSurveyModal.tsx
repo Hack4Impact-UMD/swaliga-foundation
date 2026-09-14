@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, type JSX } from "react";
 import styles from "./CreateSurveyModal.module.css";
 import Modal from "../../../components/ui/Modal";
 import { createNewSurvey, addExistingSurvey } from "../surveys";

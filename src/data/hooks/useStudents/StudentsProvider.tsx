@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState, type JSX } from "react";
 import { getFullName, Role, Student } from "@/types/user-types";
 import { collection, doc, onSnapshot } from "firebase/firestore";
 import { Collection, Document } from "../../firestore/utils";

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type JSX } from "react";
 import Modal from "@/components/ui/Modal";
 import styles from "./SendSurveyReminderEmailModal.module.css";
 import { httpsCallable } from "firebase/functions";

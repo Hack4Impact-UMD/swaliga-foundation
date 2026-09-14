@@ -1,13 +1,20 @@
 "use client";
 
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState, type JSX } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { Collection, Document } from "../../firestore/utils";
 import { db } from "@/config/firebaseConfig";
 import { SurveyID } from "@/types/survey-types";
-import { useSurveysDefault, useSurveysReturn } from "./useSurveys";
+import { useSurveysReturn } from "./useSurveys";
 import useAuth from "@/features/auth/authN/components/useAuth";
 import { Role } from "@/types/user-types";
+
+export const useSurveysDefault: useSurveysReturn = {
+  surveys: [],
+  setSurveys: () => { },
+  isLoading: false,
+  isError: false,
+}
 
 export const SurveysContext =
   createContext<useSurveysReturn>(useSurveysDefault);

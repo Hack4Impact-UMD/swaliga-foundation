@@ -31,8 +31,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} ${styles.body}`}>
-        <QueryClientProviderWrapper>
-          <Suspense fallback={<LoadingPage />}>
+        <Suspense fallback={<LoadingPage />}>
+          <QueryClientProviderWrapper>
             <Tooltip.Provider delayDuration={0}>
               <AuthProvider>
                 <Navbar />
@@ -47,8 +47,8 @@ export default function RootLayout({
               </AuthProvider>
               <Footer />
             </Tooltip.Provider>
-          </Suspense>
-        </QueryClientProviderWrapper>
+          </QueryClientProviderWrapper>
+        </Suspense>
       </body>
     </html>
   );
