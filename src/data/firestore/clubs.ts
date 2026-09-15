@@ -37,7 +37,7 @@ export async function setClubDoc(club: ClubDoc, instance?: Transaction | WriteBa
   }
 }
 
-export async function updateClub(clubId: string, updates: FirestorePartial<ClubDoc>, instance?: Transaction | WriteBatch): Promise<void> {
+export async function updateClubDoc(clubId: string, updates: FirestorePartial<ClubDoc>, instance?: Transaction | WriteBatch): Promise<void> {
   try {
     const clubRef = getClubDocRef(clubId);
     // @ts-ignore
@@ -47,7 +47,7 @@ export async function updateClub(clubId: string, updates: FirestorePartial<ClubD
   }
 }
 
-export async function deleteClub(clubId: string, instance?: Transaction | WriteBatch): Promise<void> {
+export async function deleteClubDoc(clubId: string, instance?: Transaction | WriteBatch): Promise<void> {
   try {
     const clubRef = getClubDocRef(clubId);
     // @ts-ignore
