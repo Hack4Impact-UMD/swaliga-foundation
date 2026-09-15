@@ -26,7 +26,7 @@ export async function getProgramById(programId: string, clubId: string, transact
   }
 }
 
-export async function setProgram(program: ProgramDoc, clubId: string, instance?: Transaction | WriteBatch): Promise<string> {
+export async function setProgramDoc(program: ProgramDoc, clubId: string, instance?: Transaction | WriteBatch): Promise<string> {
   const programId = v4();
   try {
     const programRef = getProgramDocRef(clubId, programId);
@@ -38,7 +38,7 @@ export async function setProgram(program: ProgramDoc, clubId: string, instance?:
   }
 }
 
-export async function updateProgram(programId: string, clubId: string, updates: FirestorePartial<ProgramDoc>, instance?: Transaction | WriteBatch): Promise<void> {
+export async function updateProgramDoc(programId: string, clubId: string, updates: FirestorePartial<ProgramDoc>, instance?: Transaction | WriteBatch): Promise<void> {
   try {
     const programRef = getProgramDocRef(clubId, programId);
     // @ts-ignore
@@ -48,7 +48,7 @@ export async function updateProgram(programId: string, clubId: string, updates: 
   }
 }
 
-export async function deleteProgram(programId: string, clubId: string, instance?: Transaction | WriteBatch): Promise<void> {
+export async function deleteProgramDoc(programId: string, clubId: string, instance?: Transaction | WriteBatch): Promise<void> {
   try {
     const programRef = getProgramDocRef(clubId, programId);
     // @ts-ignore
