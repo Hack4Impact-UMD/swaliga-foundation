@@ -2,7 +2,6 @@ import { db } from "@/config/firebaseConfig";
 import { Club, ClubDoc } from "@/types/club-types";
 import { deleteDoc, doc, getDoc, setDoc, Transaction, updateDoc, WriteBatch } from "firebase/firestore";
 import { Collection, FirestorePartial } from "./utils";
-import { v4 } from "uuid";
 
 function getClubDocRef(clubId: string) {
   return doc(db, Collection.CLUBS, clubId);
@@ -25,12 +24,12 @@ export async function getClubById(clubId: string, transaction?: Transaction): Pr
   }
 }
 
-export async function setClubDoc(club: ClubDoc, instance?: Transaction | WriteBatch): Promise<string> {
-  const clubId = v4();
+export async function setClubDoc(club: Club, instance?: Transaction | WriteBatch): Promise<string> {
+  const { clubId, ...clubDoc } = club;
   try {
     const clubRef = getClubDocRef(clubId);
     // @ts-ignore
-    await (instance ? instance.set(clubRef, club) : setDoc(clubRef, club));
+    await (instance ? instance.set(clubRef, clubDoc) : setDoc(clubRef, clubDoc));
     return clubId;
   } catch (error) {
     throw new Error("Failed to set club");

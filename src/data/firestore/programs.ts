@@ -2,7 +2,6 @@ import { db } from "@/config/firebaseConfig";
 import { Program, ProgramDoc } from "@/types/club-types";
 import { deleteDoc, doc, getDoc, setDoc, Transaction, updateDoc, WriteBatch } from "firebase/firestore";
 import { Collection, FirestorePartial } from "./utils";
-import { v4 } from "uuid";
 
 function getProgramDocRef(clubId: string, programId: string) {
   return doc(db, Collection.CLUBS, clubId, Collection.PROGRAMS, programId);
@@ -26,12 +25,12 @@ export async function getProgramById(programId: string, clubId: string, transact
   }
 }
 
-export async function setProgramDoc(program: ProgramDoc, clubId: string, instance?: Transaction | WriteBatch): Promise<string> {
-  const programId = v4();
+export async function setProgramDoc(program: Program, clubId: string, instance?: Transaction | WriteBatch): Promise<string> {
+  const { programId, ...programDoc } = program;
   try {
     const programRef = getProgramDocRef(clubId, programId);
     // @ts-ignore
-    await (instance ? instance.set(programRef, program) : setDoc(programRef, program));
+    await (instance ? instance.set(programRef, programDoc) : setDoc(programRef, programDoc));
     return programId;
   } catch (error) {
     throw new Error("Failed to set program");
