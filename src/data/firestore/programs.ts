@@ -25,8 +25,8 @@ export async function getProgramById(programId: string, clubId: string, transact
   }
 }
 
-export async function setProgramDoc(program: Program, clubId: string, instance?: Transaction | WriteBatch): Promise<string> {
-  const { programId, ...programDoc } = program;
+export async function setProgramDoc(program: Program, instance?: Transaction | WriteBatch): Promise<string> {
+  const { programId, clubId, ...programDoc } = program;
   try {
     const programRef = getProgramDocRef(clubId, programId);
     // @ts-ignore
