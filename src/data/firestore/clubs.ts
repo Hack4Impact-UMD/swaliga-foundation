@@ -1,7 +1,7 @@
 import { db } from "@/config/firebaseConfig";
 import { Club, ClubDoc } from "@/types/club-types";
-import { deleteDoc, doc, getDoc, setDoc, Transaction, updateDoc, WriteBatch } from "firebase/firestore";
-import { Collection, FirestorePartial } from "./utils";
+import { deleteDoc, doc, getDoc, setDoc, Transaction, updateDoc, WriteBatch, type UpdateData } from "firebase/firestore";
+import { Collection } from "./utils";
 import { v4 } from "uuid";
 
 function getClubDocRef(clubId: string) {
@@ -37,7 +37,7 @@ export async function setClub(club: ClubDoc, instance?: Transaction | WriteBatch
   }
 }
 
-export async function updateClub(clubId: string, updates: FirestorePartial<ClubDoc>, instance?: Transaction | WriteBatch): Promise<void> {
+export async function updateClub(clubId: string, updates: UpdateData<ClubDoc>, instance?: Transaction | WriteBatch): Promise<void> {
   try {
     const clubRef = getClubDocRef(clubId);
     // @ts-ignore

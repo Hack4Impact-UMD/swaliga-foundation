@@ -17,7 +17,3 @@ export enum Document {
   STUDENTS = "students",
   SURVEY_ACCESS_LIST = "surveyAccessList"
 }
-
-export type FirestorePartial<T> = {
-  [P in keyof T]?: T[P] | FieldValue;
-}

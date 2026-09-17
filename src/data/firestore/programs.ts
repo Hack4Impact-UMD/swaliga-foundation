@@ -1,7 +1,7 @@
 import { db } from "@/config/firebaseConfig";
 import { Program, ProgramDoc } from "@/types/club-types";
-import { deleteDoc, doc, getDoc, setDoc, Transaction, updateDoc, WriteBatch } from "firebase/firestore";
-import { Collection, FirestorePartial } from "./utils";
+import { deleteDoc, doc, getDoc, setDoc, Transaction, updateDoc, WriteBatch, type UpdateData } from "firebase/firestore";
+import { Collection } from "./utils";
 import { v4 } from "uuid";
 
 function getProgramDocRef(clubId: string, programId: string) {
@@ -38,7 +38,7 @@ export async function setProgram(program: ProgramDoc, clubId: string, instance?:
   }
 }
 
-export async function updateProgram(programId: string, clubId: string, updates: FirestorePartial<ProgramDoc>, instance?: Transaction | WriteBatch): Promise<void> {
+export async function updateProgram(programId: string, clubId: string, updates: UpdateData<ProgramDoc>, instance?: Transaction | WriteBatch): Promise<void> {
   try {
     const programRef = getProgramDocRef(clubId, programId);
     // @ts-ignore
