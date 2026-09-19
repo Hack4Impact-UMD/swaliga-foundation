@@ -2,7 +2,7 @@
 
 import React, { createContext, useEffect, useState, type JSX } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
-import { Collection, Document } from "../../firestore/utils";
+import { AdminDataSubcollection, Collection } from "../../firestore/collections";
 import { db } from "@/config/firebaseConfig";
 import { SurveyID } from "@/types/survey-types";
 import { useSurveysReturn } from "./useSurveys";
@@ -40,8 +40,8 @@ export default function SurveysProvider({
       collection(
         db,
         Collection.ADMIN_DATA,
-        Document.SURVEYS,
-        Collection.SURVEYS
+        AdminDataSubcollection.SURVEYS,
+        AdminDataSubcollection.SURVEYS
       ),
       (snapshot) => {
         const newSurveys: SurveyID[] = [];

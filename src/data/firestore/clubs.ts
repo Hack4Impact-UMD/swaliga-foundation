@@ -1,7 +1,7 @@
 import { db } from "@/config/firebaseConfig";
 import { Club, ClubDoc } from "@/types/club-types";
 import { deleteDoc, doc, getDoc, setDoc, Transaction, updateDoc, WriteBatch, type UpdateData } from "firebase/firestore";
-import { Collection } from "./utils";
+import { Collection } from "./collections";
 import { v4 } from "uuid";
 
 function getClubDocRef(clubId: string) {

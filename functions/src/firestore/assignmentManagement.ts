@@ -1,5 +1,5 @@
 import { adminDb } from "../config/firebaseAdminConfig";
-import { Collection, Document } from "@/data/firestore/utils";
+import { Collection, StudentsSubcollection, SurveysSubcollection } from "@/data/firestore/collections";
 import { PendingAssignmentID } from "@/types/survey-types";
 import { FieldValue, Transaction } from "firebase-admin/firestore";
 import { onDocumentWritten } from "firebase-functions/firestore";
@@ -20,7 +20,7 @@ export const assignSurveys = onCall(async (req) => {
     const promises: Promise<FirebaseFirestore.QuerySnapshot>[] = [];
     surveyIds.forEach(surveyId =>
       studentIds.forEach(studentId =>
-        promises.push(transaction.get(surveysCollection.doc(surveyId).collection(Collection.ASSIGNMENTS).where('studentId', '==', studentId).where('responseId', '==', null).limit(1)))
+        promises.push(transaction.get(surveysCollection.doc(surveyId).collection(SurveysSubcollection.ASSIGNMENTS).where('studentId', '==', studentId).where('responseId', '==', null).limit(1)))
       )
     );
     const existingDocs = (await Promise.all(promises)).filter(snapshot => !snapshot.empty).map(snapshot => ({
@@ -45,7 +45,7 @@ export const assignSurveys = onCall(async (req) => {
     });
     assignmentsToCreate.forEach(assignment => {
       const { id, surveyId, ...data } = assignment;
-      transaction.set(surveysCollection.doc(surveyId).collection(Collection.ASSIGNMENTS).doc(id), data);
+      transaction.set(surveysCollection.doc(surveyId).collection(SurveysSubcollection.ASSIGNMENTS).doc(id), data);
     })
   });
 })
@@ -55,8 +55,8 @@ export const onAssignmentWritten = onDocumentWritten('/surveys/{surveyId}/assign
   const beforeId = event.data?.before.exists ? event.data?.before.data()?.studentId as string : undefined;
   const afterId = event.data?.after.exists ? event.data?.after.data()?.studentId as string : undefined;
 
-  const beforeRef = beforeId ? adminDb.collection(Collection.STUDENTS).doc(beforeId).collection(Collection.SURVEY_ACCESS_LIST).doc(Document.SURVEY_ACCESS_LIST) : undefined;
-  const afterRef = afterId ? adminDb.collection(Collection.STUDENTS).doc(afterId).collection(Collection.SURVEY_ACCESS_LIST).doc(Document.SURVEY_ACCESS_LIST) : undefined;
+  const beforeRef = beforeId ? adminDb.collection(Collection.STUDENTS).doc(beforeId).collection(StudentsSubcollection.SURVEY_ACCESS_LIST).doc(StudentsSubcollection.SURVEY_ACCESS_LIST) : undefined;
+  const afterRef = afterId ? adminDb.collection(Collection.STUDENTS).doc(afterId).collection(StudentsSubcollection.SURVEY_ACCESS_LIST).doc(StudentsSubcollection.SURVEY_ACCESS_LIST) : undefined;
   if (!beforeRef && afterRef) {
     await afterRef.set({ [surveyId]: FieldValue.increment(1) }, { merge: true });
   } else if (beforeRef && afterRef) {

@@ -6,12 +6,15 @@ export const enum Collection {
   CLUBS = "clubs",
   GOOGLE_OAUTH2_TOKENS = "googleOAuth2Tokens",
   USERS = "users",
-  USERNAMEs = "usernames"
+  USERNAMES = "usernames"
+}
+
+export const enum StudentsSubcollection {
+  SURVEY_ACCESS_LIST = "surveyAccessList"
 }
 
 export const enum SurveysSubcollection {
   ASSIGNMENTS = "assignments",
-  SURVEY_ACCESS_LIST = "surveyAccessList"
 }
 
 export const enum ClubsSubcollection {
@@ -23,6 +26,6 @@ export const enum AdminDataSubcollection {
   SURVEYS = "surveys"
 }
 
-export const enum MetadataDocuments {
+export const enum MetadataDocument {
   NEXT_STUDENT_ID = "nextStudentId"
 }

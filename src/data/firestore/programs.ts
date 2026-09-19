@@ -1,11 +1,11 @@
 import { db } from "@/config/firebaseConfig";
 import { Program, ProgramDoc } from "@/types/club-types";
 import { deleteDoc, doc, getDoc, setDoc, Transaction, updateDoc, WriteBatch, type UpdateData } from "firebase/firestore";
-import { Collection } from "./utils";
+import { Collection, ClubsSubcollection } from "./collections";
 import { v4 } from "uuid";
 
 function getProgramDocRef(clubId: string, programId: string) {
-  return doc(db, Collection.CLUBS, clubId, Collection.PROGRAMS, programId);
+  return doc(db, Collection.CLUBS, clubId, ClubsSubcollection.PROGRAMS, programId);
 }
 
 export async function getProgramById(programId: string, clubId: string, transaction?: Transaction): Promise<Program> {

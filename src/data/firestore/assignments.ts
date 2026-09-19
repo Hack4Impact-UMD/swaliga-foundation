@@ -1,11 +1,11 @@
 import { Assignment, AssignmentID, PendingAssignment } from "@/types/survey-types";
 import { db } from "../../config/firebaseConfig";
 import { getDoc, doc, updateDoc, deleteDoc, Transaction, WriteBatch, collection, getDocs, collectionGroup, query, where, type UpdateData } from "firebase/firestore";
-import { Collection } from "./utils";
+import { Collection, SurveysSubcollection } from "./collections";
 import { v4 as uuid } from "uuid";
 
 export async function getAssignmentById(surveyId: string, assignmentId: string, transaction?: Transaction): Promise<AssignmentID> {
-  const assignmentRef = doc(db, Collection.SURVEYS, surveyId, Collection.ASSIGNMENTS, assignmentId);
+  const assignmentRef = doc(db, Collection.SURVEYS, surveyId, SurveysSubcollection.ASSIGNMENTS, assignmentId);
   let assignmentDoc;
   try {
     assignmentDoc = await (transaction ? transaction.get(assignmentRef) : getDoc(assignmentRef));
@@ -24,7 +24,7 @@ export async function getAssignmentById(surveyId: string, assignmentId: string, 
 
 export async function getAssignmentsBySurveyId(surveyId: string): Promise<AssignmentID[]> {
   try {
-    const assignmentsRef = collection(db, Collection.SURVEYS, surveyId, Collection.ASSIGNMENTS);
+    const assignmentsRef = collection(db, Collection.SURVEYS, surveyId, SurveysSubcollection.ASSIGNMENTS);
     const docs = await getDocs(assignmentsRef);
     return docs.docs.map(doc => ({
       id: doc.id,
@@ -38,7 +38,7 @@ export async function getAssignmentsBySurveyId(surveyId: string): Promise<Assign
 
 export async function getAssignmentsByStudentId(studentId: string): Promise<AssignmentID[]> {
   try {
-    const q = query(collectionGroup(db, Collection.ASSIGNMENTS), where("studentId", "==", studentId));
+    const q = query(collectionGroup(db, SurveysSubcollection.ASSIGNMENTS), where("studentId", "==", studentId));
     const docs = await getDocs(q);
     return docs.docs.map(doc => ({
       id: doc.id,
@@ -53,7 +53,7 @@ export async function getAssignmentsByStudentId(studentId: string): Promise<Assi
 export async function createAssignment(surveyId: string, assignment: PendingAssignment, instance?: Transaction | WriteBatch): Promise<void> {
   try {
     const assignmentId = uuid();
-    const assignmentRef = doc(db, Collection.SURVEYS, surveyId, Collection.ASSIGNMENTS, assignmentId);
+    const assignmentRef = doc(db, Collection.SURVEYS, surveyId, SurveysSubcollection.ASSIGNMENTS, assignmentId);
     // @ts-ignore
     await (instance ? instance.set(assignmentRef, assignment) : setDoc(assignmentRef, assignment));
   } catch (error) {
@@ -63,7 +63,7 @@ export async function createAssignment(surveyId: string, assignment: PendingAssi
 
 export async function updateAssignment(surveyId: string, assignmentId: string, updates: UpdateData<Assignment>, instance?: Transaction | WriteBatch): Promise<void> {
   try {
-    const assignmentRef = doc(db, Collection.SURVEYS, surveyId, Collection.ASSIGNMENTS, assignmentId);
+    const assignmentRef = doc(db, Collection.SURVEYS, surveyId, SurveysSubcollection.ASSIGNMENTS, assignmentId);
     // @ts-ignore
     await (instance ? instance.update(assignmentRef, updates) : updateDoc(assignmentRef, updates));
   } catch (error) {
@@ -73,7 +73,7 @@ export async function updateAssignment(surveyId: string, assignmentId: string, u
 
 export async function deleteAssignment(surveyId: string, assignmentId: string, instance?: Transaction | WriteBatch): Promise<void> {
   try {
-    const assignmentRef = doc(db, Collection.SURVEYS, surveyId, Collection.ASSIGNMENTS, assignmentId);
+    const assignmentRef = doc(db, Collection.SURVEYS, surveyId, SurveysSubcollection.ASSIGNMENTS, assignmentId);
     // @ts-ignore
     await (instance ? instance.delete(assignmentRef) : deleteDoc(assignmentRef));
   } catch (error) {

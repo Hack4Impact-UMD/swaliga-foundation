@@ -1,7 +1,7 @@
 import { Survey, SurveyID } from '@/types/survey-types';
 import { db } from "../../config/firebaseConfig";
 import { collection, deleteDoc, doc, getDoc, getDocs, setDoc, Transaction, updateDoc, WriteBatch, type UpdateData } from 'firebase/firestore';
-import { Collection } from './utils';
+import { Collection } from './collections';
 
 export async function getSurveyById(id: string, transaction?: Transaction): Promise<SurveyID> {
   const surveyRef = doc(db, Collection.SURVEYS, id);

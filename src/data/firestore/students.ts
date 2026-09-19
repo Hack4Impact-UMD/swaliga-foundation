@@ -1,7 +1,7 @@
 import { db } from "@/config/firebaseConfig";
 import { Student } from "@/types/user-types";
 import { deleteDoc, doc, getDoc, setDoc, Transaction, updateDoc, WriteBatch, type UpdateData } from "firebase/firestore";
-import { Collection } from "./utils";
+import { Collection } from "./collections";
 
 export async function getStudentById(id: string, transaction?: Transaction): Promise<Student> {
   const studentRef = doc(db, Collection.STUDENTS, id);
