@@ -14,3 +14,8 @@ export const enum SurveysSubcollection {
 export const enum ClubsSubcollection {
   PROGRAMS = "programs"
 }
+
+export const enum AdminDataSubcollection {
+  STUDENTS = "students",
+  SURVEYS = "surveys"
+}
