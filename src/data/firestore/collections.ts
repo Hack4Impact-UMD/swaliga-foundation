@@ -19,3 +19,7 @@ export const enum AdminDataSubcollection {
   STUDENTS = "students",
   SURVEYS = "surveys"
 }
+
+export const enum MetadataDocuments {
+  NEXT_STUDENT_ID = "nextStudentId"
+}
