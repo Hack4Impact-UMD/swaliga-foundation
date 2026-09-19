@@ -3,7 +3,10 @@ export const enum Collection {
   STUDENTS = "students",
   SURVEYS = "surveys",
   METADATA = "metadata",
-  CLUBS = "clubs"
+  CLUBS = "clubs",
+  GOOGLE_OAUTH2_TOKENS = "googleOAuth2Tokens",
+  USERS = "users",
+  USERNAMEs = "usernames"
 }
 
 export const enum SurveysSubcollection {
