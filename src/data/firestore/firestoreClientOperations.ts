@@ -9,9 +9,18 @@ export type NonEmptyArray<T> = [T, ...T[]]
 export type Nullable<T> = { [K in keyof T]: T[K] | null; };
 export type StrictExtract<T, U extends T> = Extract<T, U>;
 
-export async function getDoc<DbModelType extends DocumentData>(ref: DocumentReference<DbModelType, DbModelType>, transaction?: Transaction): Promise<DocumentSnapshot<DbModelType, DbModelType>> {
-  let doc: DocumentSnapshot<DbModelType, DbModelType>;
+interface GetDocOptions<DbModelType extends DocumentData, AppModelType = DbModelType> {
+  transaction?: Transaction;
+  converters?: FirestoreDataConverter<AppModelType, DbModelType>;
+}
+
+export async function getDoc<DbModelType extends DocumentData, AppModelType = DbModelType>(ref: DocumentReference<AppModelType, DbModelType>, options?: GetDocOptions<DbModelType, AppModelType>): Promise<DocumentSnapshot<AppModelType, DbModelType>> {
+  const { transaction, converters } = options || {};
+  let doc: DocumentSnapshot<AppModelType, DbModelType>;
   try {
+    if (converters) {
+      ref = ref.withConverter(converters);
+    }
     doc = await (transaction ? transaction.get(ref) : getFirestore(ref));
   } catch {
     throw Error("Error getting document");
