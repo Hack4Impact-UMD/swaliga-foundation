@@ -6,21 +6,18 @@ import { DistributiveKeyof, StrictExtract } from "@/types/utils";
 
 interface GetDocOptions<DbModelType extends DocumentData, AppModelType = DbModelType> {
   transaction?: Transaction;
-  converters?: FirestoreDataConverter<AppModelType, DbModelType>;
+  converter?: (snapshot: DocumentSnapshot<DbModelType, DbModelType>) => AppModelType;
 }
 
 interface GetDocResponse<DbModelType extends DocumentData, AppModelType = DbModelType> {
   doc: AppModelType;
-  snapshot: DocumentSnapshot<AppModelType, DbModelType>;
+  snapshot: DocumentSnapshot<DbModelType, DbModelType>;
 }
 
-export async function getDoc<DbModelType extends DocumentData, AppModelType = DbModelType>(ref: DocumentReference<AppModelType, DbModelType>, options?: GetDocOptions<DbModelType, AppModelType>): Promise<GetDocResponse<DbModelType, AppModelType>> {
-  const { transaction, converters } = options || {};
-  let snapshot: DocumentSnapshot<AppModelType, DbModelType>;
+export async function getDoc<DbModelType extends DocumentData, AppModelType = DbModelType>(ref: DocumentReference<DbModelType, DbModelType>, options?: GetDocOptions<DbModelType, AppModelType>): Promise<GetDocResponse<DbModelType, AppModelType>> {
+  const { transaction, converter } = options || {};
+  let snapshot: DocumentSnapshot<DbModelType, DbModelType>;
   try {
-    if (converters) {
-      ref = ref.withConverter(converters);
-    }
     snapshot = await (transaction ? transaction.get(ref) : getFirestore(ref));
   } catch {
     throw Error("Error getting document");
@@ -30,19 +27,19 @@ export async function getDoc<DbModelType extends DocumentData, AppModelType = Db
     throw Error("Document not found");
   }
   return {
-    doc: snapshot.data(),
+    doc: converter ? converter(snapshot) : snapshot.data() as unknown as AppModelType,
     snapshot
   };
 }
 
 const FIRESTORE_WHERE_IN_LIMIT = 30;
-export async function batchGetDocs<DbModelType extends DocumentData, AppModelType = DbModelType>(collection: CollectionReference<AppModelType, DbModelType>, ids: string[], converters?: FirestoreDataConverter<AppModelType, DbModelType>): Promise<ListDocsResponse<DbModelType, AppModelType>[]> {
+export async function batchGetDocs<DbModelType extends DocumentData, AppModelType = DbModelType>(collection: CollectionReference<DbModelType, DbModelType>, ids: string[], converter?: (snapshot: QueryDocumentSnapshot<DbModelType, DbModelType>) => AppModelType): Promise<ListDocsResponse<DbModelType, AppModelType>[]> {
   try {
     const idBatches = [];
     for (let i = 0; i < ids.length; i += FIRESTORE_WHERE_IN_LIMIT) {
       idBatches.push(ids.slice(i, i + FIRESTORE_WHERE_IN_LIMIT));
     }
-    const queries = idBatches.map(idBatch => listDocs(collection, { queryOptions: { where: [['__name__', 'in', idBatch]] }, converters }));
+    const queries = idBatches.map(idBatch => listDocs(collection, { queryOptions: { where: [['__name__', 'in', idBatch]] }, converter }));
     const responses = await Promise.all(queries);
     return responses.flatMap(response => response)
   } catch {
@@ -181,22 +178,21 @@ function buildQuery<DbModelType extends DocumentData, AppModelType = DbModelType
 
 interface ListDocsResponse<DbModelType extends DocumentData, AppModelType = DbModelType> {
   docs: AppModelType[];
-  snapshots: QueryDocumentSnapshot<AppModelType, DbModelType>[];
+  snapshots: QueryDocumentSnapshot<DbModelType, DbModelType>[];
 }
 
 interface ListDocsOptions<DbModelType extends DocumentData, AppModelType = DbModelType> {
   queryOptions?: FirestoreQueryOptions<DbModelType>;
-  converters?: FirestoreDataConverter<AppModelType, DbModelType>;
+  converter?: (snapshot: QueryDocumentSnapshot<DbModelType, DbModelType>) => AppModelType;
 }
 
-export async function listDocs<DbModelType extends DocumentData, AppModelType = DbModelType>(collection: CollectionReference<AppModelType, DbModelType> | Collection, options?: ListDocsOptions<DbModelType, AppModelType>): Promise<ListDocsResponse<DbModelType, AppModelType>> {
+export async function listDocs<DbModelType extends DocumentData, AppModelType = DbModelType>(collection: CollectionReference<DbModelType, DbModelType> | Collection, options?: ListDocsOptions<DbModelType, AppModelType>): Promise<ListDocsResponse<DbModelType, AppModelType>> {
   try {
-    const { queryOptions = {}, converters } = options ?? {};
+    const { queryOptions = {}, converter } = options ?? {};
     let queryObj = buildQuery(collection, queryOptions);
-    if (converters) { queryObj = queryObj.withConverter(converters); }
     const querySnapshot = await queryFirestore(queryObj);
     return {
-      docs: querySnapshot.docs.map(doc => doc.data()),
+      docs: querySnapshot.docs.map(converter ? ((doc) => converter(doc)) : ((doc) => doc.data() as unknown as AppModelType)),
       snapshots: querySnapshot.docs
     };
   } catch {
