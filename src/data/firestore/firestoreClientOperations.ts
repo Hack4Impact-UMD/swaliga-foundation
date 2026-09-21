@@ -41,13 +41,13 @@ export async function getDoc<DbModelType extends DocumentData, AppModelType = Db
 }
 
 const FIRESTORE_WHERE_IN_LIMIT = 30;
-export async function batchGetDocs<DbModelType extends DocumentData, AppModelType = DbModelType>(collection: CollectionReference<AppModelType, DbModelType>, ids: string[]): Promise<QueryDocumentSnapshot<AppModelType, DbModelType>[]> {
+export async function batchGetDocs<DbModelType extends DocumentData, AppModelType = DbModelType>(collection: CollectionReference<AppModelType, DbModelType>, ids: string[], converters?: FirestoreDataConverter<AppModelType, DbModelType>): Promise<QueryDocumentSnapshot<AppModelType, DbModelType>[]> {
   try {
     const idBatches = [];
     for (let i = 0; i < ids.length; i += FIRESTORE_WHERE_IN_LIMIT) {
       idBatches.push(ids.slice(i, i + FIRESTORE_WHERE_IN_LIMIT));
     }
-    const queries = idBatches.map(idBatch => executeQuery(collection, { where: [['__name__', 'in', idBatch ]] }));
+    const queries = idBatches.map(idBatch => listDocs(collection, { where: [['__name__', 'in', idBatch ]] }));
     const responses = await Promise.all(queries);
     return responses.flatMap(response => response)
   } catch {
@@ -136,18 +136,6 @@ export type FirestoreQueryOptions<DbModelType extends DocumentData> = {
   orderBy?: OrderByClause<DbModelType>[];
 } & LimitClause & StartCursorClause & EndCursorClause;
 
-export type ListDocsResponse<AppModelType, DbModelType extends DocumentData> =
-  | {
-    docs: [];
-    firstSnapshot?: never;
-    lastSnapshot?: never;
-  }
-  | {
-    docs: NonEmptyArray<AppModelType>;
-    firstSnapshot: QueryDocumentSnapshot<DbModelType, DbModelType>;
-    lastSnapshot: QueryDocumentSnapshot<DbModelType, DbModelType>;
-  }
-
 export type AggregationClause<DbModelType> = { aggregateFieldName: string; } & (
   | { operation: StrictExtract<AggregateType, 'count'>; }
   | { operation: StrictExtract<AggregateType, 'sum' | 'avg'>; sourceFieldPath: FirestoreDocumentFieldPath<DbModelType>; })
@@ -165,8 +153,8 @@ export async function assertDocumentDoesNotExist(ref: DocumentReference, instanc
   }
 }
 
-function buildQuery<DbModelType extends DocumentData>(collection: CollectionReference<DbModelType, DbModelType> | Collection, options?: FirestoreQueryOptions<DbModelType>): Query<DbModelType, DbModelType> {
-  let queryObj: Query<DbModelType, DbModelType> = typeof collection === 'string' ? collectionGroup(db, collection) as Query<DbModelType, DbModelType> : collection;
+function buildQuery<DbModelType extends DocumentData, AppModelType = DbModelType>(collection: CollectionReference<AppModelType, DbModelType> | Collection, options?: FirestoreQueryOptions<DbModelType>): Query<AppModelType, DbModelType> {
+  let queryObj: Query<AppModelType, DbModelType> = typeof collection === 'string' ? collectionGroup(db, collection) as Query<AppModelType, DbModelType> : collection;
   if (options) {
     const { where = [], orderBy = [] } = options;
     const whereClauses = where.map(([ fieldPath, operation, value ]) => whereFirestore(fieldPath === '__name__' ? documentId() : fieldPath, operation, value));
@@ -196,15 +184,7 @@ function buildQuery<DbModelType extends DocumentData>(collection: CollectionRefe
   return queryObj;
 }
 
-export function mapSnapshotsToPaginatedQueryResult<AppModelType, DbModelType extends DocumentData>(snapshots: QueryDocumentSnapshot<DbModelType, DbModelType>[], mapFunc: (snapshot: QueryDocumentSnapshot<DbModelType, DbModelType>) => AppModelType): ListDocsResponse<AppModelType, DbModelType> {
-  return snapshots.length === 0 ? { docs: [] } : {
-    docs: snapshots.map(mapFunc) as NonEmptyArray<AppModelType>,
-    firstSnapshot: snapshots[0],
-    lastSnapshot: snapshots[snapshots.length - 1]
-  }
-}
-
-export async function executeQuery<DbModelType extends DocumentData>(collection: CollectionReference<DbModelType, DbModelType> | Collection, options?: FirestoreQueryOptions<DbModelType>): Promise<QueryDocumentSnapshot<DbModelType, DbModelType>[]> {
+export async function listDocs<DbModelType extends DocumentData, AppModelType = DbModelType>(collection: CollectionReference<AppModelType, DbModelType> | Collection, options?: FirestoreQueryOptions<DbModelType>): Promise<QueryDocumentSnapshot<AppModelType, DbModelType>[]> {
   try {
     const queryObj = buildQuery(collection, options);
     const querySnapshot = await queryFirestore(queryObj);
@@ -214,7 +194,7 @@ export async function executeQuery<DbModelType extends DocumentData>(collection:
   }
 }
 
-export async function executeAggregationQuery<DbModelType extends DocumentData>(collection: CollectionReference<DbModelType, DbModelType> | Collection, options: AggregationQueryOptions<DbModelType>): Promise<{ [key: string]: number | null }> {
+export async function aggregateDocs<DbModelType extends DocumentData>(collection: CollectionReference<DbModelType, DbModelType> | Collection, options: AggregationQueryOptions<DbModelType>): Promise<{ [key: string]: number | null }> {
   try {
     const { aggregations, ...queryOptions } = options;
     const queryObj = buildQuery(collection, queryOptions);
