@@ -14,26 +14,34 @@ interface GetDocOptions<DbModelType extends DocumentData, AppModelType = DbModel
   converters?: FirestoreDataConverter<AppModelType, DbModelType>;
 }
 
-export async function getDoc<DbModelType extends DocumentData, AppModelType = DbModelType>(ref: DocumentReference<AppModelType, DbModelType>, options?: GetDocOptions<DbModelType, AppModelType>): Promise<DocumentSnapshot<AppModelType, DbModelType>> {
+interface GetDocResponse<DbModelType extends DocumentData, AppModelType = DbModelType> {
+  doc: AppModelType;
+  snapshot: DocumentSnapshot<AppModelType, DbModelType>;
+}
+
+export async function getDoc<DbModelType extends DocumentData, AppModelType = DbModelType>(ref: DocumentReference<AppModelType, DbModelType>, options?: GetDocOptions<DbModelType, AppModelType>): Promise<GetDocResponse<DbModelType, AppModelType>> {
   const { transaction, converters } = options || {};
-  let doc: DocumentSnapshot<AppModelType, DbModelType>;
+  let snapshot: DocumentSnapshot<AppModelType, DbModelType>;
   try {
     if (converters) {
       ref = ref.withConverter(converters);
     }
-    doc = await (transaction ? transaction.get(ref) : getFirestore(ref));
+    snapshot = await (transaction ? transaction.get(ref) : getFirestore(ref));
   } catch {
     throw Error("Error getting document");
   }
 
-  if (!doc.exists()) {
+  if (!snapshot.exists()) {
     throw Error("Document not found");
   }
-  return doc;
+  return {
+    doc: snapshot.data(),
+    snapshot
+  };
 }
 
 const FIRESTORE_WHERE_IN_LIMIT = 30;
-export async function batchGetDocs<DbModelType extends DocumentData>(collection: CollectionReference<DbModelType, DbModelType> | Collection, ids: string[]): Promise<QueryDocumentSnapshot<DbModelType, DbModelType>[]> {
+export async function batchGetDocs<DbModelType extends DocumentData, AppModelType = DbModelType>(collection: CollectionReference<AppModelType, DbModelType>, ids: string[]): Promise<QueryDocumentSnapshot<AppModelType, DbModelType>[]> {
   try {
     const idBatches = [];
     for (let i = 0; i < ids.length; i += FIRESTORE_WHERE_IN_LIMIT) {
