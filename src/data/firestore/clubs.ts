@@ -1,15 +1,29 @@
 import { db } from "@/config/firebaseConfig";
 import { Club, ClubDoc } from "@/types/club-types";
-import { deleteDoc, doc, getDoc, setDoc, Transaction, updateDoc, WriteBatch, type UpdateData } from "firebase/firestore";
+import { collection, CollectionReference, deleteDoc, doc, DocumentReference, FirestoreDataConverter, PartialWithFieldValue, QueryDocumentSnapshot, setDoc, SetOptions, Transaction, updateDoc, WithFieldValue, WriteBatch, type UpdateData } from "firebase/firestore";
 import { Collection } from "./collections";
 import { v4 } from "uuid";
+import { batchGetDocs, FirestoreQueryOptions, getDoc, listDocs } from "./firestoreClientOperations";
+
+const converters: FirestoreDataConverter<Club, ClubDoc> = {
+  fromFirestore: (snapshot: QueryDocumentSnapshot<ClubDoc, Club>) => {
+    return {
+      ...snapshot.data(),
+      clubId: snapshot.id
+    }
+  },
+  toFirestore: (modelObj: PartialWithFieldValue<Club>) => {
+    const { clubId, ...rest } = modelObj;
+    return rest as WithFieldValue<ClubDoc>;
+  },
+}
 
 function getClubDocRef(clubId: string) {
-  return doc(db, Collection.CLUBS, clubId);
+  return doc(db, Collection.CLUBS, clubId) as DocumentReference<Club, ClubDoc>;
 }
 
 function getClubCollectionRef() {
-  return collection(db, Collection.CLUBS);
+  return collection(db, Collection.CLUBS) as CollectionReference<Club, ClubDoc>;
 }
 
 export async function getClubDoc(clubId: string, transaction?: Transaction) {
