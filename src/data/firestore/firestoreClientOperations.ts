@@ -41,13 +41,13 @@ export async function getDoc<DbModelType extends DocumentData, AppModelType = Db
 }
 
 const FIRESTORE_WHERE_IN_LIMIT = 30;
-export async function batchGetDocs<DbModelType extends DocumentData, AppModelType = DbModelType>(collection: CollectionReference<AppModelType, DbModelType>, ids: string[], converters?: FirestoreDataConverter<AppModelType, DbModelType>): Promise<QueryDocumentSnapshot<AppModelType, DbModelType>[]> {
+export async function batchGetDocs<DbModelType extends DocumentData, AppModelType = DbModelType>(collection: CollectionReference<AppModelType, DbModelType>, ids: string[], converters?: FirestoreDataConverter<AppModelType, DbModelType>): Promise<ListDocsResponse<DbModelType, AppModelType>[]> {
   try {
     const idBatches = [];
     for (let i = 0; i < ids.length; i += FIRESTORE_WHERE_IN_LIMIT) {
       idBatches.push(ids.slice(i, i + FIRESTORE_WHERE_IN_LIMIT));
     }
-    const queries = idBatches.map(idBatch => listDocs(collection, { where: [['__name__', 'in', idBatch ]] }));
+    const queries = idBatches.map(idBatch => listDocs(collection, { queryOptions: { where: [['__name__', 'in', idBatch]] }, converters }));
     const responses = await Promise.all(queries);
     return responses.flatMap(response => response)
   } catch {
@@ -71,10 +71,10 @@ export async function setDoc<DbModelType extends DocumentData>(ref: DocumentRefe
     options = options ?? {};
     const { instance } = options;
     if ('mergeOptions' in options) {
-        // @ts-expect-error - both Transaction & WriteBatch have a set with the same signature, but TypeScript fails to recognize that
+      // @ts-expect-error - both Transaction & WriteBatch have a set with the same signature, but TypeScript fails to recognize that
       await (instance ? instance.set(ref, data, options.mergeOptions) : setFirestore(ref, data, options.mergeOptions));
     } else {
-        // @ts-expect-error - both Transaction & WriteBatch have a set with the same signature, but TypeScript fails to recognize that
+      // @ts-expect-error - both Transaction & WriteBatch have a set with the same signature, but TypeScript fails to recognize that
       await (instance ? instance.set(ref, data) : setFirestore(ref, data));
     }
   } catch {
@@ -157,8 +157,8 @@ function buildQuery<DbModelType extends DocumentData, AppModelType = DbModelType
   let queryObj: Query<AppModelType, DbModelType> = typeof collection === 'string' ? collectionGroup(db, collection) as Query<AppModelType, DbModelType> : collection;
   if (options) {
     const { where = [], orderBy = [] } = options;
-    const whereClauses = where.map(([ fieldPath, operation, value ]) => whereFirestore(fieldPath === '__name__' ? documentId() : fieldPath, operation, value));
-    const orderByClauses = orderBy.map(([ fieldPath, direction ]) => orderByFirestore(fieldPath === '__name__' ? documentId() : fieldPath, direction));
+    const whereClauses = where.map(([fieldPath, operation, value]) => whereFirestore(fieldPath === '__name__' ? documentId() : fieldPath, operation, value));
+    const orderByClauses = orderBy.map(([fieldPath, direction]) => orderByFirestore(fieldPath === '__name__' ? documentId() : fieldPath, direction));
 
     const limitAndCursorClauses = [];
     if ('limit' in options && options.limit) {
@@ -189,9 +189,16 @@ interface ListDocsResponse<DbModelType extends DocumentData, AppModelType = DbMo
   snapshots: QueryDocumentSnapshot<AppModelType, DbModelType>[];
 }
 
-export async function listDocs<DbModelType extends DocumentData, AppModelType = DbModelType>(collection: CollectionReference<AppModelType, DbModelType> | Collection, options?: FirestoreQueryOptions<DbModelType>): Promise<ListDocsResponse<DbModelType, AppModelType>> {
+interface ListDocsOptions<DbModelType extends DocumentData, AppModelType = DbModelType> {
+  queryOptions?: FirestoreQueryOptions<DbModelType>;
+  converters?: FirestoreDataConverter<AppModelType, DbModelType>;
+}
+
+export async function listDocs<DbModelType extends DocumentData, AppModelType = DbModelType>(collection: CollectionReference<AppModelType, DbModelType> | Collection, options?: ListDocsOptions<DbModelType, AppModelType>): Promise<ListDocsResponse<DbModelType, AppModelType>> {
   try {
-    const queryObj = buildQuery(collection, options);
+    const { queryOptions = {}, converters } = options ?? {};
+    let queryObj = buildQuery(collection, queryOptions);
+    if (converters) { queryObj = queryObj.withConverter(converters); }
     const querySnapshot = await queryFirestore(queryObj);
     return {
       docs: querySnapshot.docs.map(doc => doc.data()),
