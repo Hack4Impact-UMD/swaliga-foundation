@@ -184,11 +184,19 @@ function buildQuery<DbModelType extends DocumentData, AppModelType = DbModelType
   return queryObj;
 }
 
-export async function listDocs<DbModelType extends DocumentData, AppModelType = DbModelType>(collection: CollectionReference<AppModelType, DbModelType> | Collection, options?: FirestoreQueryOptions<DbModelType>): Promise<QueryDocumentSnapshot<AppModelType, DbModelType>[]> {
+interface ListDocsResponse<DbModelType extends DocumentData, AppModelType = DbModelType> {
+  docs: AppModelType[];
+  snapshots: QueryDocumentSnapshot<AppModelType, DbModelType>[];
+}
+
+export async function listDocs<DbModelType extends DocumentData, AppModelType = DbModelType>(collection: CollectionReference<AppModelType, DbModelType> | Collection, options?: FirestoreQueryOptions<DbModelType>): Promise<ListDocsResponse<DbModelType, AppModelType>> {
   try {
     const queryObj = buildQuery(collection, options);
     const querySnapshot = await queryFirestore(queryObj);
-    return querySnapshot.docs;
+    return {
+      docs: querySnapshot.docs.map(doc => doc.data()),
+      snapshots: querySnapshot.docs
+    };
   } catch {
     throw Error("Failed to execute query");
   }
