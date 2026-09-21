@@ -26,12 +26,12 @@ export async function getProgramById(programId: string, clubId: string, transact
   }
 }
 
-export async function setProgram(program: ProgramDoc, clubId: string, instance?: Transaction | WriteBatch): Promise<string> {
-  const programId = v4();
+export async function setProgramDoc(program: Program, instance?: Transaction | WriteBatch): Promise<string> {
+  const { programId, clubId, ...programDoc } = program;
   try {
     const programRef = getProgramDocRef(clubId, programId);
     // @ts-ignore
-    await (instance ? instance.set(programRef, program) : setDoc(programRef, program));
+    await (instance ? instance.set(programRef, programDoc) : setDoc(programRef, programDoc));
     return programId;
   } catch (error) {
     throw new Error("Failed to set program");
@@ -48,7 +48,7 @@ export async function updateProgram(programId: string, clubId: string, updates: 
   }
 }
 
-export async function deleteProgram(programId: string, clubId: string, instance?: Transaction | WriteBatch): Promise<void> {
+export async function deleteProgramDoc(programId: string, clubId: string, instance?: Transaction | WriteBatch): Promise<void> {
   try {
     const programRef = getProgramDocRef(clubId, programId);
     // @ts-ignore

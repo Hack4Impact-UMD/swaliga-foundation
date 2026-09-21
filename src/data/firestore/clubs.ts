@@ -1,9 +1,8 @@
 import { db } from "@/config/firebaseConfig";
 import { Club, ClubDoc } from "@/types/club-types";
-import { collection, CollectionReference, deleteDoc, doc, DocumentReference, FirestoreDataConverter, PartialWithFieldValue, QueryDocumentSnapshot, setDoc, SetOptions, Transaction, updateDoc, WithFieldValue, WriteBatch, type UpdateData } from "firebase/firestore";
+import { collection, CollectionReference, deleteDoc, doc, DocumentReference, FirestoreDataConverter, PartialWithFieldValue, QueryDocumentSnapshot, Transaction, updateDoc, WithFieldValue, WriteBatch, type UpdateData } from "firebase/firestore";
 import { Collection } from "./collections";
-import { v4 } from "uuid";
-import { batchGetDocs, FirestoreQueryOptions, getDoc, listDocs } from "./firestoreClientOperations";
+import { batchGetDocs, FirestoreQueryOptions, getDoc, listDocs, setDoc } from "./firestoreClientOperations";
 
 const converters: FirestoreDataConverter<Club, ClubDoc> = {
   fromFirestore: (snapshot: QueryDocumentSnapshot<ClubDoc, Club>) => {
@@ -38,19 +37,20 @@ export async function listClubDocs(queryOptions: FirestoreQueryOptions<ClubDoc>)
   return listDocs(getClubCollectionRef(), { queryOptions, converters });
 }
 
-export async function setClub(club: ClubDoc, instance?: Transaction | WriteBatch): Promise<string> {
-  const clubId = v4();
+export async function setClubDoc(club: Club, instance?: Transaction | WriteBatch): Promise<string> {
+  return setDoc(getClubDocRef(club.clubId), club);
+  const { clubId, ...clubDoc } = club;
   try {
     const clubRef = getClubDocRef(clubId);
     // @ts-ignore
-    await (instance ? instance.set(clubRef, club) : setDoc(clubRef, club));
+    await (instance ? instance.set(clubRef, clubDoc) : setDoc(clubRef, clubDoc));
     return clubId;
   } catch (error) {
     throw new Error("Failed to set club");
   }
 }
 
-export async function updateClub(clubId: string, updates: UpdateData<ClubDoc>, instance?: Transaction | WriteBatch): Promise<void> {
+export async function updateClubDoc(clubId: string, updates: UpdateData<ClubDoc>, instance?: Transaction | WriteBatch): Promise<void> {
   try {
     const clubRef = getClubDocRef(clubId);
     // @ts-ignore
@@ -60,7 +60,7 @@ export async function updateClub(clubId: string, updates: UpdateData<ClubDoc>, i
   }
 }
 
-export async function deleteClub(clubId: string, instance?: Transaction | WriteBatch): Promise<void> {
+export async function deleteClubDoc(clubId: string, instance?: Transaction | WriteBatch): Promise<void> {
   try {
     const clubRef = getClubDocRef(clubId);
     // @ts-ignore
