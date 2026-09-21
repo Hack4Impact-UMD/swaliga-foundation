@@ -8,21 +8,20 @@ function getClubDocRef(clubId: string) {
   return doc(db, Collection.CLUBS, clubId);
 }
 
-export async function getClubById(clubId: string, transaction?: Transaction): Promise<Club> {
-  const clubRef = getClubDocRef(clubId);
-  let clubDoc;
-  try {
-    clubDoc = await (transaction ? transaction.get(clubRef) : getDoc(clubRef));
-  } catch (error) {
-    throw new Error("Failed to get club");
-  }
-  if (!clubDoc.exists()) {
-    throw new Error("Club not found");
-  }
-  return {
-    ...clubDoc.data() as ClubDoc,
-    clubId
-  }
+function getClubCollectionRef() {
+  return collection(db, Collection.CLUBS);
+}
+
+export async function getClubDoc(clubId: string, transaction?: Transaction) {
+  return getDoc(getClubDocRef(clubId), { transaction, converters });
+}
+
+export async function batchGetClubDocs(clubIds: string[]) {
+  return batchGetDocs(getClubCollectionRef(), clubIds, converters);
+}
+
+export async function listClubDocs(queryOptions: FirestoreQueryOptions<ClubDoc>) {
+  return listDocs(getClubCollectionRef(), { queryOptions, converters });
 }
 
 export async function setClub(club: ClubDoc, instance?: Transaction | WriteBatch): Promise<string> {
