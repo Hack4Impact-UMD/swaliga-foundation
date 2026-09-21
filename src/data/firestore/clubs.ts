@@ -1,40 +1,32 @@
 import { db } from "@/config/firebaseConfig";
 import { Club, ClubDoc } from "@/types/club-types";
-import { collection, CollectionReference, deleteDoc, doc, DocumentReference, FirestoreDataConverter, PartialWithFieldValue, QueryDocumentSnapshot, Transaction, updateDoc, WithFieldValue, WriteBatch, type UpdateData } from "firebase/firestore";
+import { collection, CollectionReference, deleteDoc, doc, DocumentReference, DocumentSnapshot, Transaction, updateDoc, WriteBatch, type UpdateData } from "firebase/firestore";
 import { Collection } from "./collections";
 import { batchGetDocs, FirestoreQueryOptions, getDoc, listDocs, setDoc } from "./firestoreClientOperations";
 
-const converters: FirestoreDataConverter<Club, ClubDoc> = {
-  fromFirestore: (snapshot: QueryDocumentSnapshot<ClubDoc, Club>) => {
-    return {
-      ...snapshot.data(),
-      clubId: snapshot.id
-    }
-  },
-  toFirestore: (modelObj: PartialWithFieldValue<Club>) => {
-    const { clubId, ...rest } = modelObj;
-    return rest as WithFieldValue<ClubDoc>;
-  },
-}
+const clubConverter = (snapshot: DocumentSnapshot<ClubDoc, ClubDoc>) => ({
+  clubId: snapshot.id,
+  ...snapshot.data()
+})
 
 function getClubDocRef(clubId: string) {
-  return doc(db, Collection.CLUBS, clubId) as DocumentReference<Club, ClubDoc>;
+  return doc(db, Collection.CLUBS, clubId) as DocumentReference<ClubDoc, ClubDoc>;
 }
 
 function getClubCollectionRef() {
-  return collection(db, Collection.CLUBS) as CollectionReference<Club, ClubDoc>;
+  return collection(db, Collection.CLUBS) as CollectionReference<ClubDoc, ClubDoc>;
 }
 
 export async function getClubDoc(clubId: string, transaction?: Transaction) {
-  return getDoc(getClubDocRef(clubId), { transaction, converters });
+  return getDoc(getClubDocRef(clubId), { transaction, converter: clubConverter });
 }
 
 export async function batchGetClubDocs(clubIds: string[]) {
-  return batchGetDocs(getClubCollectionRef(), clubIds, converters);
+  return batchGetDocs(getClubCollectionRef(), clubIds, clubConverter);
 }
 
 export async function listClubDocs(queryOptions: FirestoreQueryOptions<ClubDoc>) {
-  return listDocs(getClubCollectionRef(), { queryOptions, converters });
+  return listDocs(getClubCollectionRef(), { queryOptions, converter: clubConverter });
 }
 
 export async function setClubDoc(club: Club, instance?: Transaction | WriteBatch): Promise<string> {
