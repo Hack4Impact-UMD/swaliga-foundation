@@ -2,12 +2,7 @@ import { FirebaseError } from "firebase/app";
 import { DocumentReference, Query, Transaction, WriteBatch, DocumentSnapshot, getDoc as getFirestore, setDoc as setFirestore, updateDoc as updateFirestore, deleteDoc as deleteFirestore, getDocs as queryFirestore, WithFieldValue, DocumentData, UpdateData, CollectionReference, collectionGroup, where as whereFirestore, orderBy as orderByFirestore, limit, limitToLast, startAfter, startAt, endBefore, endAt, query, documentId, getAggregateFromServer, count, AggregateField, sum, average, PartialWithFieldValue, QueryDocumentSnapshot, FirestoreDataConverter, SetOptions, WhereFilterOp, AggregateType } from "firebase/firestore";
 import { db } from "@/config/firebaseConfig";
 import { Collection } from "./collections";
-
-export type DistributiveOmit<T, K extends keyof any> = T extends any ? Omit<T, K> : never;
-export type DistributiveKeyof<T> = T extends T ? keyof T : never
-export type NonEmptyArray<T> = [T, ...T[]]
-export type Nullable<T> = { [K in keyof T]: T[K] | null; };
-export type StrictExtract<T, U extends T> = Extract<T, U>;
+import { DistributiveKeyof, StrictExtract } from "@/types/utils";
 
 interface GetDocOptions<DbModelType extends DocumentData, AppModelType = DbModelType> {
   transaction?: Transaction;
