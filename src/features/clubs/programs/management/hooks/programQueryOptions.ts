@@ -1,4 +1,4 @@
-import { getProgramById } from "@/data/firestore/programs";
+import { getProgramDoc } from "@/data/firestore/programs";
 import { queryOptions } from "@tanstack/react-query";
 
 type ProgramIdentifier = {
@@ -10,6 +10,6 @@ export default function programQueryOptions(req: ProgramIdentifier) {
   const { programId, clubId } = req;
   return queryOptions({
     queryKey: ["clubs", clubId, "programs", "detail", programId],
-    queryFn: async () => getProgramById(programId, clubId)
+    queryFn: async () => getProgramDoc(programId, clubId)
   })
 }

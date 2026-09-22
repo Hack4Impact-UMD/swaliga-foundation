@@ -14,9 +14,10 @@ type CreateProgramRequest = z.infer<typeof CreateProgramRequestSchema>;
 
 async function createProgram(req: CreateProgramRequest) {
   CreateProgramRequestSchema.parse(req);
-  await setProgramDoc({
-    programId: v4(),
-    ...req,
+  const programId = v4();
+  const { clubId, ...rest } = req;
+  await setProgramDoc(programId, clubId, {
+    ...rest,
     studentIds: [],
     teacherIds: [],
     staffIds: []
