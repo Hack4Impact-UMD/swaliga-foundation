@@ -170,7 +170,7 @@ function buildQuery<DbModelType extends DocumentData, AppModelType = DbModelType
   return queryObj;
 }
 
-interface ListDocsResponse<DbModelType extends DocumentData, AppModelType = DbModelType> {
+export interface ListDocsResponse<DbModelType extends DocumentData, AppModelType = DbModelType> {
   docs: AppModelType[];
   snapshots: QueryDocumentSnapshot<DbModelType, DbModelType>[];
 }
