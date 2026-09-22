@@ -1,59 +1,52 @@
 import { db } from "@/config/firebaseConfig";
 import { Program, ProgramDoc } from "@/types/club-types";
-import { deleteDoc, doc, getDoc, setDoc, Transaction, updateDoc, WriteBatch, type UpdateData } from "firebase/firestore";
+import { collection, CollectionReference, doc, DocumentReference, DocumentSnapshot, Transaction, WriteBatch, type UpdateData } from "firebase/firestore";
 import { Collection, ClubsSubcollection } from "./collections";
-import { v4 } from "uuid";
+import { aggregateDocs, AggregationClause, batchGetDocs, deleteDoc, FirestoreQueryOptions, getDoc, listDocs, setDoc, SetDocOptions, updateDoc } from "./firestoreClientOperations";
 
-function getProgramDocRef(clubId: string, programId: string) {
-  return doc(db, Collection.CLUBS, clubId, ClubsSubcollection.PROGRAMS, programId);
-}
-
-export async function getProgramById(programId: string, clubId: string, transaction?: Transaction): Promise<Program> {
-  const programRef = getProgramDocRef(clubId, programId);
-  let programDoc;
-  try {
-    programDoc = await (transaction ? transaction.get(programRef) : getDoc(programRef));
-  } catch (error) {
-    throw new Error("Failed to get program");
-  }
-  if (!programDoc.exists()) {
-    throw new Error("Program not found");
-  }
+function programConverter(snapshot: DocumentSnapshot<ProgramDoc, ProgramDoc>): Program {
+  if (!snapshot.exists()) {
+    throw new Error("Program not found")
+  };
   return {
-    ...programDoc.data() as ProgramDoc,
-    programId,
-    clubId,
-  }
+    programId: snapshot.id,
+    clubId: snapshot.ref.parent.parent!.id,
+    ...snapshot.data()
+  };
 }
 
-export async function setProgramDoc(program: Program, instance?: Transaction | WriteBatch): Promise<string> {
-  const { programId, clubId, ...programDoc } = program;
-  try {
-    const programRef = getProgramDocRef(clubId, programId);
-    // @ts-ignore
-    await (instance ? instance.set(programRef, programDoc) : setDoc(programRef, programDoc));
-    return programId;
-  } catch (error) {
-    throw new Error("Failed to set program");
-  }
+function getProgramDocRef(programId: string, clubId: string) {
+  return doc(db, Collection.CLUBS, clubId, ClubsSubcollection.PROGRAMS, programId) as DocumentReference<ProgramDoc, ProgramDoc>;
 }
 
-export async function updateProgram(programId: string, clubId: string, updates: UpdateData<ProgramDoc>, instance?: Transaction | WriteBatch): Promise<void> {
-  try {
-    const programRef = getProgramDocRef(clubId, programId);
-    // @ts-ignore
-    await (instance ? instance.update(programRef, updates) : updateDoc(programRef, updates));
-  } catch (error) {
-    throw new Error("Failed to update program");
-  }
+function getProgramCollectionRef(clubId: string) {
+  return collection(db, Collection.CLUBS, clubId, ClubsSubcollection.PROGRAMS) as CollectionReference<ProgramDoc, ProgramDoc>;
 }
 
-export async function deleteProgramDoc(programId: string, clubId: string, instance?: Transaction | WriteBatch): Promise<void> {
-  try {
-    const programRef = getProgramDocRef(clubId, programId);
-    // @ts-ignore
-    await (instance ? instance.delete(programRef) : deleteDoc(programRef));
-  } catch (error) {
-    throw new Error("Failed to delete program");
-  }
+export async function getProgramDoc(programId: string, clubId: string, transaction?: Transaction) {
+  return await getDoc(getProgramDocRef(programId, clubId), { transaction, converter: programConverter });
+}
+
+export async function batchGetProgramDocs(clubId: string, programIds: string[]) {
+  return await batchGetDocs(getProgramCollectionRef(clubId), programIds, programConverter);
+}
+
+export async function listProgramDocs(clubId: string, queryOptions?: FirestoreQueryOptions<ProgramDoc>) {
+  return await listDocs(getProgramCollectionRef(clubId), { queryOptions, converter: programConverter });
+}
+
+export async function aggregateProgramDocs(clubId: string, aggregations: AggregationClause<ProgramDoc>[], queryOptions?: FirestoreQueryOptions<ProgramDoc>) {
+  return await aggregateDocs(getProgramCollectionRef(clubId), { aggregations, queryOptions });
+}
+
+export async function setProgramDoc(programId: string, clubId: string, doc: ProgramDoc, options?: SetDocOptions) {
+  return await setDoc(getProgramDocRef(programId, clubId), doc, options); 
+}
+
+export async function updateProgramDoc(programId: string, clubId: string, updates: UpdateData<ProgramDoc>, instance?: Transaction | WriteBatch) {
+  return await updateDoc(getProgramDocRef(programId, clubId), updates, instance);
+}
+
+export async function deleteProgramDoc(programId: string, clubId: string, instance?: Transaction | WriteBatch) {
+  return await deleteDoc(getProgramDocRef(programId, clubId), instance);
 }

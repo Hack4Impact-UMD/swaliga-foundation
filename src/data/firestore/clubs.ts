@@ -1,13 +1,18 @@
 import { db } from "@/config/firebaseConfig";
-import { ClubDoc } from "@/types/club-types";
+import { Club, ClubDoc } from "@/types/club-types";
 import { collection, CollectionReference, doc, DocumentReference, DocumentSnapshot, Transaction, WriteBatch, type UpdateData } from "firebase/firestore";
 import { Collection } from "./collections";
 import { aggregateDocs, AggregationClause, batchGetDocs, deleteDoc, FirestoreQueryOptions, getDoc, listDocs, setDoc, SetDocOptions, updateDoc } from "./firestoreClientOperations";
 
-const clubConverter = (snapshot: DocumentSnapshot<ClubDoc, ClubDoc>) => ({
-  clubId: snapshot.id,
-  ...snapshot.data()
-})
+function clubConverter(snapshot: DocumentSnapshot<ClubDoc, ClubDoc>): Club {
+  if (!snapshot.exists()) {
+    throw new Error("Club not found")
+  };
+  return {
+    clubId: snapshot.id,
+    ...snapshot.data()
+  };
+}
 
 function getClubDocRef(clubId: string) {
   return doc(db, Collection.CLUBS, clubId) as DocumentReference<ClubDoc, ClubDoc>;
