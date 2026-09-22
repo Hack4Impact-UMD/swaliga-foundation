@@ -1,8 +1,8 @@
 import { db } from "@/config/firebaseConfig";
-import { Club, ClubDoc } from "@/types/club-types";
-import { collection, CollectionReference, deleteDoc, doc, DocumentReference, DocumentSnapshot, Transaction, updateDoc, WriteBatch, type UpdateData } from "firebase/firestore";
+import { ClubDoc } from "@/types/club-types";
+import { collection, CollectionReference, doc, DocumentReference, DocumentSnapshot, Transaction, WriteBatch, type UpdateData } from "firebase/firestore";
 import { Collection } from "./collections";
-import { batchGetDocs, FirestoreQueryOptions, getDoc, listDocs, setDoc } from "./firestoreClientOperations";
+import { batchGetDocs, deleteDoc, FirestoreQueryOptions, getDoc, listDocs, setDoc, SetDocOptions, updateDoc } from "./firestoreClientOperations";
 
 const clubConverter = (snapshot: DocumentSnapshot<ClubDoc, ClubDoc>) => ({
   clubId: snapshot.id,
@@ -18,46 +18,25 @@ function getClubCollectionRef() {
 }
 
 export async function getClubDoc(clubId: string, transaction?: Transaction) {
-  return getDoc(getClubDocRef(clubId), { transaction, converter: clubConverter });
+  return await getDoc(getClubDocRef(clubId), { transaction, converter: clubConverter });
 }
 
 export async function batchGetClubDocs(clubIds: string[]) {
-  return batchGetDocs(getClubCollectionRef(), clubIds, clubConverter);
+  return await batchGetDocs(getClubCollectionRef(), clubIds, clubConverter);
 }
 
 export async function listClubDocs(queryOptions: FirestoreQueryOptions<ClubDoc>) {
-  return listDocs(getClubCollectionRef(), { queryOptions, converter: clubConverter });
+  return await listDocs(getClubCollectionRef(), { queryOptions, converter: clubConverter });
 }
 
-export async function setClubDoc(club: Club, instance?: Transaction | WriteBatch): Promise<string> {
-  return setDoc(getClubDocRef(club.clubId), club);
-  const { clubId, ...clubDoc } = club;
-  try {
-    const clubRef = getClubDocRef(clubId);
-    // @ts-ignore
-    await (instance ? instance.set(clubRef, clubDoc) : setDoc(clubRef, clubDoc));
-    return clubId;
-  } catch (error) {
-    throw new Error("Failed to set club");
-  }
+export async function setClubDoc(clubId: string, doc: ClubDoc, options?: SetDocOptions): Promise<void> {
+  await setDoc(getClubDocRef(clubId), doc, options);
 }
 
 export async function updateClubDoc(clubId: string, updates: UpdateData<ClubDoc>, instance?: Transaction | WriteBatch): Promise<void> {
-  try {
-    const clubRef = getClubDocRef(clubId);
-    // @ts-ignore
-    await (instance ? instance.update(clubRef, updates) : updateDoc(clubRef, updates));
-  } catch (error) {
-    throw new Error("Failed to update club");
-  }
+  await updateDoc(getClubDocRef(clubId), updates, instance);
 }
 
 export async function deleteClubDoc(clubId: string, instance?: Transaction | WriteBatch): Promise<void> {
-  try {
-    const clubRef = getClubDocRef(clubId);
-    // @ts-ignore
-    await (instance ? instance.delete(clubRef) : deleteDoc(clubRef));
-  } catch (error) {
-    throw new Error("Failed to delete club");
-  }
+  await deleteDoc(getClubDocRef(clubId), instance);
 }
