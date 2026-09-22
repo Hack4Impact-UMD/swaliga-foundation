@@ -3,7 +3,7 @@
 import React, { createContext, useEffect, useState, type JSX } from "react";
 import { getFullName, Role, Student } from "@/types/user-types";
 import { collection, doc, onSnapshot } from "firebase/firestore";
-import { Collection, Document } from "../../firestore/utils";
+import { Collection, AdminDataSubcollection } from "../../firestore/collections";
 import { db } from "@/config/firebaseConfig";
 import useAuth from "@/features/auth/authN/components/useAuth";
 
@@ -63,8 +63,8 @@ export default function StudentsProvider({
             collection(
               db,
               Collection.ADMIN_DATA,
-              Document.STUDENTS,
-              Collection.STUDENTS,
+              AdminDataSubcollection.STUDENTS,
+              AdminDataSubcollection.STUDENTS,
             ),
             (snapshot) => {
               const newStudents: Student[] = [];

@@ -5,13 +5,13 @@ import { SurveyID, SurveyResponseStudentEmail, SurveyResponseStudentId, SurveyRe
 import { onCall, onRequest } from "firebase-functions/https";
 import { Transaction } from "firebase-admin/firestore";
 import { adminAuth, adminDb } from "../config/firebaseAdminConfig";
-import { Collection, Document } from "@/data/firestore/utils";
+import { Collection, AdminDataSubcollection, SurveysSubcollection } from "@/data/firestore/collections";
 import { v4 as uuid } from "uuid";
 import moment from "moment";
 import { getOAuth2ClientWithCredentials } from "../auth";
 
 async function getAllSurveyIds(transaction: Transaction): Promise<string[]> {
-  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS);
+  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc(AdminDataSubcollection.SURVEYS).collection(AdminDataSubcollection.SURVEYS);
   const count = (await transaction.get(collectionRef.count())).data().count;
   const promises = [];
   for (let i = 0; i < count; i++) {
@@ -22,7 +22,7 @@ async function getAllSurveyIds(transaction: Transaction): Promise<string[]> {
 }
 
 async function getAllStudentIds(transaction: Transaction): Promise<string[]> {
-  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc(Document.STUDENTS).collection(Collection.STUDENTS);
+  const collectionRef = adminDb.collection(Collection.ADMIN_DATA).doc(AdminDataSubcollection.STUDENTS).collection(AdminDataSubcollection.STUDENTS);
   const count = (await transaction.get(collectionRef.count())).data().count;
   const promises = [];
   for (let i = 0; i < count; i++) {
@@ -56,17 +56,17 @@ const addResponsesToFirestore = async (responses: GoogleFormResponse[], transact
   });
 
   const existingAssignments = await Promise.all(
-    idResponses.map(response => transaction.get(adminDb.collection(Collection.SURVEYS).doc(response.surveyId).collection(Collection.ASSIGNMENTS).where('studentId', '==', response.studentId).where('responseId', '==', null).limit(1)))
+    idResponses.map(response => transaction.get(adminDb.collection(Collection.SURVEYS).doc(response.surveyId).collection(SurveysSubcollection.ASSIGNMENTS).where('studentId', '==', response.studentId).where('responseId', '==', null).limit(1)))
   );
   idResponses.forEach((response, index) => {
-    existingAssignments[index].empty ? transaction.set(surveysCollection.doc(response.surveyId).collection(Collection.ASSIGNMENTS).doc(uuid()), {
+    existingAssignments[index].empty ? transaction.set(surveysCollection.doc(response.surveyId).collection(SurveysSubcollection.ASSIGNMENTS).doc(uuid()), {
       studentId: response.studentId,
       responseId: response.responseId,
       submittedAt: response.submittedAt
     } satisfies SurveyResponseStudentId) : transaction.update(existingAssignments[index].docs[0].ref, { responseId: response.responseId, submittedAt: response.submittedAt });
   });
 
-  unidentifiedResponses.forEach(response => transaction.set(surveysCollection.doc(response.surveyId).collection(Collection.ASSIGNMENTS).doc(uuid()), {
+  unidentifiedResponses.forEach(response => transaction.set(surveysCollection.doc(response.surveyId).collection(SurveysSubcollection.ASSIGNMENTS).doc(uuid()), {
     responseId: response.responseId,
     submittedAt: response.submittedAt,
   } satisfies SurveyResponseUnidentified))
@@ -75,7 +75,7 @@ const addResponsesToFirestore = async (responses: GoogleFormResponse[], transact
   const emailIds: { [email: string]: string } = {};
   users.forEach(user => emailIds[user.email!] = user.customClaims?.studentId);
   emailResponses.forEach(response => {
-    const docRef = surveysCollection.doc(response.surveyId).collection(Collection.ASSIGNMENTS).doc(uuid());
+    const docRef = surveysCollection.doc(response.surveyId).collection(SurveysSubcollection.ASSIGNMENTS).doc(uuid());
     emailIds[response.studentEmail] ? transaction.set(docRef, {
       studentId: emailIds[response.studentEmail],
       responseId: response.responseId,

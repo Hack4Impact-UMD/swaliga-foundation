@@ -11,10 +11,9 @@ type CreateClubRequest = z.infer<typeof CreateClubRequestSchema>;
 
 async function createClub(req: CreateClubRequest) {
   CreateClubRequestSchema.parse(req);
-  await setClubDoc({
-    clubId: v4(),
-    ...req
-  });
+  const clubId = v4();
+  await setClubDoc(clubId, req);
+  return clubId;
 }
 
 export default function useCreateClub() {

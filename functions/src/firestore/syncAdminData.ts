@@ -1,5 +1,6 @@
+import { StudentsSubcollection, SurveysSubcollection } from "@/data/firestore/collections";
 import { adminDb } from "../config/firebaseAdminConfig";
-import { Collection, Document } from "@/data/firestore/utils";
+import { Collection, AdminDataSubcollection } from "@/data/firestore/collections";
 import { FieldValue, Transaction } from "firebase-admin/firestore";
 import { onDocumentCreated, onDocumentDeleted, onDocumentUpdated } from "firebase-functions/firestore";
 
@@ -49,7 +50,7 @@ const updateAdminDataOnDocDeleted = async (collectionRef: FirebaseFirestore.Coll
 
 export const onSurveyDocCreated = onDocumentCreated('/surveys/{surveyId}', async (event) =>
   await updateAdminDataOnDocCreated(
-    adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS),
+    adminDb.collection(Collection.ADMIN_DATA).doc(AdminDataSubcollection.SURVEYS).collection(AdminDataSubcollection.SURVEYS),
     event.params.surveyId,
     event.data?.data()
   )
@@ -57,7 +58,7 @@ export const onSurveyDocCreated = onDocumentCreated('/surveys/{surveyId}', async
 
 export const onSurveyDocUpdated = onDocumentUpdated('/surveys/{surveyId}', async (event) =>
   await updateAdminDataOnDocUpdated(
-    adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS),
+    adminDb.collection(Collection.ADMIN_DATA).doc(AdminDataSubcollection.SURVEYS).collection(AdminDataSubcollection.SURVEYS),
     event.params.surveyId,
     event.data?.after.data()
   )
@@ -66,9 +67,9 @@ export const onSurveyDocUpdated = onDocumentUpdated('/surveys/{surveyId}', async
 export const onSurveyDocDeleted = onDocumentDeleted('/surveys/{surveyId}', async (event) => {
   const surveyId = event.params.surveyId;
   await Promise.all([
-    adminDb.recursiveDelete(adminDb.collection(Collection.SURVEYS).doc(surveyId).collection(Collection.ASSIGNMENTS)),
+    adminDb.recursiveDelete(adminDb.collection(AdminDataSubcollection.SURVEYS).doc(surveyId).collection(SurveysSubcollection.ASSIGNMENTS)),
     updateAdminDataOnDocDeleted(
-      adminDb.collection(Collection.ADMIN_DATA).doc(Document.SURVEYS).collection(Collection.SURVEYS),
+      adminDb.collection(Collection.ADMIN_DATA).doc(AdminDataSubcollection.SURVEYS).collection(AdminDataSubcollection.SURVEYS),
       surveyId
     )
   ]);
@@ -77,17 +78,17 @@ export const onSurveyDocDeleted = onDocumentDeleted('/surveys/{surveyId}', async
 export const onStudentDocCreated = onDocumentCreated('/students/{studentId}', async (event) =>
   await Promise.all([
     updateAdminDataOnDocCreated(
-      adminDb.collection(Collection.ADMIN_DATA).doc(Document.STUDENTS).collection(Collection.STUDENTS),
+      adminDb.collection(Collection.ADMIN_DATA).doc(AdminDataSubcollection.STUDENTS).collection(AdminDataSubcollection.STUDENTS),
       event.params.studentId,
       event.data?.data()
     ),
-    adminDb.collection(Collection.STUDENTS).doc(event.params.studentId).collection(Collection.SURVEY_ACCESS_LIST).doc(Document.SURVEY_ACCESS_LIST).create({})
+    adminDb.collection(Collection.STUDENTS).doc(event.params.studentId).collection(StudentsSubcollection.SURVEY_ACCESS_LIST).doc(StudentsSubcollection.SURVEY_ACCESS_LIST).create({})
   ])
 );
 
 export const onStudentDocUpdated = onDocumentUpdated('/students/{studentId}', async (event) =>
   await updateAdminDataOnDocUpdated(
-    adminDb.collection(Collection.ADMIN_DATA).doc(Document.STUDENTS).collection(Collection.STUDENTS),
+    adminDb.collection(Collection.ADMIN_DATA).doc(AdminDataSubcollection.STUDENTS).collection(AdminDataSubcollection.STUDENTS),
     event.params.studentId,
     event.data?.after.data()
   )
@@ -96,9 +97,9 @@ export const onStudentDocUpdated = onDocumentUpdated('/students/{studentId}', as
 export const onStudentDocDeleted = onDocumentDeleted('/students/{studentId}', async (event) =>
   await Promise.all([
     updateAdminDataOnDocDeleted(
-      adminDb.collection(Collection.ADMIN_DATA).doc(Document.STUDENTS).collection(Collection.STUDENTS),
+      adminDb.collection(Collection.ADMIN_DATA).doc(AdminDataSubcollection.STUDENTS).collection(AdminDataSubcollection.STUDENTS),
       event.params.studentId
     ),
-    adminDb.collection(Collection.STUDENTS).doc(event.params.studentId).collection(Collection.SURVEY_ACCESS_LIST).doc(Document.SURVEY_ACCESS_LIST).delete()
+    adminDb.collection(Collection.STUDENTS).doc(event.params.studentId).collection(StudentsSubcollection.SURVEY_ACCESS_LIST).doc(StudentsSubcollection.SURVEY_ACCESS_LIST).delete()
   ])
 );

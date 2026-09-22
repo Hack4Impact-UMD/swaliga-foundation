@@ -1,4 +1,4 @@
-import { getClubById } from "@/data/firestore/clubs";
+import { getClubDoc } from "@/data/firestore/clubs";
 import { queryOptions } from "@tanstack/react-query";
 
 type ClubIdentifier = {
@@ -9,6 +9,6 @@ export default function clubQueryOptions(req: ClubIdentifier) {
   const { clubId } = req;
   return queryOptions({
     queryKey: ["clubs", "detail", clubId],
-    queryFn: async () => getClubById(clubId)
+    queryFn: async () => getClubDoc(clubId)
   })
 }

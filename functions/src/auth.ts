@@ -1,6 +1,5 @@
 import { adminAuth, adminDb } from './config/firebaseAdminConfig';
-import { Collection } from './types/serverTypes';
-import { Document } from '@/data/firestore/utils';
+import { Collection, SurveysSubcollection, MetadataDocument } from "@/data/firestore/collections";
 import { StudentCustomClaims, StudentDecodedIdTokenWithCustomClaims } from '@/types/auth-types';
 import { SurveyResponseStudentEmailID } from '@/types/survey-types';
 import { FieldValue, Transaction } from 'firebase-admin/firestore';
@@ -39,10 +38,10 @@ export const setRole = onCall(async (req) => {
 })
 
 async function changeEmailAssignmentsToIdAssignments(email: string, studentId: string, transaction: Transaction) {
-  const docs = (await transaction.get(adminDb.collectionGroup(Collection.ASSIGNMENTS).where('studentEmail', '==', email))).docs.map(doc => ({ id: doc.id, surveyId: doc.ref.parent.parent!.id, ...doc.data() } as SurveyResponseStudentEmailID));
+  const docs = (await transaction.get(adminDb.collectionGroup(SurveysSubcollection.ASSIGNMENTS).where('studentEmail', '==', email))).docs.map(doc => ({ id: doc.id, surveyId: doc.ref.parent.parent!.id, ...doc.data() } as SurveyResponseStudentEmailID));
   const surveysCollectionRef = adminDb.collection(Collection.SURVEYS);
   const updates = { studentId, studentEmail: FieldValue.delete() }
-  docs.forEach(doc => transaction.update(surveysCollectionRef.doc(doc.surveyId).collection(Collection.ASSIGNMENTS).doc(doc.id), updates));
+  docs.forEach(doc => transaction.update(surveysCollectionRef.doc(doc.surveyId).collection(SurveysSubcollection.ASSIGNMENTS).doc(doc.id), updates));
 }
 
 export const createStudent = onCall(async (req) => {
@@ -54,10 +53,10 @@ export const createStudent = onCall(async (req) => {
 
   const studentDto: Omit<Student, 'id'> = req.data;
   const studentId = await adminDb.runTransaction(async (transaction: Transaction) => {
-    const nextStudentId: number = (await transaction.get(adminDb.collection(Collection.METADATA).doc(Document.NEXT_STUDENT_ID))).data()?.nextStudentId ?? FIRST_STUDENT_ID;
+    const nextStudentId: number = (await transaction.get(adminDb.collection(Collection.METADATA).doc(MetadataDocument.NEXT_STUDENT_ID))).data()?.nextStudentId ?? FIRST_STUDENT_ID;
     const student: Student = { id: String(nextStudentId), ...studentDto };
     transaction.set(adminDb.collection(Collection.STUDENTS).doc(String(nextStudentId)), student);
-    transaction.set(adminDb.collection(Collection.METADATA).doc(Document.NEXT_STUDENT_ID), { nextStudentId: nextStudentId + 1 }, { merge: true });
+    transaction.set(adminDb.collection(Collection.METADATA).doc(MetadataDocument.NEXT_STUDENT_ID), { nextStudentId: nextStudentId + 1 }, { merge: true });
     return nextStudentId;
   });
 
