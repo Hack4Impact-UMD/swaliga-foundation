@@ -2,7 +2,7 @@ import { db } from "@/config/firebaseConfig";
 import { ClubDoc } from "@/types/club-types";
 import { collection, CollectionReference, doc, DocumentReference, DocumentSnapshot, Transaction, WriteBatch, type UpdateData } from "firebase/firestore";
 import { Collection } from "./collections";
-import { batchGetDocs, deleteDoc, FirestoreQueryOptions, getDoc, listDocs, setDoc, SetDocOptions, updateDoc } from "./firestoreClientOperations";
+import { aggregateDocs, AggregationClause, batchGetDocs, deleteDoc, FirestoreQueryOptions, getDoc, listDocs, setDoc, SetDocOptions, updateDoc } from "./firestoreClientOperations";
 
 const clubConverter = (snapshot: DocumentSnapshot<ClubDoc, ClubDoc>) => ({
   clubId: snapshot.id,
@@ -25,8 +25,12 @@ export async function batchGetClubDocs(clubIds: string[]) {
   return await batchGetDocs(getClubCollectionRef(), clubIds, clubConverter);
 }
 
-export async function listClubDocs(queryOptions: FirestoreQueryOptions<ClubDoc>) {
+export async function listClubDocs(queryOptions?: FirestoreQueryOptions<ClubDoc>) {
   return await listDocs(getClubCollectionRef(), { queryOptions, converter: clubConverter });
+}
+
+export async function aggregateClubDocs(aggregations: AggregationClause<ClubDoc>[], queryOptions?: FirestoreQueryOptions<ClubDoc>) {
+  return await aggregateDocs(getClubCollectionRef(), { aggregations, queryOptions });
 }
 
 export async function setClubDoc(clubId: string, doc: ClubDoc, options?: SetDocOptions): Promise<void> {

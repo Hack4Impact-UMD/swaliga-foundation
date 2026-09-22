@@ -128,12 +128,6 @@ export type FirestoreQueryOptions<DbModelType extends DocumentData> = {
   orderBy?: OrderByClause<DbModelType>[];
 } & LimitClause & StartCursorClause & EndCursorClause;
 
-export type AggregationClause<DbModelType> = { aggregateFieldName: string; } & (
-  | { operation: StrictExtract<AggregateType, 'count'>; }
-  | { operation: StrictExtract<AggregateType, 'sum' | 'avg'>; sourceFieldPath: FirestoreDocumentFieldPath<DbModelType>; })
-
-export type AggregationQueryOptions<DbModelType extends DocumentData> = FirestoreQueryOptions<DbModelType> & { aggregations: AggregationClause<DbModelType>[]; }
-
 export function isNotFoundError(error: unknown): boolean {
   return error instanceof Error && error.message === "Document not found";
 }
@@ -188,7 +182,7 @@ interface ListDocsOptions<DbModelType extends DocumentData, AppModelType = DbMod
 
 export async function listDocs<DbModelType extends DocumentData, AppModelType = DbModelType>(collection: CollectionReference<DbModelType, DbModelType> | Collection, options?: ListDocsOptions<DbModelType, AppModelType>): Promise<ListDocsResponse<DbModelType, AppModelType>> {
   try {
-    const { queryOptions = {}, converter } = options ?? {};
+    const { queryOptions, converter } = options ?? {};
     let queryObj = buildQuery(collection, queryOptions);
     const querySnapshot = await queryFirestore(queryObj);
     return {
@@ -200,9 +194,18 @@ export async function listDocs<DbModelType extends DocumentData, AppModelType = 
   }
 }
 
-export async function aggregateDocs<DbModelType extends DocumentData>(collection: CollectionReference<DbModelType, DbModelType> | Collection, options: AggregationQueryOptions<DbModelType>): Promise<{ [key: string]: number | null }> {
+export type AggregationClause<DbModelType> = { aggregateFieldName: string; } & (
+  | { operation: StrictExtract<AggregateType, 'count'>; }
+  | { operation: StrictExtract<AggregateType, 'sum' | 'avg'>; sourceFieldPath: FirestoreDocumentFieldPath<DbModelType>; })
+
+export type AggregateDocsOptions<DbModelType extends DocumentData> = {
+  queryOptions?: FirestoreQueryOptions<DbModelType>;
+  aggregations: AggregationClause<DbModelType>[];
+};
+
+export async function aggregateDocs<DbModelType extends DocumentData>(collection: CollectionReference<DbModelType, DbModelType> | Collection, options: AggregateDocsOptions<DbModelType>): Promise<{ [key: string]: number | null }> {
   try {
-    const { aggregations, ...queryOptions } = options;
+    const { aggregations, queryOptions } = options;
     const queryObj = buildQuery(collection, queryOptions);
     const aggregationObj: { [key: string]: AggregateField<number | null> } = {};
     aggregations.forEach(agg => {
