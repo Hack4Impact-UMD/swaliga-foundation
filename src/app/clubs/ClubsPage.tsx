@@ -3,6 +3,7 @@
 import clubListQueryOptions from "@/features/clubs/management/hooks/clubListQueryOptions";
 import { Club } from "@/types/club-types";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
+import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
 
 const clubsData: Club[] = [
   {
@@ -33,7 +34,26 @@ const clubsData: Club[] = [
 export default function ClubsPage() {
   const clubListQuery = useSuspenseInfiniteQuery(clubListQueryOptions());
 
-  console.log(clubListQuery);
+  const features = tableFeatures({});
+  const clubColumnHelper = createColumnHelper<typeof features, Club>();
+  const clubColumns = clubColumnHelper.columns([
+    clubColumnHelper.accessor("name", {
+      header: "Name",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id
+    }),
+    clubColumnHelper.accessor("address", {
+      header: "Address",
+      cell: (info) => info.getValue(),
+      footer: (info) => info.column.id
+    })
+  ]);
+
+  const clubsTable = useTable({
+    features,
+    columns: clubColumns,
+    data: clubListQuery.data,
+  })
 
   return <></>;
 }
