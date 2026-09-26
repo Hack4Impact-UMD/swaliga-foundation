@@ -18,12 +18,18 @@ export default function clubListQueryOptions(firestoreQueryOptions: FirestoreQue
       clubsPage.snapshots.forEach((snapshot) => client.setQueryData(['clubs', 'detail', snapshot.id, 'snapshot'], snapshot));
       return clubsPage;
     },
-    initialPageParam: undefined as QueryDocumentSnapshot<ClubDoc, ClubDoc> | undefined,
-    getNextPageParam: (lastPage) => lastPage.snapshots.length > 0 ? lastPage.snapshots[lastPage.snapshots.length - 1] : undefined,
+    initialPageParam: undefined as FirestoreInfiniteQueryPageParam<ClubDoc> | undefined,
+    getPreviousPageParam: (firstPage) => firstPage.snapshots.length > 0 ? { direction: 'prev', snapshot: firstPage.snapshots[0] } : undefined,
+    getNextPageParam: (lastPage) => lastPage.snapshots.length > 0 ? { direction: 'next', snapshot: lastPage.snapshots[lastPage.snapshots.length - 1] } : undefined,
     select: flattenFirestoreInfiniteData
   })
 }
 
 function flattenFirestoreInfiniteData<DbModelType extends DocumentData, AppModelType = DbModelType>(data: InfiniteData<ListDocsResponse<DbModelType, AppModelType>>) {
   return data.pages.flatMap(page => page.docs);
+}
+
+type FirestoreInfiniteQueryPageParam<DbModelType extends DocumentData, AppModelType = DbModelType> = {
+  direction: 'prev' | 'next';
+  snapshot: DocumentSnapshot<AppModelType, DbModelType>;
 }
