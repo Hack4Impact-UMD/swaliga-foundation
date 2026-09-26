@@ -24,6 +24,6 @@ export default function clubListQueryOptions(firestoreQueryOptions: FirestoreQue
   })
 }
 
-function flattenFirestoreInfiniteData(data: InfiniteData<ListDocsResponse<ClubDoc, Club>>) {
+function flattenFirestoreInfiniteData<DbModelType extends DocumentData, AppModelType = DbModelType>(data: InfiniteData<ListDocsResponse<DbModelType, AppModelType>>) {
   return data.pages.flatMap(page => page.docs);
 }
