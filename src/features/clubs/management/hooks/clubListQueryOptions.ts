@@ -19,8 +19,8 @@ export default function clubListQueryOptions(firestoreQueryOptions: FirestoreQue
       return clubsPage;
     },
     initialPageParam: undefined as FirestoreInfiniteQueryPageParam<ClubDoc> | undefined,
-    getPreviousPageParam: (firstPage) => firstPage.snapshots.length > 0 ? { direction: 'prev', snapshot: firstPage.snapshots[0] } : undefined,
-    getNextPageParam: (lastPage) => lastPage.snapshots.length > 0 ? { direction: 'next', snapshot: lastPage.snapshots[lastPage.snapshots.length - 1] } : undefined,
+    getPreviousPageParam: (firstPage) => firstPage.snapshots.length > 0 ? { direction: 'prev' as const, snapshot: firstPage.snapshots[0] } : undefined,
+    getNextPageParam: (lastPage) => lastPage.snapshots.length > 0 ? { direction: 'next' as const, snapshot: lastPage.snapshots[lastPage.snapshots.length - 1] } : undefined,
     select: flattenFirestoreInfiniteData
   })
 }
