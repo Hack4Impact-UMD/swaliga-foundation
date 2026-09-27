@@ -2,16 +2,30 @@ import { listClubDocs } from "@/data/firestore/clubs";
 import { FirestoreQueryOptions, ListDocsResponse } from "@/data/firestore/firestoreClientOperations";
 import { Club, ClubDoc } from "@/types/club-types";
 import { infiniteQueryOptions, InfiniteData } from "@tanstack/react-query";
-import { QueryDocumentSnapshot } from "firebase/firestore";
+import { DocumentData, DocumentSnapshot } from "firebase/firestore";
 
 export default function clubListQueryOptions(firestoreQueryOptions: FirestoreQueryOptions<ClubDoc> = {}) {
   return infiniteQueryOptions({
     queryKey: ['clubs', 'list', firestoreQueryOptions],
     queryFn: async ({ pageParam, client }) => {
       const updatedQueryOptions = firestoreQueryOptions ? { ...firestoreQueryOptions } : {};
+      const limit = updatedQueryOptions.limit ? updatedQueryOptions.limit : updatedQueryOptions.limitToLast ? updatedQueryOptions.limitToLast : undefined;
       if (pageParam) {
-        updatedQueryOptions.startAfter = pageParam;
-        updatedQueryOptions.startAt = undefined;
+        if (pageParam.direction === "next") {
+          updatedQueryOptions.startAfter = pageParam.snapshot;
+          updatedQueryOptions.startAt = undefined;
+          if (limit) {
+            updatedQueryOptions.limit = limit;
+            updatedQueryOptions.limitToLast = undefined;
+          }
+        } else {
+          updatedQueryOptions.endBefore = pageParam.snapshot;
+          updatedQueryOptions.endAt = undefined;
+          if (limit) {
+            updatedQueryOptions.limit = undefined;
+            updatedQueryOptions.limitToLast = limit;
+          }
+        }
       }
       const clubsPage = await listClubDocs(updatedQueryOptions);
       clubsPage.docs.forEach((club: Club) => client.setQueryData(['clubs', 'detail', club.clubId], club));
