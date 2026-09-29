@@ -6,7 +6,7 @@
     "dev": "next dev",
     "compile": "npx tsc --noEmit",
     "build": "next build",
-    "emulators": "cd functions && npm run build && cd .. && firebase emulators:start --only auth,firestore,functions --import ./emulatorData",
+    "emulators": "node ./scripts/emulatorRunner.js",
     "start": "next start",
     "lint": "eslint .",
     "export": "next export",
