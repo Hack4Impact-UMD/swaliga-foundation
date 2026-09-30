@@ -51,6 +51,10 @@ service cloud.firestore {
       }
     }
 
+    match /clubs/{clubId} {
+      allow read, write: if isEmployee();
+    }
+
     match /{path=**}/assignments/{assignmentId} {
       allow read: if isEmployee() || isStudentId(resource.data.studentId)
       allow create, update: if isEmployee() || resource.data.studentEmail == request.auth.token.email
