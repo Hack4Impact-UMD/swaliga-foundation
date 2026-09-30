@@ -6,6 +6,8 @@ export function getOAuth2ConsentURL(): string {
   const email = user?.email || undefined;
 
   const scopes = [
+    'openid',
+    'email',
     'https://www.googleapis.com/auth/script.external_request',
     'https://www.googleapis.com/auth/script.scriptapp',
     'https://www.googleapis.com/auth/forms',

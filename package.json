@@ -6,7 +6,7 @@
     "dev": "next dev",
     "compile": "npx tsc --noEmit",
     "build": "next build",
-    "emulators": "cd functions && npm run build && cd .. && firebase emulators:start --only auth,firestore,functions --import ./emulatorData",
+    "emulators": "cd functions && npm run build && cd .. && node ./scripts/emulatorRunner.js",
     "start": "next start",
     "lint": "eslint .",
     "export": "next export",
@@ -48,7 +48,7 @@
     "esbuild": "^0.25.6",
     "eslint": "^9.27.0",
     "eslint-config-next": "^16.3.5",
-    "firebase-cli": "^1.2.0",
+    "firebase-tools": "^15.24.0",
     "typescript": "5.9.2"
   },
   "overrides": {
