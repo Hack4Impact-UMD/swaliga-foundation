@@ -18,16 +18,24 @@ export const setRole = onCall(async (req) => {
     throw new Error("Unauthorized");
   }
 
-  const uid = req.auth?.uid;
-  const email = req.auth?.token.email;
-  if (!email && req.auth?.token.firebase.sign_in_provider !== "custom") {
-    throw new Error("No email found");
+  const uid = req.auth.uid;
+  const email = req.auth.token.email;
+  const isCustomSignIn = req.auth.token.firebase.sign_in_provider === "custom";
+  if (!isCustomSignIn) {
+    if (!email) {
+      throw new Error("No email found");
+    }
+    if (req.auth.token.email_verified !== true) {
+      throw new HttpsError("failed-precondition", "Email address must be verified before a role can be assigned");
+    }
   }
 
   try {
-    if (email === process.env.ADMIN_EMAIL) {
+    if (isCustomSignIn) {
+      await adminAuth.setCustomUserClaims(uid, { role: "STUDENT" });
+    } else if (email === process.env.ADMIN_EMAIL) {
       await adminAuth.setCustomUserClaims(uid, { role: "ADMIN" });
-    } else if (email && email.endsWith("@swaligafoundation.org")) {
+    } else if (email!.endsWith("@swaligafoundation.org")) {
       await adminAuth.setCustomUserClaims(uid, { role: "STAFF" });
     } else {
       await adminAuth.setCustomUserClaims(uid, { role: "STUDENT" });
