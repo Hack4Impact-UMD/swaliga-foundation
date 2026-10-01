@@ -13,6 +13,8 @@ import Footer from "@/components/layout/Footer";
 import { Tooltip } from "@/components/ui/Tooltip";
 import IncompleteProfileMessage from "@/features/profile/IncompleteProfileMessage";
 import QueryClientProviderWrapper from "@/components/QueryClientProviderWrapper";
+import { MantineProvider } from "@mantine/core";
+import { ModalsProvider } from "@mantine/modals";
 
 const LoadingPage = dynamic(() => import("./loading"));
 
@@ -33,20 +35,24 @@ export default function RootLayout({
       <body className={`${inter.className} ${styles.body}`}>
         <Suspense fallback={<LoadingPage />}>
           <QueryClientProviderWrapper>
-            <Tooltip.Provider delayDuration={0}>
-              <AuthProvider>
-                <Navbar />
-                <AvailabilityProvider>
-                  <SurveysProvider>
-                    <StudentsProvider>
-                      <IncompleteProfileMessage />
-                      {children}
-                    </StudentsProvider>
-                  </SurveysProvider>
-                </AvailabilityProvider>
-              </AuthProvider>
-              <Footer />
-            </Tooltip.Provider>
+            <MantineProvider>
+              <ModalsProvider>
+                <Tooltip.Provider delayDuration={0}>
+                  <AuthProvider>
+                    <Navbar />
+                    <AvailabilityProvider>
+                      <SurveysProvider>
+                        <StudentsProvider>
+                          <IncompleteProfileMessage />
+                          {children}
+                        </StudentsProvider>
+                      </SurveysProvider>
+                    </AvailabilityProvider>
+                  </AuthProvider>
+                  <Footer />
+                </Tooltip.Provider>
+              </ModalsProvider>
+            </MantineProvider>
           </QueryClientProviderWrapper>
         </Suspense>
       </body>
