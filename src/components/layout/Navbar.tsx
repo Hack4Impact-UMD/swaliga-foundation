@@ -11,6 +11,7 @@ import { MdLogout } from "react-icons/md";
 import { DropdownMenu } from "@/components/ui/DropdownMenu";
 import ProfileIcon from "../ui/ProfileIcon";
 import { FaEnvelope } from "react-icons/fa";
+import { ActionIcon, Button, Menu } from "@mantine/core";
 
 const navbarLinks: { name: string; href: string; roles: Role[] }[] = [
   { name: "Students", href: "/students", roles: ["ADMIN", "STAFF"] },
@@ -54,28 +55,27 @@ export default function Navbar() {
       )}
 
       {auth.token && (
-        <DropdownMenu.Root modal={false}>
-          <DropdownMenu.Trigger>
-            <ProfileIcon />
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content>
+        <Menu>
+          <Menu.Target>
+            <ActionIcon size="xl" color="transparent">
+              <ProfileIcon />
+            </ActionIcon>
+          </Menu.Target>
+          <Menu.Dropdown>
             {role === "STUDENT" && (
-              <DropdownMenu.Item>
+              <Menu.Item>
                 <Link href="/change-email" className={styles.changeEmail}>
                   <span>Change Email</span>
                   <FaEnvelope size={30} title="Change Email" />
                 </Link>
-              </DropdownMenu.Item>
+              </Menu.Item>
             )}
-            <DropdownMenu.Item
-              className={styles.logoutItem}
-              onClick={() => logOut()}
-            >
+            <Menu.Item className={styles.logoutItem} onClick={() => logOut()}>
               <span>Logout</span>
               <MdLogout size={30} title="Logout" />
-            </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
       )}
     </nav>
   );
