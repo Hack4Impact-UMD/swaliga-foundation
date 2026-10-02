@@ -1,3 +1,33 @@
+@import-normalize;
+
 @import "@mantine/core/styles.css" layer(mantine);
 @import "@mantine/dates/styles.css" layer(mantine);
 @import "@mantine/notifications/styles.css" layer(mantine);
+
+html,
+body,
+#app,
+#app > div {
+  margin: 0; /* So that the login page takes up the full screen */
+  padding: 0; /* So that the login page takes up the full screen */
+}
+
+@font-face {
+  font-family: "Poppins-Medium";
+  src: url("../../public/fonts/Poppins/Poppins-Medium.ttf");
+}
+
+@font-face {
+  font-family: "Poppins-Regular";
+  src: url("../../public/fonts/Poppins/Poppins-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Poppins-SemiBold";
+  src: url("../../public/fonts/Poppins/Poppins-SemiBold.ttf");
+}
+
+@font-face {
+  font-family: "Poppins-Thin";
+  src: url("../../public/fonts/Poppins/Poppins-Thin.ttf");
+}
