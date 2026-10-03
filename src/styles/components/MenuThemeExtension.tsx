@@ -3,9 +3,6 @@ import styles from './MenuThemeExtension.module.css';
 
 const MenuThemeExtension = Menu.extend({
   classNames: styles,
-  defaultProps: {
-    
-  }
 });
 
 export default MenuThemeExtension;
