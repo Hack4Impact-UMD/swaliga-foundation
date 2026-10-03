@@ -1,6 +1,6 @@
 import useAuth from "@/features/auth/authN/components/useAuth";
 import styles from "./ProfileIcon.module.css";
-import Image from "next/image";
+import { Image } from "@mantine/core";
 
 interface ProfileIconProps {
   size?: number;

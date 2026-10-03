@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import useAuth from "@/features/auth/authN/components/useAuth";
 import { Role } from "@/types/user-types";
 import styles from "./Navbar.module.css";
@@ -46,9 +45,9 @@ export default function Navbar() {
           {navbarLinks
             .filter((item) => item.roles.includes(role))
             .map((item, index) => (
-              <Link key={index} href={item.href} className={styles.navLink}>
+              <Anchor key={index} href={item.href} className={styles.navLink}>
                 <span className={styles.navElement}>{item.name}</span>
-              </Link>
+              </Anchor>
             ))}
         </div>
       )}

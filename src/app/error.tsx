@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Anchor } from "@mantine/core";
 import styles from "./error.module.css";
 
 export default function ErrorPage({
@@ -22,9 +22,9 @@ export default function ErrorPage({
             Try Again
           </button>
         ) : (
-          <Link href="/">
+          <Anchor href="/">
             <button className={styles.button}>Back to Home</button>
-          </Link>
+          </Anchor>
         )}
       </div>
     </div>

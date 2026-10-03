@@ -5,7 +5,7 @@ import styles from "./SurveysPage.module.css";
 import { SurveyID } from "@/types/survey-types";
 import Table, { Column } from "@/components/ui/table/Table";
 import { FaEdit, FaEye, FaFileExcel } from "react-icons/fa";
-import Link from "next/link";
+import { Anchor } from "@mantine/core";
 import { FilterCondition } from "@/components/ui/table/Filter";
 import CreateSurveyModal from "@/features/surveyManagement/components/CreateSurveyModal";
 import DeleteSurveyModal from "@/features/surveyManagement/components/DeleteSurveyModal";
@@ -41,31 +41,31 @@ export default function SurveysPage() {
     {
       name: "Edit Survey",
       getValue: (survey: SurveyID) => (
-        <Link
+        <Anchor
           href={`https://docs.google.com/forms/d/${survey.id}/edit`}
           target="_blank"
         >
           <FaEdit className={styles.linkIcon} size={20} />
-        </Link>
+        </Anchor>
       ),
     },
     {
       name: "View Google Form",
       getValue: (survey: SurveyID) => (
-        <Link href={survey.responderUri} target="_blank">
+        <Anchor href={survey.responderUri} target="_blank">
           <FaEye className={styles.linkIcon} size={20} />
-        </Link>
+        </Anchor>
       ),
     },
     {
       name: "Responses Spreadsheet",
       getValue: (survey: SurveyID) => (
-        <Link
+        <Anchor
           href={`https://docs.google.com/spreadsheets/d/${survey.linkedSheetId}/edit`}
           target="_blank"
         >
           <FaFileExcel className={styles.linkIcon} size={20} />
-        </Link>
+        </Anchor>
       ),
     },
     {
@@ -78,9 +78,9 @@ export default function SurveysPage() {
     {
       name: "View Survey",
       getValue: (survey: SurveyID) => (
-        <Link href={`/surveys/${survey.id}`}>
+        <Anchor href={`/surveys/${survey.id}`}>
           <p className={styles.linkText}>View Survey</p>
-        </Link>
+        </Anchor>
       ),
     }
   ];

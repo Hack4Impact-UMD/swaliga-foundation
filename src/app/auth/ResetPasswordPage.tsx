@@ -1,11 +1,11 @@
 "use client";
 
 import styles from "./ResetPasswordPage.module.css";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { resetPassword } from "@/features/auth/authN/emailPasswordAuthN";
-import Link from "next/link";
+import { Anchor } from "@mantine/core";
 import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 
 interface ResetPasswordPageProps {
@@ -85,7 +85,7 @@ export default function ResetPasswordPage(props: ResetPasswordPageProps) {
           {success ? (
             <>
               Password reset successful! You will be redirected to the home page
-              shortly. To go there now, click <Link href="/">here</Link>.
+              shortly. To go there now, click <Anchor href="/">here</Anchor>.
             </>
           ) : (
             error
