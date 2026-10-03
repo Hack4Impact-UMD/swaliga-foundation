@@ -9,7 +9,7 @@ import { logOut } from "@/features/auth/authN/googleAuthN";
 import { MdLogout } from "react-icons/md";
 import ProfileIcon from "../ui/ProfileIcon";
 import { FaEnvelope } from "react-icons/fa";
-import { ActionIcon, Button, Menu } from "@mantine/core";
+import { ActionIcon, Anchor, Image, Menu } from "@mantine/core";
 import { useRouter } from "next/navigation";
 
 const navbarLinks: { name: string; href: string; roles: Role[] }[] = [
@@ -30,17 +30,15 @@ export default function Navbar() {
   return (
     <nav className={styles.navbar}>
       {/* Logo on the left */}
-      <div>
-        <Link href="/">
-          <img
-            className={styles.logo}
-            src={logo.src}
-            alt="Swaliga Foundation Logo"
-            height={40}
-            width={40}
-          />
-        </Link>
-      </div>
+      <Anchor href="/">
+        <Image
+          className={styles.logo}
+          src={logo.src}
+          alt="Swaliga Foundation Logo"
+          height={40}
+          width={40}
+        />
+      </Anchor>
 
       {/* Centered Text Container */}
       {(auth.token?.claims.email_verified as boolean) && (
