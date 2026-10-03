@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import useAuth from "@/features/auth/authN/components/useAuth";
 import { Role } from "@/types/user-types";
@@ -8,10 +7,10 @@ import styles from "./Navbar.module.css";
 import logo from "@/../public/logo.png";
 import { logOut } from "@/features/auth/authN/googleAuthN";
 import { MdLogout } from "react-icons/md";
-import { DropdownMenu } from "@/components/ui/DropdownMenu";
 import ProfileIcon from "../ui/ProfileIcon";
 import { FaEnvelope } from "react-icons/fa";
 import { ActionIcon, Button, Menu } from "@mantine/core";
+import { useRouter } from "next/navigation";
 
 const navbarLinks: { name: string; href: string; roles: Role[] }[] = [
   { name: "Students", href: "/students", roles: ["ADMIN", "STAFF"] },
@@ -25,6 +24,8 @@ const navbarLinks: { name: string; href: string; roles: Role[] }[] = [
 export default function Navbar() {
   const auth = useAuth();
   const role: Role = auth.token?.claims.role as Role;
+
+  const router = useRouter();
 
   return (
     <nav className={styles.navbar}>
@@ -63,16 +64,12 @@ export default function Navbar() {
           </Menu.Target>
           <Menu.Dropdown>
             {role === "STUDENT" && (
-              <Menu.Item>
-                <Link href="/change-email" className={styles.changeEmail}>
-                  <span>Change Email</span>
-                  <FaEnvelope size={30} title="Change Email" />
-                </Link>
+              <Menu.Item rightSection={<FaEnvelope size={30} title="Change Email" />} onClick={() => router.push('/change-email')}>
+                Change Email
               </Menu.Item>
             )}
-            <Menu.Item className={styles.logoutItem} onClick={() => logOut()}>
-              <span>Logout</span>
-              <MdLogout size={30} title="Logout" />
+            <Menu.Item className={styles.logoutItem} onClick={() => logOut()} rightSection={<MdLogout size={30} title="Logout" />}>
+              Logout
             </Menu.Item>
           </Menu.Dropdown>
         </Menu>
