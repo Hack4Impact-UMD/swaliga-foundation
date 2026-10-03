@@ -15,6 +15,8 @@ import IncompleteProfileMessage from "@/features/profile/IncompleteProfileMessag
 import QueryClientProviderWrapper from "@/components/QueryClientProviderWrapper";
 import { MantineProvider } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
+import theme from "@/styles/theme";
+import MantineProviderWrapper from "@/components/MantineProviderWrapper";
 
 const LoadingPage = dynamic(() => import("./loading"));
 
@@ -35,7 +37,7 @@ export default function RootLayout({
       <body className={`${inter.className} ${styles.body}`}>
         <Suspense fallback={<LoadingPage />}>
           <QueryClientProviderWrapper>
-            <MantineProvider>
+            <MantineProviderWrapper>
               <ModalsProvider>
                 <Tooltip.Provider delayDuration={0}>
                   <AuthProvider>
@@ -52,7 +54,7 @@ export default function RootLayout({
                   <Footer />
                 </Tooltip.Provider>
               </ModalsProvider>
-            </MantineProvider>
+            </MantineProviderWrapper>
           </QueryClientProviderWrapper>
         </Suspense>
       </body>
