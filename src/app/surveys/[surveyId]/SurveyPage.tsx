@@ -33,7 +33,6 @@ import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 import { MdCheck, MdEdit } from "react-icons/md";
 import TextField from "@/features/accountManagement/components/TextField";
 import { updateSurvey } from "@/data/firestore/surveys";
-import { appsScriptCloudFunctions } from "../../../../functions/src/googleAppsScript";
 import {
   updateSurveyDescription,
   updateSurveyTitle,
@@ -343,16 +342,16 @@ export default function SurveyPage(props: SurveyPageProps) {
               href={`https://docs.google.com/forms/d/${survey.id}/edit`}
               target="_blank"
             >
-              <MenuIcon icon={FaEdit} title="Edit Survey" />
+              <MenuIcon label="Edit Survey" ><FaEdit size={30} /></MenuIcon>
             </Link>
             <Link href={survey.responderUri} target="_blank">
-              <MenuIcon icon={FaEye} title="View Survey" />
+              <MenuIcon label="View Survey" ><FaEye size={30} /></MenuIcon>
             </Link>
             <Link
               href={`https://docs.google.com/spreadsheets/d/${survey.linkedSheetId}/edit`}
               target="_blank"
             >
-              <MenuIcon icon={FaFileExcel} title="View Responses Spreadsheet" />
+              <MenuIcon label="View Responses Spreadsheet"><FaFileExcel size={30} /></MenuIcon>
             </Link>
             <span className={styles.activateSpan}>
               Accepting Responses? <SurveyActivationSwitch survey={survey} />

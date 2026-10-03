@@ -134,8 +134,7 @@ export default function StudentsPage() {
           <div className={styles.optionMenu}>
             {selectedStudentIds.length > 0 && (
               <MenuIcon
-                icon={FaFileExport}
-                title="Export Student Data"
+                label="Export Student Data"
                 onClick={() =>
                   exportStudentSummariesToCSV(
                     students.filter((student) =>
@@ -143,20 +142,24 @@ export default function StudentsPage() {
                     ),
                   )
                 }
-              />
+              >
+                <FaFileExport size={30} />
+              </MenuIcon>
             )}
             {showArchivedStudents ? (
               <MenuIcon
-                icon={MdUnarchive}
-                title="Show Active Students"
+                label="Show Active Students"
                 onClick={toggleArchivedStudents}
-              />
+              >
+                <MdUnarchive size={30} />
+              </MenuIcon>
             ) : (
               <MenuIcon
-                icon={MdArchive}
-                title="Show Archived Students"
+                label="Show Archived Students"
                 onClick={toggleArchivedStudents}
-              />
+              >
+                <MdArchive size={30} />
+              </MenuIcon>
             )}
           </div>
         </div>

@@ -54,10 +54,9 @@ export default function DeleteSurveyModal(props: DeleteSurveyModalProps) {
 
   return (
     <Modal onClose={onClose}>
-      <MenuIcon
-        icon={FaTrash}
-        title={`Delete Survey${surveys.length > 1 ? "s" : ""}`}
-      />
+      <MenuIcon label={`Delete Survey${surveys.length > 1 ? "s" : ""}`}>
+        <FaTrash size={30}/>
+      </MenuIcon>
       {message ? (
         <p>{message}</p>
       ) : (

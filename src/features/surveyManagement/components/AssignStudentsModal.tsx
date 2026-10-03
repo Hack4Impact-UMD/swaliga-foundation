@@ -71,7 +71,7 @@ export default function AssignStudentsModal(props: AssignStudentsModalProps) {
 
   return (
     <Modal onClose={handleClose}>
-      <MenuIcon icon={FaPlus} title="Assign Survey" />
+      <MenuIcon label="Assign Survey"><FaPlus size={30} /></MenuIcon>
       {message ? (
         <p>{message}</p>
       ) : (

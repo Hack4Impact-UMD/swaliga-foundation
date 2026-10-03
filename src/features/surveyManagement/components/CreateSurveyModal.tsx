@@ -87,7 +87,7 @@ export default function CreateSurveyModal(): JSX.Element {
 
   return (
     <Modal onClose={onClose}>
-      <MenuIcon icon={FaCirclePlus} title="Create Survey" />
+      <MenuIcon label="Create Survey"><FaCirclePlus size={30} /></MenuIcon>
       {message ? (
         <p>{message}</p>
       ) : (

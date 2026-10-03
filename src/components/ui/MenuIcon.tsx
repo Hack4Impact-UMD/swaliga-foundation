@@ -1,26 +1,18 @@
-import { IconBaseProps, IconType } from "react-icons/lib";
-import styles from "./MenuIcon.module.css";
-import { Tooltip } from "@/components/ui/Tooltip";
+import { ActionIcon, Tooltip } from "@mantine/core";
 
-interface MenuIconProps extends IconBaseProps {
-  icon: IconType;
+interface MenuIconProps {
+  label: string;
+  children: React.ReactNode;
+  onClick?: () => void;
 }
 
 export default function MenuIcon(props: MenuIconProps) {
-  const { icon, size, className, title, ...rest } = props;
-
-  const iconElement = icon({
-    className: `${styles.icon} ${className}`,
-    size: size ?? 30,
-    ...rest,
-  });
-
-  return title ? (
-    <Tooltip.Root>
-      <Tooltip.Trigger>{iconElement}</Tooltip.Trigger>
-      <Tooltip.Content>{title}</Tooltip.Content>
-    </Tooltip.Root>
-  ) : (
-    iconElement
+  const { label, children, onClick } = props;
+  return (
+    <Tooltip label={label} onClick={onClick}>
+      <ActionIcon>
+        {children}
+      </ActionIcon>
+    </Tooltip>
   );
 }
