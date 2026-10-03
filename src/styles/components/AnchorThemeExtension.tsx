@@ -4,6 +4,7 @@ import NextLink from "next/link";
 const AnchorThemeExtension = Anchor.extend({
   defaultProps: {
     component: NextLink,
+    underline: 'not-hover'
   }
 });
 
