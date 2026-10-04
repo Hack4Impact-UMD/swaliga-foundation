@@ -10,8 +10,8 @@ interface MenuIconProps {
 export default function MenuIcon(props: MenuIconProps) {
   const { label, children, onClick } = props;
   return (
-    <Tooltip label={label} onClick={onClick}>
-      <ActionIcon size="xl" classNames={{ root: styles.root }}>
+    <Tooltip label={label} onClick={onClick} classNames={{ tooltip: styles.tooltip }}>
+      <ActionIcon size="xl" classNames={{ root: styles.actionIconRoot }}>
         {children}
       </ActionIcon>
     </Tooltip>
