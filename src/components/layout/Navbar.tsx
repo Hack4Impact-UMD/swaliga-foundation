@@ -55,9 +55,7 @@ export default function Navbar() {
       {auth.token && (
         <Menu>
           <Menu.Target>
-            <ActionIcon size="xl" color="transparent">
-              <ProfileIcon />
-            </ActionIcon>
+            <ProfileIcon />
           </Menu.Target>
           <Menu.Dropdown>
             {role === "STUDENT" && (

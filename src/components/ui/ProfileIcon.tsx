@@ -1,6 +1,6 @@
 import useAuth from "@/features/auth/authN/components/useAuth";
 import styles from "./ProfileIcon.module.css";
-import { Image } from "@mantine/core";
+import { ActionIcon, Image } from "@mantine/core";
 
 interface ProfileIconProps {
   size?: number;
@@ -8,22 +8,34 @@ interface ProfileIconProps {
 
 export default function ProfileIcon({ size = 35 }: ProfileIconProps) {
   const auth = useAuth();
+  if (!auth) {
+    return <></>;
+  }
+
   const photoURL = auth.user?.photoURL;
+  if (photoURL) {
+    return (
+      <ActionIcon size="xl" color="transparent">
+        <Image
+          src={photoURL}
+          alt="Profile Picture"
+          className={styles.profileImage}
+          width={size}
+          height={size}
+        />
+      </ActionIcon>
+    );
+  }
+
   const initials = auth.user?.displayName
-    ?.split(" ")
-    .map((name) => name[0])
-    .join("")
+    ?.split(" ")[0][0]
     .toUpperCase() ?? "G";
 
-  return photoURL ? (
-    <Image
-      src={photoURL}
-      alt="Profile Picture"
-      className={styles.profileImage}
-      width={size}
-      height={size}
-    />
-  ) : (
-    <div className={styles.profileIcon} style={{ width: size, height: size, fontSize: `${size * 3 / 70}em` }}>{initials}</div>
-  );
+  return (
+    <ActionIcon size="xl" color="transparent" classNames={{
+      root: styles.profileIcon
+    }}>
+      <div className={styles.profileIcon} style={{ width: size, height: size, fontSize: `${size * 3 / 70}em` }}>{initials}</div>
+    </ActionIcon>
+  );  
 }
