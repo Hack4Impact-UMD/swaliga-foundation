@@ -1,12 +1,13 @@
 import useAuth from "@/features/auth/authN/components/useAuth";
 import styles from "./ProfileIcon.module.css";
-import { ActionIcon, Image } from "@mantine/core";
+import { ActionIcon, ActionIconProps, Image } from "@mantine/core";
+import { ComponentPropsWithRef } from "react";
 
-interface ProfileIconProps {
+interface ProfileIconProps extends Omit<ActionIconProps, "size">, Omit<ComponentPropsWithRef<"button">, keyof ActionIconProps> {
   size?: number;
 }
 
-export default function ProfileIcon({ size = 35 }: ProfileIconProps) {
+export default function ProfileIcon({ size = 35, ref, ...others }: ProfileIconProps) {
   const auth = useAuth();
   if (!auth) {
     return <></>;
@@ -15,7 +16,7 @@ export default function ProfileIcon({ size = 35 }: ProfileIconProps) {
   const photoURL = auth.user?.photoURL;
   if (photoURL) {
     return (
-      <ActionIcon size="xl" color="transparent">
+      <ActionIcon size="xl" color="transparent" ref={ref} {...others}>
         <Image
           src={photoURL}
           alt="Profile Picture"
@@ -32,7 +33,7 @@ export default function ProfileIcon({ size = 35 }: ProfileIconProps) {
     .toUpperCase() ?? "G";
 
   return (
-    <ActionIcon size="xl" color="transparent" classNames={{
+    <ActionIcon size="xl" color="transparent" ref={ref} {...others} classNames={{
       root: styles.profileIcon
     }}>
       <div className={styles.profileIcon} style={{ width: size, height: size, fontSize: `${size * 3 / 70}em` }}>{initials}</div>
