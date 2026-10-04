@@ -10,9 +10,10 @@ import AvailabilityProvider from "@/features/auth/authZ/AvailabilityProvider";
 import SurveysProvider from "@/data/hooks/useSurveys/SurveysProvider";
 import StudentsProvider from "@/data/hooks/useStudents/StudentsProvider";
 import Footer from "@/components/layout/Footer";
-import { Tooltip } from "@/components/ui/Tooltip";
 import IncompleteProfileMessage from "@/features/profile/IncompleteProfileMessage";
 import QueryClientProviderWrapper from "@/components/QueryClientProviderWrapper";
+import { ModalsProvider } from "@mantine/modals";
+import MantineProviderWrapper from "@/components/MantineProviderWrapper";
 
 const LoadingPage = dynamic(() => import("./loading"));
 
@@ -33,20 +34,22 @@ export default function RootLayout({
       <body className={`${inter.className} ${styles.body}`}>
         <Suspense fallback={<LoadingPage />}>
           <QueryClientProviderWrapper>
-            <Tooltip.Provider delayDuration={0}>
-              <AuthProvider>
-                <Navbar />
-                <AvailabilityProvider>
-                  <SurveysProvider>
+            <MantineProviderWrapper>
+              <ModalsProvider>
+                <AuthProvider>
+                  <Navbar />
+                  <AvailabilityProvider>
+                    <SurveysProvider>
                     <StudentsProvider>
-                      <IncompleteProfileMessage />
-                      {children}
-                    </StudentsProvider>
-                  </SurveysProvider>
-                </AvailabilityProvider>
-              </AuthProvider>
-              <Footer />
-            </Tooltip.Provider>
+                        <IncompleteProfileMessage />
+                        {children}
+                      </StudentsProvider>
+                    </SurveysProvider>
+                  </AvailabilityProvider>
+                </AuthProvider>
+                <Footer />
+              </ModalsProvider>
+            </MantineProviderWrapper>
           </QueryClientProviderWrapper>
         </Suspense>
       </body>

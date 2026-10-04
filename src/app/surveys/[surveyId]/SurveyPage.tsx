@@ -14,7 +14,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import styles from "./SurveyPage.module.css";
 import LoadingPage from "@/app/loading";
-import Link from "next/link";
+import { Anchor } from "@mantine/core";
 import { FaEdit, FaEye, FaFileExcel, FaPlus } from "react-icons/fa";
 import useSurveys from "@/data/hooks/useSurveys/useSurveys";
 import Table, { Column } from "@/components/ui/table/Table";
@@ -33,7 +33,6 @@ import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 import { MdCheck, MdEdit } from "react-icons/md";
 import TextField from "@/features/accountManagement/components/TextField";
 import { updateSurvey } from "@/data/firestore/surveys";
-import { appsScriptCloudFunctions } from "../../../../functions/src/googleAppsScript";
 import {
   updateSurveyDescription,
   updateSurveyTitle,
@@ -339,21 +338,21 @@ export default function SurveyPage(props: SurveyPageProps) {
             )}
           </h2>
           <div className={styles.surveyOptionMenu}>
-            <Link
+            <Anchor
               href={`https://docs.google.com/forms/d/${survey.id}/edit`}
               target="_blank"
             >
-              <MenuIcon icon={FaEdit} title="Edit Survey" />
-            </Link>
-            <Link href={survey.responderUri} target="_blank">
-              <MenuIcon icon={FaEye} title="View Survey" />
-            </Link>
-            <Link
+              <MenuIcon label="Edit Survey" ><FaEdit size={30} /></MenuIcon>
+            </Anchor>
+            <Anchor href={survey.responderUri} target="_blank">
+              <MenuIcon label="View Survey" ><FaEye size={30} /></MenuIcon>
+            </Anchor>
+            <Anchor
               href={`https://docs.google.com/spreadsheets/d/${survey.linkedSheetId}/edit`}
               target="_blank"
             >
-              <MenuIcon icon={FaFileExcel} title="View Responses Spreadsheet" />
-            </Link>
+              <MenuIcon label="View Responses Spreadsheet"><FaFileExcel size={30} /></MenuIcon>
+            </Anchor>
             <span className={styles.activateSpan}>
               Accepting Responses? <SurveyActivationSwitch survey={survey} />
             </span>

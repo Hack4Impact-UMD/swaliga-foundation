@@ -3,8 +3,7 @@
 import useAuth from "@/features/auth/authN/components/useAuth";
 import { Role } from "@/types/user-types";
 import styles from "./InvalidRefreshTokenPage.module.css";
-import Link from "next/link";
-import { getFunctionsURL } from "@/config/utils";
+import { Anchor } from "@mantine/core";
 import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 import { getOAuth2ConsentURL } from "@/features/auth/authZ/googleAuthZ";
 
@@ -22,7 +21,7 @@ export default function InvalidRefreshTokenPage() {
               or missing. This token allows us to integrate with Google services
               such as Forms and Drive to provide this website's full
               functionality. Please click{" "}
-              <Link href={getOAuth2ConsentURL()}>here</Link> to regenerate the
+              <Anchor href={getOAuth2ConsentURL()}>here</Anchor> to regenerate the
               refresh token.
             </>
           ) : (

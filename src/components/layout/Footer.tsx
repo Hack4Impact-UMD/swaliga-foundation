@@ -1,8 +1,8 @@
 import styles from "./Footer.module.css";
 import logo from "@/../public/swaliga-website-logo.png";
 import h4ILogo from "@/../public/h4ILogo.png";
-import Link from "next/link";
-import Image from "next/image";
+import { Anchor } from "@mantine/core";
+import { Image } from "@mantine/core";
 import {
   FaFacebook,
   FaInstagram,
@@ -15,7 +15,7 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.logoSocialsColumn}>
-        <Link href="https://swaligafoundation.org/" target="_blank">
+        <Anchor href="https://swaligafoundation.org/" target="_blank">
           <Image
             src={logo.src}
             alt="Swaliga Foundation Logo"
@@ -23,23 +23,23 @@ export default function Footer() {
             width={400}
             height={63}
           />
-        </Link>
+        </Anchor>
         <div className={styles.socials}>
-          <Link href="https://www.facebook.com/TheSwaligaFoundation/">
+          <Anchor href="https://www.facebook.com/TheSwaligaFoundation/">
             <FaFacebook className={styles.socialIcon} />
-          </Link>
-          <Link href="https://www.instagram.com/tribeswaliga/">
+          </Anchor>
+          <Anchor href="https://www.instagram.com/tribeswaliga/">
             <FaInstagram className={styles.socialIcon} />
-          </Link>
-          <Link href="https://www.linkedin.com/company/swaliga-foundation/">
+          </Anchor>
+          <Anchor href="https://www.linkedin.com/company/swaliga-foundation/">
             <FaLinkedin className={styles.socialIcon} />
-          </Link>
-          <Link href="https://www.youtube.com/user/TribeSwaliga">
+          </Anchor>
+          <Anchor href="https://www.youtube.com/user/TribeSwaliga">
             <FaYoutube className={styles.socialIcon} />
-          </Link>
-          <Link href="https://x.com/tribeswaliga">
+          </Anchor>
+          <Anchor href="https://x.com/tribeswaliga">
             <FaTwitter className={styles.socialIcon} />
-          </Link>
+          </Anchor>
         </div>
       </div>
       <div className={styles.contactInfoColumn}>
@@ -64,7 +64,7 @@ export default function Footer() {
           </a>
         </p>
       </div>
-      <Link
+      <Anchor
         className={styles.linkText}
         href="https://umd.hack4impact.org/ourwork/swaliga"
         target="_blank"
@@ -81,7 +81,7 @@ export default function Footer() {
             className="h-[32px]"
           />
         </div>
-      </Link>
+      </Anchor>
     </footer>
   );
 }

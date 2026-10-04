@@ -251,8 +251,7 @@ export default function StudentPage(props: StudentPageProps) {
           <h1 className={styles.header}>{getFullName(student.name)}</h1>
           {!isAssignmentsLoading && !isSurveysLoading && (
             <MenuIcon
-              icon={FaFileExport}
-              title="Export Student Data"
+              label="Export Student Data"
               onClick={() =>
                 exportFullStudentDataToCSV(
                   student,
@@ -264,24 +263,24 @@ export default function StudentPage(props: StudentPageProps) {
                   })),
                 )
               }
-            />
+            >
+              <FaFileExport size={30} />
+            </MenuIcon>
           )}
           {student.isArchived ? (
-            <MenuIcon
-              icon={MdUnarchive}
-              title="Unarchive"
-              onClick={async () =>
-                updateStudent(student.id, { isArchived: false })
-              }
-            />
+            <MenuIcon label="Unarchive" onClick={async () => updateStudent(student.id, { isArchived: false })}>
+              <MdUnarchive size={30} />
+            </MenuIcon>
+            
           ) : (
             <MenuIcon
-              icon={MdArchive}
-              title="Archive"
+              label="Archive"
               onClick={async () =>
                 updateStudent(student.id, { isArchived: true })
               }
-            />
+            >
+              <MdArchive size={30} />
+            </MenuIcon>
           )}
           {!student.isArchived && <EditAccountModal student={student} />}
         </div>

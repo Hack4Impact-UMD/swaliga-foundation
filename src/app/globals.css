@@ -1,5 +1,9 @@
 @import-normalize;
 
+@import "@mantine/core/styles.css" layer(mantine);
+@import "@mantine/dates/styles.css" layer(mantine);
+@import "@mantine/notifications/styles.css" layer(mantine);
+
 html,
 body,
 #app,
