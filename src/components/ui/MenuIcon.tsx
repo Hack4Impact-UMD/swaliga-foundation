@@ -1,4 +1,5 @@
 import { ActionIcon, Tooltip } from "@mantine/core";
+import styles from "./MenuIcon.module.css";
 
 interface MenuIconProps {
   label: string;
@@ -10,7 +11,7 @@ export default function MenuIcon(props: MenuIconProps) {
   const { label, children, onClick } = props;
   return (
     <Tooltip label={label} onClick={onClick}>
-      <ActionIcon>
+      <ActionIcon size="xl" classNames={{ root: styles.root }}>
         {children}
       </ActionIcon>
     </Tooltip>

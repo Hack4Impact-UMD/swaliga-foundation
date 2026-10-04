@@ -1,4 +1,4 @@
-.icon {
+.root {
   color: #35627a;
   background-color: #dedeb2;
   border-radius: 10%;
@@ -6,6 +6,6 @@
   cursor: pointer;
 }
 
-.icon:hover {
+.root:hover {
   color: #5d8195;
 }
