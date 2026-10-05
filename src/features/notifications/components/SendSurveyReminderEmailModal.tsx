@@ -62,7 +62,7 @@ export default function SendSurveyReminderEmailModal(
 
   return (
     <Modal onClose={handleClose}>
-      <MenuIcon icon={FaEnvelope} title="Send Reminder Email" />
+      <MenuIcon label="Send Reminder Email"><FaEnvelope size={30} /></MenuIcon>
       {message ? (
         <p>{message}</p>
       ) : (

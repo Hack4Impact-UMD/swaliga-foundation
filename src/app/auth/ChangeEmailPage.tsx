@@ -3,7 +3,7 @@ import ErrorPage from "../error";
 import styles from "./ChangeEmailPage.module.css";
 import { useEffect, useState } from "react";
 import useAuth from "@/features/auth/authN/components/useAuth";
-import Link from "next/link";
+import { Anchor } from "@mantine/core";
 import { ActionCodeInfo, applyActionCode } from "firebase/auth";
 import { auth as firebaseAuth, functions } from "@/config/firebaseConfig";
 import { httpsCallable } from "firebase/functions";
@@ -50,7 +50,7 @@ export default function ChangeEmailPage(props: ChangeEmailPageProps) {
         </h1>
         {success && (
           <p className={styles.message}>
-            Please click <Link href="/">here</Link> to return to the home page.
+            Please click <Anchor href="/">here</Anchor> to return to the home page.
           </p>
         )}
       </div>

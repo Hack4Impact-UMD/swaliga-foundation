@@ -16,7 +16,7 @@ export default function EditAccountModal(props: EditAccountModalProps) {
 
   return (
     <Modal>
-      <MenuIcon icon={FaEdit} title="Edit Account" />
+      <MenuIcon label="Edit Account"><FaEdit size={30} /></MenuIcon>
       <div className={styles.modalContainer}>
         <h1 className={styles.header}>Edit Account</h1>
         <EditAccountForm mode={"EDIT"} student={student} />

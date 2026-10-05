@@ -7,7 +7,7 @@ import { FilterCondition } from "@/components/ui/table/Filter";
 import { getFullAddress, getFullName, Student } from "@/types/user-types";
 import moment from "moment";
 import useStudents from "@/data/hooks/useStudents/useStudents";
-import Link from "next/link";
+import { Anchor } from "@mantine/core";
 import { FaFileExport } from "react-icons/fa";
 import { exportStudentSummariesToCSV } from "@/features/dataExporting/exportCSV";
 import MenuIcon from "@/components/ui/MenuIcon";
@@ -30,9 +30,9 @@ export default function StudentsPage() {
     {
       name: "Name",
       getValue: (student: Student) => (
-        <Link href={`/students/${student.id}`}>
+        <Anchor href={`/students/${student.id}`}>
           <p className={styles.linkText}>{getFullName(student.name)}</p>
-        </Link>
+        </Anchor>
       ),
       sortFunc: (a, b) =>
         getFullName(a.name).localeCompare(getFullName(b.name)),
@@ -134,8 +134,7 @@ export default function StudentsPage() {
           <div className={styles.optionMenu}>
             {selectedStudentIds.length > 0 && (
               <MenuIcon
-                icon={FaFileExport}
-                title="Export Student Data"
+                label="Export Student Data"
                 onClick={() =>
                   exportStudentSummariesToCSV(
                     students.filter((student) =>
@@ -143,20 +142,24 @@ export default function StudentsPage() {
                     ),
                   )
                 }
-              />
+              >
+                <FaFileExport size={30} />
+              </MenuIcon>
             )}
             {showArchivedStudents ? (
               <MenuIcon
-                icon={MdUnarchive}
-                title="Show Active Students"
+                label="Show Active Students"
                 onClick={toggleArchivedStudents}
-              />
+              >
+                <MdUnarchive size={30} />
+              </MenuIcon>
             ) : (
               <MenuIcon
-                icon={MdArchive}
-                title="Show Archived Students"
+                label="Show Archived Students"
                 onClick={toggleArchivedStudents}
-              />
+              >
+                <MdArchive size={30} />
+              </MenuIcon>
             )}
           </div>
         </div>

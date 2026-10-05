@@ -2,12 +2,11 @@ import { useState } from "react";
 import styles from "./SurveyActivationSwitch.module.css";
 import { SurveyID } from "@/types/survey-types";
 import Spinner from "@/components/ui/Spinner";
-import { Switch } from "radix-ui";
 import { MdError } from "react-icons/md";
 import { MAX_TRIGGERS_PER_USER } from "@/constants/constants";
 import useSurveys from "@/data/hooks/useSurveys/useSurveys";
-import useAuth from "../../auth/authN/components/useAuth";
 import { activateSurvey, deactivateSurvey } from "../surveys";
+import { Switch } from "@mantine/core";
 
 interface SurveyActivationSwitchProps {
   survey: SurveyID;
@@ -25,8 +24,6 @@ export default function SurveyActivationSwitch(
   const maxSurveysReached =
     surveys.filter((survey) => survey.isActive).length >= MAX_TRIGGERS_PER_USER;
 
-  const auth = useAuth();
-
   const handleActivationToggle = async (checked: boolean) => {
     setIsLoading(true);
     setIsError(false);
@@ -41,23 +38,20 @@ export default function SurveyActivationSwitch(
       .catch(() => setIsError(true))
       .finally(() => setIsLoading(false));
   };
-
+  
   return isLoading ? (
     <Spinner />
   ) : (
     <div className={styles.activeContainer}>
-      <Switch.Root
-        className={`${styles.switch} ${
-          isLoading || (maxSurveysReached && !survey.isActive)
-            ? styles.switchDisabled
-            : ""
-        }`}
+      <Switch
         checked={survey.isActive}
-        onCheckedChange={(checked: boolean) => handleActivationToggle(checked)}
+        onChange={(event) => handleActivationToggle(event.currentTarget.checked)}
         disabled={isLoading || (maxSurveysReached && !survey.isActive)}
-      >
-        <Switch.Thumb className={styles.switchThumb} />
-      </Switch.Root>
+        classNames={{
+          track: styles.switchTrack,
+          thumb: styles.switchThumb,
+        }}
+      />
       {isError && (
         <MdError
           className={styles.errorIcon}

@@ -1,4 +1,4 @@
-.icon {
+.actionIconRoot {
   color: #35627a;
   background-color: #dedeb2;
   border-radius: 10%;
@@ -6,6 +6,12 @@
   cursor: pointer;
 }
 
-.icon:hover {
+.actionIconRoot:hover {
   color: #5d8195;
+}
+
+.tooltip {
+  background-color: #ffffff;
+  color: #000000;
+  font-weight: 600;
 }

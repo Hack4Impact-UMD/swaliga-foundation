@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { Image } from "@mantine/core";
 import styles from "./Modal.module.css";
 import closeIcon from "@/../public/icons/close-icon.png";
 import React, { cloneElement, useState, type JSX } from "react";

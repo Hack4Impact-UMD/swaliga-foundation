@@ -1,6 +1,6 @@
 import { useRouter } from "next/navigation";
 import styles from "./VerifyEmailPage.module.css";
-import Link from "next/link";
+import { Anchor } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { verifyEmail } from "@/features/auth/authN/emailPasswordAuthN";
 import useAuth from "@/features/auth/authN/components/useAuth";
@@ -51,7 +51,7 @@ export default function VerifyEmailPage(props: VerifyEmailPageProps) {
         {verified && (
           <p className={styles.message}>
             You will be redirected to the home page shortly. To go there now,
-            click <Link href="/">here</Link>.
+            click <Anchor href="/">here</Anchor>.
           </p>
         )}
       </div>
