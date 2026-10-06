@@ -33,7 +33,7 @@ import ErrorPage from "@/app/error";
 import MenuIcon from "@/components/ui/MenuIcon";
 import { exportFullStudentDataToCSV } from "@/features/dataExporting/exportCSV";
 import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
-import { MdArchive, MdUnarchive } from "react-icons/md";
+import { MdArchive, MdUnarchive, MdLockReset } from "react-icons/md";
 import { updateStudent } from "@/data/firestore/students";
 
 interface StudentPageProps {
@@ -283,6 +283,9 @@ export default function StudentPage(props: StudentPageProps) {
             </MenuIcon>
           )}
           {!student.isArchived && <EditAccountModal student={student} />}
+          <MenuIcon label="Reset Password">
+            <MdLockReset size={30} />
+          </MenuIcon>
         </div>
         <div className={styles.infoFieldsContainer}>
           {studentInfo.map((info) => (
