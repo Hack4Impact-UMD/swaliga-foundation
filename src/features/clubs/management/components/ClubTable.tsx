@@ -23,7 +23,10 @@ export default function ClubTable() {
     }),
     clubColumnHelper.accessor("address", {
       header: "Address",
-      cell: (info) => info.getValue(),
+      cell: (info) => {
+        const { addressLine1, addressLine2, city, state, country, zipCode } = info.getValue();
+        return `${addressLine1}${addressLine2 ? ` ${addressLine2}` : ''} ${city}, ${state}, ${country} ${zipCode}`
+      },
       footer: (info) => info.column.id,
     }),
   ]);
