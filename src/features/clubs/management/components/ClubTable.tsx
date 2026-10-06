@@ -2,6 +2,7 @@ import { Club } from "@/types/club-types";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import {
   createColumnHelper,
+  flexRender,
   tableFeatures,
   useTable,
 } from "@tanstack/react-table";
@@ -39,7 +40,12 @@ export default function ClubTable() {
         {clubTable.getHeaderGroups().map((headerGroup) => (
           <Table.Tr className={styles.headerRow}>
             {headerGroup.headers.map((header) => (
-              <Table.Th>{header.id}</Table.Th>
+              <Table.Th>
+                {flexRender(
+                  header.column.columnDef.header,
+                  header.getContext(),
+                )}
+              </Table.Th>
             ))}
           </Table.Tr>
         ))}
@@ -48,7 +54,9 @@ export default function ClubTable() {
         {clubTable.getRowModel().rows.map((row) => (
           <Table.Tr className={styles.tableRow}>
             {row.getAllCells().map((cell) => (
-              <Table.Td>{cell.id}</Table.Td>
+              <Table.Td>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </Table.Td>
             ))}
           </Table.Tr>
         ))}
