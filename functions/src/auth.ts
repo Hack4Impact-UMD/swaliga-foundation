@@ -12,6 +12,8 @@ import { UserRecord } from 'firebase-admin/auth';
 import { getFullName } from '@/types/user-types';
 import { Student } from '@/types/user-types';
 import { FIRST_STUDENT_ID } from '@/constants/constants';
+import z from 'zod';
+import { v4 } from 'uuid';
 
 export const setRole = onCall(async (req) => {
   if (!req.auth) {
@@ -292,4 +294,26 @@ export const getAdminAccessToken = onCall(async (req) => {
     expiryDate: credentials.expiry_date,
     scope: credentials.scope
   };
+});
+
+const GetResetPasswordUsingCustomAuthCodeRequest = z.object({
+  uid: z.string()
+})
+
+export const getResetPasswordUsingCustomAuthCode = onCall(async (req) => {
+  if (!req.auth || req.auth.token.role !== "ADMIN") {
+    throw new HttpsError("permission-denied", "You are not authorized to perform this operation.");
+  }
+
+  const validationResult = GetResetPasswordUsingCustomAuthCodeRequest.safeParse(req.data);
+  if (!validationResult.success) {
+    throw new HttpsError("invalid-argument", "Invalid Request");
+  }
+  const { uid } = validationResult.data;
+
+  const plainUuid = v4();
+  const resetPasswordCode = Buffer.from(plainUuid.replaceAll('-', ''), 'hex').toString('base64url');
+  const resetPasswordCodeHash = hash(resetPasswordCode, 10);
+  const expiresAt = moment().add(10, 'minutes').toISOString();
+  await adminDb.collection(Collection.USERS).doc(uid).update({ resetPasswordCodeHash, expiresAt });
 });
