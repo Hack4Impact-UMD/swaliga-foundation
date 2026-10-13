@@ -317,6 +317,7 @@ export const getResetPasswordUsingCustomAuthCode = onCall(async (req) => {
   }
 
   const plainUuid = v4();
+  // @ts-expect-error - the `replaceAll` function does exist, but the TypeScript compiler is not recognizing it
   const code = Buffer.from(plainUuid.replaceAll('-', ''), 'hex').toString('base64url');
   const codeHash = hash(code, 10);
   const expiresAt = moment().add(10, 'minutes').toISOString();
