@@ -311,6 +311,11 @@ export const getResetPasswordUsingCustomAuthCode = onCall(async (req) => {
   }
   const { uid } = validationResult.data;
 
+  const user = await adminAuth.getUser(uid);
+  if (user.providerData.every(provider => provider.providerId !== 'custom')) {
+    throw new HttpsError("failed-precondition", "User has an email associated with their account.");
+  }
+
   const plainUuid = v4();
   const resetPasswordCode = Buffer.from(plainUuid.replaceAll('-', ''), 'hex').toString('base64url');
   const resetPasswordCodeHash = hash(resetPasswordCode, 10);
