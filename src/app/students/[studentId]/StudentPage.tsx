@@ -35,6 +35,7 @@ import { exportFullStudentDataToCSV } from "@/features/dataExporting/exportCSV";
 import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 import { MdArchive, MdUnarchive, MdLockReset } from "react-icons/md";
 import { updateStudent } from "@/data/firestore/students";
+import openGenerateCustomAuthResetPasswordModal from "@/components/ui/GenerateCustomAuthResetPasswordModal";
 
 interface StudentPageProps {
   studentId: string;
@@ -283,7 +284,7 @@ export default function StudentPage(props: StudentPageProps) {
             </MenuIcon>
           )}
           {!student.isArchived && <EditAccountModal student={student} />}
-          <MenuIcon label="Reset Password">
+          <MenuIcon label="Reset Password" onClick={() => openGenerateCustomAuthResetPasswordModal()}>
             <MdLockReset size={30} />
           </MenuIcon>
         </div>
