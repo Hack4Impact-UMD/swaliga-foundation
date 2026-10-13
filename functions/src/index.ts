@@ -14,6 +14,7 @@ exports.signUpWithUsernamePassword = authFunctions.signUpWithUsernamePassword;
 exports.loginWithUsernamePassword = authFunctions.loginWithUsernamePassword;
 exports.getAdminAccessToken = authFunctions.getAdminAccessToken;
 exports.getResetPasswordUsingCustomAuthCode = authFunctions.getResetPasswordUsingCustomAuthCode;
+exports.resetPasswordUsingCustomAuth = authFunctions.resetPasswordUsingCustomAuthCode;
 
 exports.assignSurveys = assignmentManagementFunctions.assignSurveys;
 exports.onAssignmentWritten = assignmentManagementFunctions.onAssignmentWritten;

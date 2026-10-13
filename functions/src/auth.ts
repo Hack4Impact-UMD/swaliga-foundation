@@ -317,8 +317,39 @@ export const getResetPasswordUsingCustomAuthCode = onCall(async (req) => {
   }
 
   const plainUuid = v4();
-  const resetPasswordCode = Buffer.from(plainUuid.replaceAll('-', ''), 'hex').toString('base64url');
-  const resetPasswordCodeHash = hash(resetPasswordCode, 10);
+  const code = Buffer.from(plainUuid.replaceAll('-', ''), 'hex').toString('base64url');
+  const codeHash = hash(code, 10);
   const expiresAt = moment().add(10, 'minutes').toISOString();
-  await adminDb.collection(Collection.USERS).doc(uid).update({ resetPasswordCodeHash, expiresAt });
+  await adminDb.collection(Collection.USERS).doc(uid).update({ codeHash, expiresAt });
+});
+
+const ResetPasswordUsingCustomAuthCodeRequest = z.object({
+  uid: z.string(),
+  code: z.string(),
+  newPassword: z.string()
+})
+
+export const resetPasswordUsingCustomAuthCode = onCall(async (req) => {
+  const requestValidationResult = ResetPasswordUsingCustomAuthCodeRequest.safeParse(req.data);
+  if (!requestValidationResult.success) {
+    throw new HttpsError("invalid-argument", "Invalid Request");
+  }
+  const { uid, code, newPassword } = requestValidationResult.data;
+
+  const userDocRef = await adminDb.collection(Collection.USERS).doc(uid).get();
+  const userDoc = userDocRef.data()
+  if (!userDocRef.exists) {
+    throw new HttpsError("unavailable", "This user does not have a custom auth profile.");
+  } else if ('codeHash' in userDoc! && !compare(code, userDoc!.codeHash)) {
+    throw new HttpsError("unavailable", "Invalid code");
+  } else if ('expiresAt' in userDoc! && moment().isAfter(moment(userDoc!.expiresAt))) {
+    throw new HttpsError("deadline-exceeded", "This code has expired. Please request another.");
+  }
+
+  const hashedPassword = hash(newPassword, 10);
+  await adminDb.collection(Collection.USERS).doc(uid).update({
+    password: hashedPassword,
+    codeHash: FieldValue.delete(),
+    expiresAt: FieldValue.delete()
+  });
 });
