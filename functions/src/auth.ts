@@ -311,9 +311,9 @@ export const generateCustomAuthResetPasswordCode = onCall(async (req) => {
   }
   const { uid } = validationResult.data;
 
-  const user = await adminAuth.getUser(uid);
-  if (user.providerData.every(provider => provider.providerId !== 'custom')) {
-    throw new HttpsError("failed-precondition", "User has an email associated with their account.");
+  const userDocRef = await adminDb.collection(Collection.USERS).doc(uid).get();
+  if (!userDocRef.exists) {
+    throw new HttpsError("failed-precondition", "User's account does not use this site's custom authentication system.");
   }
 
   const plainUuid = v4();
@@ -322,6 +322,7 @@ export const generateCustomAuthResetPasswordCode = onCall(async (req) => {
   const codeHash = hash(code, 10);
   const expiresAt = moment().add(10, 'minutes').toISOString();
   await adminDb.collection(Collection.USERS).doc(uid).update({ codeHash, expiresAt });
+  return code;
 });
 
 const ResetCustomAuthPasswordRequest = z.object({
