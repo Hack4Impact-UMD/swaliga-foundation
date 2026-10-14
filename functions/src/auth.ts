@@ -296,16 +296,16 @@ export const getAdminAccessToken = onCall(async (req) => {
   };
 });
 
-const GetResetPasswordUsingCustomAuthCodeRequest = z.object({
+const GenerateCustomAuthResetPasswordCodeRequest = z.object({
   uid: z.string()
 })
 
-export const getResetPasswordUsingCustomAuthCode = onCall(async (req) => {
+export const generateCustomAuthResetPasswordCode = onCall(async (req) => {
   if (!req.auth || req.auth.token.role !== "ADMIN") {
     throw new HttpsError("permission-denied", "You are not authorized to perform this operation.");
   }
 
-  const validationResult = GetResetPasswordUsingCustomAuthCodeRequest.safeParse(req.data);
+  const validationResult = GenerateCustomAuthResetPasswordCodeRequest.safeParse(req.data);
   if (!validationResult.success) {
     throw new HttpsError("invalid-argument", "Invalid Request");
   }
@@ -324,14 +324,14 @@ export const getResetPasswordUsingCustomAuthCode = onCall(async (req) => {
   await adminDb.collection(Collection.USERS).doc(uid).update({ codeHash, expiresAt });
 });
 
-const ResetPasswordUsingCustomAuthCodeRequest = z.object({
+const ResetCustomAuthPasswordRequest = z.object({
   uid: z.string(),
   code: z.string(),
   newPassword: z.string()
 })
 
-export const resetPasswordUsingCustomAuthCode = onCall(async (req) => {
-  const requestValidationResult = ResetPasswordUsingCustomAuthCodeRequest.safeParse(req.data);
+export const resetCustomAuthPassword = onCall(async (req) => {
+  const requestValidationResult = ResetCustomAuthPasswordRequest.safeParse(req.data);
   if (!requestValidationResult.success) {
     throw new HttpsError("invalid-argument", "Invalid Request");
   }
