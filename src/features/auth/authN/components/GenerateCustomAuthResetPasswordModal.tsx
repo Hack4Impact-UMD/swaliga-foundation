@@ -42,8 +42,8 @@ export function GenerateCustomAuthResetPasswordModal(
         isRevealed ? (
           <CopyButton value="code">
             {({ copied, copy }) => (
-              <ActionIcon variant="light" color="gray">
-                <MdContentCopy />
+              <ActionIcon variant="light" color="gray" onClick={copy}>
+                <MdContentCopy color={copied ? "green" : undefined} />
               </ActionIcon>
             )}
           </CopyButton>
