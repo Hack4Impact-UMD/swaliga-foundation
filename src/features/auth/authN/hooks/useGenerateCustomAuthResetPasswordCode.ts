@@ -8,12 +8,18 @@ const GenerateCustomAuthResetPasswordCodeRequestSchema = z.object({
 });
 export type GenerateCustomAuthResetPasswordCodeRequest = z.infer<typeof GenerateCustomAuthResetPasswordCodeRequestSchema>;
 
+const GenerateCustomAuthResetPasswordCodeResponseSchema = z.object({
+  code: z.string()
+});
+export type GenerateCustomAuthResetPasswordCodeResponse = z.infer<typeof GenerateCustomAuthResetPasswordCodeResponseSchema>;
+
 async function generateCustomAuthResetPasswordCode(req: GenerateCustomAuthResetPasswordCodeRequest) {
   const requestValidationResult = GenerateCustomAuthResetPasswordCodeRequestSchema.safeParse(req);
   if (!requestValidationResult.success) {
     throw new Error("Invalid Request")
   }
-  await httpsCallable(functions, "generateCustomAuthResetPasswordCode")(req);
+  const res = await httpsCallable<GenerateCustomAuthResetPasswordCodeRequest, GenerateCustomAuthResetPasswordCodeResponse>(functions, "generateCustomAuthResetPasswordCode")(req);
+  return res.data;
 }
 
 export default function useGenerateCustomAuthResetPasswordCode() {

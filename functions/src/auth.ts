@@ -322,7 +322,7 @@ export const generateCustomAuthResetPasswordCode = onCall(async (req) => {
   const codeHash = hash(code, 10);
   const expiresAt = moment().add(10, 'minutes').toISOString();
   await adminDb.collection(Collection.USERS).doc(uid).update({ codeHash, expiresAt });
-  return code;
+  return { code };
 });
 
 const ResetCustomAuthPasswordRequest = z.object({
