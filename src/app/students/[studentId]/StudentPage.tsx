@@ -269,10 +269,14 @@ export default function StudentPage(props: StudentPageProps) {
             </MenuIcon>
           )}
           {student.isArchived ? (
-            <MenuIcon label="Unarchive" onClick={async () => updateStudent(student.id, { isArchived: false })}>
+            <MenuIcon
+              label="Unarchive"
+              onClick={async () =>
+                updateStudent(student.id, { isArchived: false })
+              }
+            >
               <MdUnarchive size={30} />
             </MenuIcon>
-            
           ) : (
             <MenuIcon
               label="Archive"
@@ -284,9 +288,16 @@ export default function StudentPage(props: StudentPageProps) {
             </MenuIcon>
           )}
           {!student.isArchived && <EditAccountModal student={student} />}
-          <MenuIcon label="Reset Password" onClick={() => openGenerateCustomAuthResetPasswordModal()}>
-            <MdLockReset size={30} />
-          </MenuIcon>
+          {student.uid !== undefined && (
+            <MenuIcon
+              label="Reset Password"
+              onClick={() =>
+                openGenerateCustomAuthResetPasswordModal({ uid: student.uid! })
+              }
+            >
+              <MdLockReset size={30} />
+            </MenuIcon>
+          )}
         </div>
         <div className={styles.infoFieldsContainer}>
           {studentInfo.map((info) => (
