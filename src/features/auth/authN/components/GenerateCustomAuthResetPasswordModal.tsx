@@ -5,7 +5,6 @@ import { ActionIcon, CopyButton, PasswordInput } from "@mantine/core";
 import { MdContentCopy } from "react-icons/md";
 import { clsx } from "clsx";
 import styles from "./GenerateCustomAuthResetPasswordModal.module.css";
-
 interface GenerateCustomAuthResetPasswordModalProps {
   uid: string;
 }
@@ -35,12 +34,13 @@ export function GenerateCustomAuthResetPasswordModal(
       }}
       value={code}
       loading={generateCustomAuthResetPasswordCodeMutation.isPending}
+      disabled={generateCustomAuthResetPasswordCodeMutation.isPending}
       error={generateCustomAuthResetPasswordCodeMutation.error?.message}
       visible={isRevealed}
       onVisibilityChange={reveal}
       rightSection={
         isRevealed ? (
-          <CopyButton value="code">
+          <CopyButton value={code ?? ""}>
             {({ copied, copy }) => (
               <ActionIcon variant="light" color="gray" onClick={copy}>
                 <MdContentCopy color={copied ? "green" : undefined} />
