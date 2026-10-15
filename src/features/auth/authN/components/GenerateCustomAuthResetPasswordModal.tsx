@@ -1,29 +1,52 @@
-import useGenerateCustomAuthResetPasswordCode from "@/features/auth/authN/hooks/useGenerateCustomAuthResetPasswordCode"
-import { modals } from "@mantine/modals"
-import { useEffect } from "react";
+import useGenerateCustomAuthResetPasswordCode from "@/features/auth/authN/hooks/useGenerateCustomAuthResetPasswordCode";
+import { modals } from "@mantine/modals";
+import { useEffect, useState } from "react";
+import { ActionIcon, CopyButton, PasswordInput } from "@mantine/core";
+import { MdContentCopy } from "react-icons/md";
+import { clsx } from "clsx";
+import styles from "./GenerateCustomAuthResetPasswordModal.module.css";
 
 interface GenerateCustomAuthResetPasswordModalProps {
   uid: string;
 }
 
-export function GenerateCustomAuthResetPasswordModal(props: GenerateCustomAuthResetPasswordModalProps) {
+export function GenerateCustomAuthResetPasswordModal(
+  props: GenerateCustomAuthResetPasswordModalProps,
+) {
   const { uid } = props;
 
-  const generateCustomAuthResetPasswordCodeMutation = useGenerateCustomAuthResetPasswordCode();
+  const [isRevealed, setIsRevealed] = useState<boolean>(false);
+  const reveal = () => setIsRevealed(true);
+
+  const generateCustomAuthResetPasswordCodeMutation =
+    useGenerateCustomAuthResetPasswordCode();
   const generateResetPasswordCode = () => {
     generateCustomAuthResetPasswordCodeMutation.mutate({ uid });
-  }
+  };
   useEffect(generateResetPasswordCode, []);
 
-  if (!generateCustomAuthResetPasswordCodeMutation.data) {
-    return <p>Loading</p>
-  }
-  return <div>{generateCustomAuthResetPasswordCodeMutation.data.code}</div>
+  const code = generateCustomAuthResetPasswordCodeMutation.data?.code;
+  return (
+    <PasswordInput
+      classNames={{
+        input: clsx(styles.disableInput),
+        visibilityToggle: clsx({ [styles.hiddenIcon]: isRevealed })
+      }}
+      value={code ?? ""}
+      label="code"
+      loading={generateCustomAuthResetPasswordCodeMutation.isPending}
+      error={generateCustomAuthResetPasswordCodeMutation.error}
+      visible={isRevealed}
+      onVisibilityChange={reveal}
+    />
+  );
 }
 
-export default function openGenerateCustomAuthResetPasswordModal(props: GenerateCustomAuthResetPasswordModalProps) {
+export default function openGenerateCustomAuthResetPasswordModal(
+  props: GenerateCustomAuthResetPasswordModalProps,
+) {
   modals.open({
     title: "Generate Code",
-    children: <GenerateCustomAuthResetPasswordModal {...props} />
-  })
+    children: <GenerateCustomAuthResetPasswordModal {...props} />,
+  });
 }
