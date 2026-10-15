@@ -35,7 +35,7 @@ import { exportFullStudentDataToCSV } from "@/features/dataExporting/exportCSV";
 import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 import { MdArchive, MdUnarchive, MdLockReset } from "react-icons/md";
 import { updateStudent } from "@/data/firestore/students";
-import openGenerateCustomAuthResetPasswordModal from "@/components/ui/GenerateCustomAuthResetPasswordModal";
+import openGenerateCustomAuthResetPasswordModal from "@/features/auth/authN/components/GenerateCustomAuthResetPasswordModal";
 
 interface StudentPageProps {
   studentId: string;
