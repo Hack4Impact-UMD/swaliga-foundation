@@ -17,6 +17,7 @@ export function GenerateCustomAuthResetPasswordModal(
 
   const [isRevealed, setIsRevealed] = useState<boolean>(false);
   const reveal = () => setIsRevealed(true);
+  console.log(isRevealed);
 
   const generateCustomAuthResetPasswordCodeMutation =
     useGenerateCustomAuthResetPasswordCode();
@@ -30,14 +31,24 @@ export function GenerateCustomAuthResetPasswordModal(
     <PasswordInput
       classNames={{
         input: clsx(styles.disableInput),
-        visibilityToggle: clsx({ [styles.hiddenIcon]: isRevealed })
+        visibilityToggle: clsx(isRevealed && styles.hiddenIcon),
       }}
-      value={code ?? ""}
-      label="code"
+      value={code}
       loading={generateCustomAuthResetPasswordCodeMutation.isPending}
-      error={generateCustomAuthResetPasswordCodeMutation.error}
+      error={generateCustomAuthResetPasswordCodeMutation.error?.message}
       visible={isRevealed}
       onVisibilityChange={reveal}
+      rightSection={
+        isRevealed ? (
+          <CopyButton value="code">
+            {({ copied, copy }) => (
+              <ActionIcon variant="light" color="gray">
+                <MdContentCopy />
+              </ActionIcon>
+            )}
+          </CopyButton>
+        ) : undefined
+      }
     />
   );
 }
