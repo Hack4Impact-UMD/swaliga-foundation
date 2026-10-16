@@ -40,7 +40,7 @@ export default function SendResetPasswordEmailPage() {
             value={email}
             onChange={(e) => handleEmailChange(e.target.value)}
           />
-          <Anchor href="/reset-password-custom" className={styles.customAuthResetPasswordRedirect}>Didn't sign up with an email?</Anchor>
+          <Anchor href="/reset-password?auth=custom" className={styles.customAuthResetPasswordRedirect}>Didn't sign up with an email?</Anchor>
           <button
             className={`${styles.button} ${styles.submitButton}`}
             onClick={handleResetButtonClick}

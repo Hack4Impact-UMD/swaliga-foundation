@@ -1,20 +1,30 @@
+"use client";
+
 import ImageBackgroundPage from "@/components/layout/pages/ImageBackgroundPage";
 import useResetPasswordCustomAuth from "@/features/auth/authN/hooks/useResetPasswordCustomAuth";
 import { useForm } from "@tanstack/react-form";
 import z from "zod";
+import styles from "./ResetPasswordCustomAuthPage.module.css";
+import { Anchor } from "@mantine/core";
+import { FaArrowLeft } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 const ResetPasswordCustomAuthFormSchema = z.object({
   username: z.string(),
   newPassword: z.string(),
-  code: z.string()
+  confirmNewPassword: z.string(),
+  code: z.string(),
 });
-type ResetPasswordCustomAuthForm = z.infer<typeof ResetPasswordCustomAuthFormSchema>;
+type ResetPasswordCustomAuthForm = z.infer<
+  typeof ResetPasswordCustomAuthFormSchema
+>;
 
 const DEFAULT_VALUES: ResetPasswordCustomAuthForm = {
   username: "",
   newPassword: "",
-  code: ""
-}
+  confirmNewPassword: "",
+  code: "",
+};
 
 export default function ResetPasswordCustomAuthPage() {
   const resetPasswordCustomAuthMutation = useResetPasswordCustomAuth();
@@ -23,10 +33,100 @@ export default function ResetPasswordCustomAuthPage() {
     defaultValues: DEFAULT_VALUES,
     onSubmit: async ({ value }) => {
       resetPasswordCustomAuthMutation.mutate(value);
-    }
+    },
   });
 
-  return <ImageBackgroundPage>
-    
-  </ImageBackgroundPage>
+  const router = useRouter();
+
+  return (
+    <ImageBackgroundPage>
+      <div className={styles.container}>
+        <div className={styles.formContainer}>
+          <h1 className={styles.header}>Reset Password</h1>
+          <form.Field
+            name="username"
+            validators={{
+              onBlur: ResetPasswordCustomAuthFormSchema.shape.username,
+            }}
+          >
+            {(field) => (
+              <input
+                className={styles.inputField}
+                placeholder={field.name}
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+              />
+            )}
+          </form.Field>
+          <form.Field
+            name="newPassword"
+            validators={{
+              onBlur: ResetPasswordCustomAuthFormSchema.shape.newPassword,
+            }}
+          >
+            {(field) => (
+              <input
+                className={styles.inputField}
+                placeholder={field.name}
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+              />
+            )}
+          </form.Field>
+          <form.Field
+            name="confirmNewPassword"
+            validators={{
+              onBlur:
+                ResetPasswordCustomAuthFormSchema.shape.confirmNewPassword,
+            }}
+          >
+            {(field) => (
+              <input
+                className={styles.inputField}
+                placeholder={field.name}
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+              />
+            )}
+          </form.Field>
+          <form.Field
+            name="code"
+            validators={{
+              onBlur: ResetPasswordCustomAuthFormSchema.shape.code,
+            }}
+          >
+            {(field) => (
+              <input
+                className={styles.inputField}
+                placeholder={field.name}
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+              />
+            )}
+          </form.Field>
+          <Anchor
+            href="/reset-password?auth=builtin"
+            className={styles.customAuthResetPasswordRedirect}
+          >
+            Signed up with an email? Click here.
+          </Anchor>
+          <button
+            className={`${styles.button} ${styles.submitButton}`}
+            onClick={form.handleSubmit}
+          >
+            Send Reset Email
+          </button>
+        
+        </div>
+        <div className={styles.returnButtonContainer}>
+          <button
+            className={`${styles.button} ${styles.returnHomeButton}`}
+            onClick={() => router.push("/")}
+          >
+            <FaArrowLeft /> Return to Home
+          </button>
+        </div>
+      </div>
+    </ImageBackgroundPage>
+  );
 }
