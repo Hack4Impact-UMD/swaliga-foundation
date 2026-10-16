@@ -13,7 +13,7 @@ type ResetPasswordCustomAuthRequest = z.infer<typeof ResetPasswordCustomAuthRequ
 async function resetPasswordCustomAuth(req: ResetPasswordCustomAuthRequest) {
   const validationResult = ResetPasswordCustomAuthRequestSchema.safeParse(req);
   if (!validationResult.success) {
-    throw new Error("Invalid Request");
+    throw new Error(validationResult.error.issues.flatMap(issue => issue.message).join(", "));
   }
   return await httpsCallable(functions, 'resetPasswordCustomAuth')(req);
 }
