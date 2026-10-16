@@ -6,6 +6,7 @@ import { sendResetPasswordEmail } from "@/features/auth/authN/emailPasswordAuthN
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageBackgroundPage from "@/components/layout/pages/ImageBackgroundPage";
+import { Anchor } from "@mantine/core";
 
 export default function SendResetPasswordEmailPage() {
   const [email, setEmail] = useState<string>("");
@@ -39,6 +40,7 @@ export default function SendResetPasswordEmailPage() {
             value={email}
             onChange={(e) => handleEmailChange(e.target.value)}
           />
+          <Anchor href="/reset-password-custom" className={styles.customAuthResetPasswordRedirect}>Didn't sign up with an email?</Anchor>
           <button
             className={`${styles.button} ${styles.submitButton}`}
             onClick={handleResetButtonClick}
