@@ -325,14 +325,14 @@ export const generateCustomAuthResetPasswordCode = onCall(async (req) => {
   return { code };
 });
 
-const ResetCustomAuthPasswordRequest = z.object({
+const ResetPasswordCustomAuthRequest = z.object({
   uid: z.string(),
   code: z.string(),
   newPassword: z.string()
 })
 
-export const resetCustomAuthPassword = onCall(async (req) => {
-  const requestValidationResult = ResetCustomAuthPasswordRequest.safeParse(req.data);
+export const resetPasswordCustomAuth = onCall(async (req) => {
+  const requestValidationResult = ResetPasswordCustomAuthRequest.safeParse(req.data);
   if (!requestValidationResult.success) {
     throw new HttpsError("invalid-argument", "Invalid Request");
   }
