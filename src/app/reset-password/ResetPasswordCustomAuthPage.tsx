@@ -9,12 +9,17 @@ import { Anchor } from "@mantine/core";
 import { FaArrowLeft } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
-const ResetPasswordCustomAuthFormSchema = z.object({
-  username: z.string(),
-  newPassword: z.string(),
-  confirmNewPassword: z.string(),
-  code: z.string(),
-});
+const ResetPasswordCustomAuthFormSchema = z
+  .object({
+    username: z.string(),
+    newPassword: z.string(),
+    confirmNewPassword: z.string(),
+    code: z.string(),
+  })
+  .refine(
+    (obj) => obj.newPassword === obj.confirmNewPassword,
+    "Password confirmation must be the same as password.",
+  );
 type ResetPasswordCustomAuthForm = z.infer<
   typeof ResetPasswordCustomAuthFormSchema
 >;
@@ -116,7 +121,6 @@ export default function ResetPasswordCustomAuthPage() {
           >
             Send Reset Email
           </button>
-        
         </div>
         <div className={styles.returnButtonContainer}>
           <button
