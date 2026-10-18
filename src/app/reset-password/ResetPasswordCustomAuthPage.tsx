@@ -49,7 +49,11 @@ export default function ResetPasswordCustomAuthPage() {
       if (!validationResult.success) {
         throw new Error("Unable to submit form");
       }
-      resetPasswordCustomAuthMutation.mutate(value);
+      resetPasswordCustomAuthMutation.mutate({
+        code: value.code,
+        newPassword: value.newPassword,
+        username: value.username
+      });
     },
     validators: {
       onChangeAsync: ResetPasswordCustomAuthFormSchema,
