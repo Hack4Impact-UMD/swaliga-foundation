@@ -8,13 +8,16 @@ import styles from "./ResetPasswordCustomAuthPage.module.css";
 import { Anchor } from "@mantine/core";
 import { FaArrowLeft } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { auth } from "@/config/firebaseConfig";
+import { validatePassword } from "firebase/auth";
+import { Base64UrlUUID, Base64UrlUUIDSchema } from "@/utils/utils";
 
 const ResetPasswordCustomAuthFormSchema = z
   .object({
     username: z.string(),
-    newPassword: z.string(),
+    newPassword: z.string().refine(async (password) => validatePassword(auth, password)),
     confirmNewPassword: z.string(),
-    code: z.string(),
+    code: Base64UrlUUIDSchema,
   })
   .refine(
     (obj) => obj.newPassword === obj.confirmNewPassword,
@@ -28,7 +31,7 @@ const DEFAULT_VALUES: ResetPasswordCustomAuthForm = {
   username: "",
   newPassword: "",
   confirmNewPassword: "",
-  code: "",
+  code: "" as Base64UrlUUID,
 };
 
 export default function ResetPasswordCustomAuthPage() {
@@ -37,6 +40,10 @@ export default function ResetPasswordCustomAuthPage() {
   const form = useForm({
     defaultValues: DEFAULT_VALUES,
     onSubmit: async ({ value }) => {
+      const validationResult = await ResetPasswordCustomAuthFormSchema.safeParseAsync(value);
+      if (validationResult.success) {
+        throw new Error("Unable to submit form");
+      }
       resetPasswordCustomAuthMutation.mutate(value);
     },
   });
