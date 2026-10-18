@@ -326,7 +326,7 @@ export const generateCustomAuthResetPasswordCode = onCall(async (req) => {
 });
 
 const ResetPasswordCustomAuthRequest = z.object({
-  uid: z.string(),
+  username: z.string(),
   code: z.string(),
   newPassword: z.string()
 })
@@ -336,8 +336,13 @@ export const resetPasswordCustomAuth = onCall(async (req) => {
   if (!requestValidationResult.success) {
     throw new HttpsError("invalid-argument", "Invalid Request");
   }
-  const { uid, code, newPassword } = requestValidationResult.data;
+  const { username, code, newPassword } = requestValidationResult.data;
 
+  const usernameDocRef = await adminDb.collection(Collection.USERNAMES).doc(username).get();
+  if (!usernameDocRef.exists) {
+    throw new HttpsError("invalid-argument", "Invalid username");
+  }
+  const uid = usernameDocRef.data()!.uid;
   const userDocRef = await adminDb.collection(Collection.USERS).doc(uid).get();
   const userDoc = userDocRef.data()
   if (!userDocRef.exists) {

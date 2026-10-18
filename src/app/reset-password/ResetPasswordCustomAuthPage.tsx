@@ -46,7 +46,7 @@ export default function ResetPasswordCustomAuthPage() {
     onSubmit: async ({ value }) => {
       const validationResult =
         await ResetPasswordCustomAuthFormSchema.safeParseAsync(value);
-      if (validationResult.success) {
+      if (!validationResult.success) {
         throw new Error("Unable to submit form");
       }
       resetPasswordCustomAuthMutation.mutate(value);
