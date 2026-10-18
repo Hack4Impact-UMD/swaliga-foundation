@@ -10,7 +10,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { auth } from "@/config/firebaseConfig";
 import { validatePassword } from "firebase/auth";
-import { Base64UrlUUID, Base64UrlUUIDSchema } from "@/utils/utils";
+import { Base64UrlUUIDSchema } from "@/utils/utils";
 
 const ResetPasswordCustomAuthFormSchema = z
   .object({
@@ -27,11 +27,11 @@ type ResetPasswordCustomAuthForm = z.infer<
   typeof ResetPasswordCustomAuthFormSchema
 >;
 
-const DEFAULT_VALUES: ResetPasswordCustomAuthForm = {
+const DEFAULT_VALUES: Record<keyof ResetPasswordCustomAuthForm, string> = {
   username: "",
   newPassword: "",
   confirmNewPassword: "",
-  code: "" as Base64UrlUUID,
+  code: "",
 };
 
 export default function ResetPasswordCustomAuthPage() {
