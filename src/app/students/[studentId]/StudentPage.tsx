@@ -36,6 +36,7 @@ import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
 import { MdArchive, MdUnarchive, MdLockReset } from "react-icons/md";
 import { updateStudent } from "@/data/firestore/students";
 import openGenerateCustomAuthResetPasswordModal from "@/features/auth/authN/components/GenerateCustomAuthResetPasswordModal";
+import { auth } from "@/config/firebaseConfig";
 
 interface StudentPageProps {
   studentId: string;
@@ -288,7 +289,7 @@ export default function StudentPage(props: StudentPageProps) {
             </MenuIcon>
           )}
           {!student.isArchived && <EditAccountModal student={student} />}
-          {student.uid !== undefined && (
+          {student.uid !== undefined && (role === "ADMIN" || role === "STAFF") && (
             <MenuIcon
               label="Reset Password"
               onClick={() =>
