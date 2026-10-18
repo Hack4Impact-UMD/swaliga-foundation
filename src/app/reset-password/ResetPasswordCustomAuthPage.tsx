@@ -8,14 +8,18 @@ import styles from "./ResetPasswordCustomAuthPage.module.css";
 import { Anchor } from "@mantine/core";
 import { FaArrowLeft } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { auth } from "@/config/firebaseConfig";
-import { validatePassword } from "firebase/auth";
 import { Base64UrlUUIDSchema } from "@/utils/utils";
+import { checkPasswordValidity } from "@/features/auth/authN/emailPasswordAuthN";
 
 const ResetPasswordCustomAuthFormSchema = z
   .object({
     username: z.string(),
-    newPassword: z.string().refine(async (password) => validatePassword(auth, password)),
+    newPassword: z
+      .string()
+      .refine(
+        async (password) => checkPasswordValidity(password),
+        "Invalid password",
+      ),
     confirmNewPassword: z.string(),
     code: Base64UrlUUIDSchema,
   })
@@ -40,11 +44,16 @@ export default function ResetPasswordCustomAuthPage() {
   const form = useForm({
     defaultValues: DEFAULT_VALUES,
     onSubmit: async ({ value }) => {
-      const validationResult = await ResetPasswordCustomAuthFormSchema.safeParseAsync(value);
+      const validationResult =
+        await ResetPasswordCustomAuthFormSchema.safeParseAsync(value);
       if (validationResult.success) {
         throw new Error("Unable to submit form");
       }
       resetPasswordCustomAuthMutation.mutate(value);
+    },
+    validators: {
+      onChangeAsync: ResetPasswordCustomAuthFormSchema,
+      onChangeAsyncDebounceMs: 1000,
     },
   });
 
@@ -55,12 +64,7 @@ export default function ResetPasswordCustomAuthPage() {
       <div className={styles.container}>
         <div className={styles.formContainer}>
           <h1 className={styles.header}>Reset Password</h1>
-          <form.Field
-            name="username"
-            validators={{
-              onBlur: ResetPasswordCustomAuthFormSchema.shape.username,
-            }}
-          >
+          <form.Field name="username">
             {(field) => (
               <input
                 className={styles.inputField}
@@ -70,12 +74,7 @@ export default function ResetPasswordCustomAuthPage() {
               />
             )}
           </form.Field>
-          <form.Field
-            name="newPassword"
-            validators={{
-              onBlur: ResetPasswordCustomAuthFormSchema.shape.newPassword,
-            }}
-          >
+          <form.Field name="newPassword">
             {(field) => (
               <input
                 className={styles.inputField}
@@ -85,13 +84,7 @@ export default function ResetPasswordCustomAuthPage() {
               />
             )}
           </form.Field>
-          <form.Field
-            name="confirmNewPassword"
-            validators={{
-              onBlur:
-                ResetPasswordCustomAuthFormSchema.shape.confirmNewPassword,
-            }}
-          >
+          <form.Field name="confirmNewPassword">
             {(field) => (
               <input
                 className={styles.inputField}
@@ -101,12 +94,7 @@ export default function ResetPasswordCustomAuthPage() {
               />
             )}
           </form.Field>
-          <form.Field
-            name="code"
-            validators={{
-              onBlur: ResetPasswordCustomAuthFormSchema.shape.code,
-            }}
-          >
+          <form.Field name="code">
             {(field) => (
               <input
                 className={styles.inputField}
