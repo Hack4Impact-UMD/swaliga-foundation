@@ -5,7 +5,7 @@ import useResetPasswordCustomAuth from "@/features/auth/authN/hooks/useResetPass
 import { useForm } from "@tanstack/react-form";
 import z from "zod";
 import styles from "./ResetPasswordCustomAuthPage.module.css";
-import { Anchor } from "@mantine/core";
+import { Anchor, TextInput } from "@mantine/core";
 import { FaArrowLeft } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { Base64UrlUUIDSchema } from "@/utils/utils";
@@ -66,41 +66,72 @@ export default function ResetPasswordCustomAuthPage() {
           <h1 className={styles.header}>Reset Password</h1>
           <form.Field name="username">
             {(field) => (
-              <input
-                className={styles.inputField}
+              <TextInput
+                classNames={{
+                  label: styles.inputFieldLabel,
+                  description: styles.inputFieldDescription,
+                }}
+                label={"Username"}
                 placeholder={field.name}
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
+                error={field.state.meta.errors
+                  .map((err) => (typeof err === "string" ? err : err?.message))
+                  .join(", ")}
               />
             )}
           </form.Field>
           <form.Field name="newPassword">
             {(field) => (
-              <input
-                className={styles.inputField}
+              <TextInput
+                classNames={{
+                  label: styles.inputFieldLabel,
+                  description: styles.inputFieldDescription,
+                }}
+                label={"New Password"}
                 placeholder={field.name}
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
+                error={field.state.meta.errors
+                  .map((err) => (typeof err === "string" ? err : err?.message))
+                  .join(", ")}
               />
             )}
           </form.Field>
           <form.Field name="confirmNewPassword">
             {(field) => (
-              <input
-                className={styles.inputField}
+              <TextInput
+                classNames={{
+                  label: styles.inputFieldLabel,
+                  description: styles.inputFieldDescription,
+                }}
+                label={"Confirm New Password"}
                 placeholder={field.name}
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
+                error={field.state.meta.errors
+                  .map((err) => (typeof err === "string" ? err : err?.message))
+                  .join(", ")}
               />
             )}
           </form.Field>
           <form.Field name="code">
             {(field) => (
-              <input
-                className={styles.inputField}
+              <TextInput
+                classNames={{
+                  label: styles.inputFieldLabel,
+                  description: styles.inputFieldDescription,
+                }}
+                label={"Code"}
+                description={
+                  "Please ask your Swaliga teacher or admin for this code."
+                }
                 placeholder={field.name}
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
+                error={field.state.meta.errors
+                  .map((err) => (typeof err === "string" ? err : err?.message))
+                  .join(", ")}
               />
             )}
           </form.Field>
