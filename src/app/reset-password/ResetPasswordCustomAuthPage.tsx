@@ -17,8 +17,8 @@ const ResetPasswordCustomAuthFormSchema = z
     newPassword: z
       .string()
       .refine(
-        async (password) => checkPasswordValidity(password),
-        "Invalid password",
+        async (password) => { checkPasswordValidity(password); return true; },
+        "Password must be between 6 and 4096 characters",
       ),
     confirmNewPassword: z.string(),
     code: Base64UrlUUIDSchema,
