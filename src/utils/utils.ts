@@ -1,4 +1,5 @@
 import z from "zod";
+import { Buffer } from "buffer";
 
 export function isEmail(input: string) {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -30,17 +31,18 @@ export function asUUID(str: string): UUID {
   return validationResult.data;
 }
 
-export const Base64UrlUUIDSchema = z.string().regex(/[A-Za-z0-9_-]{22}/).transform((val) => {
+export const Base64UrlUUIDSchema = z.string().regex(/[A-Za-z0-9_-]{22}/, "Invalid input").transform((val) => {
   const hexStr = Buffer.from(val, 'base64url').toString('hex');
   return `${hexStr.substring(0, 12)}-${hexStr.substring(12, 16)}-${hexStr.substring(16, 20)}-${hexStr.substring(20, 24)}-${hexStr.substring(24, 36)}`;
-}).pipe(z.uuid()).brand<"Base64UrlUUID">();
+}).pipe(z.uuid("Invalid input")).brand<"Base64UrlUUID">();
 export type Base64UrlUUID = z.infer<typeof Base64UrlUUIDSchema>;
 export function asBase64UrlUuid(str: string): Base64UrlUUID {
   const validationResult = Base64UrlUUIDSchema.safeParse(str);
   if (!validationResult.success) {
     throw new Error("Input is not a valid UUID");
   }
-  return validationResult.data;}
+  return validationResult.data;
+}
 
 export function base64UrlEncodeUUID(uuid: UUID): Base64UrlUUID {
   return Buffer.from(uuid.replaceAll('-', ''), 'hex').toString('base64url') as Base64UrlUUID;

@@ -13,7 +13,7 @@ import { checkPasswordValidity } from "@/features/auth/authN/emailPasswordAuthN"
 
 const ResetPasswordCustomAuthFormSchema = z
   .object({
-    username: z.string(),
+    username: z.string().min(1, "Username can't be empty."),
     newPassword: z
       .string()
       .refine(
@@ -23,10 +23,10 @@ const ResetPasswordCustomAuthFormSchema = z
     confirmNewPassword: z.string(),
     code: Base64UrlUUIDSchema,
   })
-  .refine(
-    (obj) => obj.newPassword === obj.confirmNewPassword,
-    "Password confirmation must be the same as password.",
-  );
+  .refine((obj) => obj.newPassword === obj.confirmNewPassword, {
+    message: "Password confirmation must be the same as password.",
+    path: ["confirmNewPassword"],
+  });
 type ResetPasswordCustomAuthForm = z.infer<
   typeof ResetPasswordCustomAuthFormSchema
 >;
