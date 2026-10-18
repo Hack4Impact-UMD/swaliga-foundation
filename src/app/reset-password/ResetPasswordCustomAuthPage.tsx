@@ -141,7 +141,7 @@ export default function ResetPasswordCustomAuthPage() {
             className={`${styles.button} ${styles.submitButton}`}
             onClick={form.handleSubmit}
           >
-            Send Reset Email
+            Reset Password
           </button>
         </div>
         <div className={styles.returnButtonContainer}>
