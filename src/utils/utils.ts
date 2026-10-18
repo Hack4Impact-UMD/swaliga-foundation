@@ -27,24 +27,25 @@ export function asUUID(str: string): UUID {
   if (!validationResult.success) {
     throw new Error("Input is not a valid UUID");
   }
-  return validationResult.data as UUID;
+  return validationResult.data;
 }
 
-export const Base64UrlUUIDSchema = z.preprocess((val) => {
-  const StringFormatSchema = z.string().regex(/[A-Za-z0-9_-]{22}/);
-  const validationResult = StringFormatSchema.safeParse(val);
-  return validationResult.success ? validationResult.data : null;
-}, z.uuid().brand<"Base64UrlUUID">());
-export type Base64UrlUUID = z.infer<typeof Base64UrlUUIDSchema> ;
+export const Base64UrlUUIDSchema = z.string().regex(/[A-Za-z0-9_-]{22}/).transform((val) => {
+  const hexStr = Buffer.from(val, 'base64url').toString('hex');
+  return `${hexStr.substring(0, 12)}-${hexStr.substring(12, 16)}-${hexStr.substring(16, 20)}-${hexStr.substring(20, 24)}-${hexStr.substring(24, 36)}`;
+}).pipe(z.uuid()).brand<"Base64UrlUUID">();
+export type Base64UrlUUID = z.infer<typeof Base64UrlUUIDSchema>;
 export function asBase64UrlUuid(str: string): Base64UrlUUID {
-  return "5" as Base64UrlUUID;
-}
+  const validationResult = Base64UrlUUIDSchema.safeParse(str);
+  if (!validationResult.success) {
+    throw new Error("Input is not a valid UUID");
+  }
+  return validationResult.data;}
 
-
-export function uuidToBase64Url(uuid: UUID): Base64UrlUUID {
+export function base64UrlEncodeUUID(uuid: UUID): Base64UrlUUID {
   return Buffer.from(uuid.replaceAll('-', ''), 'hex').toString('base64url') as Base64UrlUUID;
 }
 
-export function base64UrlToUUID(base64UrlUUID: Base64UrlUUID): UUID {
+export function base64UrlDecodeUUID(base64UrlUUID: Base64UrlUUID): UUID {
   return Buffer.from(base64UrlUUID, 'base64url').toString('hex') as UUID;
 }
