@@ -14,6 +14,7 @@ import IncompleteProfileMessage from "@/features/profile/IncompleteProfileMessag
 import QueryClientProviderWrapper from "@/components/QueryClientProviderWrapper";
 import { ModalsProvider } from "@mantine/modals";
 import MantineProviderWrapper from "@/components/MantineProviderWrapper";
+import TanstackDevtoolsWrapper from "@/components/TanstackDevtoolsWrapper";
 
 const LoadingPage = dynamic(() => import("./loading"));
 
@@ -52,6 +53,7 @@ export default function RootLayout({
             </MantineProviderWrapper>
           </QueryClientProviderWrapper>
         </Suspense>
+        <TanstackDevtoolsWrapper />
       </body>
     </html>
   );
