@@ -72,7 +72,6 @@ export default function ResetPasswordCustomAuthPage() {
                   description: styles.inputFieldDescription,
                 }}
                 label={"Username"}
-                placeholder={field.name}
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 error={field.state.meta.errors
@@ -89,7 +88,6 @@ export default function ResetPasswordCustomAuthPage() {
                   description: styles.inputFieldDescription,
                 }}
                 label={"New Password"}
-                placeholder={field.name}
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 error={field.state.meta.errors
@@ -106,7 +104,6 @@ export default function ResetPasswordCustomAuthPage() {
                   description: styles.inputFieldDescription,
                 }}
                 label={"Confirm New Password"}
-                placeholder={field.name}
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 error={field.state.meta.errors
@@ -126,7 +123,6 @@ export default function ResetPasswordCustomAuthPage() {
                 description={
                   "Please ask your Swaliga teacher or admin for this code."
                 }
-                placeholder={field.name}
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 error={field.state.meta.errors
