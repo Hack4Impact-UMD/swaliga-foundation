@@ -5,7 +5,7 @@ import useResetPasswordCustomAuth from "@/features/auth/authN/hooks/useResetPass
 import { useForm } from "@tanstack/react-form";
 import z from "zod";
 import styles from "./ResetPasswordCustomAuthPage.module.css";
-import { Anchor, TextInput } from "@mantine/core";
+import { Anchor, Text, TextInput } from "@mantine/core";
 import { FaArrowLeft } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { Base64UrlUUIDSchema } from "@/utils/utils";
@@ -14,12 +14,10 @@ import { checkPasswordValidity } from "@/features/auth/authN/emailPasswordAuthN"
 const ResetPasswordCustomAuthFormSchema = z
   .object({
     username: z.string().min(1, "Username can't be empty."),
-    newPassword: z
-      .string()
-      .refine(
-        async (password) => { checkPasswordValidity(password); return true; },
-        "Password must be between 6 and 4096 characters",
-      ),
+    newPassword: z.string().refine(async (password) => {
+      checkPasswordValidity(password);
+      return true;
+    }, "Password must be between 6 and 4096 characters"),
     confirmNewPassword: z.string(),
     code: Base64UrlUUIDSchema,
   })
@@ -43,17 +41,27 @@ export default function ResetPasswordCustomAuthPage() {
 
   const form = useForm({
     defaultValues: DEFAULT_VALUES,
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value, formApi }) => {
       const validationResult =
         await ResetPasswordCustomAuthFormSchema.safeParseAsync(value);
       if (!validationResult.success) {
         throw new Error("Unable to submit form");
       }
-      resetPasswordCustomAuthMutation.mutate({
-        code: value.code,
-        newPassword: value.newPassword,
-        username: value.username
-      });
+      try {
+        await resetPasswordCustomAuthMutation.mutateAsync({
+          code: value.code,
+          newPassword: value.newPassword,
+          username: value.username,
+        });
+      } catch (err: any) {
+        formApi.setErrorMap({
+          onSubmit: {
+            form: err.message,
+            fields: {},
+          },
+        });
+        console.log("ERROR", err.message);
+      }
     },
     validators: {
       onChangeAsync: ResetPasswordCustomAuthFormSchema,
@@ -147,6 +155,11 @@ export default function ResetPasswordCustomAuthPage() {
           >
             Reset Password
           </button>
+          <Text className={styles.error}>
+            {form.state.errors
+              .map((err) => (typeof err === "string" ? err : err?.message))
+              .join(", ")}
+          </Text>
         </div>
         <div className={styles.returnButtonContainer}>
           <button
