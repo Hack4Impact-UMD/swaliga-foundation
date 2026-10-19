@@ -349,7 +349,7 @@ export const resetPasswordCustomAuth = onCall(async (req) => {
   const userDoc = userDocRef.data()
   if (!userDocRef.exists) {
     throw new HttpsError("unavailable", "This user does not have a custom auth profile.");
-  } else if ('codeHash' in userDoc! && !compare(code, userDoc!.codeHash)) {
+  } else if ('codeHash' in userDoc! && !(await compare(code, userDoc!.codeHash))) {
     if (userDoc.failedAttempts + 1 === MAX_FAILED_RESET_PASSWORD_ATTEMPTS) {
       await adminDb.collection(Collection.USERS).doc(uid).update({
         codeHash: FieldValue.delete(),
