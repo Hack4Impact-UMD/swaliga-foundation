@@ -5,7 +5,7 @@ import useResetPasswordCustomAuth from "@/features/auth/authN/hooks/useResetPass
 import { useForm } from "@tanstack/react-form";
 import z from "zod";
 import styles from "./ResetPasswordCustomAuthPage.module.css";
-import { Anchor, Text, TextInput } from "@mantine/core";
+import { Anchor, PasswordInput, Text, TextInput } from "@mantine/core";
 import { FaArrowLeft } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { Base64UrlUUIDSchema } from "@/utils/utils";
@@ -94,7 +94,7 @@ export default function ResetPasswordCustomAuthPage() {
           </form.Field>
           <form.Field name="newPassword">
             {(field) => (
-              <TextInput
+              <PasswordInput
                 classNames={{
                   label: styles.inputFieldLabel,
                   description: styles.inputFieldDescription,
@@ -110,7 +110,7 @@ export default function ResetPasswordCustomAuthPage() {
           </form.Field>
           <form.Field name="confirmNewPassword">
             {(field) => (
-              <TextInput
+              <PasswordInput
                 classNames={{
                   label: styles.inputFieldLabel,
                   description: styles.inputFieldDescription,
