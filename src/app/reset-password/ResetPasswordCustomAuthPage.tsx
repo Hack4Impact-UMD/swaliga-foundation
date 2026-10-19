@@ -86,9 +86,15 @@ export default function ResetPasswordCustomAuthPage() {
                 label={"Username"}
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
-                error={field.state.meta.errors
-                  .map((err) => (typeof err === "string" ? err : err?.message))
-                  .join(", ")}
+                error={
+                  field.state.meta.isTouched
+                    ? field.state.meta.errors
+                        .map((err) =>
+                          typeof err === "string" ? err : err?.message,
+                        )
+                        .join(", ")
+                    : undefined
+                }
               />
             )}
           </form.Field>
@@ -102,9 +108,15 @@ export default function ResetPasswordCustomAuthPage() {
                 label={"New Password"}
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
-                error={field.state.meta.errors
-                  .map((err) => (typeof err === "string" ? err : err?.message))
-                  .join(", ")}
+                error={
+                  field.state.meta.isTouched
+                    ? field.state.meta.errors
+                        .map((err) =>
+                          typeof err === "string" ? err : err?.message,
+                        )
+                        .join(", ")
+                    : undefined
+                }
               />
             )}
           </form.Field>
@@ -118,9 +130,15 @@ export default function ResetPasswordCustomAuthPage() {
                 label={"Confirm New Password"}
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
-                error={field.state.meta.errors
-                  .map((err) => (typeof err === "string" ? err : err?.message))
-                  .join(", ")}
+                error={
+                  field.state.meta.isTouched
+                    ? field.state.meta.errors
+                        .map((err) =>
+                          typeof err === "string" ? err : err?.message,
+                        )
+                        .join(", ")
+                    : undefined
+                }
               />
             )}
           </form.Field>
@@ -137,9 +155,15 @@ export default function ResetPasswordCustomAuthPage() {
                 }
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
-                error={field.state.meta.errors
-                  .map((err) => (typeof err === "string" ? err : err?.message))
-                  .join(", ")}
+                error={
+                  field.state.meta.isTouched
+                    ? field.state.meta.errors
+                        .map((err) =>
+                          typeof err === "string" ? err : err?.message,
+                        )
+                        .join(", ")
+                    : undefined
+                }
               />
             )}
           </form.Field>
