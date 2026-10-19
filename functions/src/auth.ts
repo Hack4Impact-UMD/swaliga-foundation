@@ -313,18 +313,20 @@ export const generateCustomAuthResetPasswordCode = onCall(async (req) => {
   }
   const { uid } = validationResult.data;
 
-  const userDocRef = await adminDb.collection(Collection.USERS).doc(uid).get();
-  if (!userDocRef.exists) {
-    throw new HttpsError("failed-precondition", "User's account does not use this site's custom authentication system.");
-  }
+  return await adminDb.runTransaction(async (transaction) => {
+    const userDocRef = await transaction.get(adminDb.collection(Collection.USERS).doc(uid));
+    if (!userDocRef.exists) {
+      throw new HttpsError("failed-precondition", "User's account does not use this site's custom authentication system.");
+    }
 
-  const plainUuid = v4();
-  // @ts-expect-error - the `replaceAll` function does exist, but the TypeScript compiler is not recognizing it
-  const code = Buffer.from(plainUuid.replaceAll('-', ''), 'hex').toString('base64url');
-  const codeHash = await hash(code, 10);
-  const expiresAt = moment().add(10, 'minutes').toISOString();
-  await adminDb.collection(Collection.USERS).doc(uid).update({ codeHash, expiresAt, failedAttempts: 0 });
-  return { code };
+    const plainUuid = v4();
+    // @ts-expect-error - the `replaceAll` function does exist, but the TypeScript compiler is not recognizing it
+    const code = Buffer.from(plainUuid.replaceAll('-', ''), 'hex').toString('base64url');
+    const codeHash = await hash(code, 10);
+    const expiresAt = moment().add(10, 'minutes').toISOString();
+    transaction.update(adminDb.collection(Collection.USERS).doc(uid), { codeHash, expiresAt, failedAttempts: 0 });
+    return { code };
+  });
 });
 
 const ResetPasswordCustomAuthRequest = z.object({
@@ -340,37 +342,44 @@ export const resetPasswordCustomAuth = onCall(async (req) => {
   }
   const { username, code, newPassword } = requestValidationResult.data;
 
-  const usernameDocRef = await adminDb.collection(Collection.USERNAMES).doc(username).get();
-  if (!usernameDocRef.exists) {
-    throw new HttpsError("invalid-argument", "Invalid username");
-  }
-  const uid = usernameDocRef.data()!.uid;
-  const userDocRef = await adminDb.collection(Collection.USERS).doc(uid).get();
-  const userDoc = userDocRef.data()
-  if (!userDocRef.exists) {
-    throw new HttpsError("unavailable", "This user does not have a custom auth profile.");
-  } else if (!('codeHash' in userDoc!) || !('expiresAt' in userDoc!) || !('failedAttempts' in userDoc!)) {
-    throw new HttpsError("failed-precondition", "Please request another code.");
-  } else if ('expiresAt' in userDoc! && moment().isAfter(moment(userDoc!.expiresAt))) {
-    throw new HttpsError("deadline-exceeded", "This code has expired. Please request another.");
-  } else if ('codeHash' in userDoc! && !(await compare(code, userDoc!.codeHash))) {
-    if (userDoc.failedAttempts + 1 === MAX_FAILED_RESET_PASSWORD_ATTEMPTS) {
-      await adminDb.collection(Collection.USERS).doc(uid).update({
+  await adminDb.runTransaction(async (transaction) => {
+    const usernameDocRef = await transaction.get(adminDb.collection(Collection.USERNAMES).doc(username));
+    if (!usernameDocRef.exists) {
+      throw new HttpsError("invalid-argument", "Invalid username");
+    }
+    const uid = usernameDocRef.data()!.uid;
+    const userDocRef = await transaction.get(adminDb.collection(Collection.USERS).doc(uid));
+    const userDoc = userDocRef.data()
+    if (!userDocRef.exists) {
+      throw new HttpsError("unavailable", "This user does not have a custom auth profile.");
+    } else if (!('codeHash' in userDoc!) || !('expiresAt' in userDoc!) || !('failedAttempts' in userDoc!)) {
+      throw new HttpsError("failed-precondition", "Please request another code.");
+    } else if ('expiresAt' in userDoc! && moment().isAfter(moment(userDoc!.expiresAt))) {
+      transaction.update(adminDb.collection(Collection.USERS).doc(uid), {
         codeHash: FieldValue.delete(),
         expiresAt: FieldValue.delete(),
         failedAttempts: FieldValue.delete()
       });
-      throw new HttpsError("unavailable", "Too many failed attempts. Please request another code.");
+      throw new HttpsError("deadline-exceeded", "This code has expired. Please request another.");
+    } else if ('codeHash' in userDoc! && !(await compare(code, userDoc!.codeHash))) {
+      if (userDoc.failedAttempts + 1 === MAX_FAILED_RESET_PASSWORD_ATTEMPTS) {
+        transaction.update(adminDb.collection(Collection.USERS).doc(uid), {
+          codeHash: FieldValue.delete(),
+          expiresAt: FieldValue.delete(),
+          failedAttempts: FieldValue.delete()
+        });
+        throw new HttpsError("unavailable", "Too many failed attempts. Please request another code.");
+      }
+      transaction.update(adminDb.collection(Collection.USERS).doc(uid), { failedAttempts: FieldValue.increment(1) });
+      throw new HttpsError("unavailable", "Invalid code");
     }
-    await adminDb.collection(Collection.USERS).doc(uid).update({ failedAttempts: FieldValue.increment(1) })
-    throw new HttpsError("unavailable", "Invalid code");
-  }
 
-  const hashedPassword = await hash(newPassword, 10);
-  await adminDb.collection(Collection.USERS).doc(uid).update({
-    password: hashedPassword,
-    codeHash: FieldValue.delete(),
-    expiresAt: FieldValue.delete(),
-    failedAttempts: FieldValue.delete()
+    const hashedPassword = await hash(newPassword, 10);
+    transaction.update(adminDb.collection(Collection.USERS).doc(uid), {
+      password: hashedPassword,
+      codeHash: FieldValue.delete(),
+      expiresAt: FieldValue.delete(),
+      failedAttempts: FieldValue.delete()
+    });
   });
 });
