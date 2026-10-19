@@ -368,6 +368,7 @@ export const resetPasswordCustomAuth = onCall(async (req) => {
   await adminDb.collection(Collection.USERS).doc(uid).update({
     password: hashedPassword,
     codeHash: FieldValue.delete(),
-    expiresAt: FieldValue.delete()
+    expiresAt: FieldValue.delete(),
+    failedAttempts: FieldValue.delete()
   });
 });
