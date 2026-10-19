@@ -349,6 +349,10 @@ export const resetPasswordCustomAuth = onCall(async (req) => {
   const userDoc = userDocRef.data()
   if (!userDocRef.exists) {
     throw new HttpsError("unavailable", "This user does not have a custom auth profile.");
+  } else if (!('codeHash' in userDoc!) || !('expiresAt' in userDoc!) || !('failedAttempts' in userDoc!)) {
+    throw new HttpsError("failed-precondition", "Please request another code.");
+  } else if ('expiresAt' in userDoc! && moment().isAfter(moment(userDoc!.expiresAt))) {
+    throw new HttpsError("deadline-exceeded", "This code has expired. Please request another.");
   } else if ('codeHash' in userDoc! && !(await compare(code, userDoc!.codeHash))) {
     if (userDoc.failedAttempts + 1 === MAX_FAILED_RESET_PASSWORD_ATTEMPTS) {
       await adminDb.collection(Collection.USERS).doc(uid).update({
@@ -360,8 +364,6 @@ export const resetPasswordCustomAuth = onCall(async (req) => {
     }
     await adminDb.collection(Collection.USERS).doc(uid).update({ failedAttempts: FieldValue.increment(1) })
     throw new HttpsError("unavailable", "Invalid code");
-  } else if ('expiresAt' in userDoc! && moment().isAfter(moment(userDoc!.expiresAt))) {
-    throw new HttpsError("deadline-exceeded", "This code has expired. Please request another.");
   }
 
   const hashedPassword = await hash(newPassword, 10);
