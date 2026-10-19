@@ -296,6 +296,8 @@ export const getAdminAccessToken = onCall(async (req) => {
   };
 });
 
+const MAX_FAILED_RESET_PASSWORD_ATTEMPTS = 3;
+
 const GenerateCustomAuthResetPasswordCodeRequest = z.object({
   uid: z.string()
 })
@@ -321,7 +323,7 @@ export const generateCustomAuthResetPasswordCode = onCall(async (req) => {
   const code = Buffer.from(plainUuid.replaceAll('-', ''), 'hex').toString('base64url');
   const codeHash = await hash(code, 10);
   const expiresAt = moment().add(10, 'minutes').toISOString();
-  await adminDb.collection(Collection.USERS).doc(uid).update({ codeHash, expiresAt });
+  await adminDb.collection(Collection.USERS).doc(uid).update({ codeHash, expiresAt, failedAttempts: 0 });
   return { code };
 });
 
@@ -348,6 +350,15 @@ export const resetPasswordCustomAuth = onCall(async (req) => {
   if (!userDocRef.exists) {
     throw new HttpsError("unavailable", "This user does not have a custom auth profile.");
   } else if ('codeHash' in userDoc! && !compare(code, userDoc!.codeHash)) {
+    if (userDoc.failedAttempts + 1 === MAX_FAILED_RESET_PASSWORD_ATTEMPTS) {
+      await adminDb.collection(Collection.USERS).doc(uid).update({
+        codeHash: FieldValue.delete(),
+        expiresAt: FieldValue.delete(),
+        failedAttempts: FieldValue.delete()
+      });
+      throw new HttpsError("unavailable", "Too many failed attempts. Please request another code.");
+    }
+    await adminDb.collection(Collection.USERS).doc(uid).update({ failedAttempts: FieldValue.increment(1) })
     throw new HttpsError("unavailable", "Invalid code");
   } else if ('expiresAt' in userDoc! && moment().isAfter(moment(userDoc!.expiresAt))) {
     throw new HttpsError("deadline-exceeded", "This code has expired. Please request another.");
