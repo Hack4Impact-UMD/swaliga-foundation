@@ -39,6 +39,8 @@ const DEFAULT_VALUES: Record<keyof ResetPasswordCustomAuthForm, string> = {
 
 export default function ResetPasswordCustomAuthPage() {
   const resetPasswordCustomAuthMutation = useResetPasswordCustomAuth();
+  
+  const router = useRouter();
 
   const form = useForm({
     defaultValues: DEFAULT_VALUES,
@@ -54,6 +56,7 @@ export default function ResetPasswordCustomAuthPage() {
           newPassword: value.newPassword,
           username: value.username,
         });
+        router.push("/");
       } catch (err: any) {
         formApi.setErrorMap({
           onSubmit: {
@@ -68,8 +71,6 @@ export default function ResetPasswordCustomAuthPage() {
       onChangeAsyncDebounceMs: 1000,
     },
   });
-
-  const router = useRouter();
 
   return (
     <ImageBackgroundPage>
