@@ -5,11 +5,12 @@ import useResetPasswordCustomAuth from "@/features/auth/authN/hooks/useResetPass
 import { useForm } from "@tanstack/react-form";
 import z from "zod";
 import styles from "./ResetPasswordCustomAuthPage.module.css";
-import { Anchor, PasswordInput, Text, TextInput } from "@mantine/core";
+import { Anchor, Button, PasswordInput, Text, TextInput } from "@mantine/core";
 import { FaArrowLeft } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { Base64UrlUUIDSchema } from "@/utils/utils";
 import { checkPasswordValidity } from "@/features/auth/authN/emailPasswordAuthN";
+import clsx from "clsx";
 
 const ResetPasswordCustomAuthFormSchema = z
   .object({
@@ -172,12 +173,15 @@ export default function ResetPasswordCustomAuthPage() {
           >
             Signed up with an email? Click here.
           </Anchor>
-          <button
-            className={`${styles.button} ${styles.submitButton}`}
+          <Button
+            classNames={{
+              root: clsx(styles.button, styles.submitButton),
+            }}
             onClick={form.handleSubmit}
+            loading={form.state.isSubmitting}
           >
             Reset Password
-          </button>
+          </Button>
           <Text className={styles.error}>
             {form.state.errors
               .map((err) => (typeof err === "string" ? err : err?.message))
@@ -185,12 +189,15 @@ export default function ResetPasswordCustomAuthPage() {
           </Text>
         </div>
         <div className={styles.returnButtonContainer}>
-          <button
-            className={`${styles.button} ${styles.returnHomeButton}`}
+          <Button
+            classNames={{
+              root: clsx(styles.button, styles.returnHomeButton),
+            }}
+            leftSection={<FaArrowLeft />}
             onClick={() => router.push("/")}
           >
-            <FaArrowLeft /> Return to Home
-          </button>
+            Return to Home
+          </Button>
         </div>
       </div>
     </ImageBackgroundPage>
