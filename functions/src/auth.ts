@@ -353,7 +353,7 @@ export const resetPasswordCustomAuth = onCall(async (req) => {
     throw new HttpsError("deadline-exceeded", "This code has expired. Please request another.");
   }
 
-  const hashedPassword = hash(newPassword, 10);
+  const hashedPassword = await hash(newPassword, 10);
   await adminDb.collection(Collection.USERS).doc(uid).update({
     password: hashedPassword,
     codeHash: FieldValue.delete(),
