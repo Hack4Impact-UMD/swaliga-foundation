@@ -144,7 +144,7 @@ export default function ResetPasswordCustomAuthPage() {
             )}
           </form.Field>
           <Anchor
-            href="/reset-password?auth=builtin"
+            href="/reset-password?auth=standard"
             className={styles.customAuthResetPasswordRedirect}
           >
             Signed up with an email? Click here.
