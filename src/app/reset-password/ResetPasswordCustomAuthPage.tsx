@@ -60,7 +60,6 @@ export default function ResetPasswordCustomAuthPage() {
             fields: {},
           },
         });
-        console.log("ERROR", err.message);
       }
     },
     validators: {

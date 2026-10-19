@@ -16,7 +16,6 @@ export function GenerateCustomAuthResetPasswordModal(
 
   const [isRevealed, setIsRevealed] = useState<boolean>(false);
   const reveal = () => setIsRevealed(true);
-  console.log(isRevealed);
 
   const generateCustomAuthResetPasswordCodeMutation =
     useGenerateCustomAuthResetPasswordCode();
