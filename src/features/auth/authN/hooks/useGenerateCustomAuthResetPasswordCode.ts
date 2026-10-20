@@ -22,8 +22,12 @@ async function generateCustomAuthResetPasswordCode(req: GenerateCustomAuthResetP
   return res.data;
 }
 
+const TEN_MINUTES = 10 * 60 * 1000;
+
 export default function useGenerateCustomAuthResetPasswordCode() {
   return useMutation({
-    mutationFn: generateCustomAuthResetPasswordCode
+    mutationKey: ["generate-custom-auth-reset-password-code"],
+    mutationFn: generateCustomAuthResetPasswordCode,
+    gcTime: TEN_MINUTES
   })
 }
