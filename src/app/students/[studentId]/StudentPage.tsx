@@ -33,8 +33,10 @@ import ErrorPage from "@/app/error";
 import MenuIcon from "@/components/ui/MenuIcon";
 import { exportFullStudentDataToCSV } from "@/features/dataExporting/exportCSV";
 import BlankBackgroundPage from "@/components/layout/pages/BlankBackgroundPage";
-import { MdArchive, MdUnarchive } from "react-icons/md";
+import { MdArchive, MdUnarchive, MdLockReset } from "react-icons/md";
 import { updateStudent } from "@/data/firestore/students";
+import openGenerateCustomAuthResetPasswordModal from "@/features/auth/authN/components/GenerateCustomAuthResetPasswordModal";
+import { auth } from "@/config/firebaseConfig";
 
 interface StudentPageProps {
   studentId: string;
@@ -268,10 +270,14 @@ export default function StudentPage(props: StudentPageProps) {
             </MenuIcon>
           )}
           {student.isArchived ? (
-            <MenuIcon label="Unarchive" onClick={async () => updateStudent(student.id, { isArchived: false })}>
+            <MenuIcon
+              label="Unarchive"
+              onClick={async () =>
+                updateStudent(student.id, { isArchived: false })
+              }
+            >
               <MdUnarchive size={30} />
             </MenuIcon>
-            
           ) : (
             <MenuIcon
               label="Archive"
@@ -283,6 +289,16 @@ export default function StudentPage(props: StudentPageProps) {
             </MenuIcon>
           )}
           {!student.isArchived && <EditAccountModal student={student} />}
+          {student.uid !== undefined && (role === "ADMIN" || role === "STAFF") && (
+            <MenuIcon
+              label="Reset Password"
+              onClick={() =>
+                openGenerateCustomAuthResetPasswordModal({ uid: student.uid! })
+              }
+            >
+              <MdLockReset size={30} />
+            </MenuIcon>
+          )}
         </div>
         <div className={styles.infoFieldsContainer}>
           {studentInfo.map((info) => (
