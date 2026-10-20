@@ -51,9 +51,9 @@ export default function RootLayout({
                 <Footer />
               </ModalsProvider>
             </MantineProviderWrapper>
+            <TanstackDevtoolsWrapper />
           </QueryClientProviderWrapper>
         </Suspense>
-        <TanstackDevtoolsWrapper />
       </body>
     </html>
   );
