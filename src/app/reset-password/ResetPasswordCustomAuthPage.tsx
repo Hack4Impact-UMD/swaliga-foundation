@@ -8,7 +8,7 @@ import styles from "./ResetPasswordCustomAuthPage.module.css";
 import { Anchor, Button, PasswordInput, Text, TextInput } from "@mantine/core";
 import { FaArrowLeft } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { Base64UrlUUIDSchema } from "@/utils/utils";
+import { Base64UrlUUIDSchema, stripCodeFromFirebaseErrorMessage } from "@/utils/utils";
 import { checkPasswordValidity } from "@/features/auth/authN/emailPasswordAuthN";
 import clsx from "clsx";
 
@@ -60,7 +60,7 @@ export default function ResetPasswordCustomAuthPage() {
       } catch (err: any) {
         formApi.setErrorMap({
           onSubmit: {
-            form: err.message,
+            form: stripCodeFromFirebaseErrorMessage(err.message),
             fields: {},
           },
         });

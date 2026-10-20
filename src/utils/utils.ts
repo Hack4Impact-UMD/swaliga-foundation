@@ -63,3 +63,10 @@ function base64UrlToBase64(str: string) {
   }
   return base64Str;
 }
+
+export function stripCodeFromFirebaseErrorMessage(err: string) {
+  if (/^\s\[\d{3}\]$/.test(err.substring(err.length - 6))) {
+    return err.substring(0, err.length - 6);
+  }
+  return err;
+}
