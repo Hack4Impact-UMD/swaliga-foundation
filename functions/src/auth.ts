@@ -343,8 +343,7 @@ export const resetPasswordCustomAuth = onCall(async (req) => {
   }
   const { username, code, newPassword } = requestValidationResult.data;
 
-  let error: HttpsError | null = null;
-  await adminDb.runTransaction(async (transaction) => {
+  const error: HttpsError | undefined = await adminDb.runTransaction(async (transaction) => {
     const usernameDocRef = await transaction.get(adminDb.collection(Collection.USERNAMES).doc(username));
     if (!usernameDocRef.exists) {
       throw new HttpsError("invalid-argument", "Invalid username");
@@ -362,8 +361,7 @@ export const resetPasswordCustomAuth = onCall(async (req) => {
         expiresAt: FieldValue.delete(),
         failedAttempts: FieldValue.delete()
       });
-      error = new HttpsError("failed-precondition", "This code has expired. Please request another.");
-      return;
+      return new HttpsError("failed-precondition", "This code has expired. Please request another.");
     } else if ('codeHash' in userDoc! && !(await compare(code, userDoc!.codeHash))) {
       if (userDoc.failedAttempts + 1 === MAX_FAILED_RESET_PASSWORD_ATTEMPTS) {
         transaction.update(adminDb.collection(Collection.USERS).doc(uid), {
@@ -371,12 +369,10 @@ export const resetPasswordCustomAuth = onCall(async (req) => {
           expiresAt: FieldValue.delete(),
           failedAttempts: FieldValue.delete()
         });
-        error = new HttpsError("unavailable", "Too many failed attempts. Please request another code.");
-        return;
+        return new HttpsError("unavailable", "Too many failed attempts. Please request another code.");
       }
       transaction.update(adminDb.collection(Collection.USERS).doc(uid), { failedAttempts: FieldValue.increment(1) });
-      error = new HttpsError("unavailable", "Invalid code");
-      return;
+      return new HttpsError("unavailable", "Invalid code");
     }
 
     const hashedPassword = await hash(newPassword, 10);
@@ -386,9 +382,10 @@ export const resetPasswordCustomAuth = onCall(async (req) => {
       expiresAt: FieldValue.delete(),
       failedAttempts: FieldValue.delete()
     });
+    return undefined;
   });
 
-  if (error as HttpsError | null) {
+  if (error) {
     throw error;
   }
 });
