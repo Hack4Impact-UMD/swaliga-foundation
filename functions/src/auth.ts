@@ -14,6 +14,7 @@ import { Student } from '@/types/user-types';
 import { FIRST_STUDENT_ID } from '@/constants/constants';
 import z from 'zod';
 import { v4 } from 'uuid';
+import { Base64UrlUUIDSchema } from "@/utils/utils";
 
 export const setRole = onCall(async (req) => {
   if (!req.auth) {
@@ -303,7 +304,7 @@ const GenerateCustomAuthResetPasswordCodeRequest = z.object({
 })
 
 export const generateCustomAuthResetPasswordCode = onCall(async (req) => {
-  if (!req.auth || req.auth.token.role !== "ADMIN") {
+  if (!req.auth || (req.auth.token.role !== "ADMIN" && req.auth.token.role !== "STAFF")) {
     throw new HttpsError("permission-denied", "You are not authorized to perform this operation.");
   }
 
@@ -330,10 +331,10 @@ export const generateCustomAuthResetPasswordCode = onCall(async (req) => {
 });
 
 const ResetPasswordCustomAuthRequest = z.object({
-  username: z.string(),
-  code: z.string(),
-  newPassword: z.string()
-})
+  username: z.string().min(1, "Username can't be empty."),
+  newPassword: z.string().min(6, "Password must be at least 6 characters").max(4096, "Password must be at most 4096 characters"),
+  code: Base64UrlUUIDSchema,
+});
 
 export const resetPasswordCustomAuth = onCall(async (req) => {
   const requestValidationResult = ResetPasswordCustomAuthRequest.safeParse(req.data);
@@ -342,6 +343,7 @@ export const resetPasswordCustomAuth = onCall(async (req) => {
   }
   const { username, code, newPassword } = requestValidationResult.data;
 
+  let error: HttpsError | null = null;
   await adminDb.runTransaction(async (transaction) => {
     const usernameDocRef = await transaction.get(adminDb.collection(Collection.USERNAMES).doc(username));
     if (!usernameDocRef.exists) {
@@ -360,7 +362,8 @@ export const resetPasswordCustomAuth = onCall(async (req) => {
         expiresAt: FieldValue.delete(),
         failedAttempts: FieldValue.delete()
       });
-      throw new HttpsError("deadline-exceeded", "This code has expired. Please request another.");
+      error = new HttpsError("failed-precondition", "This code has expired. Please request another.");
+      return;
     } else if ('codeHash' in userDoc! && !(await compare(code, userDoc!.codeHash))) {
       if (userDoc.failedAttempts + 1 === MAX_FAILED_RESET_PASSWORD_ATTEMPTS) {
         transaction.update(adminDb.collection(Collection.USERS).doc(uid), {
@@ -368,10 +371,12 @@ export const resetPasswordCustomAuth = onCall(async (req) => {
           expiresAt: FieldValue.delete(),
           failedAttempts: FieldValue.delete()
         });
-        throw new HttpsError("unavailable", "Too many failed attempts. Please request another code.");
+        error = new HttpsError("unavailable", "Too many failed attempts. Please request another code.");
+        return;
       }
       transaction.update(adminDb.collection(Collection.USERS).doc(uid), { failedAttempts: FieldValue.increment(1) });
-      throw new HttpsError("unavailable", "Invalid code");
+      error = new HttpsError("unavailable", "Invalid code");
+      return;
     }
 
     const hashedPassword = await hash(newPassword, 10);
@@ -382,4 +387,8 @@ export const resetPasswordCustomAuth = onCall(async (req) => {
       failedAttempts: FieldValue.delete()
     });
   });
+
+  if (error as HttpsError | null) {
+    throw error;
+  }
 });

@@ -16,7 +16,7 @@ const ResetPasswordCustomAuthFormSchema = z
   .object({
     username: z.string().min(1, "Username can't be empty."),
     newPassword: z.string().refine(async (password) => {
-      checkPasswordValidity(password);
+      await checkPasswordValidity(password);
       return true;
     }, "Password must be between 6 and 4096 characters"),
     confirmNewPassword: z.string(),
