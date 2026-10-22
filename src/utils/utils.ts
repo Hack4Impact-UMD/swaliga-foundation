@@ -34,7 +34,8 @@ export function asUUID(str: string): UUID {
 export const Base64UrlUUIDSchema = z.string().regex(/^[A-Za-z0-9_-]{22}$/, "Invalid input").transform((val) => {
   const hexStr = Buffer.from(base64UrlToBase64(val), 'base64').toString('hex');
   return `${hexStr.substring(0, 8)}-${hexStr.substring(8, 12)}-${hexStr.substring(12, 16)}-${hexStr.substring(16, 20)}-${hexStr.substring(20, 32)}`;
-}).pipe(z.uuid("Invalid input")).brand<"Base64UrlUUID">();
+  // @ts-expect-error - replaceAll is a real function
+}).pipe(z.uuid("Invalid input")).transform((val) => base64ToBase64Url(Buffer.from(val.replaceAll('-', ''), 'hex').toString('base64'))).brand<"Base64UrlUUID">();
 export type Base64UrlUUID = z.infer<typeof Base64UrlUUIDSchema>;
 export function asBase64UrlUuid(str: string): Base64UrlUUID {
   const validationResult = Base64UrlUUIDSchema.safeParse(str);
@@ -45,6 +46,7 @@ export function asBase64UrlUuid(str: string): Base64UrlUUID {
 }
 
 export function base64UrlEncodeUUID(uuid: UUID): Base64UrlUUID {
+  // @ts-expect-error - replaceAll is a real function
   return base64ToBase64Url(Buffer.from(uuid.replaceAll('-', ''), 'hex').toString('base64')) as Base64UrlUUID;
 }
 
