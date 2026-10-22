@@ -49,7 +49,8 @@ export function base64UrlEncodeUUID(uuid: UUID): Base64UrlUUID {
 }
 
 export function base64UrlDecodeUUID(base64UrlUUID: Base64UrlUUID): UUID {
-  return Buffer.from(base64UrlToBase64(base64UrlUUID), 'base64').toString('hex') as UUID;
+  const uuidWithoutDashes = Buffer.from(base64UrlToBase64(base64UrlUUID), 'base64').toString('hex');
+  return `${uuidWithoutDashes.substring(0, 8)}-${uuidWithoutDashes.substring(8, 12)}-${uuidWithoutDashes.substring(12, 16)}-${uuidWithoutDashes.substring(16, 20)}-${uuidWithoutDashes.substring(20, 32)}` as UUID;
 }
 
 function base64ToBase64Url(str: string) {
