@@ -300,7 +300,7 @@ export const getAdminAccessToken = onCall(async (req) => {
 const MAX_FAILED_RESET_PASSWORD_ATTEMPTS = 3;
 
 const GenerateCustomAuthResetPasswordCodeRequest = z.object({
-  uid: z.string()
+  uid: z.string().min(1).max(128)
 })
 
 export const generateCustomAuthResetPasswordCode = onCall(async (req) => {
