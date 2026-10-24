@@ -71,8 +71,8 @@ export default function ResetPasswordCustomAuthPage() {
       }
     },
     validators: {
-      onChangeAsync: ResetPasswordCustomAuthFormSchema,
-      onChangeAsyncDebounceMs: 1000,
+      //onChangeAsync: ResetPasswordCustomAuthFormSchema,
+      //onChangeAsyncDebounceMs: 1000,
     },
   });
 
@@ -81,7 +81,11 @@ export default function ResetPasswordCustomAuthPage() {
       <div className={styles.container}>
         <div className={styles.formContainer}>
           <h1 className={styles.header}>Reset Password</h1>
-          <form.Field name="username">
+          <form.Field name="username" validators={{
+            onBlur: ResetPasswordCustomAuthFormSchema.shape.username,
+            onChange: ResetPasswordCustomAuthFormSchema.shape.username,
+            onSubmit: ResetPasswordCustomAuthFormSchema.shape.username,
+          }}>
             {(field) => (
               <TextInput
                 classNames={{
@@ -90,6 +94,7 @@ export default function ResetPasswordCustomAuthPage() {
                 }}
                 label={"Username"}
                 value={field.state.value}
+                onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 error={
                   field.state.meta.isTouched
