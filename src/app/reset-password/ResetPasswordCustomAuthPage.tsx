@@ -81,11 +81,14 @@ export default function ResetPasswordCustomAuthPage() {
       <div className={styles.container}>
         <div className={styles.formContainer}>
           <h1 className={styles.header}>Reset Password</h1>
-          <form.Field name="username" validators={{
-            onBlur: ResetPasswordCustomAuthFormSchema.shape.username,
-            onChange: ResetPasswordCustomAuthFormSchema.shape.username,
-            onSubmit: ResetPasswordCustomAuthFormSchema.shape.username,
-          }}>
+          <form.Field
+            name="username"
+            validators={{
+              onBlur: ResetPasswordCustomAuthFormSchema.shape.username,
+              onChange: ResetPasswordCustomAuthFormSchema.shape.username,
+              onSubmit: ResetPasswordCustomAuthFormSchema.shape.username,
+            }}
+          >
             {(field) => (
               <TextInput
                 classNames={{
@@ -108,7 +111,18 @@ export default function ResetPasswordCustomAuthPage() {
               />
             )}
           </form.Field>
-          <form.Field name="newPassword">
+          <form.Field
+            name="newPassword"
+            validators={{
+              onBlurAsync: ResetPasswordCustomAuthFormSchema.shape.newPassword,
+              onBlurAsyncDebounceMs: 500,
+              onChangeAsync:
+                ResetPasswordCustomAuthFormSchema.shape.newPassword,
+              onChangeAsyncDebounceMs: 500,
+              onSubmitAsync:
+                ResetPasswordCustomAuthFormSchema.shape.newPassword,
+            }}
+          >
             {(field) => (
               <PasswordInput
                 classNames={{
@@ -117,6 +131,7 @@ export default function ResetPasswordCustomAuthPage() {
                 }}
                 label={"New Password"}
                 value={field.state.value}
+                onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 error={
                   field.state.meta.isTouched
@@ -130,7 +145,22 @@ export default function ResetPasswordCustomAuthPage() {
               />
             )}
           </form.Field>
-          <form.Field name="confirmNewPassword">
+          <form.Field
+            name="confirmNewPassword"
+            validators={{
+              onBlurListenTo: ["newPassword"],
+              onBlur: ({ value, fieldApi }) =>
+                fieldApi.form.getFieldValue("newPassword") === value
+                  ? undefined
+                  : {
+                      message:
+                        "Password confirmation must be the same as password.",
+                      path: ["confirmNewPassword"],
+                    },
+              onSubmit:
+                ResetPasswordCustomAuthFormSchema.shape.confirmNewPassword,
+            }}
+          >
             {(field) => (
               <PasswordInput
                 classNames={{
@@ -139,6 +169,7 @@ export default function ResetPasswordCustomAuthPage() {
                 }}
                 label={"Confirm New Password"}
                 value={field.state.value}
+                onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 error={
                   field.state.meta.isTouched
@@ -152,7 +183,10 @@ export default function ResetPasswordCustomAuthPage() {
               />
             )}
           </form.Field>
-          <form.Field name="code">
+          <form.Field name="code" validators={{
+            onBlur: ResetPasswordCustomAuthFormSchema.shape.code,
+            onSubmit: ResetPasswordCustomAuthFormSchema.shape.code,
+          }}>
             {(field) => (
               <TextInput
                 classNames={{
@@ -164,6 +198,7 @@ export default function ResetPasswordCustomAuthPage() {
                   "Please ask your Swaliga teacher or admin for this code."
                 }
                 value={field.state.value}
+                onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 error={
                   field.state.meta.isTouched
