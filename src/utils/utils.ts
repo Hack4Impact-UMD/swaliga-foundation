@@ -71,3 +71,7 @@ export function stripCodeFromFirebaseErrorMessage(err: string) {
   }
   return err;
 }
+
+export function getUniqueValues<T>(vals: T[]): T[] {
+  return [...new Set(vals)];
+}

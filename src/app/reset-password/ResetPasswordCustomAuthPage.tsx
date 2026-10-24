@@ -10,6 +10,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import {
   Base64UrlUUIDSchema,
+  getUniqueValues,
   stripCodeFromFirebaseErrorMessage,
 } from "@/utils/utils";
 import { checkPasswordValidity } from "@/features/auth/authN/emailPasswordAuthN";
@@ -69,7 +70,7 @@ export default function ResetPasswordCustomAuthPage() {
           },
         });
       }
-    }
+    },
   });
 
   return (
@@ -97,11 +98,11 @@ export default function ResetPasswordCustomAuthPage() {
                 onChange={(e) => field.handleChange(e.target.value)}
                 error={
                   field.state.meta.isTouched
-                    ? field.state.meta.errors
-                        .map((err) =>
+                    ? getUniqueValues(
+                        field.state.meta.errors.map((err) =>
                           typeof err === "string" ? err : err?.message,
-                        )
-                        .join(", ")
+                        ),
+                      ).join(", ")
                     : undefined
                 }
               />
@@ -131,11 +132,11 @@ export default function ResetPasswordCustomAuthPage() {
                 onChange={(e) => field.handleChange(e.target.value)}
                 error={
                   field.state.meta.isTouched
-                    ? field.state.meta.errors
-                        .map((err) =>
+                    ? getUniqueValues(
+                        field.state.meta.errors.map((err) =>
                           typeof err === "string" ? err : err?.message,
-                        )
-                        .join(", ")
+                        ),
+                      ).join(", ")
                     : undefined
                 }
               />
@@ -169,20 +170,23 @@ export default function ResetPasswordCustomAuthPage() {
                 onChange={(e) => field.handleChange(e.target.value)}
                 error={
                   field.state.meta.isTouched
-                    ? field.state.meta.errors
-                        .map((err) =>
+                    ? getUniqueValues(
+                        field.state.meta.errors.map((err) =>
                           typeof err === "string" ? err : err?.message,
-                        )
-                        .join(", ")
+                        ),
+                      ).join(", ")
                     : undefined
                 }
               />
             )}
           </form.Field>
-          <form.Field name="code" validators={{
-            onBlur: ResetPasswordCustomAuthFormSchema.shape.code,
-            onSubmit: ResetPasswordCustomAuthFormSchema.shape.code,
-          }}>
+          <form.Field
+            name="code"
+            validators={{
+              onBlur: ResetPasswordCustomAuthFormSchema.shape.code,
+              onSubmit: ResetPasswordCustomAuthFormSchema.shape.code,
+            }}
+          >
             {(field) => (
               <TextInput
                 classNames={{
@@ -198,11 +202,11 @@ export default function ResetPasswordCustomAuthPage() {
                 onChange={(e) => field.handleChange(e.target.value)}
                 error={
                   field.state.meta.isTouched
-                    ? field.state.meta.errors
-                        .map((err) =>
+                    ? getUniqueValues(
+                        field.state.meta.errors.map((err) =>
                           typeof err === "string" ? err : err?.message,
-                        )
-                        .join(", ")
+                        ),
+                      ).join(", ")
                     : undefined
                 }
               />
