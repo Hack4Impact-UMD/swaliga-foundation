@@ -1,10 +1,11 @@
-import useGenerateCustomAuthResetPasswordCode from "@/features/auth/authN/hooks/useGenerateCustomAuthResetPasswordCode";
+import useGenerateCustomAuthResetPasswordCode, { GenerateCustomAuthResetPasswordCodeRequest } from "@/features/auth/authN/hooks/useGenerateCustomAuthResetPasswordCode";
 import { modals } from "@mantine/modals";
 import { useEffect, useState } from "react";
 import { ActionIcon, CopyButton, PasswordInput } from "@mantine/core";
 import { MdContentCopy } from "react-icons/md";
 import { clsx } from "clsx";
 import styles from "./GenerateCustomAuthResetPasswordModal.module.css";
+import { useQueryClient } from "@tanstack/react-query";
 interface GenerateCustomAuthResetPasswordModalProps {
   uid: string;
 }
@@ -17,10 +18,20 @@ export function GenerateCustomAuthResetPasswordModal(
   const [isRevealed, setIsRevealed] = useState<boolean>(false);
   const reveal = () => setIsRevealed(true);
 
+  const queryClient = useQueryClient();
+  const mutationCache = queryClient.getMutationCache();
+
   const generateCustomAuthResetPasswordCodeMutation =
     useGenerateCustomAuthResetPasswordCode();
   const generateResetPasswordCode = () => {
     generateCustomAuthResetPasswordCodeMutation.mutate({ uid });
+    return () => {
+      const mutationToRemove = mutationCache.find({
+        mutationKey: ["generate-custom-auth-reset-password-code"],
+        predicate: (mutation) => (mutation.state.variables as GenerateCustomAuthResetPasswordCodeRequest).uid === uid
+      });
+      if (mutationToRemove) { mutationCache.remove(mutationToRemove); }
+    }
   };
   useEffect(generateResetPasswordCode, []);
 
