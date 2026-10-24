@@ -229,6 +229,7 @@ export default function ResetPasswordCustomAuthPage() {
           </Button>
           <Text className={styles.error}>
             {form.state.errors
+              // @ts-expect-error - form errors do exist
               .map((err) => (typeof err === "string" ? err : err?.message))
               .join(", ")}
           </Text>
