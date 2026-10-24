@@ -8,7 +8,10 @@ import styles from "./ResetPasswordCustomAuthPage.module.css";
 import { Anchor, Button, PasswordInput, Text, TextInput } from "@mantine/core";
 import { FaArrowLeft } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { Base64UrlUUIDSchema, stripCodeFromFirebaseErrorMessage } from "@/utils/utils";
+import {
+  Base64UrlUUIDSchema,
+  stripCodeFromFirebaseErrorMessage,
+} from "@/utils/utils";
 import { checkPasswordValidity } from "@/features/auth/authN/emailPasswordAuthN";
 import clsx from "clsx";
 
@@ -39,7 +42,7 @@ const DEFAULT_VALUES: Record<keyof ResetPasswordCustomAuthForm, string> = {
 
 export default function ResetPasswordCustomAuthPage() {
   const resetPasswordCustomAuthMutation = useResetPasswordCustomAuth();
-  
+
   const router = useRouter();
 
   const form = useForm({
@@ -50,6 +53,7 @@ export default function ResetPasswordCustomAuthPage() {
       if (!validationResult.success) {
         throw new Error("Unable to submit form");
       }
+
       try {
         await resetPasswordCustomAuthMutation.mutateAsync({
           code: value.code,
