@@ -70,5 +70,6 @@ export default function openGenerateCustomAuthResetPasswordModal(
   modals.open({
     title: "Generate Code",
     children: <GenerateCustomAuthResetPasswordModal {...props} />,
+    closeOnClickOutside: false
   });
 }
