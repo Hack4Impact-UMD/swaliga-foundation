@@ -69,11 +69,7 @@ export default function ResetPasswordCustomAuthPage() {
           },
         });
       }
-    },
-    validators: {
-      //onChangeAsync: ResetPasswordCustomAuthFormSchema,
-      //onChangeAsyncDebounceMs: 1000,
-    },
+    }
   });
 
   return (
