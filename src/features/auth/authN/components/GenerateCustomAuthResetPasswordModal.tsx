@@ -48,6 +48,7 @@ export function GenerateCustomAuthResetPasswordModal(
       error={generateCustomAuthResetPasswordCodeMutation.error?.message}
       visible={isRevealed}
       onVisibilityChange={reveal}
+      visibilityToggleFocusable={true}
       rightSection={
         isRevealed ? (
           <CopyButton value={code ?? ""}>
