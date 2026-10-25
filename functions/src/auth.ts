@@ -12,6 +12,9 @@ import { UserRecord } from 'firebase-admin/auth';
 import { getFullName } from '@/types/user-types';
 import { Student } from '@/types/user-types';
 import { FIRST_STUDENT_ID } from '@/constants/constants';
+import z from 'zod';
+import { v4 } from 'uuid';
+import { Base64UrlUUIDSchema } from "@/utils/utils";
 
 export const setRole = onCall(async (req) => {
   if (!req.auth) {
@@ -292,4 +295,86 @@ export const getAdminAccessToken = onCall(async (req) => {
     expiryDate: credentials.expiry_date,
     scope: credentials.scope
   };
+});
+
+const MAX_FAILED_RESET_PASSWORD_ATTEMPTS = 3;
+
+const GenerateCustomAuthResetPasswordCodeRequest = z.object({
+  uid: z.string().min(1).max(128)
+})
+
+export const generateCustomAuthResetPasswordCode = onCall(async (req) => {
+  if (!req.auth || (req.auth.token.role !== "ADMIN" && req.auth.token.role !== "STAFF")) {
+    throw new HttpsError("permission-denied", "You are not authorized to perform this operation.");
+  }
+
+  const validationResult = GenerateCustomAuthResetPasswordCodeRequest.safeParse(req.data);
+  if (!validationResult.success) {
+    throw new HttpsError("invalid-argument", "Invalid Request");
+  }
+  const { uid } = validationResult.data;
+
+  return await adminDb.runTransaction(async (transaction) => {
+    const userDocRef = await transaction.get(adminDb.collection(Collection.USERS).doc(uid));
+    if (!userDocRef.exists) {
+      throw new HttpsError("failed-precondition", "User's account does not use this site's custom authentication system.");
+    }
+
+    const plainUuid = v4();
+    const code = Buffer.from(plainUuid.replaceAll('-', ''), 'hex').toString('base64url');
+    const codeHash = await hash(code, 10);
+    const expiresAt = moment().add(10, 'minutes').toISOString();
+    transaction.update(adminDb.collection(Collection.USERS).doc(uid), { resetPassword: { codeHash, expiresAt, failedAttempts: 0 } });
+    return { code };
+  });
+});
+
+const ResetPasswordCustomAuthRequest = z.object({
+  username: z.string().min(1, "Username can't be empty."),
+  newPassword: z.string().min(6, "Password must be at least 6 characters").max(4096, "Password must be at most 4096 characters"),
+  code: Base64UrlUUIDSchema,
+});
+
+export const resetPasswordCustomAuth = onCall(async (req) => {
+  const requestValidationResult = ResetPasswordCustomAuthRequest.safeParse(req.data);
+  if (!requestValidationResult.success) {
+    throw new HttpsError("invalid-argument", "Invalid Request");
+  }
+  const { username, code, newPassword } = requestValidationResult.data;
+
+  const error: HttpsError | undefined = await adminDb.runTransaction(async (transaction) => {
+    const usernameDocRef = await transaction.get(adminDb.collection(Collection.USERNAMES).doc(username));
+    if (!usernameDocRef.exists) {
+      throw new HttpsError("invalid-argument", "Invalid username");
+    }
+    const uid = usernameDocRef.data()!.uid;
+    const userDocRef = await transaction.get(adminDb.collection(Collection.USERS).doc(uid));
+    const userDoc = userDocRef.data()
+    if (!userDocRef.exists) {
+      throw new HttpsError("failed-precondition", "This user does not have a custom auth profile.");
+    } else if (!('resetPassword' in userDoc!)) {
+      throw new HttpsError("failed-precondition", "Please request another code.");
+    } else if (moment().isAfter(moment(userDoc.resetPassword.expiresAt))) {
+      transaction.update(adminDb.collection(Collection.USERS).doc(uid), { resetPassword: FieldValue.delete() });
+      return new HttpsError("failed-precondition", "This code has expired. Please request another.");
+    } else if (!(await compare(code, userDoc.resetPassword.codeHash))) {
+      if (userDoc.resetPassword.failedAttempts + 1 >= MAX_FAILED_RESET_PASSWORD_ATTEMPTS) {
+        transaction.update(adminDb.collection(Collection.USERS).doc(uid), { resetPassword: FieldValue.delete() });
+        return new HttpsError("unavailable", "Too many failed attempts. Please request another code.");
+      }
+      transaction.update(adminDb.collection(Collection.USERS).doc(uid), { "resetPassword.failedAttempts": FieldValue.increment(1) });
+      return new HttpsError("unavailable", "Invalid code");
+    }
+
+    const hashedPassword = await hash(newPassword, 10);
+    transaction.update(adminDb.collection(Collection.USERS).doc(uid), {
+      password: hashedPassword,
+      resetPassword: FieldValue.delete()
+    });
+    return undefined;
+  });
+
+  if (error) {
+    throw error;
+  }
 });

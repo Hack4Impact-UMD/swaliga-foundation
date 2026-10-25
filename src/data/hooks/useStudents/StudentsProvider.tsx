@@ -87,7 +87,6 @@ export default function StudentsProvider({
           );
     return () => unsubscribe();
   }, [role, auth.token?.claims.studentId]);
-  console.log("STUDENTS", students);
   return (
     <StudentsContext.Provider value={{ students, isLoading, isError }}>
       {children}
